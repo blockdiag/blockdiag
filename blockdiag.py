@@ -26,19 +26,24 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
     def textnode(self, position, string, **kwargs):
-        xy = (position[0] + self.nodePadding, position[1] + self.nodePadding)
-
-        height = 0
         lines = self._getLogicalLines(string, **kwargs)
         lines = self._truncateLines(lines, **kwargs)
 
         height = 0
         ttfont = kwargs.get('font')
         for string in lines:
-            draw_xy = (xy[0], xy[1] + height)
+            height += self.textsize(string, font=ttfont)[1] + self.lineSpacing
+
+        height = (self.nodeHeight - self.nodePadding - height) / 2
+        xy = (position[0] + self.nodePadding, position[1] + self.nodePadding)
+        for string in lines:
+            size = self.textsize(string, font=ttfont)
+            x = (self.nodeWidth - self.nodePadding - size[0]) / 2
+
+            draw_xy = (xy[0] + x, xy[1] + height)
             self.text(draw_xy, string, fill=self.fill, font=ttfont)
 
-            height += self.textsize(string, font=ttfont)[1] + self.lineSpacing
+            height += size[1] + self.lineSpacing
 
         bottom_left = (position[0] + self.nodeWidth, position[1] + self.nodeHeight)
         self.rectangle([position, bottom_left], outline=self.fill)
