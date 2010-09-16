@@ -217,8 +217,8 @@ def main():
     fontpath = '/usr/share/fonts/truetype/ipafont/ipagp.ttf'
     ttfont = ImageFont.truetype(fontpath, 24)
 
-    image = Image.new('RGB', (2048, 2048), (256, 256, 256))
-    draw = ImageNodeDraw(image)
+    imgbuff = Image.new('RGB', (10240, 10240), (256, 256, 256))
+    draw = ImageNodeDraw(imgbuff)
 
     infile = args[0]
     if options.filename:
@@ -235,7 +235,7 @@ def main():
     draw.nodelinklist(None, root, recursive=1)
 
     size = (0, 0, root.width + paperMargin * 2, root.height + paperMargin * 2)
-    image = image.crop(size)
+    image = imgbuff.crop(size)
 
     image.save(outfile, 'PNG')
 
