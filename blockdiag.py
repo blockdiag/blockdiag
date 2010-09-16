@@ -11,12 +11,14 @@ import Image, ImageFont, ImageDraw
 class ImageNodeDraw(ImageDraw.ImageDraw):
     def __init__(self, im, mode=None, **kwargs):
         self.nodeColumns = kwargs.get('nodeColumns', 8)
+        self.nodeRows = kwargs.get('nodeRows', 4)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.textMargin = kwargs.get('textMargin', 2)
         self.cellSize = kwargs.get('cellSize', 16)
         self.fill = kwargs.get('fill', (0, 0, 0))
 
         self.nodeWidth = self.cellSize * self.nodeColumns
+        self.nodeHeight = self.cellSize * self.nodeRows
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
     def _getNodeHeight(self, height):
@@ -27,24 +29,25 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         xy = (position[0] + self.textMargin, position[1] + self.textMargin)
 
         height = 0
-        for line in string.splitlines():
+        lines = self._getLogicalLines(string, **kwargs)
+        lines = self._truncateLines(lines, **kwargs)
+
+        height = 0
+        ttfont = kwargs.get('font')
+        for string in lines:
             draw_xy = (xy[0], xy[1] + height)
-            line_height = self._drawLogicalLine(draw_xy, line, **kwargs)
+            self.text(draw_xy, string, fill=self.fill, font=ttfont)
 
-            height += line_height + self.lineSpacing
+            height += self.textsize(string, font=ttfont)[1] + self.lineSpacing
 
-        node_width = self.nodeWidth
-        node_height = self._getNodeHeight(height)
-        bottom_left = (position[0] + node_width, position[1] + node_height)
+        bottom_left = (position[0] + self.nodeWidth, position[1] + self.nodeHeight)
         self.rectangle([position, bottom_left], outline=self.fill)
 
-        return (node_width, node_height)
-
     def screennode(self, node, **kwargs):
-        size = self.textnode(node.xy, node.title, **kwargs)
+        self.textnode(node.xy, node.title, **kwargs)
 
-        node.width = size[0]
-        node.height = size[1]
+        node.width = self.nodeWidth
+        node.height = self.nodeHeight
 
         if kwargs.get('recursive') and node.children:
             node.children.xy = (node.xy[0] + node.width + self.cellSize * 5,
@@ -93,23 +96,49 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
 
         return length
 
-    def _drawLogicalLine(self, position, string, **kwargs):
+    def _getLogicalLines(self, string, **kwargs):
+        ttfont = kwargs.get('font')
+        lines = []
+
+        for line in string.splitlines():
+            while line:
+                string = string.strip()
+                pos = self._getLinefeedPosition(line, **kwargs)
+
+                lines.append(line[0:pos])
+                line = line[pos:]
+
+        return lines
+
+    def _truncateLines(self, lines, **kwargs):
         ttfont = kwargs.get('font')
         height = 0
+        truncated = 0
+        truncated_lines = []
 
-        while string:
-            string = string.strip()
-            pos = self._getLinefeedPosition(string, **kwargs)
+        for string in lines:
+            size = self.textsize(string, font=ttfont)
+            height += size[1] + self.lineSpacing
 
-            line = string[0:pos]
-            string = string[pos:]
+            if height < self.nodeHeight - self.textMargin * 2:
+                 truncated_lines.append(string)
+            else:
+                 truncated = 1
 
-            draw_xy = (position[0], position[1] + height)
-            self.text(draw_xy, line, fill=self.fill, font=ttfont)
+        if truncated:
+            string = truncated_lines.pop()
+            for i in range(0, len(string)):
+                if i == 0:
+                    truncated = string + ' ...'
+                else:
+                    truncated = string[0:-i] + ' ...'
 
-            height += self.textsize(line, font=ttfont)[1] + self.lineSpacing
+                size = self.textsize(truncated, font=ttfont)
+                if size[0] <= self.nodeWidth - self.textMargin * 2:
+                    truncated_lines.append(truncated)
+                    break
 
-        return height
+        return truncated_lines
 
 
 class ScreenNode:
