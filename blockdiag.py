@@ -45,7 +45,8 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
 
             height += size[1] + self.lineSpacing
 
-        bottom_left = (position[0] + self.nodeWidth, position[1] + self.nodeHeight)
+        bottom_left = (position[0] + self.nodeWidth,
+                       position[1] + self.nodeHeight)
         self.rectangle([position, bottom_left], outline=self.fill)
 
     def screennode(self, node, **kwargs):
@@ -129,9 +130,9 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             height += size[1] + self.lineSpacing
 
             if height < self.nodeHeight - self.nodePadding * 2:
-                 truncated_lines.append(string)
+                truncated_lines.append(string)
             else:
-                 truncated = 1
+                truncated = 1
 
         if truncated:
             string = truncated_lines.pop()
@@ -218,7 +219,6 @@ def main():
 
     image = Image.new('RGB', (2048, 2048), (256, 256, 256))
     draw = ImageNodeDraw(image)
-
 
     infile = args[0]
     if options.filename:
