@@ -25,10 +25,6 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         self.spanHeight = self.cellSize * self.spanRows
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
-    def _getNodeHeight(self, height):
-        margined_height = float(height + self.nodePadding * 2)
-        return int(math.ceil(margined_height / self.cellSize) * self.cellSize)
-
     def textnode(self, position, string, **kwargs):
         xy = (position[0] + self.nodePadding, position[1] + self.nodePadding)
 
