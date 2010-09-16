@@ -60,6 +60,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             self.screennodelist(node.children, **kwargs)
 
     def screennodelist(self, nodelist, **kwargs):
+        width = 0
         height = 0
 
         for node in nodelist.nodes:
@@ -67,8 +68,10 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             self.screennode(node, **kwargs)
 
             height += node._height() + self.spanHeight
+            if width < node._width():
+                width = node._width()
 
-        nodelist.width = self.nodeWidth
+        nodelist.width = width
         nodelist.height = height - self.spanHeight
 
     def nodelink(self, node1, node2):
@@ -161,6 +164,14 @@ class ScreenNode:
             height = self.height
 
         return height
+
+    def _width(self):
+        if self.children:
+            width = self.children.xy[0] - self.xy[0] + self.children.width
+        else:
+            width = self.width
+
+        return width
 
 
 class ScreenNodeList:
