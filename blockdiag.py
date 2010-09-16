@@ -15,12 +15,14 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.nodePadding = kwargs.get('nodePadding', 2)
         self.cellSize = kwargs.get('cellSize', 16)
-        self.spanWidth = kwargs.get('spanWidth', 5)
-        self.spanHeight = kwargs.get('spanHeight', 2)
+        self.spanColumns = kwargs.get('spanColumns', 5)
+        self.spanRows = kwargs.get('spanRows', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
 
         self.nodeWidth = self.cellSize * self.nodeColumns
         self.nodeHeight = self.cellSize * self.nodeRows
+        self.spanWidth = self.cellSize * self.spanColumns
+        self.spanHeight = self.cellSize * self.spanRows
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
     def _getNodeHeight(self, height):
