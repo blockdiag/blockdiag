@@ -216,25 +216,25 @@ def main():
     fontpath = '/usr/share/fonts/truetype/ipafont/ipagp.ttf'
     ttfont = ImageFont.truetype(fontpath, 24)
 
-    cellsize = 16
     image = Image.new('RGB', (2048, 2048), (256, 256, 256))
-    draw = ImageNodeDraw(image, cellSize=cellsize)
+    draw = ImageNodeDraw(image)
 
 
     infile = args[0]
     if options.filename:
         outfile = options.filename
     else:
-        outfile = re.sub('\..*', '', infile) + '.png'
+        outfile = re.sub('\..*'s, '', infile) + '.png'
 
     list = yaml.load(file(infile))
     root = ScreenNodeBuilder.build(list)
 
-    root.xy = (cellsize * 2, cellsize * 2)
+    paperMargin = draw.cellSize * 2
+    root.xy = (paperMargin, paperMargin)
     draw.screennodelist(root, font=ttfont, recursive=1)
     draw.nodelinklist(None, root, recursive=1)
 
-    size = (0, 0, root.width + cellsize * 4, root.height + cellsize * 4)
+    size = (0, 0, root.width + paperMargin * 2, root.height + paperMargin * 2)
     image = image.crop(size)
 
     image.save(outfile, 'PNG')
