@@ -10,12 +10,12 @@ import Image, ImageFont, ImageDraw
 
 class ImageNodeDraw(ImageDraw.ImageDraw):
     def __init__(self, im, mode=None, **kwargs):
-        self.nodeColumns = kwargs.get('nodeColumns', 8)
+        self.nodeColumns = kwargs.get('nodeColumns', 16)
         self.nodeRows = kwargs.get('nodeRows', 4)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
-        self.nodePadding = kwargs.get('nodePadding', 2)
+        self.nodePadding = kwargs.get('nodePadding', 4)
         self.cellSize = kwargs.get('cellSize', 16)
-        self.spanColumns = kwargs.get('spanColumns', 5)
+        self.spanColumns = kwargs.get('spanColumns', 8)
         self.spanRows = kwargs.get('spanRows', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
 
@@ -206,8 +206,8 @@ def main():
     ttfont = ImageFont.truetype(fontpath, 24)
 
     cellsize = 16
-    image = Image.new('RGB', (1024, 1024), (256, 256, 256))
-    draw = ImageNodeDraw(image, nodeColumns=12, cellSize=cellsize)
+    image = Image.new('RGB', (2048, 2048), (256, 256, 256))
+    draw = ImageNodeDraw(image, cellSize=cellsize)
 
 
     infile = args[0]
