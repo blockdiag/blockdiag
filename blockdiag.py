@@ -224,7 +224,7 @@ def main():
     if options.filename:
         outfile = options.filename
     else:
-        outfile = re.sub('\..*'s, '', infile) + '.png'
+        outfile = re.sub('\..*', '', infile) + '.png'
 
     list = yaml.load(file(infile))
     root = ScreenNodeBuilder.build(list)
