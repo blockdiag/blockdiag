@@ -234,6 +234,9 @@ def main():
     draw.screennodelist(root, font=ttfont, recursive=1)
     draw.nodelinklist(None, root, recursive=1)
 
+    size = (0, 0, root.width + cellsize * 4, root.height + cellsize * 4)
+    image = image.crop(size)
+
     image.save(outfile, 'PNG')
 
 main()
