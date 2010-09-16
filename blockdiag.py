@@ -64,7 +64,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             height += node._height() + self.cellSize * 2
 
         nodelist.width = self.nodeWidth
-        nodelist.height = height
+        nodelist.height = height - self.cellSize * 2
 
     def nodelink(self, node1, node2):
         line_begin = (node1.xy[0] + node1.width,
