@@ -15,6 +15,8 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.nodePadding = kwargs.get('nodePadding', 2)
         self.cellSize = kwargs.get('cellSize', 16)
+        self.spanWidth = kwargs.get('spanWidth', 5)
+        self.spanHeight = kwargs.get('spanHeight', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
 
         self.nodeWidth = self.cellSize * self.nodeColumns
@@ -50,7 +52,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         node.height = self.nodeHeight
 
         if kwargs.get('recursive') and node.children:
-            node.children.xy = (node.xy[0] + node.width + self.cellSize * 5,
+            node.children.xy = (node.xy[0] + node.width + self.spanWidth,
                                 node.xy[1])
             self.screennodelist(node.children, **kwargs)
 
@@ -61,10 +63,10 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             node.xy = (nodelist.xy[0], nodelist.xy[1] + height)
             self.screennode(node, **kwargs)
 
-            height += node._height() + self.cellSize * 2
+            height += node._height() + self.spanHeight
 
         nodelist.width = self.nodeWidth
-        nodelist.height = height - self.cellSize * 2
+        nodelist.height = height - self.spanHeight
 
     def nodelink(self, node1, node2):
         line_begin = (node1.xy[0] + node1.width,
