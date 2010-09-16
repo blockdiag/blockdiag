@@ -13,7 +13,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         self.nodeColumns = kwargs.get('nodeColumns', 8)
         self.nodeRows = kwargs.get('nodeRows', 4)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
-        self.textMargin = kwargs.get('textMargin', 2)
+        self.nodePadding = kwargs.get('nodePadding', 2)
         self.cellSize = kwargs.get('cellSize', 16)
         self.fill = kwargs.get('fill', (0, 0, 0))
 
@@ -22,11 +22,11 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
     def _getNodeHeight(self, height):
-        margined_height = float(height + self.textMargin * 2)
+        margined_height = float(height + self.nodePadding * 2)
         return int(math.ceil(margined_height / self.cellSize) * self.cellSize)
 
     def textnode(self, position, string, **kwargs):
-        xy = (position[0] + self.textMargin, position[1] + self.textMargin)
+        xy = (position[0] + self.nodePadding, position[1] + self.nodePadding)
 
         height = 0
         lines = self._getLogicalLines(string, **kwargs)
@@ -91,7 +91,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             length = len(string) - i
             metrics = self.textsize(string[0:length], font=ttfont)
 
-            if metrics[0] <= (self.nodeWidth - self.textMargin * 2):
+            if metrics[0] <= (self.nodeWidth - self.nodePadding * 2):
                 break
 
         return length
@@ -120,7 +120,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             size = self.textsize(string, font=ttfont)
             height += size[1] + self.lineSpacing
 
-            if height < self.nodeHeight - self.textMargin * 2:
+            if height < self.nodeHeight - self.nodePadding * 2:
                  truncated_lines.append(string)
             else:
                  truncated = 1
@@ -134,7 +134,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
                     truncated = string[0:-i] + ' ...'
 
                 size = self.textsize(truncated, font=ttfont)
-                if size[0] <= self.nodeWidth - self.textMargin * 2:
+                if size[0] <= self.nodeWidth - self.nodePadding * 2:
                     truncated_lines.append(truncated)
                     break
 
