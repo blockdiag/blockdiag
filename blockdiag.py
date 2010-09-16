@@ -2,9 +2,9 @@
 # -*- encoding: utf-8 -*-
 
 import re
-import sys
 import math
 import yaml
+from optparse import OptionParser
 import Image, ImageFont, ImageDraw
 
 
@@ -158,8 +158,14 @@ class ScreenNodeBuilder:
 
 
 def main():
-    if len(sys.argv) == 1:
-        print "Usage: blockdiag.py [filename]\n"
+    usage = "usage: %prog [options] infile"
+    p = OptionParser(usage=usage)
+    p.add_option('-o', dest='filename',
+                 help='write diagram to FILE', metavar='FILE')
+    (options, args) = p.parse_args()
+
+    if len(args) == 0:
+        p.print_help()
         exit(0)
 
     fontpath = '/usr/share/fonts/truetype/ipafont/ipagp.ttf'
@@ -170,16 +176,19 @@ def main():
     draw = ImageNodeDraw(image, nodeColumns=12, cellSize=cellsize)
 
 
-    filename = sys.argv[1]
-    output = re.sub('\..*', '', filename) + '.png'
+    infile = args[0]
+    if options.filename:
+        outfile = options.filename
+    else:
+        outfile = re.sub('\..*', '', infile) + '.png'
 
-    list = yaml.load(file(filename))
+    list = yaml.load(file(infile))
     root = ScreenNodeBuilder.build(list)
 
     root.xy = (cellsize * 2, cellsize * 2)
     draw.screennodelist(root, font=ttfont, recursive=1)
     draw.nodelinklist(None, root, recursive=1)
 
-    image.save(output, 'PNG')
+    image.save(outfile, 'PNG')
 
 main()
