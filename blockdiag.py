@@ -137,8 +137,16 @@ class NodeMetrix:
         x, y = self.topLeft(xy)
         return (x + self.nodeWidth, y + self.nodeHeight / 2)
 
-    def pageSize(self, root):
-        x, y = self.bottomRight((root.width() - 1, root.height() - 1))
+    def pageSize(self, nodelist):
+        x = 0
+        y = 0
+        for node in nodelist:
+            if x <= node.xy[0]:
+                 x = node.xy[0]
+            if y <= node.xy[1]:
+                 y = node.xy[1]
+
+        x, y = self.bottomRight((x, y))
         return (x + self.pageMargin, y + self.pageMargin)
 
 
@@ -165,11 +173,8 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         bottom_right = self.metrix.bottomRight(node.xy)
         self.rectangle([top_left, bottom_right], outline=self.fill)
 
-        if kwargs.get('recursive') and node.children:
-            self.screennodelist(node.children, **kwargs)
-
     def screennodelist(self, nodelist, **kwargs):
-        for node in nodelist.nodes:
+        for node in nodelist:
             self.screennode(node, **kwargs)
 
     def nodelink(self, node1, node2):
@@ -205,15 +210,9 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         self.line(lines, fill=self.fill)
         self.polygon(head, outline=self.fill, fill=self.fill)
 
-    def nodelinklist(self, parent, nodelist, **kwargs):
-        if parent:
-            for node in nodelist.nodes:
-                self.nodelink(parent, node)
-
-        if kwargs.get('recursive'):
-            for node in nodelist.nodes:
-                if node.children:
-                    self.nodelinklist(node, node.children, **kwargs)
+    def nodelinklist(self, linklist, **kwargs):
+        for link in linklist:
+            self.nodelink(link[0], link[1])
 
 
 class ScreenNode:
@@ -239,64 +238,55 @@ class ScreenNode:
         return height
 
 
-class ScreenNodeList:
-    def __init__(self, nodes=None):
-        self.nodes = nodes or []
-        self.xy = None
-
-    def width(self):
-        width = 1
-        for node in self.nodes:
-            if width < node.width():
-                width = node.width()
-
-        return width
-
-    def height(self):
-        height = 0
-        for node in self.nodes:
-            height += node.height()
-
-        return height
-
-    def append(self, node):
-        self.nodes.append(node)
-
-
 class ScreenNodeBuilder:
     @classmethod
     def build(klass, list):
-        nodelist = klass.buildNodeList(list)
-        klass.doLayout(nodelist)
-        return nodelist
+        return klass()._build(list)
 
-    @classmethod
-    def buildNodeList(klass, list):
-        root = ScreenNodeList()
+    def __init__(self):
+        self.uniqNodes = {}
+        self.uniqLinks = {}
+        self.rows = 0
+
+    def _build(self, list):
+        self.buildNodeList(None, list)
+
+        return (self.uniqNodes.values(), self.uniqLinks.keys())
+
+    def getScreenNode(self, title, xy):
+        if self.uniqNodes.has_key(title):
+            is_new = 0
+            node = self.uniqNodes[title]
+        else:
+            is_new = 1
+            node = ScreenNode(title)
+            node.xy = xy
+            self.uniqNodes[title] = node
+
+        return (node, is_new)
+
+    def buildNodeList(self, parent, list, columns=0):
         for node in list:
             if isinstance(node, dict):
                 for key in node.keys():
-                    screennode = ScreenNode(key)
-                    screennode.children = klass.buildNodeList(node[key])
+                    screennode, is_new = self.getScreenNode(key, (columns, self.rows))
 
-                    root.append(screennode)
+                    if is_new:
+                        self.buildNodeList(screennode, node[key], columns + 1)
+
+                        self.rows += 1
+
+                    if parent:
+                        self.uniqLinks[(parent, screennode)] = 1
             else:
-                root.append(ScreenNode(node))
+                screennode, is_new = self.getScreenNode(node, (columns, self.rows))
 
-        return root
+                if is_new:
+                    self.rows += 1
 
-    @classmethod
-    def doLayout(klass, root, x=-1, y=0):
-        height = 0
-        root.xy = (x + 1, y)
-        for node in root.nodes:
-            node.xy = (root.xy[0], root.xy[1] + height)
-
-            if node.children:
-                node.children.xy = node.xy
-                klass.doLayout(node.children, node.xy[0], node.xy[1])
-
-            height += node.height()
+                if parent:
+                    self.uniqLinks[(parent, screennode)] = 1
+        self.rows -= 1
 
 
 def main():
@@ -323,12 +313,12 @@ def main():
         outfile = re.sub('\..*', '', infile) + '.png'
 
     list = yaml.load(file(infile))
-    root = ScreenNodeBuilder.build(list)
+    nodelist, linklist = ScreenNodeBuilder.build(list)
 
-    draw.screennodelist(root, font=ttfont, recursive=1)
-    draw.nodelinklist(None, root, recursive=1)
+    draw.screennodelist(nodelist, font=ttfont)
+    draw.nodelinklist(linklist)
 
-    image = imgbuff.crop((0, 0) + draw.getPaperSize(root))
+    image = imgbuff.crop((0, 0) + draw.getPaperSize(nodelist))
     image.save(outfile, 'PNG')
 
 main()
