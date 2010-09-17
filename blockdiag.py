@@ -173,7 +173,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
 
         top_left = self.metrix.topLeft(node.xy)
         bottom_right = self.metrix.bottomRight(node.xy)
-        self.rectangle([draw_xy, bottom_right], outline=self.fill)
+        self.rectangle([top_left, bottom_right], outline=self.fill)
 
         if kwargs.get('recursive') and node.children:
             self.screennodelist(node.children, **kwargs)
