@@ -36,7 +36,7 @@ class FoldedTextDraw(ImageDraw.ImageDraw):
             ImageDraw.ImageDraw.text(self, draw_xy, string,
                                      fill=self.fill, font=ttfont)
 
-            height += size[1] + lineSpacing
+            height += textsize[1] + lineSpacing
 
     def _getFoldedText(self, size, string, **kwargs):
         ttfont = kwargs.get('font')
