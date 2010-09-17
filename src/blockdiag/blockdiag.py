@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- encoding: utf-8 -*-
 
+import sys
 import re
 import math
 import yaml
@@ -225,7 +226,10 @@ def main():
         p.print_help()
         exit(0)
 
-    fontpath = '/usr/share/fonts/truetype/ipafont/ipagp.ttf'
+    if sys.platform.startswith('win'):
+        fontpath = 'c:/windows/fonts/msmincho.ttf'
+    else:
+        fontpath = '/usr/share/fonts/truetype/ipafont/ipagp.ttf'
     ttfont = ImageFont.truetype(fontpath, 24)
 
     imgbuff = Image.new('RGB', (10240, 10240), (256, 256, 256))
