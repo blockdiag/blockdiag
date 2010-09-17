@@ -37,6 +37,7 @@ setup(
      install_requires=[
         'setuptools',
         'PIL',
+        'PyYAML',
          # -*- Extra requirements: -*-
      ],
      extras_require=dict(
