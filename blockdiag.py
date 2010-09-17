@@ -95,22 +95,19 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         self.spanHeight = self.cellSize * self.spanRows
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
-    def textnode(self, position, string, **kwargs):
+    def screennode(self, node, **kwargs):
         ttfont = kwargs.get('font')
-        box = (position[0] + self.nodePadding,
-               position[1] + self.nodePadding,
-               position[0] + self.nodeWidth - self.nodePadding * 2,
-               position[1] + self.nodeHeight - self.nodePadding * 2)
+        box = (node.xy[0] + self.nodePadding,
+               node.xy[1] + self.nodePadding,
+               node.xy[0] + self.nodeWidth - self.nodePadding * 2,
+               node.xy[1] + self.nodeHeight - self.nodePadding * 2)
 
         draw = FoldedTextDraw(self.image)
-        draw.text(box, string, font=ttfont, lineSpacing=self.lineSpacing)
+        draw.text(box, node.title, font=ttfont, lineSpacing=self.lineSpacing)
 
-        bottom_left = (position[0] + self.nodeWidth,
-                       position[1] + self.nodeHeight)
-        self.rectangle([position, bottom_left], outline=self.fill)
-
-    def screennode(self, node, **kwargs):
-        self.textnode(node.xy, node.title, **kwargs)
+        bottom_left = (node.xy[0] + self.nodeWidth,
+                       node.xy[1] + self.nodeHeight)
+        self.rectangle([node.xy, bottom_left], outline=self.fill)
 
         node.width = self.nodeWidth
         node.height = self.nodeHeight
