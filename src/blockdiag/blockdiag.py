@@ -206,6 +206,20 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
                          node2_left[1] - cellSize / 2))
             head.append((node2_left[0] - cellSize,
                          node2_left[1] + cellSize / 2))
+        elif node1.xy[0] == node2.xy[0] and node1.xy[1] > node2.xy[1]:
+            # draw arrow line
+            node1_top = self.metrix.topCenter(node1.xy)
+            node2_bottom = self.metrix.bottomCenter(node2.xy)
+
+            lines.append(node1_top)
+            lines.append(node2_bottom)
+
+            # draw arrow head
+            head.append(node2_bottom)
+            head.append((node2_bottom[0] - cellSize / 2,
+                         node2_bottom[1] + cellSize))
+            head.append((node2_bottom[0] + cellSize / 2,
+                         node2_bottom[1] + cellSize))
         elif node1.xy[1] >= node2.xy[1]:
             # draw arrow line
             node1_right = self.metrix.rightCenter(node1.xy)
