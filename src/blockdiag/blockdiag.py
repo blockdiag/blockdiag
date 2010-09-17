@@ -250,4 +250,7 @@ def main():
 
     image.save(outfile, 'PNG')
 
-main()
+
+if __name__ == '__main__':
+    main()
+
