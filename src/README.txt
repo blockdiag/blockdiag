@@ -9,9 +9,28 @@ Features
 Setup
 =====
 
-Make environment (by easy_install)::
+by easy_install
+----------------
+Make environment::
 
    $ easy_install blockdiag
+
+by buildout
+------------
+Make environment::
+
+   $ hg clone http://bitbucket.org/tk0miya/blockdiag
+   $ cd blockdiag
+   $ python bootstrap.py
+   $ bin/buildout
+
+Copy and modify ini file. example::
+
+   $ cp <blockdiag installed path>/blockdiag/examples/screen.yaml .
+   $ vi screen.yaml
+
+Please refer to `spec-text setting sample`_ section for the format of the
+`screen.yaml` configuration file.
 
 spec-text setting sample
 ========================
@@ -30,7 +49,7 @@ screen.yaml::
 Usage
 =====
 
-Execute svnpoller command::
+Execute blockdiag command::
 
    $ blockdiag screen.yaml
 
@@ -42,12 +61,10 @@ Requirements
 * Python Imaging Library 1.1.6 or later.
 * setuptools or distriubte
 
-
 History
 =======
 
-
-0.0.1 (2010-xx-xx)
+0.0.1 (unreleased)
 ------------------
 * first release
 
