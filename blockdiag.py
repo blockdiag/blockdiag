@@ -82,15 +82,13 @@ class FoldedTextDraw(ImageDraw.ImageDraw):
 
 class NodeMetrix:
     def __init__(self, **kwargs):
+        self.cellSize = kwargs.get('cellSize', 16)
+        self.pageMargin = kwargs.get('pageMargin', 2)
+        self.nodePadding = kwargs.get('nodePadding', 4)
         self.nodeColumns = kwargs.get('nodeColumns', 16)
         self.nodeRows = kwargs.get('nodeRows', 4)
-        self.lineSpacing = kwargs.get('lineSpacing', 2)
-        self.nodePadding = kwargs.get('nodePadding', 4)
-        self.cellSize = kwargs.get('cellSize', 16)
         self.spanColumns = kwargs.get('spanColumns', 8)
         self.spanRows = kwargs.get('spanRows', 2)
-        self.pageMargin = kwargs.get('pageMargin', 2)
-        self.fill = kwargs.get('fill', (0, 0, 0))
 
         self.pageMargin = self.cellSize * self.pageMargin
         self.nodeWidth = self.cellSize * self.nodeColumns
