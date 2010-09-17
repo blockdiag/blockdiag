@@ -77,22 +77,34 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
 
     def nodelink(self, node1, node2):
         lines = []
-        if node1.xy[0] < node2.xy[0] and node1.xy[1] != node2.xy[1]:
+        head = []
+
+        if node1.xy[0] < node2.xy[0]:
+            # draw arrow line
             lines.append((node1.xy[0] + node1.width,
                           node1.xy[1] + node1.height / 2))
-            lines.append((node1.xy[0] + node1.width + self.spanWidth / 2,
-                          node1.xy[1] + node1.height / 2))
-            lines.append((node2.xy[0] - self.spanWidth / 2,
-                          node2.xy[1] + node2.height / 2))
-            lines.append((node2.xy[0],
-                          node2.xy[1] + node2.height / 2))
-        else:
-            lines.append((node1.xy[0] + node1.width,
-                          node1.xy[1] + node1.height / 2))
+
+            if node1.xy[1] != node2.xy[1]:
+                lines.append((node1.xy[0] + node1.width + self.spanWidth / 2,
+                              node1.xy[1] + node1.height / 2))
+                lines.append((node2.xy[0] - self.spanWidth / 2,
+                              node2.xy[1] + node2.height / 2))
+
             lines.append((node2.xy[0],
                           node2.xy[1] + node2.height / 2))
 
+            # draw arrow head
+            head.append((node2.xy[0],
+                         node2.xy[1] + node2.height / 2))
+            head.append((node2.xy[0] - self.cellSize,
+                         node2.xy[1] + node2.height / 2 - self.cellSize / 2))
+            head.append((node2.xy[0] - self.cellSize,
+                         node2.xy[1] + node2.height / 2 + self.cellSize / 2))
+        else:
+            raise
+
         self.line(lines, fill=self.fill)
+        self.polygon(arrow, outline=self.fill, fill=self.fill)
 
     def nodelinklist(self, parent, nodelist, **kwargs):
         if parent:
