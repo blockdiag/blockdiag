@@ -2,7 +2,6 @@
 # -*- encoding: utf-8 -*-
 
 import re
-import math
 import yaml
 from optparse import OptionParser
 import Image, ImageFont, ImageDraw
