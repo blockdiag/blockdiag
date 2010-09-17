@@ -4,7 +4,9 @@
 import re
 import yaml
 from optparse import OptionParser
-import Image, ImageFont, ImageDraw
+import Image
+import ImageFont
+import ImageDraw
 
 
 class FoldedTextDraw(ImageDraw.ImageDraw):
@@ -16,7 +18,8 @@ class FoldedTextDraw(ImageDraw.ImageDraw):
         lineSpacing = kwargs.get('lineSpacing', 2)
         size = (box[2] - box[0], box[3] - box[1])
 
-        lines = self._getFoldedText(size, string, font=ttfont, lineSpacing=lineSpacing)
+        lines = self._getFoldedText(size, string,
+                                    font=ttfont, lineSpacing=lineSpacing)
 
         height = 0
         for string in lines:
@@ -29,7 +32,8 @@ class FoldedTextDraw(ImageDraw.ImageDraw):
             x = (size[0] - textsize[0]) / 2
 
             draw_xy = (xy[0] + x, xy[1] + height)
-            ImageDraw.ImageDraw.text(self, draw_xy, string, fill=self.fill, font=ttfont)
+            ImageDraw.ImageDraw.text(self, draw_xy, string,
+                                     fill=self.fill, font=ttfont)
 
             height += size[1] + lineSpacing
 
@@ -74,6 +78,7 @@ class FoldedTextDraw(ImageDraw.ImageDraw):
                     break
 
         return lines
+
 
 class NodeMetrix:
     def __init__(self, **kwargs):
@@ -229,9 +234,9 @@ class ScreenNode:
 
     def height(self):
         if self.children:
-           height = self.children.height()
+            height = self.children.height()
         else:
-           height = 1
+            height = 1
 
         return height
 
@@ -244,15 +249,15 @@ class ScreenNodeList:
     def width(self):
         width = 1
         for node in self.nodes:
-           if width < node.width():
-               width = node.width()
+            if width < node.width():
+                width = node.width()
 
         return width
 
     def height(self):
         height = 0
         for node in self.nodes:
-           height += node.height()
+            height += node.height()
 
         return height
 
