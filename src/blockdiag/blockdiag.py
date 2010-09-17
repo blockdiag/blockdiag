@@ -295,19 +295,14 @@ class ScreenNodeBuilder:
                     if is_new:
                         self.buildNodeList(screennode, node[key], columns + 1)
 
-                        self.rows += 1
-
                     if parent:
                         self.uniqLinks[(parent, screennode)] = 1
             else:
                 screennode, is_new = self.getScreenNode(node, (columns, self.rows))
-
-                if is_new:
-                    self.rows += 1
+                self.rows += 1
 
                 if parent:
                     self.uniqLinks[(parent, screennode)] = 1
-        self.rows -= 1
 
 
 def main():
