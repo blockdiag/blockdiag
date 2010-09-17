@@ -143,22 +143,9 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
     def __init__(self, im, mode=None, **kwargs):
         self.image = im
         self.metrix = NodeMetrix(**kwargs)
-
-        self.nodeColumns = kwargs.get('nodeColumns', 16)
-        self.nodeRows = kwargs.get('nodeRows', 4)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
-        self.nodePadding = kwargs.get('nodePadding', 4)
-        self.cellSize = kwargs.get('cellSize', 16)
-        self.spanColumns = kwargs.get('spanColumns', 8)
-        self.spanRows = kwargs.get('spanRows', 2)
-        self.pageMargin = kwargs.get('pageMargin', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
 
-        self.pageMargin = self.cellSize * self.pageMargin
-        self.nodeWidth = self.cellSize * self.nodeColumns
-        self.nodeHeight = self.cellSize * self.nodeRows
-        self.spanWidth = self.cellSize * self.spanColumns
-        self.spanHeight = self.cellSize * self.spanRows
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
     def getPaperSize(self, root):
@@ -185,6 +172,8 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
     def nodelink(self, node1, node2):
         lines = []
         head = []
+        cellSize = self.metrix.cellSize
+        spanWidth = self.metrix.spanWidth
 
         node1_xy = self.metrix.topLeft(node1.xy)
         node2_xy = self.metrix.topLeft(node2.xy)
@@ -196,17 +185,17 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             lines.append(node1_right)
 
             if node1.xy[1] != node2.xy[1]:
-                lines.append((node1_right[0] + self.spanWidth / 2, node1_right[1]))
-                lines.append((node2_left[0] - self.spanWidth / 2, node2_left[1]))
+                lines.append((node1_right[0] + spanWidth / 2, node1_right[1]))
+                lines.append((node2_left[0] - spanWidth / 2, node2_left[1]))
 
             lines.append(node2_left)
 
             # draw arrow head
             head.append(node2_left)
-            head.append((node2_left[0] - self.cellSize,
-                         node2_left[1] - self.cellSize / 2))
-            head.append((node2_left[0] - self.cellSize,
-                         node2_left[1] + self.cellSize / 2))
+            head.append((node2_left[0] - cellSize,
+                         node2_left[1] - cellSize / 2))
+            head.append((node2_left[0] - cellSize,
+                         node2_left[1] + cellSize / 2))
         else:
             raise
 
