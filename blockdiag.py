@@ -87,76 +87,78 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         self.cellSize = kwargs.get('cellSize', 16)
         self.spanColumns = kwargs.get('spanColumns', 8)
         self.spanRows = kwargs.get('spanRows', 2)
+        self.pageMargin = kwargs.get('pageMargin', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
 
+        self.pageMargin = self.cellSize * self.pageMargin
         self.nodeWidth = self.cellSize * self.nodeColumns
         self.nodeHeight = self.cellSize * self.nodeRows
         self.spanWidth = self.cellSize * self.spanColumns
         self.spanHeight = self.cellSize * self.spanRows
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
+    def _convertDrawXY(self, xy):
+        x = self.pageMargin + xy[0] * (self.nodeWidth + self.spanWidth)
+        y = self.pageMargin + xy[1] * (self.nodeHeight + self.spanHeight)
+
+        return (x, y)
+
+    def getPaperSize(self, root):
+        xy = self._convertDrawXY((root.width() - 1, root.height() - 1))
+
+        return (xy[0] + self.nodeWidth + self.pageMargin,
+                xy[1] + self.nodeHeight + self.pageMargin)
+
     def screennode(self, node, **kwargs):
         ttfont = kwargs.get('font')
-        box = (node.xy[0] + self.nodePadding,
-               node.xy[1] + self.nodePadding,
-               node.xy[0] + self.nodeWidth - self.nodePadding * 2,
-               node.xy[1] + self.nodeHeight - self.nodePadding * 2)
+        draw_xy = self._convertDrawXY(node.xy)
+        box = (draw_xy[0] + self.nodePadding,
+               draw_xy[1] + self.nodePadding,
+               draw_xy[0] + self.nodeWidth - self.nodePadding * 2,
+               draw_xy[1] + self.nodeHeight - self.nodePadding * 2)
 
         draw = FoldedTextDraw(self.image)
         draw.text(box, node.title, font=ttfont, lineSpacing=self.lineSpacing)
 
-        bottom_left = (node.xy[0] + self.nodeWidth,
-                       node.xy[1] + self.nodeHeight)
-        self.rectangle([node.xy, bottom_left], outline=self.fill)
-
-        node.width = self.nodeWidth
-        node.height = self.nodeHeight
+        bottom_left = (draw_xy[0] + self.nodeWidth,
+                       draw_xy[1] + self.nodeHeight)
+        self.rectangle([draw_xy, bottom_left], outline=self.fill)
 
         if kwargs.get('recursive') and node.children:
-            node.children.xy = (node.xy[0] + node.width + self.spanWidth,
-                                node.xy[1])
             self.screennodelist(node.children, **kwargs)
 
     def screennodelist(self, nodelist, **kwargs):
-        width = 0
-        height = 0
-
         for node in nodelist.nodes:
-            node.xy = (nodelist.xy[0], nodelist.xy[1] + height)
             self.screennode(node, **kwargs)
-
-            height += node._height() + self.spanHeight
-            if width < node._width():
-                width = node._width()
-
-        nodelist.width = width
-        nodelist.height = height - self.spanHeight
 
     def nodelink(self, node1, node2):
         lines = []
         head = []
 
+        node1_xy = self._convertDrawXY(node1.xy)
+        node2_xy = self._convertDrawXY(node2.xy)
+
         if node1.xy[0] < node2.xy[0]:
             # draw arrow line
-            lines.append((node1.xy[0] + node1.width,
-                          node1.xy[1] + node1.height / 2))
+            lines.append((node1_xy[0] + self.nodeWidth,
+                          node1_xy[1] + self.nodeHeight / 2))
 
             if node1.xy[1] != node2.xy[1]:
-                lines.append((node1.xy[0] + node1.width + self.spanWidth / 2,
-                              node1.xy[1] + node1.height / 2))
-                lines.append((node2.xy[0] - self.spanWidth / 2,
-                              node2.xy[1] + node2.height / 2))
+                lines.append((node1_xy[0] + self.nodeWidth + self.spanWidth / 2,
+                              node1_xy[1] + self.nodeHeight / 2))
+                lines.append((node2_xy[0] - self.spanWidth / 2,
+                              node2_xy[1] + self.nodeHeight / 2))
 
-            lines.append((node2.xy[0],
-                          node2.xy[1] + node2.height / 2))
+            lines.append((node2_xy[0],
+                          node2_xy[1] + self.nodeHeight / 2))
 
             # draw arrow head
-            head.append((node2.xy[0],
-                         node2.xy[1] + node2.height / 2))
-            head.append((node2.xy[0] - self.cellSize,
-                         node2.xy[1] + node2.height / 2 - self.cellSize / 2))
-            head.append((node2.xy[0] - self.cellSize,
-                         node2.xy[1] + node2.height / 2 + self.cellSize / 2))
+            head.append((node2_xy[0],
+                         node2_xy[1] + self.nodeHeight / 2))
+            head.append((node2_xy[0] - self.cellSize,
+                         node2_xy[1] + self.nodeHeight / 2 - self.cellSize / 2))
+            head.append((node2_xy[0] - self.cellSize,
+                         node2_xy[1] + self.nodeHeight / 2 + self.cellSize / 2))
         else:
             raise
 
@@ -178,33 +180,44 @@ class ScreenNode:
     def __init__(self, title=None):
         self.title = title
         self.xy = None
-        self.width = None
-        self.height = None
         self.children = None
 
-    def _height(self):
-        if self.children and self.height < self.children.height:
-            height = self.children.height
-        else:
-            height = self.height
-
-        return height
-
-    def _width(self):
+    def width(self):
         if self.children:
-            width = self.children.xy[0] - self.xy[0] + self.children.width
+            width = 1 + self.children.width()
         else:
-            width = self.width
+            width = 1
 
         return width
+
+    def height(self):
+        if self.children:
+           height = self.children.height()
+        else:
+           height = 1
+
+        return height
 
 
 class ScreenNodeList:
     def __init__(self, nodes=None):
         self.nodes = nodes or []
         self.xy = None
-        self.width = None
-        self.height = None
+
+    def width(self):
+        width = 1
+        for node in self.nodes:
+           if width < node.width():
+               width = node.width()
+
+        return width
+
+    def height(self):
+        height = 0
+        for node in self.nodes:
+           height += node.height()
+
+        return height
 
     def append(self, node):
         self.nodes.append(node)
@@ -213,18 +226,37 @@ class ScreenNodeList:
 class ScreenNodeBuilder:
     @classmethod
     def build(klass, list):
+        nodelist = klass.buildNodeList(list)
+        klass.doLayout(nodelist)
+        return nodelist
+
+    @classmethod
+    def buildNodeList(klass, list):
         root = ScreenNodeList()
         for node in list:
             if isinstance(node, dict):
                 for key in node.keys():
                     screennode = ScreenNode(key)
-                    screennode.children = klass.build(node[key])
+                    screennode.children = klass.buildNodeList(node[key])
 
                     root.append(screennode)
             else:
                 root.append(ScreenNode(node))
 
         return root
+
+    @classmethod
+    def doLayout(klass, root, x=-1, y=0):
+        height = 0
+        root.xy = (x + 1, y)
+        for node in root.nodes:
+            node.xy = (root.xy[0], root.xy[1] + height)
+
+            if node.children:
+                node.children.xy = node.xy
+                klass.doLayout(node.children, node.xy[0], node.xy[1])
+
+            height += node.height()
 
 
 def main():
@@ -253,14 +285,10 @@ def main():
     list = yaml.load(file(infile))
     root = ScreenNodeBuilder.build(list)
 
-    paperMargin = draw.cellSize * 2
-    root.xy = (paperMargin, paperMargin)
     draw.screennodelist(root, font=ttfont, recursive=1)
     draw.nodelinklist(None, root, recursive=1)
 
-    size = (0, 0, root.width + paperMargin * 2, root.height + paperMargin * 2)
-    image = imgbuff.crop(size)
-
+    image = imgbuff.crop((0, 0) + draw.getPaperSize(root))
     image.save(outfile, 'PNG')
 
 main()
