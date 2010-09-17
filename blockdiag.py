@@ -75,10 +75,74 @@ class FoldedTextDraw(ImageDraw.ImageDraw):
 
         return lines
 
+class NodeMetrix:
+    def __init__(self, **kwargs):
+        self.nodeColumns = kwargs.get('nodeColumns', 16)
+        self.nodeRows = kwargs.get('nodeRows', 4)
+        self.lineSpacing = kwargs.get('lineSpacing', 2)
+        self.nodePadding = kwargs.get('nodePadding', 4)
+        self.cellSize = kwargs.get('cellSize', 16)
+        self.spanColumns = kwargs.get('spanColumns', 8)
+        self.spanRows = kwargs.get('spanRows', 2)
+        self.pageMargin = kwargs.get('pageMargin', 2)
+        self.fill = kwargs.get('fill', (0, 0, 0))
+
+        self.pageMargin = self.cellSize * self.pageMargin
+        self.nodeWidth = self.cellSize * self.nodeColumns
+        self.nodeHeight = self.cellSize * self.nodeRows
+        self.spanWidth = self.cellSize * self.spanColumns
+        self.spanHeight = self.cellSize * self.spanRows
+
+    def nodeCoreBox(self, xy):
+        xy = self.topLeft(xy)
+        return (xy[0] + self.nodePadding,
+                xy[1] + self.nodePadding,
+                xy[0] + self.nodeWidth - self.nodePadding * 2,
+                xy[1] + self.nodeHeight - self.nodePadding * 2)
+
+    def topLeft(self, xy):
+        x = self.pageMargin + xy[0] * (self.nodeWidth + self.spanWidth)
+        y = self.pageMargin + xy[1] * (self.nodeHeight + self.spanHeight)
+
+        return (x, y)
+
+    def topCenter(self, xy):
+        x, y = self.topLeft(xy)
+        return (x + self.nodeWidth / 2, y)
+
+    def topRight(self, xy):
+        x, y = self.topLeft(xy)
+        return (x + self.nodeWidth, y)
+
+    def bottomLeft(self, xy):
+        x, y = self.topLeft(xy)
+        return (x, y + self.nodeHeight)
+
+    def bottomCenter(self, xy):
+        x, y = self.topLeft(xy)
+        return (x + self.nodeWidth / 2, y + self.nodeHeight)
+
+    def bottomRight(self, xy):
+        x, y = self.topLeft(xy)
+        return (x + self.nodeWidth, y + self.nodeHeight)
+
+    def leftCenter(self, xy):
+        x, y = self.topLeft(xy)
+        return (x, y + self.nodeHeight / 2)
+
+    def rightCenter(self, xy):
+        x, y = self.topLeft(xy)
+        return (x + self.nodeWidth, y + self.nodeHeight / 2)
+
+    def pageSize(self, root):
+        x, y = self.bottomRight((root.width() - 1, root.height() - 1))
+        return (x + self.pageMargin, y + self.pageMargin)
+
 
 class ImageNodeDraw(ImageDraw.ImageDraw):
     def __init__(self, im, mode=None, **kwargs):
         self.image = im
+        self.metrix = NodeMetrix(**kwargs)
 
         self.nodeColumns = kwargs.get('nodeColumns', 16)
         self.nodeRows = kwargs.get('nodeRows', 4)
@@ -97,32 +161,19 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         self.spanHeight = self.cellSize * self.spanRows
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
-    def _convertDrawXY(self, xy):
-        x = self.pageMargin + xy[0] * (self.nodeWidth + self.spanWidth)
-        y = self.pageMargin + xy[1] * (self.nodeHeight + self.spanHeight)
-
-        return (x, y)
-
     def getPaperSize(self, root):
-        xy = self._convertDrawXY((root.width() - 1, root.height() - 1))
-
-        return (xy[0] + self.nodeWidth + self.pageMargin,
-                xy[1] + self.nodeHeight + self.pageMargin)
+        return self.metrix.pageSize(root)
 
     def screennode(self, node, **kwargs):
         ttfont = kwargs.get('font')
-        draw_xy = self._convertDrawXY(node.xy)
-        box = (draw_xy[0] + self.nodePadding,
-               draw_xy[1] + self.nodePadding,
-               draw_xy[0] + self.nodeWidth - self.nodePadding * 2,
-               draw_xy[1] + self.nodeHeight - self.nodePadding * 2)
 
+        box = self.metrix.nodeCoreBox(node.xy)
         draw = FoldedTextDraw(self.image)
         draw.text(box, node.title, font=ttfont, lineSpacing=self.lineSpacing)
 
-        bottom_left = (draw_xy[0] + self.nodeWidth,
-                       draw_xy[1] + self.nodeHeight)
-        self.rectangle([draw_xy, bottom_left], outline=self.fill)
+        top_left = self.metrix.topLeft(node.xy)
+        bottom_right = self.metrix.bottomRight(node.xy)
+        self.rectangle([draw_xy, bottom_right], outline=self.fill)
 
         if kwargs.get('recursive') and node.children:
             self.screennodelist(node.children, **kwargs)
@@ -135,30 +186,27 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         lines = []
         head = []
 
-        node1_xy = self._convertDrawXY(node1.xy)
-        node2_xy = self._convertDrawXY(node2.xy)
+        node1_xy = self.metrix.topLeft(node1.xy)
+        node2_xy = self.metrix.topLeft(node2.xy)
 
         if node1.xy[0] < node2.xy[0]:
             # draw arrow line
-            lines.append((node1_xy[0] + self.nodeWidth,
-                          node1_xy[1] + self.nodeHeight / 2))
+            node1_right = self.metrix.rightCenter(node1.xy)
+            node2_left = self.metrix.leftCenter(node2.xy)
+            lines.append(node1_right)
 
             if node1.xy[1] != node2.xy[1]:
-                lines.append((node1_xy[0] + self.nodeWidth + self.spanWidth / 2,
-                              node1_xy[1] + self.nodeHeight / 2))
-                lines.append((node2_xy[0] - self.spanWidth / 2,
-                              node2_xy[1] + self.nodeHeight / 2))
+                lines.append((node1_right[0] + self.spanWidth / 2, node1_right[1]))
+                lines.append((node2_left[0] - self.spanWidth / 2, node2_left[1]))
 
-            lines.append((node2_xy[0],
-                          node2_xy[1] + self.nodeHeight / 2))
+            lines.append(node2_left)
 
             # draw arrow head
-            head.append((node2_xy[0],
-                         node2_xy[1] + self.nodeHeight / 2))
-            head.append((node2_xy[0] - self.cellSize,
-                         node2_xy[1] + self.nodeHeight / 2 - self.cellSize / 2))
-            head.append((node2_xy[0] - self.cellSize,
-                         node2_xy[1] + self.nodeHeight / 2 + self.cellSize / 2))
+            head.append(node2_left)
+            head.append((node2_left[0] - self.cellSize,
+                         node2_left[1] - self.cellSize / 2))
+            head.append((node2_left[0] - self.cellSize,
+                         node2_left[1] + self.cellSize / 2))
         else:
             raise
 
