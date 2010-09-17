@@ -27,7 +27,7 @@ setup(
      classifiers=classifiers,
      keywords=['diagram','generator','yaml'],
      author='Takeshi Komiya',
-     author_email='tk0miya at gmail.com',
+     author_email='i.tkomiya at gmail.com',
      url='http://bitbucket.org/tk0miya/blockdiag',
      license='PSL',
      packages=find_packages('src'),
