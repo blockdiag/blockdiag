@@ -104,7 +104,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             raise
 
         self.line(lines, fill=self.fill)
-        self.polygon(arrow, outline=self.fill, fill=self.fill)
+        self.polygon(head, outline=self.fill, fill=self.fill)
 
     def nodelinklist(self, parent, nodelist, **kwargs):
         if parent:
