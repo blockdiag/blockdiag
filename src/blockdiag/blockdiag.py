@@ -89,7 +89,7 @@ class NodeMetrix:
         self.nodeColumns = kwargs.get('nodeColumns', 16)
         self.nodeRows = kwargs.get('nodeRows', 4)
         self.spanColumns = kwargs.get('spanColumns', 8)
-        self.spanRows = kwargs.get('spanRows', 2)
+        self.spanRows = kwargs.get('spanRows', 3)
 
         self.pageMargin = self.cellSize * self.pageMargin
         self.nodeWidth = self.cellSize * self.nodeColumns
@@ -183,6 +183,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         head = []
         cellSize = self.metrix.cellSize
         spanWidth = self.metrix.spanWidth
+        spanHeight = self.metrix.spanHeight
 
         node1_xy = self.metrix.topLeft(node1.xy)
         node2_xy = self.metrix.topLeft(node2.xy)
@@ -205,6 +206,25 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
                          node2_left[1] - cellSize / 2))
             head.append((node2_left[0] - cellSize,
                          node2_left[1] + cellSize / 2))
+        elif node1.xy[1] >= node2.xy[1]:
+            # draw arrow line
+            node1_right = self.metrix.rightCenter(node1.xy)
+            node2_top = self.metrix.topCenter(node2.xy)
+
+            lines.append(node1_right)
+            lines.append((node1_right[0] + spanWidth / 8, node1_right[1]))
+            lines.append((node1_right[0] + spanWidth / 8,
+                          node2_top[1] - spanHeight / 2))
+            lines.append((node2_top[0], node2_top[1] - spanHeight / 2))
+
+            lines.append(node2_top)
+
+            # draw arrow head
+            head.append(node2_top)
+            head.append((node2_top[0] - cellSize / 2,
+                         node2_top[1] - cellSize))
+            head.append((node2_top[0] + cellSize / 2,
+                         node2_top[1] - cellSize))
         else:
             raise
 
