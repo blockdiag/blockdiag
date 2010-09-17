@@ -3,14 +3,84 @@
 
 import sys
 import re
-import math
 import yaml
 from optparse import OptionParser
 import Image, ImageFont, ImageDraw
 
 
+class FoldedTextDraw(ImageDraw.ImageDraw):
+    def __init__(self, im, mode=None):
+        ImageDraw.ImageDraw.__init__(self, im, mode)
+
+    def text(self, box, string, **kwargs):
+        ttfont = kwargs.get('font')
+        lineSpacing = kwargs.get('lineSpacing', 2)
+        size = (box[2] - box[0], box[3] - box[1])
+
+        lines = self._getFoldedText(size, string, font=ttfont, lineSpacing=lineSpacing)
+
+        height = 0
+        for string in lines:
+            height += self.textsize(string, font=ttfont)[1] + lineSpacing
+
+        height = (size[1] - (height - lineSpacing)) / 2
+        xy = (box[0], box[1])
+        for string in lines:
+            textsize = self.textsize(string, font=ttfont)
+            x = (size[0] - textsize[0]) / 2
+
+            draw_xy = (xy[0] + x, xy[1] + height)
+            ImageDraw.ImageDraw.text(self, draw_xy, string, fill=self.fill, font=ttfont)
+
+            height += size[1] + lineSpacing
+
+    def _getFoldedText(self, size, string, **kwargs):
+        ttfont = kwargs.get('font')
+        lineSpacing = kwargs.get('lineSpacing', 2)
+        lines = []
+
+        height = 0
+        truncated = 0
+        for line in string.splitlines():
+            while line:
+                string = string.strip()
+                for i in range(0, len(string)):
+                    length = len(string) - i
+                    metrics = self.textsize(string[0:length], font=ttfont)
+
+                    if metrics[0] <= size[0]:
+                        break
+
+                if size[1] < height + metrics[1]:
+                    truncated = 1
+                    break
+
+                lines.append(line[0:length])
+                line = line[length:]
+
+                height += metrics[1] + lineSpacing
+
+        # truncate last line.
+        if truncated:
+            string = lines.pop()
+            for i in range(0, len(string)):
+                if i == 0:
+                    truncated = string + ' ...'
+                else:
+                    truncated = string[0:-i] + ' ...'
+
+                size = self.textsize(truncated, font=ttfont)
+                if size[0] <= size[0]:
+                    lines.append(truncated)
+                    break
+
+        return lines
+
+
 class ImageNodeDraw(ImageDraw.ImageDraw):
     def __init__(self, im, mode=None, **kwargs):
+        self.image = im
+
         self.nodeColumns = kwargs.get('nodeColumns', 16)
         self.nodeRows = kwargs.get('nodeRows', 4)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
@@ -27,24 +97,14 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
     def textnode(self, position, string, **kwargs):
-        lines = self._getLogicalLines(string, **kwargs)
-        lines = self._truncateLines(lines, **kwargs)
-
-        height = 0
         ttfont = kwargs.get('font')
-        for string in lines:
-            height += self.textsize(string, font=ttfont)[1] + self.lineSpacing
+        box = (position[0] + self.nodePadding,
+               position[1] + self.nodePadding,
+               position[0] + self.nodeWidth - self.nodePadding * 2,
+               position[1] + self.nodeHeight - self.nodePadding * 2)
 
-        height = (self.nodeHeight - self.nodePadding - height) / 2
-        xy = (position[0] + self.nodePadding, position[1] + self.nodePadding)
-        for string in lines:
-            size = self.textsize(string, font=ttfont)
-            x = (self.nodeWidth - self.nodePadding - size[0]) / 2
-
-            draw_xy = (xy[0] + x, xy[1] + height)
-            self.text(draw_xy, string, fill=self.fill, font=ttfont)
-
-            height += size[1] + self.lineSpacing
+        draw = FoldedTextDraw(self.image)
+        draw.text(box, string, font=ttfont, lineSpacing=self.lineSpacing)
 
         bottom_left = (position[0] + self.nodeWidth,
                        position[1] + self.nodeHeight)
@@ -78,22 +138,34 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
 
     def nodelink(self, node1, node2):
         lines = []
-        if node1.xy[0] < node2.xy[0] and node1.xy[1] != node2.xy[1]:
+        head = []
+
+        if node1.xy[0] < node2.xy[0]:
+            # draw arrow line
             lines.append((node1.xy[0] + node1.width,
                           node1.xy[1] + node1.height / 2))
-            lines.append((node1.xy[0] + node1.width + self.spanWidth / 2,
-                          node1.xy[1] + node1.height / 2))
-            lines.append((node2.xy[0] - self.spanWidth / 2,
-                          node2.xy[1] + node2.height / 2))
-            lines.append((node2.xy[0],
-                          node2.xy[1] + node2.height / 2))
-        else:
-            lines.append((node1.xy[0] + node1.width,
-                          node1.xy[1] + node1.height / 2))
+
+            if node1.xy[1] != node2.xy[1]:
+                lines.append((node1.xy[0] + node1.width + self.spanWidth / 2,
+                              node1.xy[1] + node1.height / 2))
+                lines.append((node2.xy[0] - self.spanWidth / 2,
+                              node2.xy[1] + node2.height / 2))
+
             lines.append((node2.xy[0],
                           node2.xy[1] + node2.height / 2))
 
+            # draw arrow head
+            head.append((node2.xy[0],
+                         node2.xy[1] + node2.height / 2))
+            head.append((node2.xy[0] - self.cellSize,
+                         node2.xy[1] + node2.height / 2 - self.cellSize / 2))
+            head.append((node2.xy[0] - self.cellSize,
+                         node2.xy[1] + node2.height / 2 + self.cellSize / 2))
+        else:
+            raise
+
         self.line(lines, fill=self.fill)
+        self.polygon(head, outline=self.fill, fill=self.fill)
 
     def nodelinklist(self, parent, nodelist, **kwargs):
         if parent:
@@ -104,62 +176,6 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             for node in nodelist.nodes:
                 if node.children:
                     self.nodelinklist(node, node.children, **kwargs)
-
-    def _getLinefeedPosition(self, string, **kwargs):
-        ttfont = kwargs.get('font')
-
-        for i in range(0, len(string)):
-            length = len(string) - i
-            metrics = self.textsize(string[0:length], font=ttfont)
-
-            if metrics[0] <= (self.nodeWidth - self.nodePadding * 2):
-                break
-
-        return length
-
-    def _getLogicalLines(self, string, **kwargs):
-        ttfont = kwargs.get('font')
-        lines = []
-
-        for line in string.splitlines():
-            while line:
-                string = string.strip()
-                pos = self._getLinefeedPosition(line, **kwargs)
-
-                lines.append(line[0:pos])
-                line = line[pos:]
-
-        return lines
-
-    def _truncateLines(self, lines, **kwargs):
-        ttfont = kwargs.get('font')
-        height = 0
-        truncated = 0
-        truncated_lines = []
-
-        for string in lines:
-            size = self.textsize(string, font=ttfont)
-            height += size[1] + self.lineSpacing
-
-            if height < self.nodeHeight - self.nodePadding * 2:
-                truncated_lines.append(string)
-            else:
-                truncated = 1
-
-        if truncated:
-            string = truncated_lines.pop()
-            for i in range(0, len(string)):
-                if i == 0:
-                    truncated = string + ' ...'
-                else:
-                    truncated = string[0:-i] + ' ...'
-
-                size = self.textsize(truncated, font=ttfont)
-                if size[0] <= self.nodeWidth - self.nodePadding * 2:
-                    truncated_lines.append(truncated)
-                    break
-
-        return truncated_lines
 
 
 class ScreenNode:
