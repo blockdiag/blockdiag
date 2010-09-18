@@ -143,9 +143,9 @@ class NodeMetrix:
         y = 0
         for node in nodelist:
             if x <= node.xy[0]:
-                 x = node.xy[0]
+                x = node.xy[0]
             if y <= node.xy[1]:
-                 y = node.xy[1]
+                y = node.xy[1]
 
         x, y = self.bottomRight((x, y))
         return (x + self.pageMargin, y + self.pageMargin)
@@ -298,7 +298,7 @@ class ScreenNodeBuilder:
         return (self.uniqNodes.values(), self.uniqLinks.keys())
 
     def getScreenNode(self, title, xy):
-        if self.uniqNodes.has_key(title):
+        if self.uniqNodes.in(title):
             is_new = 0
             node = self.uniqNodes[title]
         else:
@@ -313,20 +313,23 @@ class ScreenNodeBuilder:
         for node in list:
             if isinstance(node, dict):
                 for key in node.keys():
-                    screennode, is_new = self.getScreenNode(key, (columns, self.rows))
+                    xy = (columns, self.rows)
+                    screennode, is_new = self.getScreenNode(key, xy)
 
                     if is_new:
                         self.buildNodeList(screennode, node[key], columns + 1)
                     else:
                         rows = self.rows
                         self.rows = screennode.xy[1]
-                        self.buildNodeList(screennode, node[key], screennode.xy[0] + 1)
+                        self.buildNodeList(screennode, node[key],
+                                           screennode.xy[0] + 1)
                         self.rows = rows
 
                     if parent:
                         self.uniqLinks[(parent, screennode)] = 1
             else:
-                screennode, is_new = self.getScreenNode(node, (columns, self.rows))
+                xy = (columns, self.rows)
+                screennode, is_new = self.getScreenNode(node, xy)
                 self.rows += 1
 
                 if parent:
@@ -371,4 +374,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
