@@ -192,10 +192,19 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             # draw arrow line
             node1_right = self.metrix.rightCenter(node1.xy)
             node2_left = self.metrix.leftCenter(node2.xy)
+            node1_bottomRight = self.metrix.bottomRight(node1.xy)
+            node2_bottomRight = self.metrix.bottomRight(node2.xy)
             lines.append(node1_right)
 
             if node1.xy[1] != node2.xy[1]:
                 lines.append((node1_right[0] + spanWidth / 2, node1_right[1]))
+                lines.append((node2_left[0] - spanWidth / 2, node2_left[1]))
+            if node1.xy[0] + 1 < node2.xy[0]:
+                lines.append((node1_right[0] + spanWidth / 2, node1_right[1]))
+                lines.append((node1_right[0] + spanWidth / 2,
+                              node1_bottomRight[1] + spanHeight / 2))
+                lines.append((node2_left[0] - spanWidth / 2,
+                              node2_bottomRight[1] + spanHeight / 2))
                 lines.append((node2_left[0] - spanWidth / 2, node2_left[1]))
 
             lines.append(node2_left)
