@@ -298,7 +298,7 @@ class ScreenNodeBuilder:
         return (self.uniqNodes.values(), self.uniqLinks.keys())
 
     def getScreenNode(self, title, xy):
-        if self.uniqNodes.in(title):
+        if title in self.uniqNodes:
             is_new = 0
             node = self.uniqNodes[title]
         else:
