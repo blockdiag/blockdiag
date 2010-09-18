@@ -308,6 +308,11 @@ class ScreenNodeBuilder:
 
                     if is_new:
                         self.buildNodeList(screennode, node[key], columns + 1)
+                    else:
+                        rows = self.rows
+                        self.rows = screennode.xy[1]
+                        self.buildNodeList(screennode, node[key], screennode.xy[0] + 1)
+                        self.rows = rows
 
                     if parent:
                         self.uniqLinks[(parent, screennode)] = 1
