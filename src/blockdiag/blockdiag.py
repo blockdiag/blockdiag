@@ -265,22 +265,6 @@ class ScreenNode:
         self.xy = None
         self.children = None
 
-    def width(self):
-        if self.children:
-            width = 1 + self.children.width()
-        else:
-            width = 1
-
-        return width
-
-    def height(self):
-        if self.children:
-            height = self.children.height()
-        else:
-            height = 1
-
-        return height
-
 
 class ScreenNodeBuilder:
     @classmethod
