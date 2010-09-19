@@ -181,29 +181,29 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         for node in nodelist:
             self.screennode(node, **kwargs)
 
-    def nodelink(self, node1, node2):
+    def edge(self, edge):
         lines = []
         head = []
         cellSize = self.metrix.cellSize
         spanWidth = self.metrix.spanWidth
         spanHeight = self.metrix.spanHeight
 
-        node1_xy = self.metrix.topLeft(node1.xy)
-        node2_xy = self.metrix.topLeft(node2.xy)
+        node1_xy = self.metrix.topLeft(edge.node1.xy)
+        node2_xy = self.metrix.topLeft(edge.node2.xy)
 
-        if node1.xy[0] < node2.xy[0]:
+        if edge.node1.xy[0] < edge.node2.xy[0]:
             # draw arrow line
-            node1_right = self.metrix.rightCenter(node1.xy)
-            node2_left = self.metrix.leftCenter(node2.xy)
-            node1_bottomRight = self.metrix.bottomRight(node1.xy)
-            node2_bottomRight = self.metrix.bottomRight(node2.xy)
+            node1_right = self.metrix.rightCenter(edge.node1.xy)
+            node2_left = self.metrix.leftCenter(edge.node2.xy)
+            node1_bottomRight = self.metrix.bottomRight(edge.node1.xy)
+            node2_bottomRight = self.metrix.bottomRight(edge.node2.xy)
             lines.append(node1_right)
 
-            if node1.xy[1] != node2.xy[1]:
+            if edge.node1.xy[1] != edge.node2.xy[1]:
                 lines.append((node1_right[0] + spanWidth / 2, node1_right[1]))
                 lines.append((node1_right[0] + spanWidth / 2, node2_left[1]))
                 lines.append((node2_left[0] - spanWidth / 2, node2_left[1]))
-            elif node1.xy[0] + 1 < node2.xy[0]:
+            elif edge.node1.xy[0] + 1 < edge.node2.xy[0]:
                 lines.append((node1_right[0] + spanWidth / 2, node1_right[1]))
                 lines.append((node1_right[0] + spanWidth / 2,
                               node1_bottomRight[1] + spanHeight / 2))
@@ -219,7 +219,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
                          node2_left[1] - cellSize / 2))
             head.append((node2_left[0] - cellSize,
                          node2_left[1] + cellSize / 2))
-        elif node1.xy[0] == node2.xy[0] and node1.xy[1] > node2.xy[1]:
+        elif edge.node1.xy[0] == edge.node2.xy[0] and edge.node1.xy[1] > edge.node2.xy[1]:
             # draw arrow line
             node1_top = self.metrix.topCenter(node1.xy)
             node2_bottom = self.metrix.bottomCenter(node2.xy)
@@ -233,10 +233,10 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
                          node2_bottom[1] + cellSize))
             head.append((node2_bottom[0] + cellSize / 2,
                          node2_bottom[1] + cellSize))
-        elif node1.xy[1] >= node2.xy[1]:
+        elif edge.node1.xy[1] >= edge.node2.xy[1]:
             # draw arrow line
-            node1_right = self.metrix.rightCenter(node1.xy)
-            node2_top = self.metrix.topCenter(node2.xy)
+            node1_right = self.metrix.rightCenter(edge.node1.xy)
+            node2_top = self.metrix.topCenter(edge.node2.xy)
 
             lines.append(node1_right)
             lines.append((node1_right[0] + spanWidth / 8, node1_right[1]))
@@ -255,12 +255,17 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
         else:
             raise
 
-        self.line(lines, fill=self.fill)
-        self.polygon(head, outline=self.fill, fill=self.fill)
+        if edge.color:
+            color = edge.color
+        else:
+            color = self.fill
 
-    def nodelinklist(self, linklist, **kwargs):
-        for link in linklist:
-            self.nodelink(link[0], link[1])
+        self.line(lines, fill=color)
+        self.polygon(head, outline=color, fill=color)
+
+    def edgelist(self, edgelist, **kwargs):
+        for edge in edgelist:
+            self.edge(edge)
 
 
 class ScreenNode:
@@ -286,6 +291,15 @@ class ScreenEdge:
     def __init__(self, node1, node2):
         self.node1 = node1
         self.node2 = node2
+        self.color = None
+
+    def setAttributes(self, attrs):
+        for attr in attrs:
+            value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
+            if attr.name == 'color':
+                self.color = value
+            else:
+                raise
 
 
 class ScreenNodeBuilder:
@@ -303,7 +317,7 @@ class ScreenNodeBuilder:
     def _build(self, tree):
         self.buildNodeList(tree)
 
-        return (self.uniqNodes.values(), self.uniqLinks.keys())
+        return (self.uniqNodes.values(), self.uniqLinks.values())
 
     def getScreenNode(self, title):
         if title in self.uniqNodes:
@@ -388,7 +402,8 @@ class ScreenNodeBuilder:
                 node.setAttributes(stmt.attrs)
             elif isinstance(stmt, diagparser.Edge):
                 while len(stmt.nodes) >= 2:
-                    self.getScreenEdge(stmt.nodes.pop(0), stmt.nodes[0])
+                    edge = self.getScreenEdge(stmt.nodes.pop(0), stmt.nodes[0])
+                    edge.setAttributes(stmt.attrs)
             else:
                 raise
 
@@ -432,10 +447,10 @@ def main():
         outfile = re.sub('\..*', '', infile) + '.png'
 
     tree = diagparser.parse_file(infile)
-    nodelist, linklist = ScreenNodeBuilder.build(tree)
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
 
     draw.screennodelist(nodelist, font=ttfont)
-    draw.nodelinklist(linklist)
+    draw.edgelist(edgelist)
 
     image = imgbuff.crop((0, 0) + draw.getPaperSize(nodelist))
     image.save(outfile, 'PNG')
