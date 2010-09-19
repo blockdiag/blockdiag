@@ -324,6 +324,24 @@ class ScreenNodeBuilder:
 
         return edge
 
+    def getChildrenIds(self, node):
+        if isinstance(node, ScreenNode):
+            node_id = node.id
+        else:
+            node_id = node
+
+        if node_id in self.linkForward:
+            children = self.linkForward[node_id].keys()
+        elif node == None:
+            children = self.linkForward.keys()
+        else:
+            children = []
+
+        order = self.nodeOrder
+        children.sort(lambda x, y: cmp(order.index(x), order.index(y)))
+
+        return children
+
     def setNodeWidth(self, parent, node, drawn=[]):
         if node.id in drawn:
             return
@@ -332,21 +350,17 @@ class ScreenNodeBuilder:
         drawn.append(parent.id)
 
         if node.id in self.linkForward:
-            children = self.linkForward[node.id].keys()
-            children.sort()
-            for child in children:
-                childnode = self.getScreenNode(child)
+            for child_id in self.getChildrenIds(node):
+                childnode = self.getScreenNode(child_id)
                 self.setNodeWidth(node, childnode)
 
     def setNodeHeight(self, node, height, references=[]):
         node.xy = (node.xy[0], height)
         if node.id in self.linkForward:
-            children = self.linkForward[node.id].keys()
-            children.sort()
-            for child in children:
-                if not child in references:
-                    childnode = self.getScreenNode(child)
-                    references.append(child)
+            for child_id in self.getChildrenIds(node):
+                if not child_id in references:
+                    childnode = self.getScreenNode(child_id)
+                    references.append(child_id)
                     height = self.setNodeHeight(childnode, height, references)
                 else:
                     height += 1
@@ -366,20 +380,14 @@ class ScreenNodeBuilder:
             else:
                 raise
 
-        links = self.linkForward.keys()
-        links.sort(lambda x, y: cmp(self.nodeOrder.index(x), self.nodeOrder.index(y)))
-        for link in links:
-            parent = self.getScreenNode(link)
-            children = self.linkForward[link].keys()
-            children.sort()
-            for child in children:
-                childnode = self.getScreenNode(child)
+        for parent_id in self.getChildrenIds(None):
+            parent = self.getScreenNode(parent_id)
+            for child_id in self.getChildrenIds(parent):
+                childnode = self.getScreenNode(child_id)
                 self.setNodeWidth(parent, childnode)
 
         height = 0
-        node_ids = self.uniqNodes.keys()
-        node_ids.sort()
-        for node_id in node_ids:
+        for node_id in self.nodeOrder:
             node = self.uniqNodes[node_id]
             if node.xy[0] == 0:
                 height += self.setNodeHeight(node, height)
