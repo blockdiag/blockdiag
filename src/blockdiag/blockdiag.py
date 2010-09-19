@@ -263,7 +263,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
 class ScreenNode:
     def __init__(self, id):
         self.id = id
-        self.title = id
+        self.title = re.sub('^"?(.*?)"?$', '\\1', id)
         self.xy = (0, 0)
         self.children = None
 
