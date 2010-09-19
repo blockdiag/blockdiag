@@ -38,6 +38,7 @@ setup(
         'setuptools',
         'PIL',
         'PyYAML',
+        'funcparselib',
          # -*- Extra requirements: -*-
      ],
      extras_require=dict(
