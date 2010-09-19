@@ -37,7 +37,7 @@ setup(
      install_requires=[
         'setuptools',
         'PIL',
-        'funcparselib',
+        'funcparserlib',
          # -*- Extra requirements: -*-
      ],
      extras_require=dict(
