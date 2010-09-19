@@ -425,8 +425,7 @@ def main():
     else:
         outfile = re.sub('\..*', '', infile) + '.png'
 
-    input = file(infile).read().decode('utf-8')
-    tree = diagparser.parse(diagparser.tokenize(input))
+    tree = diagparser.parse_file(infile)
     nodelist, linklist = ScreenNodeBuilder.build(tree)
 
     draw.screennodelist(nodelist, font=ttfont)
