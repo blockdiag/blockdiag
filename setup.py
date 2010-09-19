@@ -25,7 +25,7 @@ setup(
      description='blockdiag generate block-diagram image file from spec-text file..',
      long_description=long_description,
      classifiers=classifiers,
-     keywords=['diagram','generator','yaml'],
+     keywords=['diagram','generator'],
      author='Takeshi Komiya',
      author_email='i.tkomiya at gmail.com',
      url='http://bitbucket.org/tk0miya/blockdiag',
