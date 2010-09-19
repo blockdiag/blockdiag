@@ -270,7 +270,7 @@ class ScreenNode:
     def setAttributes(self, attrs):
         for attr in attrs:
             if attr.name == 'label':
-                self.title = attr.value
+                self.title = re.sub('^"?(.*?)"?$', '\\1', attr.value)
             else:
                 raise
 
