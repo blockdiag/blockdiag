@@ -360,10 +360,16 @@ class ScreenNodeBuilder:
             for child_id in self.getChildrenIds(node):
                 if not child_id in references:
                     childnode = self.getScreenNode(child_id)
+
+                    if node.xy[0] < childnode.xy[0]:
+                        height = self.setNodeHeight(childnode, height, references)
+                    else:
+                        height += 1
+
                     references.append(child_id)
-                    height = self.setNodeHeight(childnode, height, references)
                 else:
-                    height += 1
+                    if not node.id in references:
+                        height += 1
         else:
             height += 1
 
@@ -390,7 +396,7 @@ class ScreenNodeBuilder:
         for node_id in self.nodeOrder:
             node = self.uniqNodes[node_id]
             if node.xy[0] == 0:
-                height += self.setNodeHeight(node, height)
+                height = self.setNodeHeight(node, height)
 
 
 def main():
