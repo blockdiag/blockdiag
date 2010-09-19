@@ -16,6 +16,7 @@ At the moment, the parser builds only a parse tree, not an abstract syntax tree
 '''
 
 import sys, os
+import codecs
 from re import MULTILINE
 from pprint import pformat
 from funcparserlib.util import pretty_tree
@@ -163,6 +164,10 @@ def pretty_parse_tree(x):
         else:
             return unicode(x)
     return pretty_tree(x, kids, show)
+
+def parse_file(path):
+    input = codecs.open(path, 'r', 'utf-8').read()
+    return parse(tokenize(input))
 
 def main():
     #import logging
