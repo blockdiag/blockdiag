@@ -166,13 +166,16 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
     def screennode(self, node, **kwargs):
         ttfont = kwargs.get('font')
 
+        top_left = self.metrix.topLeft(node.xy)
+        bottom_right = self.metrix.bottomRight(node.xy)
+        if node.color:
+            self.rectangle([top_left, bottom_right], outline=self.fill, fill=node.color)
+        else:
+            self.rectangle([top_left, bottom_right], outline=self.fill)
+
         box = self.metrix.nodeCoreBox(node.xy)
         draw = FoldedTextDraw(self.image)
         draw.text(box, node.title, font=ttfont, lineSpacing=self.lineSpacing)
-
-        top_left = self.metrix.topLeft(node.xy)
-        bottom_right = self.metrix.bottomRight(node.xy)
-        self.rectangle([top_left, bottom_right], outline=self.fill)
 
     def screennodelist(self, nodelist, **kwargs):
         for node in nodelist:
@@ -265,12 +268,16 @@ class ScreenNode:
         self.id = id
         self.title = re.sub('^"?(.*?)"?$', '\\1', id)
         self.xy = (0, 0)
+        self.color = None
         self.children = None
 
     def setAttributes(self, attrs):
         for attr in attrs:
+            value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
             if attr.name == 'label':
-                self.title = re.sub('^"?(.*?)"?$', '\\1', attr.value)
+                self.title = value
+            elif attr.name == 'color':
+                self.color = value
             else:
                 raise
 

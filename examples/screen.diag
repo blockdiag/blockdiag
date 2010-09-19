@@ -1,5 +1,5 @@
 diagram admin {
-  top_page [label = "トップページ"];
+  top_page [label = "トップページ", color = "pink"];
 
   foo_index [label = "List of FOOs"];
   foo_detail [label = "Detail FOO"];
