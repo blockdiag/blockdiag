@@ -37,7 +37,6 @@ setup(
      install_requires=[
         'setuptools',
         'PIL',
-        'PyYAML',
         'funcparselib',
          # -*- Extra requirements: -*-
      ],
