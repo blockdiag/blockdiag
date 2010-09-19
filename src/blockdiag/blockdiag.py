@@ -8,6 +8,7 @@ from optparse import OptionParser
 import Image
 import ImageFont
 import ImageDraw
+import diagparser
 
 
 class FoldedTextDraw(ImageDraw.ImageDraw):
@@ -198,8 +199,9 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
 
             if node1.xy[1] != node2.xy[1]:
                 lines.append((node1_right[0] + spanWidth / 2, node1_right[1]))
+                lines.append((node1_right[0] + spanWidth / 2, node2_left[1]))
                 lines.append((node2_left[0] - spanWidth / 2, node2_left[1]))
-            if node1.xy[0] + 1 < node2.xy[0]:
+            elif node1.xy[0] + 1 < node2.xy[0]:
                 lines.append((node1_right[0] + spanWidth / 2, node1_right[1]))
                 lines.append((node1_right[0] + spanWidth / 2,
                               node1_bottomRight[1] + spanHeight / 2))
@@ -260,28 +262,44 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
 
 
 class ScreenNode:
-    def __init__(self, title=None):
-        self.title = title
-        self.xy = None
+    def __init__(self, id):
+        self.id = id
+        self.title = id
+        self.xy = (0, 0)
         self.children = None
+
+    def setAttributes(self, attrs):
+        for attr in attrs:
+            if attr.name == 'label':
+                self.title = attr.value
+            else:
+                raise
+
+
+class ScreenEdge:
+    def __init__(self, node1, node2):
+        self.node1 = node1
+        self.node2 = node2
 
 
 class ScreenNodeBuilder:
     @classmethod
-    def build(klass, list):
-        return klass()._build(list)
+    def build(klass, tree):
+        return klass()._build(tree)
 
     def __init__(self):
         self.uniqNodes = {}
+        self.nodeOrder = []
         self.uniqLinks = {}
+        self.linkForward = {}
         self.rows = 0
 
-    def _build(self, list):
-        self.buildNodeList(None, list)
+    def _build(self, tree):
+        self.buildNodeList2(tree)
 
         return (self.uniqNodes.values(), self.uniqLinks.keys())
 
-    def getScreenNode(self, title, xy):
+    def getScreenNode(self, title, xy=(0, 0)):
         if title in self.uniqNodes:
             is_new = 0
             node = self.uniqNodes[title]
@@ -290,8 +308,98 @@ class ScreenNodeBuilder:
             node = ScreenNode(title)
             node.xy = xy
             self.uniqNodes[title] = node
+            self.nodeOrder.append(title)
 
         return (node, is_new)
+
+    def getScreenEdge(self, id1, id2):
+        node1, is_new = self.getScreenNode(id1)
+        node2, is_new = self.getScreenNode(id2)
+        link = (node1, node2)
+
+        if link in self.uniqLinks:
+            edge = self.uniqLinks[link]
+        else:
+            edge = ScreenEdge(node1, node2)
+            self.uniqLinks[link] = edge
+
+            if not id1 in self.linkForward:
+                self.linkForward[id1] = {}
+            self.linkForward[id1][id2] = 1
+
+        return edge
+
+    def isBloodhood(self, parent, node):
+        if parent.id in self.linkForward:
+            for child in self.linkForward[parent.id]:
+                if node.id == child:
+                    return True
+                else:
+                    childnode, is_new = self.getScreenNode(child)
+                    if self.isBloodhood(childnode, node):
+                        return True
+        else:
+            return False
+
+    def setNodeWidth(self, parent, node, drawn=[]):
+        if node.id in drawn:
+            return
+
+        node.xy = (parent.xy[0] + 1, node.xy[1])
+        drawn.append(parent.id)
+
+        if node.id in self.linkForward:
+            children = self.linkForward[node.id].keys()
+            children.sort()
+            for child in children:
+                childnode, is_new = self.getScreenNode(child)
+                self.setNodeWidth(node, childnode)
+
+    def setNodeHeight(self, node, height, references=[]):
+        node.xy = (node.xy[0], height)
+        if node.id in self.linkForward:
+            children = self.linkForward[node.id].keys()
+            children.sort()
+            for child in children:
+                if not child in references:
+                    childnode, is_new = self.getScreenNode(child)
+                    references.append(child)
+                    height = self.setNodeHeight(childnode, height, references)
+                else:
+                    height += 1
+        else:
+            height += 1
+
+        return height
+
+    def buildNodeList2(self, tree):
+        for stmt in tree.stmts:
+            if isinstance(stmt, diagparser.Node):
+                node, is_new = self.getScreenNode(stmt.id)
+                node.setAttributes(stmt.attrs)
+            elif isinstance(stmt, diagparser.Edge):
+                while len(stmt.nodes) >= 2:
+                    self.getScreenEdge(stmt.nodes.pop(0), stmt.nodes[0])
+            else:
+                raise
+
+        links = self.linkForward.keys()
+        links.sort(lambda x, y: cmp(self.nodeOrder.index(x), self.nodeOrder.index(y)))
+        for link in links:
+            parent, is_new = self.getScreenNode(link)
+            children = self.linkForward[link].keys()
+            children.sort()
+            for child in children:
+                childnode, is_new = self.getScreenNode(child)
+                self.setNodeWidth(parent, childnode)
+
+        height = 0
+        node_ids = self.uniqNodes.keys()
+        node_ids.sort()
+        for node_id in node_ids:
+            node = self.uniqNodes[node_id]
+            if node.xy[0] == 0:
+                height += self.setNodeHeight(node, height)
 
     def buildNodeList(self, parent, list, columns=0):
         for node in list:
@@ -346,8 +454,9 @@ def main():
     else:
         outfile = re.sub('\..*', '', infile) + '.png'
 
-    list = yaml.load(file(infile))
-    nodelist, linklist = ScreenNodeBuilder.build(list)
+    input = file(infile).read().decode('utf-8')
+    tree = diagparser.parse(diagparser.tokenize(input))
+    nodelist, linklist = ScreenNodeBuilder.build(tree)
 
     draw.screennodelist(nodelist, font=ttfont)
     draw.nodelinklist(linklist)
