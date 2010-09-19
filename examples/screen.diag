@@ -15,7 +15,7 @@ diagram admin {
 
   logout;
 
-  top_page -> foo_index;
+  top_page -> foo_index [color = "red"];
   top_page -> bar_detail;
 
   foo_index -> foo_detail;
