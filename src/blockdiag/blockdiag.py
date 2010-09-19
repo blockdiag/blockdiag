@@ -298,12 +298,11 @@ class ScreenNodeBuilder:
 
         return (self.uniqNodes.values(), self.uniqLinks.keys())
 
-    def getScreenNode(self, title, xy=(0, 0)):
+    def getScreenNode(self, title):
         if title in self.uniqNodes:
             node = self.uniqNodes[title]
         else:
             node = ScreenNode(title)
-            node.xy = xy
             self.uniqNodes[title] = node
             self.nodeOrder.append(title)
 
