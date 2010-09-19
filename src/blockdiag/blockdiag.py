@@ -343,7 +343,7 @@ class ScreenNodeBuilder:
         return children
 
     def setNodeWidth(self, parent, node, drawn=[]):
-        if node.id in drawn:
+        if node.id in drawn or parent == node:
             return
 
         node.xy = (parent.xy[0] + 1, node.xy[1])
