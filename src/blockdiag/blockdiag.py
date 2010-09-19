@@ -3,7 +3,6 @@
 
 import sys
 import re
-import yaml
 from optparse import OptionParser
 import Image
 import ImageFont
@@ -295,32 +294,28 @@ class ScreenNodeBuilder:
         self.rows = 0
 
     def _build(self, tree):
-        self.buildNodeList2(tree)
+        self.buildNodeList(tree)
 
         return (self.uniqNodes.values(), self.uniqLinks.keys())
 
     def getScreenNode(self, title, xy=(0, 0)):
         if title in self.uniqNodes:
-            is_new = 0
             node = self.uniqNodes[title]
         else:
-            is_new = 1
             node = ScreenNode(title)
             node.xy = xy
             self.uniqNodes[title] = node
             self.nodeOrder.append(title)
 
-        return (node, is_new)
+        return node
 
     def getScreenEdge(self, id1, id2):
-        node1, is_new = self.getScreenNode(id1)
-        node2, is_new = self.getScreenNode(id2)
-        link = (node1, node2)
+        link = (self.getScreenNode(id1), self.getScreenNode(id2))
 
         if link in self.uniqLinks:
             edge = self.uniqLinks[link]
         else:
-            edge = ScreenEdge(node1, node2)
+            edge = ScreenEdge(link[0], link[1])
             self.uniqLinks[link] = edge
 
             if not id1 in self.linkForward:
@@ -328,18 +323,6 @@ class ScreenNodeBuilder:
             self.linkForward[id1][id2] = 1
 
         return edge
-
-    def isBloodhood(self, parent, node):
-        if parent.id in self.linkForward:
-            for child in self.linkForward[parent.id]:
-                if node.id == child:
-                    return True
-                else:
-                    childnode, is_new = self.getScreenNode(child)
-                    if self.isBloodhood(childnode, node):
-                        return True
-        else:
-            return False
 
     def setNodeWidth(self, parent, node, drawn=[]):
         if node.id in drawn:
@@ -352,7 +335,7 @@ class ScreenNodeBuilder:
             children = self.linkForward[node.id].keys()
             children.sort()
             for child in children:
-                childnode, is_new = self.getScreenNode(child)
+                childnode = self.getScreenNode(child)
                 self.setNodeWidth(node, childnode)
 
     def setNodeHeight(self, node, height, references=[]):
@@ -362,7 +345,7 @@ class ScreenNodeBuilder:
             children.sort()
             for child in children:
                 if not child in references:
-                    childnode, is_new = self.getScreenNode(child)
+                    childnode = self.getScreenNode(child)
                     references.append(child)
                     height = self.setNodeHeight(childnode, height, references)
                 else:
@@ -372,10 +355,10 @@ class ScreenNodeBuilder:
 
         return height
 
-    def buildNodeList2(self, tree):
+    def buildNodeList(self, tree):
         for stmt in tree.stmts:
             if isinstance(stmt, diagparser.Node):
-                node, is_new = self.getScreenNode(stmt.id)
+                node = self.getScreenNode(stmt.id)
                 node.setAttributes(stmt.attrs)
             elif isinstance(stmt, diagparser.Edge):
                 while len(stmt.nodes) >= 2:
@@ -386,11 +369,11 @@ class ScreenNodeBuilder:
         links = self.linkForward.keys()
         links.sort(lambda x, y: cmp(self.nodeOrder.index(x), self.nodeOrder.index(y)))
         for link in links:
-            parent, is_new = self.getScreenNode(link)
+            parent = self.getScreenNode(link)
             children = self.linkForward[link].keys()
             children.sort()
             for child in children:
-                childnode, is_new = self.getScreenNode(child)
+                childnode = self.getScreenNode(child)
                 self.setNodeWidth(parent, childnode)
 
         height = 0
@@ -400,32 +383,6 @@ class ScreenNodeBuilder:
             node = self.uniqNodes[node_id]
             if node.xy[0] == 0:
                 height += self.setNodeHeight(node, height)
-
-    def buildNodeList(self, parent, list, columns=0):
-        for node in list:
-            if isinstance(node, dict):
-                for key in node.keys():
-                    xy = (columns, self.rows)
-                    screennode, is_new = self.getScreenNode(key, xy)
-
-                    if is_new:
-                        self.buildNodeList(screennode, node[key], columns + 1)
-                    else:
-                        rows = self.rows
-                        self.rows = screennode.xy[1]
-                        self.buildNodeList(screennode, node[key],
-                                           screennode.xy[0] + 1)
-                        self.rows = rows
-
-                    if parent:
-                        self.uniqLinks[(parent, screennode)] = 1
-            else:
-                xy = (columns, self.rows)
-                screennode, is_new = self.getScreenNode(node, xy)
-                self.rows += 1
-
-                if parent:
-                    self.uniqLinks[(parent, screennode)] = 1
 
 
 def main():
