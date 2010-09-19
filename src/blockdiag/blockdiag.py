@@ -83,7 +83,7 @@ class FoldedTextDraw(ImageDraw.ImageDraw):
 
 class NodeMetrix:
     def __init__(self, **kwargs):
-        self.cellSize = kwargs.get('cellSize', 16)
+        self.cellSize = kwargs.get('cellSize', 8)
         self.pageMargin = kwargs.get('pageMargin', 2)
         self.nodePadding = kwargs.get('nodePadding', 4)
         self.nodeColumns = kwargs.get('nodeColumns', 16)
@@ -435,7 +435,7 @@ def main():
         fontpath = 'c:/windows/fonts/msmincho.ttf'
     else:
         fontpath = '/usr/share/fonts/truetype/ipafont/ipagp.ttf'
-    ttfont = ImageFont.truetype(fontpath, 24)
+    ttfont = ImageFont.truetype(fontpath, 11)
 
     imgbuff = Image.new('RGB', (10240, 10240), (256, 256, 256))
     draw = ImageNodeDraw(imgbuff)
