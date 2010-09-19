@@ -3,8 +3,8 @@
 Features
 ========
 
-* Generate block-diagram from yaml (basic feature).
-* ...
+* Generate block-diagram from dot like text (basic feature).
+* Multilingualization for node-label (utf-8 only).
 
 Setup
 =====
@@ -26,32 +26,71 @@ Make environment::
 
 Copy and modify ini file. example::
 
-   $ cp <blockdiag installed path>/blockdiag/examples/screen.yaml .
-   $ vi screen.yaml
+   $ cp <blockdiag installed path>/blockdiag/examples/simple.diag .
+   $ vi simple.diag
 
 Please refer to `spec-text setting sample`_ section for the format of the
-`screen.yaml` configuration file.
+`simpla.diag` configuration file.
 
 spec-text setting sample
 ========================
 
-screen.yaml::
+Few examples are available.
 
-    ---
-    - ほげほげ一覧画面:
-      - ほげほげ詳細画面:
-        - ほげほげ設定画面
-        - ほげほげ編集画面
-      - ほげほげ削除確認画面
-    - ふがふが一覧画面:
-      - ふがふが設定画面
+simple.diag
+------------
+
+simple.diag is simply define nodes and transitions by dot-like text format::
+
+    diagram admin {
+      top_page -> config -> config_edit -> config_confirm -> top_page;
+    }
+
+screen.diag
+------------
+
+screen.diag is more complexly sample. diaglam nodes have a alternative label
+and some transitions::
+
+    diagram admin {
+      top_page [label = "トップページ"];
+
+      foo_index [label = "List of FOOs"];
+      foo_detail [label = "Detail FOO"];
+      foo_add [label = "Add FOO"];
+      foo_add_confirm [label = "Add FOO (confirm)"];
+      foo_edit [label = "Edit FOO"];
+      foo_edit_confirm [label = "Edit FOO (confirm)"];
+      foo_delete_confirm [label = "Delete FOO (confirm)"];
+
+      bar_detail [label = "Detail of BAR"];
+      bar_edit [label = "Edit BAR"];
+      bar_edit_confirm [label = "Edit BAR (confirm)"];
+
+      logout;
+
+      top_page -> foo_index;
+      top_page -> bar_detail;
+
+      foo_index -> foo_detail;
+                   foo_detail -> foo_edit;
+                   foo_detail -> foo_delete_confirm;
+      foo_index -> foo_add -> foo_add_confirm -> foo_index;
+      foo_index -> foo_edit -> foo_edit_confirm -> foo_index;
+      foo_index -> foo_delete_confirm -> foo_index;
+
+      bar_detail -> bar_edit -> bar_edit_confirm -> bar_detail;
+    }
+
 
 Usage
 =====
 
 Execute blockdiag command::
 
-   $ blockdiag screen.yaml
+   $ blockdiag simple.diag
+   $ ls simple.png
+   simple.png
 
 
 Requirements
@@ -59,7 +98,8 @@ Requirements
 
 * Python 2.4 or later (not support 3.x)
 * Python Imaging Library 1.1.6 or later.
-* setuptools or distriubte
+* funcparserlib 0.3.4 or later.
+* setuptools or distriubte.
 
 History
 =======
