@@ -30,5 +30,7 @@ def test_pep8():
             runner(path)
 
     pep8.print_statistics()
-    count = pep8.get_count()
-    assert count == 0
+    errors = pep8.get_count('E')
+    warnings = pep8.get_count('W')
+    assert errors + warnings == 0, \
+        'pep8 test detect %d errors / %d warnings' % (errors, warnings)
