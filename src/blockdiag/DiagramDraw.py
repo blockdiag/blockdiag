@@ -310,7 +310,7 @@ class DiagramDraw(ImageDraw.ImageDraw):
 
         else:
             pos = (node1.x, node1.y, node2.x, node2.y)
-            raise RuntimeError, "Invalid edge: (%d, %d), (%d, %d)" % pos
+            raise RuntimeError("Invalid edge: (%d, %d), (%d, %d)" % pos)
 
         if edge.color:
             color = edge.color
