@@ -226,9 +226,8 @@ class DiagramDraw(ImageDraw.ImageDraw):
     def edge(self, edge):
         lines = xylist()
         head = xylist()
-        cellSize = self.metrix.cellSize
-        spanWidth = self.metrix.spanWidth
-        spanHeight = self.metrix.spanHeight
+        cell = self.metrix.cellSize
+        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
 
         node1 = self.metrix.node(edge.node1)
         node2 = self.metrix.node(edge.node2)
@@ -238,24 +237,24 @@ class DiagramDraw(ImageDraw.ImageDraw):
             lines.add(node1.right())
 
             if edge.node1.xy[1] != edge.node2.xy[1]:
-                lines.add(node1.right().x + spanWidth / 2, node1.right().y)
-                lines.add(node1.right().x + spanWidth / 2, node1.right().y)
-                lines.add(node1.right().x + spanWidth / 2, node2.left().y)
-                lines.add(node2.left().x - spanWidth / 2, node2.left().y)
+                lines.add(node1.right().x + span.x / 2, node1.right().y)
+                lines.add(node1.right().x + span.x / 2, node1.right().y)
+                lines.add(node1.right().x + span.x / 2, node2.left().y)
+                lines.add(node2.left().x - span.x / 2, node2.left().y)
             elif edge.node1.xy[0] + 1 < edge.node2.xy[0]:
-                lines.add(node1.right().x + spanWidth / 2, node1.right().y)
-                lines.add(node1.right().x + spanWidth / 2,
-                          node1.bottomRight().y + spanHeight / 2)
-                lines.add(node2.left().x - spanWidth / 2,
-                          node2.bottomRight().y + spanHeight / 2)
-                lines.add(node2.left().x - spanWidth / 2, node2.left().y)
+                lines.add(node1.right().x + span.x / 2, node1.right().y)
+                lines.add(node1.right().x + span.x / 2,
+                          node1.bottomRight().y + span.y / 2)
+                lines.add(node2.left().x - span.x / 2,
+                          node2.bottomRight().y + span.y / 2)
+                lines.add(node2.left().x - span.x / 2, node2.left().y)
 
             lines.add(node2.left())
 
             # draw arrow head
             head.add(node2.left())
-            head.add(node2.left().x - cellSize, node2.left().y - cellSize / 2)
-            head.add(node2.left().x - cellSize, node2.left().y + cellSize / 2)
+            head.add(node2.left().x - cell, node2.left().y - cell / 2)
+            head.add(node2.left().x - cell, node2.left().y + cell / 2)
 
         elif node1.x == node2.x and node1.y > node2.y:
             # draw arrow line
@@ -264,23 +263,22 @@ class DiagramDraw(ImageDraw.ImageDraw):
 
             # draw arrow head
             head.add(node2.bottom())
-            head.add(node2.bottom().x - cellSize / 2, node2.bottom().y + cellSize)
-            head.add(node2.bottom().x + cellSize / 2, node2.bottom().y + cellSize)
+            head.add(node2.bottom().x - cell / 2, node2.bottom().y + cell)
+            head.add(node2.bottom().x + cell / 2, node2.bottom().y + cell)
 
         elif node1.y >= node2.y:
             # draw arrow line
             lines.add(node1.right())
-            lines.add(node1.right().x + spanWidth / 8, node1.right().y)
-            lines.add(node1.right().x + spanWidth / 8,
-                      node2.top().y - spanHeight / 2)
-            lines.add(node2.top().x, node2.top().y - spanHeight / 2)
+            lines.add(node1.right().x + span.x / 8, node1.right().y)
+            lines.add(node1.right().x + span.x / 8, node2.top().y - span.y / 2)
+            lines.add(node2.top().x, node2.top().y - span.y / 2)
 
             lines.add(node2.top())
 
             # draw arrow head
             head.add(node2.top())
-            head.add(node2.top().x - cellSize / 2, node2.top().y - cellSize)
-            head.add(node2.top().x + cellSize / 2, node2.top().y - cellSize)
+            head.add(node2.top().x - cell / 2, node2.top().y - cell)
+            head.add(node2.top().x + cell / 2, node2.top().y - cell)
         else:
             pos = (node1.x, node1.y, node2.x, node2.y)
             raise RuntimeError, "Invalid edge: (%d, %d), (%d, %d)" % pos
