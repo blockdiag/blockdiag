@@ -175,7 +175,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
 
         box = self.metrix.nodeCoreBox(node.xy)
         draw = FoldedTextDraw(self.image)
-        draw.text(box, node.title, font=ttfont, lineSpacing=self.lineSpacing)
+        draw.text(box, node.label, font=ttfont, lineSpacing=self.lineSpacing)
 
     def screennodelist(self, nodelist, **kwargs):
         for node in nodelist:
@@ -272,7 +272,7 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
 class ScreenNode:
     def __init__(self, id):
         self.id = id
-        self.title = re.sub('^"?(.*?)"?$', '\\1', id)
+        self.label = re.sub('^"?(.*?)"?$', '\\1', id)
         self.xy = (0, 0)
         self.color = None
         self.children = None
@@ -281,7 +281,7 @@ class ScreenNode:
         for attr in attrs:
             value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
             if attr.name == 'label':
-                self.title = value
+                self.label = value
             elif attr.name == 'color':
                 self.color = value
             else:
@@ -320,13 +320,13 @@ class ScreenNodeBuilder:
 
         return (self.uniqNodes.values(), self.uniqLinks.values())
 
-    def getScreenNode(self, title):
-        if title in self.uniqNodes:
-            node = self.uniqNodes[title]
+    def getScreenNode(self, id):
+        if id in self.uniqNodes:
+            node = self.uniqNodes[id]
         else:
-            node = ScreenNode(title)
-            self.uniqNodes[title] = node
-            self.nodeOrder.append(title)
+            node = ScreenNode(id)
+            self.uniqNodes[id] = node
+            self.nodeOrder.append(id)
 
         return node
 
