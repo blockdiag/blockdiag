@@ -32,5 +32,6 @@ def test_pep8():
     pep8.print_statistics()
     errors = pep8.get_count('E')
     warnings = pep8.get_count('W')
-    assert errors + warnings == 0, \
-        'pep8 test detect %d errors / %d warnings' % (errors, warnings)
+    message = 'pep8: %d errors / %d warnings' % (errors, warnings)
+    print message
+    assert errors + warnings == 0, message
