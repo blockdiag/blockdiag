@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- encoding: utf-8 -*-
 
+import os
 import sys
 import re
 from optparse import OptionParser
@@ -177,17 +178,24 @@ def main():
     p = OptionParser(usage=usage)
     p.add_option('-o', dest='filename',
                  help='write diagram to FILE', metavar='FILE')
+    p.add_option('-f', '--font', dest='font',
+                 help='use FONT to draw diagram', metavar='FONT')
     (options, args) = p.parse_args()
 
     if len(args) == 0:
         p.print_help()
         exit(0)
 
-    if sys.platform.startswith('win'):
-        fontpath = 'c:/windows/fonts/VL-Gothic-Regular.ttf'
-    else:
-        fontpath = '/usr/share/fonts/truetype/ipafont/ipagp.ttf'
-    ttfont = ImageFont.truetype(fontpath, 11)
+    fonts = [options.font,
+             'c:/windows/fonts/VL-Gothic-Regular.ttf',
+             'c:/windows/fonts/msmincho.ttf',
+             '/usr/share/fonts/truetype/ipafont/ipagp.ttf']
+
+    ttfont = None
+    for path in fonts:
+        if os.path.isfile(path):
+            ttfont = ImageFont.truetype(path, 11)
+            break
 
     draw = DiagramDraw.DiagramDraw()
 
