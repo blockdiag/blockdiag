@@ -193,7 +193,7 @@ def main():
 
     ttfont = None
     for path in fonts:
-        if os.path.isfile(path):
+        if path and os.path.isfile(path):
             ttfont = ImageFont.truetype(path, 11)
             break
 

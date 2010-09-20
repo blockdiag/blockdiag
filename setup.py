@@ -22,7 +22,7 @@ classifiers = [
 setup(
      name='blockdiag',
      version=version,
-     description='blockdiag generate block-diagram image file from spec-text file..',
+     description='blockdiag generate block-diagram image file from spec-text file.',
      long_description=long_description,
      classifiers=classifiers,
      keywords=['diagram','generator'],
