@@ -35,12 +35,19 @@ class ScreenEdge:
         self.node1 = node1
         self.node2 = node2
         self.color = None
+        self.dir = 'forward'
 
     def setAttributes(self, attrs):
         for attr in attrs:
             value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
             if attr.name == 'color':
                 self.color = value
+            elif attr.name == 'dir':
+                dir = value.lower()
+                if dir in ('back', 'both', 'none'):
+                    self.dir = dir
+                else:
+                    self.dir = 'forward'
             else:
                 raise AttributeError, "Unknown edge attribute: %s" % attr.name
 
