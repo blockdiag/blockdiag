@@ -186,6 +186,14 @@ class NodeMetrix:
     left = leftCenter;
 
 
+class xylist(list):
+    def add(self, x, y=None):
+        if y:
+            self.append((x, y))
+        else:
+            self.append(x)
+
+
 class DiagramDraw(ImageDraw.ImageDraw):
     def __init__(self, im, mode=None, **kwargs):
         self.image = im
@@ -216,8 +224,8 @@ class DiagramDraw(ImageDraw.ImageDraw):
             self.screennode(node, **kwargs)
 
     def edge(self, edge):
-        lines = []
-        head = []
+        lines = xylist()
+        head = xylist()
         cellSize = self.metrix.cellSize
         spanWidth = self.metrix.spanWidth
         spanHeight = self.metrix.spanHeight
@@ -227,58 +235,52 @@ class DiagramDraw(ImageDraw.ImageDraw):
 
         if node1.x < node2.x:
             # draw arrow line
-            lines.append(node1.right())
+            lines.add(node1.right())
 
             if edge.node1.xy[1] != edge.node2.xy[1]:
-                lines.append((node1.right().x + spanWidth / 2, node1.right().y))
-                lines.append((node1.right().x + spanWidth / 2, node1.right().y))
-                lines.append((node1.right().x + spanWidth / 2, node2.left().y))
-                lines.append((node2.left().x - spanWidth / 2, node2.left().y))
+                lines.add(node1.right().x + spanWidth / 2, node1.right().y)
+                lines.add(node1.right().x + spanWidth / 2, node1.right().y)
+                lines.add(node1.right().x + spanWidth / 2, node2.left().y)
+                lines.add(node2.left().x - spanWidth / 2, node2.left().y)
             elif edge.node1.xy[0] + 1 < edge.node2.xy[0]:
-                lines.append((node1.right().x + spanWidth / 2, node1.right().y))
-                lines.append((node1.right().x + spanWidth / 2,
-                              node1.bottomRight().y + spanHeight / 2))
-                lines.append((node2.left().x - spanWidth / 2,
-                              node2.bottomRight().y + spanHeight / 2))
-                lines.append((node2.left().x - spanWidth / 2, node2.left().y))
+                lines.add(node1.right().x + spanWidth / 2, node1.right().y)
+                lines.add(node1.right().x + spanWidth / 2,
+                          node1.bottomRight().y + spanHeight / 2)
+                lines.add(node2.left().x - spanWidth / 2,
+                          node2.bottomRight().y + spanHeight / 2)
+                lines.add(node2.left().x - spanWidth / 2, node2.left().y)
 
-            lines.append(node2.left())
+            lines.add(node2.left())
 
             # draw arrow head
-            head.append(node2.left())
-            head.append((node2.left().x - cellSize,
-                         node2.left().y - cellSize / 2))
-            head.append((node2.left().x - cellSize,
-                         node2.left().y + cellSize / 2))
+            head.add(node2.left())
+            head.add(node2.left().x - cellSize, node2.left().y - cellSize / 2)
+            head.add(node2.left().x - cellSize, node2.left().y + cellSize / 2)
 
         elif node1.x == node2.x and node1.y > node2.y:
             # draw arrow line
-            lines.append(node1.top())
-            lines.append(node2.bottom())
+            lines.add(node1.top())
+            lines.add(node2.bottom())
 
             # draw arrow head
-            head.append(node2.bottom())
-            head.append((node2.bottom().x - cellSize / 2,
-                         node2.bottom().y + cellSize))
-            head.append((node2.bottom().x + cellSize / 2,
-                         node2.bottom().y + cellSize))
+            head.add(node2.bottom())
+            head.add(node2.bottom().x - cellSize / 2, node2.bottom().y + cellSize)
+            head.add(node2.bottom().x + cellSize / 2, node2.bottom().y + cellSize)
 
         elif node1.y >= node2.y:
             # draw arrow line
-            lines.append(node1.right())
-            lines.append((node1.right().x + spanWidth / 8, node1.right().y))
-            lines.append((node1.right().x + spanWidth / 8,
-                          node2.top().y - spanHeight / 2))
-            lines.append((node2.top().x, node2.top().y - spanHeight / 2))
+            lines.add(node1.right())
+            lines.add(node1.right().x + spanWidth / 8, node1.right().y)
+            lines.add(node1.right().x + spanWidth / 8,
+                      node2.top().y - spanHeight / 2)
+            lines.add(node2.top().x, node2.top().y - spanHeight / 2)
 
-            lines.append(node2.top())
+            lines.add(node2.top())
 
             # draw arrow head
-            head.append(node2.top())
-            head.append((node2.top().x - cellSize / 2,
-                         node2.top().y - cellSize))
-            head.append((node2.top().x + cellSize / 2,
-                         node2.top().y - cellSize))
+            head.add(node2.top())
+            head.add(node2.top().x - cellSize / 2, node2.top().y - cellSize)
+            head.add(node2.top().x + cellSize / 2, node2.top().y - cellSize)
         else:
             pos = (node1.x, node1.y, node2.x, node2.y)
             raise RuntimeError, "Invalid edge: (%d, %d), (%d, %d)" % pos
