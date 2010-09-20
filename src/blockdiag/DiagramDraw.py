@@ -4,7 +4,10 @@
 import Image
 import ImageFont
 import ImageDraw
-from collections import namedtuple
+try:
+    from collections import namedtuple
+except ImportError:
+    from utils.namedtuple import namedtuple
 
 
 XY = namedtuple('XY', 'x y')
