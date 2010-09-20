@@ -47,39 +47,41 @@ def test_empty_diagram():
 def test_single_node_diagram():
     # empty diagram
     str = ("diagram {\n"
-           "  foo;\n"
+           "  A;\n"
            "}\n")
     tree = parse(tokenize(str))
     nodelist, edgelist = ScreenNodeBuilder.build(tree)
 
     assert len(nodelist) == 1
     assert len(edgelist) == 0
-    assert nodelist[0].label == 'foo'
+    assert nodelist[0].label == 'A'
     assert nodelist[0].xy == (0, 0)
 
 
 def test_single_edge_diagram():
     # empty diagram
     str = ("diagram {\n"
-           "  foo -> bar;\n"
+           "  A -> B;\n"
            "}\n")
     tree = parse(tokenize(str))
     nodelist, edgelist = ScreenNodeBuilder.build(tree)
 
     assert len(nodelist) == 2
     assert len(edgelist) == 1
-    assert nodelist[0].label == 'foo'
-    assert nodelist[0].xy == (0, 0)
-    assert nodelist[1].label == 'bar'
-    assert nodelist[1].xy == (1, 0)
-    assert edgelist[0].node1.id == 'foo'
-    assert edgelist[0].node2.id == 'bar'
+    assert nodelist[0].label == 'A'
+    assert nodelist[1].label == 'B'
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0)}
+    assert_label = {'A': 'A', 'B': 'B'}
+    for node in nodelist:
+        assert node.xy == assert_pos[node.id]
+        assert node.label == assert_label[node.id]
 
 
 def test_two_edges_diagram():
     # empty diagram
     str = ("diagram {\n"
-           "  foo -> bar -> baz;\n"
+           "  A -> B -> C;\n"
            "}\n")
     tree = parse(tokenize(str))
     nodelist, edgelist = ScreenNodeBuilder.build(tree)
@@ -87,7 +89,7 @@ def test_two_edges_diagram():
     assert len(nodelist) == 3
     assert len(edgelist) == 2
 
-    assert_pos = {'foo': (0, 0), 'bar': (1, 0), 'baz': (2, 0)}
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0)}
     for node in nodelist:
         assert node.xy == assert_pos[node.id]
 
@@ -115,19 +117,19 @@ def test_node_attribute():
 def test_edge_attribute():
     # empty diagram
     str = ("diagram {\n"
-           "  foo -> bar -> baz [color = red]\n"
-           "  hoge -> fuga [dir = none]\n"
+           "  A -> B -> C [color = red]\n"
+           "  D -> E [dir = none]\n"
            "}\n")
     tree = parse(tokenize(str))
     nodelist, edgelist = ScreenNodeBuilder.build(tree)
 
-    assert_pos = {'foo': (0, 0), 'bar': (1, 0), 'baz': (2, 0),
-                  'hoge': (0, 1), 'fuga': (1, 1)}
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'D': (0, 1), 'E': (1, 1)}
     for node in nodelist:
         assert node.xy == assert_pos[node.id]
 
     for edge in edgelist:
-        if edge.node1.id == 'hoge':
+        if edge.node1.id == 'D':
             assert edge.dir == 'none'
             assert edge.color == None
         else:
