@@ -53,7 +53,7 @@ screen.diag is more complexly sample. diaglam nodes have a alternative label
 and some transitions::
 
     diagram admin {
-      top_page [label = "トップページ"];
+      top_page [label = "Top page"];
 
       foo_index [label = "List of FOOs"];
       foo_detail [label = "Detail FOO"];
@@ -104,8 +104,8 @@ Requirements
 History
 =======
 
-0.0.1 (unreleased)
-------------------
+0.1
+---
 * first release
 
 
