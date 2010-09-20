@@ -44,10 +44,11 @@ setup(
          test=[
              'Nose',
              'minimock',
+             'pep8',
          ],
      ),
      test_suite='nose.collector',
-     tests_require=['Nose','minimock'],
+     tests_require=['Nose','minimock','pep8'],
      entry_points="""
         [console_scripts]
         blockdiag = blockdiag:main
