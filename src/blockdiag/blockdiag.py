@@ -62,6 +62,8 @@ class ScreenNodeBuilder:
         self.nodeOrder = []
         self.uniqLinks = {}
         self.linkForward = {}
+        self.widthRefs = []
+        self.heightRefs = []
         self.rows = 0
 
     def _build(self, tree):
@@ -112,33 +114,33 @@ class ScreenNodeBuilder:
 
         return children
 
-    def setNodeWidth(self, parent, node, drawn=[]):
-        if node.id in drawn or parent == node:
+    def setNodeWidth(self, parent, node):
+        if node.id in self.widthRefs or parent == node:
             return
 
         node.xy = (parent.xy[0] + 1, node.xy[1])
-        drawn.append(parent.id)
+        self.widthRefs.append(parent.id)
 
         if node.id in self.linkForward:
             for child_id in self.getChildrenIds(node):
                 childnode = self.getScreenNode(child_id)
                 self.setNodeWidth(node, childnode)
 
-    def setNodeHeight(self, node, height, refs=[]):
+    def setNodeHeight(self, node, height):
         node.xy = (node.xy[0], height)
         if node.id in self.linkForward:
             for child_id in self.getChildrenIds(node):
-                if not child_id in refs:
+                if not child_id in self.heightRefs:
                     childnode = self.getScreenNode(child_id)
 
                     if node.xy[0] < childnode.xy[0]:
-                        height = self.setNodeHeight(childnode, height, refs)
+                        height = self.setNodeHeight(childnode, height)
                     else:
                         height += 1
 
-                    refs.append(child_id)
+                    self.heightRefs.append(child_id)
                 else:
-                    if not node.id in refs:
+                    if not node.id in self.heightRefs:
                         height += 1
         else:
             height += 1
