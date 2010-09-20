@@ -12,6 +12,7 @@ except ImportError:
 
 XY = namedtuple('XY', 'x y')
 
+
 class FoldedTextDraw(ImageDraw.ImageDraw):
     def __init__(self, im, mode=None):
         ImageDraw.ImageDraw.__init__(self, im, mode)
@@ -180,10 +181,10 @@ class NodeMetrix:
         return XY(x + m.nodeWidth, y + m.nodeHeight / 2)
 
     # method aliases
-    top = topCenter;
-    bottom = bottomCenter;
-    right = rightCenter;
-    left = leftCenter;
+    top = topCenter
+    bottom = bottomCenter
+    right = rightCenter
+    left = leftCenter
 
 
 class xylist(list):
@@ -210,10 +211,11 @@ class DiagramDraw(ImageDraw.ImageDraw):
         ttfont = kwargs.get('font')
 
         metrix = self.metrix.node(node)
+        box = [metrix.topLeft(), metrix.bottomRight()]
         if node.color:
-            self.rectangle([metrix.topLeft(), metrix.bottomRight()], outline=self.fill, fill=node.color)
+            self.rectangle(box, outline=self.fill, fill=node.color)
         else:
-            self.rectangle([metrix.topLeft(), metrix.bottomRight()], outline=self.fill)
+            self.rectangle(box, outline=self.fill)
 
         box = self.metrix.node(node).coreBox()
         draw = FoldedTextDraw(self.image)
