@@ -182,13 +182,12 @@ def main():
         exit(0)
 
     if sys.platform.startswith('win'):
-        fontpath = 'c:/windows/fonts/msmincho.ttf'
+        fontpath = 'c:/windows/fonts/VL-Gothic-Regular.ttf'
     else:
         fontpath = '/usr/share/fonts/truetype/ipafont/ipagp.ttf'
     ttfont = ImageFont.truetype(fontpath, 11)
 
-    imgbuff = Image.new('RGB', (10240, 10240), (256, 256, 256))
-    draw = DiagramDraw.DiagramDraw(imgbuff)
+    draw = DiagramDraw.DiagramDraw()
 
     infile = args[0]
     if options.filename:
@@ -203,12 +202,14 @@ def main():
         draw.screennodelist(nodelist, font=ttfont)
         draw.edgelist(edgelist)
     except Exception, e:
+        import traceback
+        traceback.print_exc()
+
         name = e.__class__.__name__
         print "[%s] %s" % (name, e)
         exit(1)
 
-    image = imgbuff.crop((0, 0) + draw.getPaperSize(nodelist))
-    image.save(outfile, 'PNG')
+    draw.save(outfile, 'PNG')
 
 
 if __name__ == '__main__':

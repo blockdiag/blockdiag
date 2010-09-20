@@ -4,6 +4,8 @@
 import Image
 import ImageFont
 import ImageDraw
+import ImageFilter
+
 try:
     from collections import namedtuple
 except ImportError:
@@ -194,16 +196,19 @@ class xylist(list):
         else:
             self.append(x)
 
-
-class DiagramDraw(ImageDraw.ImageDraw):
-    def __init__(self, im, mode=None, **kwargs):
-        self.image = im
+class DiagramDraw(object):
+    def __init__(self, mode=None, **kwargs):
+        self.mode = None
+        self.image = None
+        self.imageDraw = None
         self.metrix = DiagramMetrix(**kwargs)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
-
-        ImageDraw.ImageDraw.__init__(self, im, mode)
-
+        self.defaultFill = kwargs.get('defaultFill', (255, 255, 255))
+        self.shadow = kwargs.get('shadow', (128, 128, 128))
+        self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
+        self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
+        
     def getPaperSize(self, root):
         return self.metrix.pageSize(root)
 
@@ -213,15 +218,33 @@ class DiagramDraw(ImageDraw.ImageDraw):
         metrix = self.metrix.node(node)
         box = [metrix.topLeft(), metrix.bottomRight()]
         if node.color:
-            self.rectangle(box, outline=self.fill, fill=node.color)
+            self.imageDraw.rectangle(box, outline=self.fill, fill=node.color)
         else:
-            self.rectangle(box, outline=self.fill)
+            self.imageDraw.rectangle(box, outline=self.fill, fill=self.defaultFill)
 
         box = self.metrix.node(node).coreBox()
         draw = FoldedTextDraw(self.image)
         draw.text(box, node.label, font=ttfont, lineSpacing=self.lineSpacing)
+    
+    def dropshadow(self, node, **kwargs):
+        metrix = self.metrix.node(node)
+        def shift(original):
+            return XY(original.x+self.shadowOffsetX, 
+                      original.y+self.shadowOffsetY)
+        box = [shift(metrix.topLeft()), shift(metrix.bottomRight())]
+        self.imageDraw.rectangle(box, fill=self.shadow)
 
     def screennodelist(self, nodelist, **kwargs):
+        self.image = Image.new(
+            'RGB', self.getPaperSize(nodelist), (256, 256, 256))
+        self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
+        
+        for node in nodelist:
+            self.dropshadow(node, **kwargs)
+        for i in range(15):
+            self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
+        
+        self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
         for node in nodelist:
             self.screennode(node, **kwargs)
 
@@ -247,7 +270,7 @@ class DiagramDraw(ImageDraw.ImageDraw):
         else:
             color = self.fill
 
-        self.polygon(head, outline=color, fill=color)
+        self.imageDraw.polygon(head, outline=color, fill=color)
 
     def edge(self, edge):
         lines = xylist()
@@ -317,8 +340,11 @@ class DiagramDraw(ImageDraw.ImageDraw):
         else:
             color = self.fill
 
-        self.line(lines, fill=color)
+        self.imageDraw.line(lines, fill=color)
 
     def edgelist(self, edgelist, **kwargs):
         for edge in edgelist:
             self.edge(edge)
+    
+    def save(self, filename, format):
+        self.image.save(filename, format)
