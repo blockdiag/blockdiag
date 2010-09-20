@@ -131,7 +131,7 @@ class ScreenNodeBuilder:
 
                     refs.append(child_id)
                 else:
-                    if not node.id in references:
+                    if not node.id in refs:
                         height += 1
         else:
             height += 1
