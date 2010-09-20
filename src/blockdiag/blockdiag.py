@@ -26,7 +26,8 @@ class ScreenNode:
             elif attr.name == 'color':
                 self.color = value
             else:
-                raise AttributeError, "Unknown node attribute: %s.%s" % (self.id, attr.name)
+                msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
+                raise AttributeError, msg
 
 
 class ScreenEdge:
@@ -116,19 +117,19 @@ class ScreenNodeBuilder:
                 childnode = self.getScreenNode(child_id)
                 self.setNodeWidth(node, childnode)
 
-    def setNodeHeight(self, node, height, references=[]):
+    def setNodeHeight(self, node, height, refs=[]):
         node.xy = (node.xy[0], height)
         if node.id in self.linkForward:
             for child_id in self.getChildrenIds(node):
-                if not child_id in references:
+                if not child_id in refs:
                     childnode = self.getScreenNode(child_id)
 
                     if node.xy[0] < childnode.xy[0]:
-                        height = self.setNodeHeight(childnode, height, references)
+                        height = self.setNodeHeight(childnode, height, refs)
                     else:
                         height += 1
 
-                    references.append(child_id)
+                    refs.append(child_id)
                 else:
                     if not node.id in references:
                         height += 1
