@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 # Basic implementation of namedtuple for 2.1 < Python < 2.6
 def namedtuple(name, fields):
     'Only space-delimited fields are supported.'

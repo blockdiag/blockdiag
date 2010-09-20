@@ -27,7 +27,7 @@ class ScreenNode:
                 self.color = value
             else:
                 msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
-                raise AttributeError, msg
+                raise AttributeError(msg)
 
 
 class ScreenEdge:
@@ -35,14 +35,21 @@ class ScreenEdge:
         self.node1 = node1
         self.node2 = node2
         self.color = None
+        self.dir = 'forward'
 
     def setAttributes(self, attrs):
         for attr in attrs:
             value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
             if attr.name == 'color':
                 self.color = value
+            elif attr.name == 'dir':
+                dir = value.lower()
+                if dir in ('back', 'both', 'none'):
+                    self.dir = dir
+                else:
+                    self.dir = 'forward'
             else:
-                raise AttributeError, "Unknown edge attribute: %s" % attr.name
+                raise AttributeError("Unknown edge attribute: %s" % attr.name)
 
 
 class ScreenNodeBuilder:
@@ -148,7 +155,7 @@ class ScreenNodeBuilder:
                     edge = self.getScreenEdge(stmt.nodes.pop(0), stmt.nodes[0])
                     edge.setAttributes(stmt.attrs)
             else:
-                raise AttributeError, "Unknown sentense: " + str(type(stmt))
+                raise AttributeError("Unknown sentense: " + str(type(stmt)))
 
         for parent_id in self.getChildrenIds(None):
             parent = self.getScreenNode(parent_id)
