@@ -225,10 +225,33 @@ class DiagramDraw(ImageDraw.ImageDraw):
         for node in nodelist:
             self.screennode(node, **kwargs)
 
+    def arrow_head(self, xy, direct, **kwargs):
+        head = xylist(xy)
+        cell = self.metrix.cellSize
+
+        if direct == 'up':
+            head.add(xy.x - cell / 2, xy.y + cell)
+            head.add(xy.x + cell / 2, xy.y + cell)
+        elif direct == 'down':
+            head.add(xy.x - cell / 2, xy.y - cell)
+            head.add(xy.x + cell / 2, xy.y - cell)
+        elif direct == 'right':
+            head.add(xy.x - cell, xy.y - cell / 2)
+            head.add(xy.x - cell, xy.y + cell / 2)
+        elif direct == 'left':
+            head.add(xy.x + cell, xy.y - cell / 2)
+            head.add(xy.x + cell, xy.y + cell / 2)
+
+        if kwargs.get('color'):
+            color = kwargs.get('color')
+        else:
+            color = self.fill
+
+        self.polygon(head, outline=color, fill=color)
+
     def edge(self, edge):
         lines = xylist()
         head = xylist()
-        cell = self.metrix.cellSize
         span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
 
         node1 = self.metrix.node(edge.node1)
@@ -254,9 +277,10 @@ class DiagramDraw(ImageDraw.ImageDraw):
             lines.add(node2.left())
 
             # draw arrow head
-            head.add(node2.left())
-            head.add(node2.left().x - cell, node2.left().y - cell / 2)
-            head.add(node2.left().x - cell, node2.left().y + cell / 2)
+            if edge.dir in ('back', 'both'):
+                self.arrow_head(node1.right(), 'left', color=edge.color)
+            if edge.dir in ('forward', 'both'):
+                self.arrow_head(node2.left(), 'right', color=edge.color)
 
         elif node1.x == node2.x and node1.y > node2.y:
             # draw arrow line
@@ -264,9 +288,10 @@ class DiagramDraw(ImageDraw.ImageDraw):
             lines.add(node2.bottom())
 
             # draw arrow head
-            head.add(node2.bottom())
-            head.add(node2.bottom().x - cell / 2, node2.bottom().y + cell)
-            head.add(node2.bottom().x + cell / 2, node2.bottom().y + cell)
+            if edge.dir in ('back', 'both'):
+                self.arrow_head(node1.top(), 'down', color=edge.color)
+            if edge.dir in ('forward', 'both'):
+                self.arrow_head(node2.bottom(), 'up', color=edge.color)
 
         elif node1.y >= node2.y:
             # draw arrow line
@@ -278,9 +303,11 @@ class DiagramDraw(ImageDraw.ImageDraw):
             lines.add(node2.top())
 
             # draw arrow head
-            head.add(node2.top())
-            head.add(node2.top().x - cell / 2, node2.top().y - cell)
-            head.add(node2.top().x + cell / 2, node2.top().y - cell)
+            if edge.dir in ('back', 'both'):
+                self.arrow_head(node1.right(), 'left', color=edge.color)
+            if edge.dir in ('forward', 'both'):
+                self.arrow_head(node2.top(), 'down', color=edge.color)
+
         else:
             pos = (node1.x, node1.y, node2.x, node2.y)
             raise RuntimeError, "Invalid edge: (%d, %d), (%d, %d)" % pos
@@ -291,7 +318,6 @@ class DiagramDraw(ImageDraw.ImageDraw):
             color = self.fill
 
         self.line(lines, fill=color)
-        self.polygon(head, outline=color, fill=color)
 
     def edgelist(self, edgelist, **kwargs):
         for edge in edgelist:
