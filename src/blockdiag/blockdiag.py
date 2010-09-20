@@ -253,7 +253,8 @@ class ImageNodeDraw(ImageDraw.ImageDraw):
             head.append((node2_top[0] + cellSize / 2,
                          node2_top[1] - cellSize))
         else:
-            raise
+            pos = node1_xy + node2_xy
+            raise RuntimeError, "Invalid edge: (%d, %d), (%d, %d)" % pos
 
         if edge.color:
             color = edge.color
@@ -284,7 +285,7 @@ class ScreenNode:
             elif attr.name == 'color':
                 self.color = value
             else:
-                raise
+                raise AttributeError, "Unknown node attribute: %s.%s" % (self.id, attr.name)
 
 
 class ScreenEdge:
@@ -299,7 +300,7 @@ class ScreenEdge:
             if attr.name == 'color':
                 self.color = value
             else:
-                raise
+                raise AttributeError, "Unknown edge attribute: %s" % attr.name
 
 
 class ScreenNodeBuilder:
@@ -405,7 +406,7 @@ class ScreenNodeBuilder:
                     edge = self.getScreenEdge(stmt.nodes.pop(0), stmt.nodes[0])
                     edge.setAttributes(stmt.attrs)
             else:
-                raise
+                raise AttributeError, "Unknown sentense: " + str(type(stmt))
 
         for parent_id in self.getChildrenIds(None):
             parent = self.getScreenNode(parent_id)
@@ -446,11 +447,16 @@ def main():
     else:
         outfile = re.sub('\..*', '', infile) + '.png'
 
-    tree = diagparser.parse_file(infile)
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    try:
+        tree = diagparser.parse_file(infile)
+        nodelist, edgelist = ScreenNodeBuilder.build(tree)
 
-    draw.screennodelist(nodelist, font=ttfont)
-    draw.edgelist(edgelist)
+        draw.screennodelist(nodelist, font=ttfont)
+        draw.edgelist(edgelist)
+    except Exception, e:
+        name = e.__class__.__name__
+        print "[%s] %s" % (name, e)
+        exit(1)
 
     image = imgbuff.crop((0, 0) + draw.getPaperSize(nodelist))
     image.save(outfile, 'PNG')
