@@ -121,6 +121,11 @@ def test_edge_attribute():
     tree = parse(tokenize(str))
     nodelist, edgelist = ScreenNodeBuilder.build(tree)
 
+    assert_pos = {'foo': (0, 0), 'bar': (1, 0), 'baz': (2, 0),
+                  'hoge': (0, 1), 'fuga': (1, 1)}
+    for node in nodelist:
+        assert node.xy == assert_pos[node.id]
+
     for edge in edgelist:
         if edge.node1.id == 'hoge':
             assert edge.dir == 'none'
@@ -128,3 +133,96 @@ def test_edge_attribute():
         else:
             assert edge.dir == 'forward'
             assert edge.color == 'red'
+
+
+def test_branched_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  A -> B -> C\n"
+           "  A -> D -> E\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'D': (1, 1), 'E': (2, 1), 'Z': (0, 2)}
+    for node in nodelist:
+        assert node.xy == assert_pos[node.id]
+
+
+def test_circular_ref_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  A -> B -> C -> A\n"
+           "       B -> D\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'D': (2, 1), 'Z': (0, 2)}
+    for node in nodelist:
+        assert node.xy == assert_pos[node.id]
+
+
+def test_skipped_edge_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  A -> B -> C -> A\n"
+           "  A      -> C\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'Z': (0, 1)}
+    for node in nodelist:
+        assert node.xy == assert_pos[node.id]
+
+
+def test_triple_branched_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  A -> D\n"
+           "  B -> D\n"
+           "  C -> D\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (0, 1), 'C': (0, 2),
+                  'D': (1, 0), 'Z': (0, 3)}
+    for node in nodelist:
+        assert node.xy == assert_pos[node.id]
+
+
+def test_twin_circular_ref_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  A -> B -> A\n"
+           "  A -> C -> A\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'Z': (0, 2)}
+    for node in nodelist:
+        assert node.xy == assert_pos[node.id]
+
+
+def test_self_ref_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  A -> B -> B\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'Z': (0, 1)}
+    for node in nodelist:
+        assert node.xy == assert_pos[node.id]
