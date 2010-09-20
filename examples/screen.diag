@@ -15,7 +15,7 @@ diagram admin {
 
   logout;
 
-  top_page -> foo_index [color = "red", label = "click FOO menu"];
+  top_page -> foo_index [color = "red", dir = none];
   top_page -> bar_detail;
 
   foo_index -> foo_detail;
@@ -25,5 +25,5 @@ diagram admin {
   foo_index -> foo_edit -> foo_edit_confirm -> foo_index;
   foo_index -> foo_delete_confirm -> foo_index;
 
-  bar_detail -> bar_edit -> bar_edit_confirm -> bar_detail;
+  bar_detail -> bar_edit -> bar_edit_confirm -> bar_detail [dir = both];
 }

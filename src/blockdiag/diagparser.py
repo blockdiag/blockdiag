@@ -15,7 +15,8 @@ At the moment, the parser builds only a parse tree, not an abstract syntax tree
   [1]: http://www.graphviz.org/doc/info/lang.html
 '''
 
-import sys, os
+import os
+import sys
 import codecs
 from re import MULTILINE
 from pprint import pformat
@@ -37,6 +38,7 @@ Attr = namedtuple('Attr', 'name value')
 Edge = namedtuple('Edge', 'nodes attrs')
 DefAttrs = namedtuple('DefAttrs', 'object attrs')
 
+
 def tokenize(str):
     'str -> Sequence(Token)'
     specs = [
@@ -47,11 +49,12 @@ def tokenize(str):
         ('Name',    (r'[A-Za-z\200-\377_][A-Za-z\200-\377_0-9]*',)),
         ('Op',      (r'[{};,=\[\]]|(->)|(--)',)),
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),
-        ('String',  (r'"[^"]*"',)), # '\"' escapes are ignored
+        ('String',  (r'"[^"]*"',)),  # '\"' escapes are ignored
     ]
     useless = ['Comment', 'NL', 'Space']
     t = make_tokenizer(specs)
     return [x for x in t(str) if x.type not in useless]
+
 
 def parse(seq):
     'Sequence(Token) -> object'
@@ -66,7 +69,7 @@ def parse(seq):
     make_graph_attr = lambda args: DefAttrs(u'graph', [Attr(*args)])
     make_edge = lambda x, xs, attrs: Edge([x] + xs, attrs)
 
-    node_id = id # + maybe(port)
+    node_id = id  # + maybe(port)
     a_list = (
         id +
         maybe(op_('=') + id) +
@@ -116,10 +119,12 @@ def parse(seq):
 
     return dotfile.parse(seq)
 
+
 def pretty_parse_tree(x):
     'object -> str'
     Pair = namedtuple('Pair', 'first second')
     p = lambda x, y: Pair(x, y)
+
     def kids(x):
         'object -> list(object)'
         if isinstance(x, (Graph, SubGraph)):
@@ -128,10 +133,11 @@ def pretty_parse_tree(x):
             return [p('attrs', x.attrs)]
         elif isinstance(x, Edge):
             return [p('nodes', x.nodes), p('attrs', x.attrs)]
-        elif isinstance (x, Pair):
+        elif isinstance(x, Pair):
             return x.second
         else:
             return []
+
     def show(x):
         'object -> str'
         if isinstance(x, Pair):
@@ -153,9 +159,11 @@ def pretty_parse_tree(x):
             return unicode(x)
     return pretty_tree(x, kids, show)
 
+
 def parse_file(path):
     input = codecs.open(path, 'r', 'utf-8').read()
     return parse(tokenize(input))
+
 
 def main():
     #import logging
@@ -174,4 +182,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
