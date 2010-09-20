@@ -3,13 +3,17 @@ Todos
 
 Functionals
 ------------
-* ...
+* Description (or note) to node.
+* Description to edge.
+* Specify shape of node (rounded rectangle, diamond, end-point, etc.)
+* Grouping nodes (like DOT's subgraph).
+* Sphinx extension.
 
 Environments
 -------------
-* ...
+* font configuration.
 
 Known Issues
 -------------
-* ...
+Not yet.
 
