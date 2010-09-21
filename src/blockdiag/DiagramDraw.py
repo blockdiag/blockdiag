@@ -335,6 +335,19 @@ class DiagramDraw(object):
             if edge.dir in ('forward', 'both'):
                 self.arrow_head(node2.top(), 'down', color=edge.color)
 
+        elif node1.x > node2.x:
+            # draw arrow line
+            lines.add(node1.bottom())
+            lines.add(node1.bottom().x, node2.top().y - span.y / 2)
+            lines.add(node2.top().x, node2.top().y - span.y / 2)
+            lines.add(node2.top())
+
+            # draw arrow head
+            if edge.dir in ('back', 'both'):
+                self.arrow_head(node1.bottom(), 'up', color=edge.color)
+            if edge.dir in ('forward', 'both'):
+                self.arrow_head(node2.top(), 'down', color=edge.color)
+
         else:
             pos = (node1.x, node1.y, node2.x, node2.y)
             raise RuntimeError("Invalid edge: (%d, %d), (%d, %d)" % pos)

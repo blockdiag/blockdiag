@@ -36,6 +36,7 @@ class ScreenEdge:
         self.node1 = node1
         self.node2 = node2
         self.color = None
+        self.noweight = None
         self.dir = 'forward'
 
     def setAttributes(self, attrs):
@@ -49,6 +50,11 @@ class ScreenEdge:
                     self.dir = dir
                 else:
                     self.dir = 'forward'
+            elif attr.name == 'noweight':
+                if value.lower() == 'none':
+                    self.noweight = None
+                else:
+                    self.noweight = 1
             else:
                 raise AttributeError("Unknown edge attribute: %s" % attr.name)
 
@@ -100,10 +106,11 @@ class ScreenNodeBuilder:
 
         uniq = {}
         for edge in self.uniqLinks.values():
-            if node_id == None:
-                uniq[edge.node1.id] = 1
-            elif edge.node1.id == node_id:
-                uniq[edge.node2.id] = 1
+            if edge.noweight == None:
+                if node_id == None:
+                    uniq[edge.node1.id] = 1
+                elif edge.node1.id == node_id:
+                    uniq[edge.node2.id] = 1
         children = uniq.keys()
 
         order = self.nodeOrder
