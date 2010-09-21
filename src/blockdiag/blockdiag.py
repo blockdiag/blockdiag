@@ -62,7 +62,6 @@ class ScreenNodeBuilder:
         self.uniqNodes = {}
         self.nodeOrder = []
         self.uniqLinks = {}
-        self.linkForward = {}
         self.widthRefs = []
         self.heightRefs = []
         self.rows = 0
@@ -91,10 +90,6 @@ class ScreenNodeBuilder:
             edge = ScreenEdge(link[0], link[1])
             self.uniqLinks[link] = edge
 
-            if not id1 in self.linkForward:
-                self.linkForward[id1] = {}
-            self.linkForward[id1][id2] = 1
-
         return edge
 
     def getChildrenIds(self, node):
@@ -103,12 +98,13 @@ class ScreenNodeBuilder:
         else:
             node_id = node
 
-        if node_id in self.linkForward:
-            children = self.linkForward[node_id].keys()
-        elif node == None:
-            children = self.linkForward.keys()
-        else:
-            children = []
+        uniq = {}
+        for edge in self.uniqLinks.values():
+            if node_id == None:
+                uniq[edge.node1.id] = 1
+            elif edge.node1.id == node_id:
+                uniq[edge.node2.id] = 1
+        children = uniq.keys()
 
         order = self.nodeOrder
         children.sort(lambda x, y: cmp(order.index(x), order.index(y)))
@@ -122,14 +118,14 @@ class ScreenNodeBuilder:
         node.xy = (parent.xy[0] + 1, node.xy[1])
         self.widthRefs.append(parent.id)
 
-        if node.id in self.linkForward:
+        if node.id in self.getChildrenIds(None):
             for child_id in self.getChildrenIds(node):
                 childnode = self.getScreenNode(child_id)
                 self.setNodeWidth(node, childnode)
 
     def setNodeHeight(self, node, height):
         node.xy = (node.xy[0], height)
-        if node.id in self.linkForward:
+        if node.id in self.getChildrenIds(None):
             for child_id in self.getChildrenIds(node):
                 if not child_id in self.heightRefs:
                     childnode = self.getScreenNode(child_id)
