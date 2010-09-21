@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- encoding: utf-8 -*-
 
+import math
 import Image
 import ImageFont
 import ImageDraw
@@ -35,7 +36,7 @@ class FoldedTextDraw(ImageDraw.ImageDraw):
         xy = (box[0], box[1])
         for string in lines:
             textsize = self.textsize(string, font=ttfont)
-            x = (size[0] - textsize[0]) / 2
+            x = math.ceil((size[0] - textsize[0]) / 2.0)
 
             draw_xy = (xy[0] + x, xy[1] + height)
             ImageDraw.ImageDraw.text(self, draw_xy, string,
@@ -206,6 +207,7 @@ class DiagramDraw(object):
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.defaultFill = kwargs.get('defaultFill', (255, 255, 255))
+        self.badgeFill = kwargs.get('defaultFill', "pink")
         self.shadow = kwargs.get('shadow', (128, 128, 128))
         self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
         self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
@@ -228,6 +230,14 @@ class DiagramDraw(object):
         box = self.metrix.node(node).coreBox()
         draw = FoldedTextDraw(self.image)
         draw.text(box, node.label, font=ttfont, lineSpacing=self.lineSpacing)
+
+        if node.numbered != None:
+            xy = metrix.topLeft()
+            r = self.metrix.cellSize
+
+            box = [xy.x - r, xy.y - r, xy.x + r, xy.y + r]
+            draw.ellipse(box, outline=self.fill, fill=self.badgeFill)
+            draw.text(box, node.numbered, font=ttfont)
 
     def dropshadow(self, node, **kwargs):
         metrix = self.metrix.node(node)
