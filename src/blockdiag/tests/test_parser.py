@@ -6,7 +6,7 @@ from blockdiag.diagparser import *
 from nose.tools import assert_raises
 
 
-def test_diagparser():
+def test_diagparser_basic():
     # basic digram
     str = ("diagram test {\n"
            "}\n")
@@ -14,19 +14,22 @@ def test_diagparser():
     tree = parse(tokenize(str))
     assert isinstance(tree, Graph)
 
-    # digram without id
+
+def test_diagparser_without_id():
     str = ("diagram {\n"
            "}\n")
     tree = parse(tokenize(str))
     assert isinstance(tree, Graph)
 
-    # digram without diagram and id
+
+def test_diagparser_empty():
     str = ("{\n"
            "}\n")
     tree = parse(tokenize(str))
     assert isinstance(tree, Graph)
 
-    # parsing error for empty string
+
+def test_diagparser_parenthesis_ness():
     def dummy():
         str = ""
         tree = parse(tokenize(str))
