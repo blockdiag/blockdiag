@@ -157,30 +157,26 @@ class ScreenNodeBuilder:
             else:
                 if node_id == None:
                     child.xy = XY(0, child.xy.y)
-                else:
+                elif node.xy.x + 1 > child.xy.x:
                     child.xy = XY(node.xy.x + 1, child.xy.y)
                 self.setNodeWidth(child)
 
-    def setNodeHeight(self, node, height):
-        node.xy = XY(node.xy.x, height)
-        children = self.getChildren(node)
+    def setNodeHeight(self, node):
+        node.xy = XY(node.xy.x, self.nodeHeight)
+        self.heightRefs.append(node.id)
 
-        if len(children) == 0:
-            height += 1
-        else:
-            for child in children:
-                if not child.id in self.heightRefs:
-                    if node.xy.x < child.xy.x:
-                        height = self.setNodeHeight(child, height)
-                    else:
-                        height += 1
+        avail_children = 0
+        for child in self.getChildren(node):
+            if child.id in self.heightRefs:
+                pass
+            elif node.xy.x < child.xy.y:
+                pass
+            else:
+                self.setNodeHeight(child)
+                avail_children += 1
 
-                    self.heightRefs.append(child.id)
-                else:
-                    if not node.id in self.heightRefs:
-                        height += 1
-
-        return height
+        if avail_children == 0:
+            self.nodeHeight += 1
 
     def buildNodeList(self, tree):
         for stmt in tree.stmts:
@@ -196,10 +192,10 @@ class ScreenNodeBuilder:
 
         self.setNodeWidth()
 
-        height = 0
+        self.nodeHeight = 0
         toplevel_nodes = [x for x in self.nodeOrder if x.xy.x == 0]
         for node in toplevel_nodes:
-            height = self.setNodeHeight(node, height)
+            height = self.setNodeHeight(node)
 
 
 def main():
