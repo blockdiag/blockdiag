@@ -118,15 +118,27 @@ class ScreenNodeBuilder:
 
         return children
 
-    def setNodeWidth(self, parent, node):
-        if node.id in self.widthRefs or parent == node:
+    def setNodeWidth(self, node=None):
+        if isinstance(node, ScreenNode):
+            node_id = node.id
+        else:
+            node_id = node
+
+        if node_id in self.widthRefs:
             return
 
-        node.xy = (parent.xy[0] + 1, node.xy[1])
-        self.widthRefs.append(parent.id)
-
-        for child in self.getChildren(node):
-            self.setNodeWidth(node, child)
+        self.widthRefs.append(node_id)
+        for child in self.getChildren(node_id):
+            if node_id == child.id:
+                pass
+            elif child.id in self.widthRefs:
+                pass
+            else:
+                if node_id == None:
+                    child.xy = (0, child.xy[1])
+                else:
+                    child.xy = (node.xy[0] + 1, child.xy[1])
+                self.setNodeWidth(child)
 
     def setNodeHeight(self, node, height):
         node.xy = (node.xy[0], height)
@@ -161,9 +173,7 @@ class ScreenNodeBuilder:
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))
 
-        for parent in self.getChildren(None):
-            for child in self.getChildren(parent):
-                self.setNodeWidth(parent, child)
+        self.setNodeWidth()
 
         height = 0
         for node_id in self.nodeOrder:
