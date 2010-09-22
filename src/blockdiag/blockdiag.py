@@ -125,15 +125,18 @@ class ScreenNodeBuilder:
         node.xy = (parent.xy[0] + 1, node.xy[1])
         self.widthRefs.append(parent.id)
 
-        if node.id in self.getChildrenIds(None):
-            for child_id in self.getChildrenIds(node):
-                childnode = self.getScreenNode(child_id)
-                self.setNodeWidth(node, childnode)
+        for child_id in self.getChildrenIds(node):
+            childnode = self.getScreenNode(child_id)
+            self.setNodeWidth(node, childnode)
 
     def setNodeHeight(self, node, height):
         node.xy = (node.xy[0], height)
-        if node.id in self.getChildrenIds(None):
-            for child_id in self.getChildrenIds(node):
+        children = self.getChildrenIds(node)
+
+        if len(children) == 0:
+            height += 1
+        else:
+            for child_id in children:
                 if not child_id in self.heightRefs:
                     childnode = self.getScreenNode(child_id)
 
@@ -146,8 +149,6 @@ class ScreenNodeBuilder:
                 else:
                     if not node.id in self.heightRefs:
                         height += 1
-        else:
-            height += 1
 
         return height
 
