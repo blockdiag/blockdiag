@@ -4,6 +4,7 @@
 import os
 import sys
 import re
+import uuid
 from optparse import OptionParser
 import Image
 import ImageFont
@@ -24,9 +25,21 @@ class ScreenNode:
 
     def __init__(self, id):
         self.id = id
-        self.label = re.sub('^"?(.*?)"?$', '\\1', id)
+        if id:
+            self.label = re.sub('^"?(.*?)"?$', '\\1', id)
+        else:
+            self.label = ''
         self.xy = XY(0, 0)
         self.color = None
+        self.group = None
+        self.width = 1
+        self.height = 1
+        self.drawable = 1
+
+    def copyAttributes(self, other):
+        self.label = other.label
+        self.xy = other.xy
+        self.color = other.color
 
     def setAttributes(self, attrs):
         for attr in attrs:
@@ -44,9 +57,15 @@ class ScreenEdge:
     def __init__(self, node1, node2):
         self.node1 = node1
         self.node2 = node2
+        self.group = None
         self.color = None
         self.noweight = None
         self.dir = 'forward'
+
+    def copyAttributes(self, other):
+        self.color = other.color
+        self.noweight = other.noweight
+        self.dir = other.dir
 
     def setAttributes(self, attrs):
         for attr in attrs:
@@ -66,6 +85,17 @@ class ScreenEdge:
                     self.noweight = 1
             else:
                 raise AttributeError("Unknown edge attribute: %s" % attr.name)
+
+
+class ScreenGroup(ScreenNode):
+    def __init__(self, id):
+        ScreenNode.__init__(self, id)
+        self.label = ''
+        self.nodes = []
+        self.edges = []
+        self.width = 1
+        self.height = 1
+        self.drawable = 0
 
 
 class ScreenNodeBuilder:
@@ -95,6 +125,20 @@ class ScreenNodeBuilder:
             self.nodeOrder.append(node)
 
         return node
+
+    def getScreenGroup(self, id):
+        if id is None:
+            # generate new id
+            id = 'ScreenGroup_%s' % uuid.uuid1()
+
+        if id in self.uniqNodes:
+            group = self.uniqNodes[id]
+        else:
+            group = ScreenGroup(id)
+            self.uniqNodes[id] = group
+            self.nodeOrder.append(group)
+
+        return group
 
     def getScreenEdge(self, id1, id2):
         link = (self.getScreenNode(id1), self.getScreenNode(id2))
@@ -151,13 +195,15 @@ class ScreenNodeBuilder:
 
             if is_ref and self.isCircularRef(node_id, child):
                 pass
+            elif child.group:
+                pass
             elif is_ref and node_id == None:
                 pass
             else:
                 if node_id == None:
                     child.xy = XY(0, child.xy.y)
                 elif node.xy.x + 1 > child.xy.x:
-                    child.xy = XY(node.xy.x + 1, child.xy.y)
+                    child.xy = XY(node.xy.x + node.width, child.xy.y)
                 self.setNodeWidth(child)
 
     def setNodeHeight(self, node):
@@ -175,7 +221,9 @@ class ScreenNodeBuilder:
                 avail_children += 1
 
         if avail_children == 0:
-            self.nodeHeight += 1
+            self.nodeHeight += node.height
+        else:
+            self.nodeHeight += node.height - 1
 
     def buildNodeList(self, tree):
         for stmt in tree.stmts:
@@ -186,6 +234,28 @@ class ScreenNodeBuilder:
                 while len(stmt.nodes) >= 2:
                     edge = self.getScreenEdge(stmt.nodes.pop(0), stmt.nodes[0])
                     edge.setAttributes(stmt.attrs)
+            elif isinstance(stmt, diagparser.SubGraph):
+                nodes, edges = ScreenNodeBuilder.build(stmt)
+                group = self.getScreenGroup(stmt.id)
+                group.width = max(x.xy.x for x in nodes) + 1
+                group.height = max(x.xy.y for x in nodes) + 1
+
+                for node in nodes:
+                    o = self.getScreenNode(node.id)
+                    if o.group:
+                        msg = "ScreenNode could not belong to two groups"
+                        raise RuntimeError(msg)
+                    o.copyAttributes(node)
+                    o.group = group
+
+                    group.nodes.append(o)
+
+                for edge in edges:
+                    o = self.getScreenEdge(edge.node1.id, edge.node2.id)
+                    o.copyAttributes(edge)
+                    o.group = group
+
+                    group.edges.append(o)
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))
 
@@ -194,7 +264,13 @@ class ScreenNodeBuilder:
         self.nodeHeight = 0
         toplevel_nodes = [x for x in self.nodeOrder if x.xy.x == 0]
         for node in toplevel_nodes:
-            height = self.setNodeHeight(node)
+            if not node.group:
+                height = self.setNodeHeight(node)
+
+        for node in self.nodeOrder:
+            if isinstance(node, ScreenGroup):
+                for child in node.nodes:
+                    child.xy = (node.xy.x + child.xy.x, node.xy.y + child.xy.y)
 
 
 def main():
