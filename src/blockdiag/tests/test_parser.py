@@ -285,6 +285,23 @@ def test_belongs_to_two_groups_diagram():
     assert_raises(RuntimeError, dummy)
 
 
+def test_nested_groups_diagram():
+    def dummy():
+        str = ("diagram {\n"
+               "  group {\n"
+               "    A\n"
+               "    group {\n"
+               "      B\n"
+               "    }\n"
+               "  }\n"
+               "  Z\n"
+               "}\n")
+        tree = parse(tokenize(str))
+        nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_raises(NoParseError, dummy)
+
+
 def test_simple_group_diagram():
     str = ("diagram {\n"
            "  group {\n"
