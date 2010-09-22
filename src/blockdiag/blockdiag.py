@@ -27,7 +27,6 @@ class ScreenNode:
         self.label = re.sub('^"?(.*?)"?$', '\\1', id)
         self.xy = XY(0, 0)
         self.color = None
-        self.children = None
 
     def setAttributes(self, attrs):
         for attr in attrs:
