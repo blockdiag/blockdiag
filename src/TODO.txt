@@ -6,7 +6,6 @@ Functionals
 * Description (or note) to node.
 * Description to edge.
 * Specify shape of node (rounded rectangle, diamond, end-point, etc.)
-* Grouping nodes (like DOT's subgraph).
 * Sphinx extension.
 * Export diagram as vector data.
 * Support other block diagram structure.
