@@ -158,8 +158,13 @@ class ScreenNodeBuilder:
         for edge in self.uniqLinks.values():
             if edge.noweight == None:
                 if node_id == None:
-                    uniq[edge.node1] = 1
+                    if edge.node1.group:
+                        uniq[edge.node1.group] = 1
+                    else:
+                        uniq[edge.node1] = 1
                 elif edge.node1.id == node_id:
+                    uniq[edge.node2] = 1
+                elif edge.node1.group and edge.node1.group.id == node_id:
                     uniq[edge.node2] = 1
         children = uniq.keys()
 
