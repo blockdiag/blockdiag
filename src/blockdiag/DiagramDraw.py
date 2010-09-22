@@ -105,6 +105,9 @@ class DiagramMetrix:
     def node(self, node):
         return NodeMetrix(node, self)
 
+    def group(self, group):
+        return GroupMetrix(group, self)
+
     def pageSize(self, nodelist):
         x = 0
         y = 0
@@ -189,6 +192,33 @@ class NodeMetrix:
     left = leftCenter
 
 
+class GroupMetrix:
+    def __init__(self, group, metrix):
+        self.metrix = metrix
+        self.width = group.width
+        self.height = group.height
+
+        if group:
+            (self.x, self.y) = self._topLeft(group.xy[0], group.xy[1], metrix)
+
+    @classmethod
+    def _topLeft(klass, x, y, m):
+        x = m.pageMargin + x * (m.nodeWidth + m.spanWidth) - m.spanWidth / 8
+        y = m.pageMargin + y * (m.nodeHeight + m.spanHeight) - m.spanHeight / 8
+
+        return XY(x, y)
+
+    def topLeft(self):
+        return XY(self.x, self.y)
+
+    def bottomRight(self):
+        m = self.metrix
+        x, y = self.topLeft()
+        x += self.width * m.nodeWidth + (self.width - 0.75) * m.spanWidth
+        y += self.height * m.nodeHeight + (self.height - 0.75) * m.spanHeight
+        return XY(x, y)
+
+
 class xylist(list):
     def add(self, x, y=None):
         if y:
@@ -206,6 +236,7 @@ class DiagramDraw(object):
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.defaultFill = kwargs.get('defaultFill', (255, 255, 255))
+        self.group = kwargs.get('group', (243, 152, 0))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
         self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
         self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
@@ -242,6 +273,11 @@ class DiagramDraw(object):
         self.image = Image.new(
             'RGB', self.getPaperSize(nodelist), (256, 256, 256))
         self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
+
+        for node in (x for x in nodelist if x.drawable == 0):  # == ScreenGroup
+            metrix = self.metrix.group(node)
+            box = [metrix.topLeft(), metrix.bottomRight()]
+            self.imageDraw.rectangle(box, fill=self.group)
 
         for node in (x for x in nodelist if x.drawable):
             self.dropshadow(node, **kwargs)
