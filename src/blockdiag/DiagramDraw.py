@@ -249,7 +249,7 @@ class DiagramDraw(object):
             self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
 
         self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
-        for node in (x for x in nodelist if x.drawable == 1):
+        for node in (x for x in nodelist if x.drawable):
             self.screennode(node, **kwargs)
 
     def arrow_head(self, xy, direct, **kwargs):
