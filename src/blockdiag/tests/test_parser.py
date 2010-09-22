@@ -278,3 +278,21 @@ def test_flowable_node_diagram():
                   'Z': (0, 1)}
     for node in nodelist:
         assert node.xy == assert_pos[node.id]
+
+
+def test_simple_group_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  group {\n"
+           "    A -> B\n"
+           "    A -> C\n"
+           "  }\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
+                  'Z': (0, 2)}
+    for node in (x for x in nodelist if x.drawable):
+        assert node.xy == assert_pos[node.id]
