@@ -280,6 +280,24 @@ def test_flowable_node_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_belongs_to_two_groups_diagram():
+    # empty diagram
+    def dummy():
+        str = ("diagram {\n"
+               "  group {\n"
+               "    A\n"
+               "  }\n"
+               "  group {\n"
+               "    A\n"
+               "  }\n"
+               "  Z\n"
+               "}\n")
+        tree = parse(tokenize(str))
+        nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_raises(RuntimeError, dummy)
+
+
 def test_simple_group_diagram():
     # empty diagram
     str = ("diagram {\n"
@@ -316,7 +334,7 @@ def test_group_and_node_diagram():
         assert node.xy == assert_pos[node.id]
 
 
-def test_group_and_node_diagram():
+def test_group_and_childnode_diagram():
     # empty diagram
     str = ("diagram {\n"
            "  group {\n"
@@ -331,6 +349,24 @@ def test_group_and_node_diagram():
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (2, 1), 'Z': (0, 2)}
+    for node in (x for x in nodelist if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
+def test_group_and_parentnode_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  group {\n"
+           "    B -> C\n"
+           "  }\n"
+           "  A -> B\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'Z': (0, 1)}
     for node in (x for x in nodelist if x.drawable):
         assert node.xy == assert_pos[node.id]
 
@@ -376,5 +412,64 @@ def test_large_group_and_two_node_diagram():
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
                   'D': (1, 2), 'E': (1, 3), 'F': (2, 0),
                   'G': (2, 1), 'Z': (0, 4)}
+    for node in (x for x in nodelist if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
+def test_multiple_groups_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  group {\n"
+           "    A;  B;  C;  D\n"
+           "  }\n"
+           "  group {\n"
+           "    E;  F;  G\n"
+           "  }\n"
+           "  group {\n"
+           "    H;  I\n"
+           "  }\n"
+           "  group {\n"
+           "    J\n"
+           "  }\n"
+           "  A -> E -> H -> J\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (0, 1), 'C': (0, 2),
+                  'D': (0, 3), 'E': (1, 0), 'F': (1, 1),
+                  'G': (1, 2), 'H': (2, 0), 'I': (2, 1),
+                  'J': (3, 0), 'Z': (0, 4)}
+    for node in (x for x in nodelist if x.drawable):
+        print node.id, node.xy
+        assert node.xy == assert_pos[node.id]
+
+
+def test_reversed_multiple_groups_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  group {\n"
+           "    A;  B;  C;  D\n"
+           "  }\n"
+           "  group {\n"
+           "    E;  F;  G\n"
+           "  }\n"
+           "  group {\n"
+           "    H;  I\n"
+           "  }\n"
+           "  group {\n"
+           "    J\n"
+           "  }\n"
+           "  J -> H -> E -> A\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (3, 0), 'B': (3, 1), 'C': (3, 2),
+                  'D': (3, 3), 'E': (2, 0), 'F': (2, 1),
+                  'G': (2, 2), 'H': (1, 0), 'I': (1, 1),
+                  'J': (0, 0), 'Z': (0, 4)}
     for node in (x for x in nodelist if x.drawable):
         assert node.xy == assert_pos[node.id]
