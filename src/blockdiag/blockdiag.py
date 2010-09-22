@@ -83,7 +83,7 @@ class ScreenNodeBuilder:
         else:
             node = ScreenNode(id)
             self.uniqNodes[id] = node
-            self.nodeOrder.append(id)
+            self.nodeOrder.append(node)
 
         return node
 
@@ -114,7 +114,7 @@ class ScreenNodeBuilder:
         children = uniq.keys()
 
         order = self.nodeOrder
-        children.sort(lambda x, y: cmp(order.index(x.id), order.index(y.id)))
+        children.sort(lambda x, y: cmp(order.index(x), order.index(y)))
 
         return children
 
@@ -176,10 +176,9 @@ class ScreenNodeBuilder:
         self.setNodeWidth()
 
         height = 0
-        for node_id in self.nodeOrder:
-            node = self.uniqNodes[node_id]
-            if node.xy[0] == 0:
-                height = self.setNodeHeight(node, height)
+        toplevel_nodes = [x for x in self.nodeOrder if x.xy[0] == 0]
+        for node in toplevel_nodes:
+            height = self.setNodeHeight(node, height)
 
 
 def main():
