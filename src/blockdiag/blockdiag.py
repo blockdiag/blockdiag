@@ -13,6 +13,15 @@ from DiagramDraw import XY
 
 
 class ScreenNode:
+    @classmethod
+    def getId(klass, node):
+        try:
+            node_id = node.id
+        except AttributeError:
+            node_id = node
+
+        return node_id
+
     def __init__(self, id):
         self.id = id
         self.label = re.sub('^"?(.*?)"?$', '\\1', id)
@@ -100,10 +109,7 @@ class ScreenNodeBuilder:
         return edge
 
     def getChildren(self, node):
-        if isinstance(node, ScreenNode):
-            node_id = node.id
-        else:
-            node_id = node
+        node_id = ScreenNode.getId(node)
 
         uniq = {}
         for edge in self.uniqLinks.values():
@@ -120,10 +126,7 @@ class ScreenNodeBuilder:
         return children
 
     def isCircularRef(self, node1, node2):
-        if isinstance(node1, ScreenNode):
-            node1_id = node1.id
-        else:
-            node1_id = node1
+        node1_id = ScreenNode.getId(node1)
 
         referenced = False
         children = [node2]
@@ -141,10 +144,7 @@ class ScreenNodeBuilder:
         return referenced
 
     def setNodeWidth(self, node=None):
-        if isinstance(node, ScreenNode):
-            node_id = node.id
-        else:
-            node_id = node
+        node_id = ScreenNode.getId(node)
 
         self.widthRefs.append(node_id)
         for child in self.getChildren(node_id):
