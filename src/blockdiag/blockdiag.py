@@ -97,6 +97,11 @@ class ScreenGroup(ScreenNode):
         self.height = 1
         self.drawable = 0
 
+    def setSize(self, nodes):
+        if len(nodes) > 0:
+            self.width = max(x.xy.x for x in nodes) + 1
+            self.height = max(x.xy.y for x in nodes) + 1
+
 
 class ScreenNodeBuilder:
     @classmethod
@@ -232,6 +237,31 @@ class ScreenNodeBuilder:
 
         return height
 
+    def buildNodeGroup(self, tree):
+        nodes, edges = ScreenNodeBuilder.build(tree)
+        if not nodes:
+            return
+
+        group = self.getScreenGroup(tree.id)
+        group.setSize(nodes)
+
+        for node in nodes:
+            n = self.getScreenNode(node.id)
+            if n.group:
+                msg = "ScreenNode could not belong to two groups"
+                raise RuntimeError(msg)
+            n.copyAttributes(node)
+            n.group = group
+
+            group.nodes.append(n)
+
+        for edge in edges:
+            e = self.getScreenEdge(edge.node1.id, edge.node2.id)
+            e.copyAttributes(edge)
+            e.group = group
+
+            group.edges.append(e)
+
     def buildNodeList(self, tree):
         for stmt in tree.stmts:
             if isinstance(stmt, diagparser.Node):
@@ -242,27 +272,7 @@ class ScreenNodeBuilder:
                     edge = self.getScreenEdge(stmt.nodes.pop(0), stmt.nodes[0])
                     edge.setAttributes(stmt.attrs)
             elif isinstance(stmt, diagparser.SubGraph):
-                nodes, edges = ScreenNodeBuilder.build(stmt)
-                group = self.getScreenGroup(stmt.id)
-                group.width = max(x.xy.x for x in nodes) + 1
-                group.height = max(x.xy.y for x in nodes) + 1
-
-                for node in nodes:
-                    o = self.getScreenNode(node.id)
-                    if o.group:
-                        msg = "ScreenNode could not belong to two groups"
-                        raise RuntimeError(msg)
-                    o.copyAttributes(node)
-                    o.group = group
-
-                    group.nodes.append(o)
-
-                for edge in edges:
-                    o = self.getScreenEdge(edge.node1.id, edge.node2.id)
-                    o.copyAttributes(edge)
-                    o.group = group
-
-                    group.edges.append(o)
+                self.buildNodeGroup(stmt)
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))
 

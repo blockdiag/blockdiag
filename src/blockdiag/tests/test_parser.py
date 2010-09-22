@@ -288,6 +288,20 @@ def test_belongs_to_two_groups_diagram():
 def test_simple_group_diagram():
     str = ("diagram {\n"
            "  group {\n"
+           "  }\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'Z': (0, 0)}
+    for node in (x for x in nodelist if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
+def test_simple_group_diagram():
+    str = ("diagram {\n"
+           "  group {\n"
            "    A -> B\n"
            "    A -> C\n"
            "  }\n"
