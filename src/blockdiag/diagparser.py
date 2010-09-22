@@ -87,9 +87,9 @@ def parse(seq):
     # We use a forward_decl becaue of circular definitions like (stmt_list ->
     # stmt -> subgraph -> stmt_list)
     subgraph = forward_decl()
-    edge_rhs = skip(op('->') | op('--')) + (subgraph | node_id)
+    edge_rhs = skip(op('->') | op('--')) + node_id
     edge_stmt = (
-        (subgraph | node_id) +
+        node_id +
         oneplus(edge_rhs) +
         attr_list
         >> unarg(make_edge))
