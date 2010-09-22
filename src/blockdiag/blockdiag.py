@@ -239,12 +239,20 @@ class ScreenNodeBuilder:
 
         return height
 
-    def buildNodeGroup(self, tree):
+    def buildNodeGroup(self, group, tree):
+        nodes = [x.id for x in tree.stmts if isinstance(x, diagparser.Node)]
+        for edge in self.uniqLinks.values():
+            node1_id = edge.node1.id
+            node2_id = edge.node2.id
+
+            if node1_id in nodes and node2_id in nodes:
+                edge = diagparser.Edge([node1_id, node2_id], [])
+                tree.stmts.append(edge)
+
         nodes, edges = ScreenNodeBuilder.build(tree)
         if not nodes:
             return
 
-        group = self.getScreenGroup(tree.id)
         group.setSize(nodes)
 
         for node in nodes:
@@ -265,6 +273,7 @@ class ScreenNodeBuilder:
             group.edges.append(e)
 
     def buildNodeList(self, tree):
+        nodeGroups = {}
         for stmt in tree.stmts:
             if isinstance(stmt, diagparser.Node):
                 node = self.getScreenNode(stmt.id)
@@ -274,9 +283,13 @@ class ScreenNodeBuilder:
                     edge = self.getScreenEdge(stmt.nodes.pop(0), stmt.nodes[0])
                     edge.setAttributes(stmt.attrs)
             elif isinstance(stmt, diagparser.SubGraph):
-                self.buildNodeGroup(stmt)
+                group = self.getScreenGroup(stmt.id)
+                nodeGroups[group] = stmt
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))
+
+        for group in nodeGroups:
+            self.buildNodeGroup(group, nodeGroups[group])
 
         self.setNodeWidth()
 
