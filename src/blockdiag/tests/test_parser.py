@@ -37,7 +37,6 @@ def test_diagparser_parenthesis_ness():
 
 
 def test_empty_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "}\n")
     tree = parse(tokenize(str))
@@ -48,7 +47,6 @@ def test_empty_diagram():
 
 
 def test_single_node_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  A;\n"
            "}\n")
@@ -62,7 +60,6 @@ def test_single_node_diagram():
 
 
 def test_single_edge_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  A -> B;\n"
            "}\n")
@@ -82,7 +79,6 @@ def test_single_edge_diagram():
 
 
 def test_two_edges_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  A -> B -> C;\n"
            "}\n")
@@ -98,7 +94,6 @@ def test_two_edges_diagram():
 
 
 def test_node_attribute():
-    # empty diagram
     str = ("diagram {\n"
            "  foo [label = bar, color = red];\n"
            "  bar\n"
@@ -118,7 +113,6 @@ def test_node_attribute():
 
 
 def test_edge_attribute():
-    # empty diagram
     str = ("diagram {\n"
            "  A -> B -> C [color = red]\n"
            "  D -> E [dir = none]\n"
@@ -141,7 +135,6 @@ def test_edge_attribute():
 
 
 def test_branched_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  A -> B -> C\n"
            "  A -> D -> E\n"
@@ -157,7 +150,6 @@ def test_branched_diagram():
 
 
 def test_circular_ref_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  A -> B -> C -> A\n"
            "       B -> D\n"
@@ -173,7 +165,6 @@ def test_circular_ref_diagram():
 
 
 def test_skipped_edge_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  A -> B -> C\n"
            "  A      -> C\n"
@@ -189,7 +180,6 @@ def test_skipped_edge_diagram():
 
 
 def test_circular_skipped_edge_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  A -> B -> C -> A\n"
            "  A      -> C\n"
@@ -204,7 +194,6 @@ def test_circular_skipped_edge_diagram():
 
 
 def test_triple_branched_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  A -> D\n"
            "  B -> D\n"
@@ -221,7 +210,6 @@ def test_triple_branched_diagram():
 
 
 def test_twin_circular_ref_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  A -> B -> A\n"
            "  A -> C -> A\n"
@@ -236,7 +224,6 @@ def test_twin_circular_ref_diagram():
 
 
 def test_self_ref_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  A -> B -> B\n"
            "  Z\n"
@@ -250,7 +237,6 @@ def test_self_ref_diagram():
 
 
 def test_noweight_edge_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  A -> B -> C\n"
            "       B -> D -> E[noweight = 1]\n"
@@ -268,7 +254,6 @@ def test_noweight_edge_diagram():
 
 
 def test_flowable_node_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  B -> C\n"
            "  A -> B\n"
@@ -284,7 +269,6 @@ def test_flowable_node_diagram():
 
 
 def test_belongs_to_two_groups_diagram():
-    # empty diagram
     def dummy():
         str = ("diagram {\n"
                "  group {\n"
@@ -302,7 +286,6 @@ def test_belongs_to_two_groups_diagram():
 
 
 def test_simple_group_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  group {\n"
            "    A -> B\n"
@@ -320,7 +303,6 @@ def test_simple_group_diagram():
 
 
 def test_group_and_node_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  group {\n"
            "    A -> B\n"
@@ -338,7 +320,6 @@ def test_group_and_node_diagram():
 
 
 def test_group_and_childnode_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  group {\n"
            "    A -> B\n"
@@ -357,7 +338,6 @@ def test_group_and_childnode_diagram():
 
 
 def test_group_and_parentnode_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  group {\n"
            "    B -> C\n"
@@ -375,7 +355,6 @@ def test_group_and_parentnode_diagram():
 
 
 def test_large_group_and_node_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  group {\n"
            "    A -> B\n"
@@ -397,7 +376,6 @@ def test_large_group_and_node_diagram():
 
 
 def test_large_group_and_two_node_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  group {\n"
            "    A -> B\n"
@@ -420,7 +398,6 @@ def test_large_group_and_two_node_diagram():
 
 
 def test_multiple_groups_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  group {\n"
            "    A;  B;  C;  D\n"
@@ -450,7 +427,6 @@ def test_multiple_groups_diagram():
 
 
 def test_reversed_multiple_groups_diagram():
-    # empty diagram
     str = ("diagram {\n"
            "  group {\n"
            "    A;  B;  C;  D\n"
