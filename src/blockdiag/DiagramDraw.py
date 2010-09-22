@@ -89,12 +89,12 @@ class FoldedTextDraw(ImageDraw.ImageDraw):
 class DiagramMetrix:
     def __init__(self, **kwargs):
         self.cellSize = kwargs.get('cellSize', 8)
-        self.pageMargin = kwargs.get('pageMargin', 2)
+        self.pageMargin = kwargs.get('pageMargin', 3)
         self.nodePadding = kwargs.get('nodePadding', 4)
         self.nodeColumns = kwargs.get('nodeColumns', 16)
-        self.nodeRows = kwargs.get('nodeRows', 4)
+        self.nodeRows = kwargs.get('nodeRows', 5)
         self.spanColumns = kwargs.get('spanColumns', 8)
-        self.spanRows = kwargs.get('spanRows', 3)
+        self.spanRows = kwargs.get('spanRows', 5)
 
         self.pageMargin = self.cellSize * self.pageMargin
         self.nodeWidth = self.cellSize * self.nodeColumns
@@ -204,7 +204,7 @@ class GroupMetrix:
     @classmethod
     def _topLeft(klass, x, y, m):
         x = m.pageMargin + x * (m.nodeWidth + m.spanWidth) - m.spanWidth / 8
-        y = m.pageMargin + y * (m.nodeHeight + m.spanHeight) - m.spanHeight / 8
+        y = m.pageMargin + y * (m.nodeHeight + m.spanHeight) - m.spanHeight / 4
 
         return XY(x, y)
 
@@ -215,7 +215,7 @@ class GroupMetrix:
         m = self.metrix
         x, y = self.topLeft()
         x += self.width * m.nodeWidth + (self.width - 0.75) * m.spanWidth
-        y += self.height * m.nodeHeight + (self.height - 0.75) * m.spanHeight
+        y += self.height * m.nodeHeight + (self.height - 0.5) * m.spanHeight
         return XY(x, y)
 
 
