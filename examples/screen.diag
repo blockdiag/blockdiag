@@ -1,17 +1,21 @@
 diagram admin {
   top_page [label = "Top page", color = "pink"];
 
-  foo_index [label = "List of FOOs"];
-  foo_detail [label = "Detail FOO"];
-  foo_add [label = "Add FOO"];
-  foo_add_confirm [label = "Add FOO (confirm)"];
-  foo_edit [label = "Edit FOO"];
-  foo_edit_confirm [label = "Edit FOO (confirm)"];
-  foo_delete_confirm [label = "Delete FOO (confirm)"];
+  group foo {
+    foo_index [label = "List of FOOs"];
+    foo_detail [label = "Detail FOO"];
+    foo_add [label = "Add FOO"];
+    foo_add_confirm [label = "Add FOO (confirm)"];
+    foo_edit [label = "Edit FOO"];
+    foo_edit_confirm [label = "Edit FOO (confirm)"];
+    foo_delete_confirm [label = "Delete FOO (confirm)"];
+  }
 
-  bar_detail [label = "Detail of BAR"];
-  bar_edit [label = "Edit BAR"];
-  bar_edit_confirm [label = "Edit BAR (confirm)"];
+  group bar {
+    bar_detail [label = "Detail of BAR"];
+    bar_edit [label = "Edit BAR"];
+    bar_edit_confirm [label = "Edit BAR (confirm)"];
+  }
 
   logout;
 
