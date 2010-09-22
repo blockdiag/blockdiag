@@ -243,13 +243,13 @@ class DiagramDraw(object):
             'RGB', self.getPaperSize(nodelist), (256, 256, 256))
         self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
 
-        for node in nodelist:
+        for node in (x for x in nodelist if x.drawable):
             self.dropshadow(node, **kwargs)
         for i in range(15):
             self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
 
         self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
-        for node in nodelist:
+        for node in (x for x in nodelist if x.drawable == 1):
             self.screennode(node, **kwargs)
 
     def arrow_head(self, xy, direct, **kwargs):

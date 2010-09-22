@@ -102,7 +102,7 @@ def parse(seq):
     )
     stmt_list = many(stmt + skip(maybe(op(';'))))
     subgraph.define(
-        skip(n('subgraph')) +
+        skip(n('group')) +
         maybe(id) +
         op_('{') +
         stmt_list +
