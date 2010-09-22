@@ -302,6 +302,34 @@ def test_nested_groups_diagram():
     assert_raises(NoParseError, dummy)
 
 
+def test_node_follows_group_diagram():
+    def dummy():
+        str = ("diagram {\n"
+               "  A -> group {\n"
+               "    B\n"
+               "  }\n"
+               "  Z\n"
+               "}\n")
+        tree = parse(tokenize(str))
+        nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_raises(NoParseError, dummy)
+
+
+def test_group_follows_node_diagram():
+    def dummy():
+        str = ("diagram {\n"
+               "  A -> group {\n"
+               "    B\n"
+               "  }\n"
+               "  Z\n"
+               "}\n")
+        tree = parse(tokenize(str))
+        nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_raises(NoParseError, dummy)
+
+
 def test_simple_group_diagram():
     str = ("diagram {\n"
            "  group {\n"
@@ -346,6 +374,23 @@ def test_group_and_node_diagram():
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'Z': (0, 1)}
+    for node in (x for x in nodelist if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
+def test_group_id_and_node_id_are_not_conflicted_diagram():
+    str = ("diagram {\n"
+           "  A -> B\n"
+           "  group B {\n"
+           "    C -> D\n"
+           "  }\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (0, 1),
+                  'D': (1, 1), 'Z': (0, 2)}
     for node in (x for x in nodelist if x.drawable):
         assert node.xy == assert_pos[node.id]
 
