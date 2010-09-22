@@ -134,7 +134,9 @@ class ScreenNodeBuilder:
     def getScreenGroup(self, id):
         if id is None:
             # generate new id
-            id = 'ScreenGroup_%s' % uuid.uuid1()
+            id = 'ScreenGroup %s' % uuid.uuid1()
+        else:
+            id = 'ScreenGroup %s' % id
 
         if id in self.uniqNodes:
             group = self.uniqNodes[id]
