@@ -502,6 +502,25 @@ def test_multiple_groups_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_group_as_node_decorator_diagram():
+    str = ("diagram {\n"
+           "  A -> B -> C\n"
+           "  A -> B -> D\n"
+           "  A -> E\n"
+           "  group {\n"
+           "    A; B; D; E\n"
+           "  }\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (3, 0),
+                  'D': (2, 0), 'E': (1, 1), 'Z': (0, 2)}
+    for node in (x for x in nodelist if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
 def test_reversed_multiple_groups_diagram():
     str = ("diagram {\n"
            "  group {\n"
