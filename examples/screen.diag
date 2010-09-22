@@ -1,9 +1,4 @@
 diagram admin {
-  group {
-    group {
-    }
-  }
-
   top_page [label = "Top page", color = "pink"];
 
   foo_index [label = "List of FOOs"];
