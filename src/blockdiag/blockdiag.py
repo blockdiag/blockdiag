@@ -98,7 +98,7 @@ class ScreenNodeBuilder:
 
         return edge
 
-    def getChildrenIds(self, node):
+    def getChildren(self, node):
         if isinstance(node, ScreenNode):
             node_id = node.id
         else:
@@ -108,13 +108,13 @@ class ScreenNodeBuilder:
         for edge in self.uniqLinks.values():
             if edge.noweight == None:
                 if node_id == None:
-                    uniq[edge.node1.id] = 1
+                    uniq[edge.node1] = 1
                 elif edge.node1.id == node_id:
-                    uniq[edge.node2.id] = 1
+                    uniq[edge.node2] = 1
         children = uniq.keys()
 
         order = self.nodeOrder
-        children.sort(lambda x, y: cmp(order.index(x), order.index(y)))
+        children.sort(lambda x, y: cmp(order.index(x.id), order.index(y.id)))
 
         return children
 
@@ -125,27 +125,24 @@ class ScreenNodeBuilder:
         node.xy = (parent.xy[0] + 1, node.xy[1])
         self.widthRefs.append(parent.id)
 
-        for child_id in self.getChildrenIds(node):
-            childnode = self.getScreenNode(child_id)
-            self.setNodeWidth(node, childnode)
+        for child in self.getChildren(node):
+            self.setNodeWidth(node, child)
 
     def setNodeHeight(self, node, height):
         node.xy = (node.xy[0], height)
-        children = self.getChildrenIds(node)
+        children = self.getChildren(node)
 
         if len(children) == 0:
             height += 1
         else:
-            for child_id in children:
-                if not child_id in self.heightRefs:
-                    childnode = self.getScreenNode(child_id)
-
-                    if node.xy[0] < childnode.xy[0]:
-                        height = self.setNodeHeight(childnode, height)
+            for child in children:
+                if not child.id in self.heightRefs:
+                    if node.xy[0] < child.xy[0]:
+                        height = self.setNodeHeight(child, height)
                     else:
                         height += 1
 
-                    self.heightRefs.append(child_id)
+                    self.heightRefs.append(child.id)
                 else:
                     if not node.id in self.heightRefs:
                         height += 1
@@ -164,11 +161,9 @@ class ScreenNodeBuilder:
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))
 
-        for parent_id in self.getChildrenIds(None):
-            parent = self.getScreenNode(parent_id)
-            for child_id in self.getChildrenIds(parent):
-                childnode = self.getScreenNode(child_id)
-                self.setNodeWidth(parent, childnode)
+        for parent in self.getChildren(None):
+            for child in self.getChildren(parent):
+                self.setNodeWidth(parent, child)
 
         height = 0
         for node_id in self.nodeOrder:
