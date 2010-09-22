@@ -297,9 +297,9 @@ class DiagramDraw(object):
                 lines.add(node1.right().x + span.x / 2, node1.right().y)
                 lines.add(node1.right().x + span.x / 2,
                           node1.bottomRight().y + span.y / 2)
-                lines.add(node2.left().x - span.x / 2,
+                lines.add(node2.left().x - span.x / 4,
                           node2.bottomRight().y + span.y / 2)
-                lines.add(node2.left().x - span.x / 2, node2.left().y)
+                lines.add(node2.left().x - span.x / 4, node2.left().y)
 
             lines.add(node2.left())
 
