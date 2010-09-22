@@ -333,3 +333,48 @@ def test_group_and_node_diagram():
                   'D': (2, 1), 'Z': (0, 2)}
     for node in (x for x in nodelist if x.drawable):
         assert node.xy == assert_pos[node.id]
+
+
+def test_large_group_and_node_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  group {\n"
+           "    A -> B\n"
+           "    A -> C\n"
+           "    A -> D\n"
+           "    A -> E\n"
+           "  }\n"
+           "  B -> F\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
+                  'D': (1, 2), 'E': (1, 3), 'F': (2, 0),
+                  'Z': (0, 4)}
+    for node in (x for x in nodelist if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
+def test_large_group_and_two_node_diagram():
+    # empty diagram
+    str = ("diagram {\n"
+           "  group {\n"
+           "    A -> B\n"
+           "    A -> C\n"
+           "    A -> D\n"
+           "    A -> E\n"
+           "  }\n"
+           "  B -> F\n"
+           "  C -> G\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
+                  'D': (1, 2), 'E': (1, 3), 'F': (2, 0),
+                  'G': (2, 1), 'Z': (0, 4)}
+    for node in (x for x in nodelist if x.drawable):
+        assert node.xy == assert_pos[node.id]
