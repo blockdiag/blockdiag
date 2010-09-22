@@ -221,10 +221,10 @@ class GroupMetrix:
 
 class xylist(list):
     def add(self, x, y=None):
-        if y:
-            self.append((x, y))
-        else:
+        if y is None:
             self.append(x)
+        else:
+            self.append(XY(x, y))
 
 
 class DiagramDraw(object):
@@ -362,7 +362,6 @@ class DiagramDraw(object):
             lines.add(node1.right().x + span.x / 8, node1.right().y)
             lines.add(node1.right().x + span.x / 8, node2.top().y - span.y / 2)
             lines.add(node2.top().x, node2.top().y - span.y / 2)
-
             lines.add(node2.top())
 
             # draw arrow head
