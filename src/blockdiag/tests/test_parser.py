@@ -172,6 +172,22 @@ def test_circular_ref_diagram():
 def test_skipped_edge_diagram():
     # empty diagram
     str = ("diagram {\n"
+           "  A -> B -> C\n"
+           "  A      -> C\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'Z': (0, 1)}
+    for node in nodelist:
+        assert node.xy == assert_pos[node.id]
+
+
+def test_circular_skipped_edge_diagram():
+    # empty diagram
+    str = ("diagram {\n"
            "  A -> B -> C -> A\n"
            "  A      -> C\n"
            "  Z\n"
