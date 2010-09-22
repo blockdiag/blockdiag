@@ -119,20 +119,40 @@ class ScreenNodeBuilder:
 
         return children
 
+    def isCircularRef(self, node1, node2):
+        if isinstance(node1, ScreenNode):
+            node1_id = node1.id
+        else:
+            node1_id = node1
+
+        referenced = False
+        children = [node2]
+        uniqNodes = {}
+        for child in children:
+            if node1_id == child.id:
+                referenced = True
+                break
+
+            for node in self.getChildren(child):
+                if not node in uniqNodes:
+                    children.append(node)
+                    uniqNodes[node] = 1
+
+        return referenced
+
     def setNodeWidth(self, node=None):
         if isinstance(node, ScreenNode):
             node_id = node.id
         else:
             node_id = node
 
-        if node_id in self.widthRefs:
-            return
-
         self.widthRefs.append(node_id)
         for child in self.getChildren(node_id):
-            if node_id == child.id:
+            is_ref = child.id in self.widthRefs
+
+            if is_ref and self.isCircularRef(node_id, child):
                 pass
-            elif child.id in self.widthRefs:
+            elif is_ref and node_id == None:
                 pass
             else:
                 if node_id == None:
