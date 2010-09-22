@@ -9,13 +9,14 @@ import Image
 import ImageFont
 import DiagramDraw
 import diagparser
+from DiagramDraw import XY
 
 
 class ScreenNode:
     def __init__(self, id):
         self.id = id
         self.label = re.sub('^"?(.*?)"?$', '\\1', id)
-        self.xy = (0, 0)
+        self.xy = XY(0, 0)
         self.color = None
         self.children = None
 
@@ -135,13 +136,13 @@ class ScreenNodeBuilder:
                 pass
             else:
                 if node_id == None:
-                    child.xy = (0, child.xy[1])
+                    child.xy = XY(0, child.xy.y)
                 else:
-                    child.xy = (node.xy[0] + 1, child.xy[1])
+                    child.xy = XY(node.xy.x + 1, child.xy.y)
                 self.setNodeWidth(child)
 
     def setNodeHeight(self, node, height):
-        node.xy = (node.xy[0], height)
+        node.xy = XY(node.xy.x, height)
         children = self.getChildren(node)
 
         if len(children) == 0:
@@ -149,7 +150,7 @@ class ScreenNodeBuilder:
         else:
             for child in children:
                 if not child.id in self.heightRefs:
-                    if node.xy[0] < child.xy[0]:
+                    if node.xy.x < child.xy.x:
                         height = self.setNodeHeight(child, height)
                     else:
                         height += 1
@@ -176,7 +177,7 @@ class ScreenNodeBuilder:
         self.setNodeWidth()
 
         height = 0
-        toplevel_nodes = [x for x in self.nodeOrder if x.xy[0] == 0]
+        toplevel_nodes = [x for x in self.nodeOrder if x.xy.x == 0]
         for node in toplevel_nodes:
             height = self.setNodeHeight(node, height)
 
