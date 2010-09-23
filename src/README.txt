@@ -108,4 +108,9 @@ History
 ---
 * first release
 
+0.2
+---
+* Update layout engine.
+* Support group { ... } sentence for create Node-Groups.
+* Support numbered badge on node (cf. A [numbered = 5])
 
