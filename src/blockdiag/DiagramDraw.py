@@ -95,6 +95,8 @@ class DiagramMetrix:
         self.nodeRows = kwargs.get('nodeRows', 5)
         self.spanColumns = kwargs.get('spanColumns', 8)
         self.spanRows = kwargs.get('spanRows', 5)
+        self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
+        self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
 
         self.pageMargin = self.cellSize * self.pageMargin
         self.nodeWidth = self.cellSize * self.nodeColumns
@@ -149,6 +151,13 @@ class NodeMetrix:
 
         return XY(x, y)
 
+    def box(self):
+        m = self.metrix
+        topLeft = self.topLeft()
+        bottomRight = self.bottomRight()
+
+        return (topLeft.x, topLeft.y, bottomRight.x, bottomRight.y)
+
     def marginBox(self):
         m = self.metrix
         topLeft = self.topLeft()
@@ -163,12 +172,21 @@ class NodeMetrix:
         m = self.metrix
         topLeft = self.topLeft()
         bottomRight = self.bottomRight()
-        x, y = self.topLeft()
 
         return (topLeft.x + m.nodePadding,
                 topLeft.y + m.nodePadding,
                 bottomRight.x - m.nodePadding * 2,
                 bottomRight.y - m.nodePadding * 2)
+
+    def shadowBox(self):
+        m = self.metrix
+        topLeft = self.topLeft()
+        bottomRight = self.bottomRight()
+
+        return (topLeft.x + m.shadowOffsetX,
+                topLeft.y + m.shadowOffsetY,
+                bottomRight.x + m.shadowOffsetX,
+                bottomRight.y + m.shadowOffsetY)
 
     def nodeWidth(self):
         m = self.metrix
@@ -234,8 +252,6 @@ class DiagramDraw(object):
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.defaultFill = kwargs.get('defaultFill', (255, 255, 255))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
-        self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
-        self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
 
     def getPaperSize(self, root):
         return self.metrix.pageSize(root)
@@ -244,26 +260,20 @@ class DiagramDraw(object):
         ttfont = kwargs.get('font')
 
         metrix = self.metrix.node(node)
-        box = [metrix.topLeft(), metrix.bottomRight()]
         if node.color:
-            self.imageDraw.rectangle(box, outline=self.fill,
+            self.imageDraw.rectangle(metrix.box(), outline=self.fill,
                                      fill=node.color)
         else:
-            self.imageDraw.rectangle(box, outline=self.fill,
+            self.imageDraw.rectangle(metrix.box(), outline=self.fill,
                                      fill=self.defaultFill)
 
-        box = self.metrix.node(node).coreBox()
         draw = FoldedTextDraw(self.image)
-        draw.text(box, node.label, font=ttfont, lineSpacing=self.lineSpacing)
+        draw.text(metrix.coreBox(), node.label,
+                  font=ttfont, lineSpacing=self.lineSpacing)
 
     def dropshadow(self, node, **kwargs):
         metrix = self.metrix.node(node)
-
-        def shift(original):
-            return XY(original.x + self.shadowOffsetX,
-                      original.y + self.shadowOffsetY)
-        box = [shift(metrix.topLeft()), shift(metrix.bottomRight())]
-        self.imageDraw.rectangle(box, fill=self.shadow)
+        self.imageDraw.rectangle(metrix.shadowBox(), fill=self.shadow)
 
     def screennodelist(self, nodelist, **kwargs):
         self.image = Image.new(
