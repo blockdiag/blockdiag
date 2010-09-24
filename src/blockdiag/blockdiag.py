@@ -30,7 +30,7 @@ class ScreenNode:
         else:
             self.label = ''
         self.xy = XY(0, 0)
-        self.color = None
+        self.color = (0, 0, 0)
         self.group = None
         self.width = 1
         self.height = 1

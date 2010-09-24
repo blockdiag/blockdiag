@@ -250,7 +250,6 @@ class DiagramDraw(object):
         self.metrix = DiagramMetrix(**kwargs)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
-        self.defaultFill = kwargs.get('defaultFill', (255, 255, 255))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
 
     def getPaperSize(self, root):
@@ -260,12 +259,8 @@ class DiagramDraw(object):
         ttfont = kwargs.get('font')
 
         metrix = self.metrix.node(node)
-        if node.color:
-            self.imageDraw.rectangle(metrix.box(), outline=self.fill,
-                                     fill=node.color)
-        else:
-            self.imageDraw.rectangle(metrix.box(), outline=self.fill,
-                                     fill=self.defaultFill)
+        self.imageDraw.rectangle(metrix.box(), outline=self.fill,
+                                 fill=node.color)
 
         draw = FoldedTextDraw(self.image)
         draw.text(metrix.coreBox(), node.label,
