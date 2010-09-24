@@ -236,7 +236,6 @@ class DiagramDraw(object):
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.defaultFill = kwargs.get('defaultFill', (255, 255, 255))
-        self.group = kwargs.get('group', (243, 152, 0))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
         self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
         self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
@@ -277,7 +276,7 @@ class DiagramDraw(object):
         for node in (x for x in nodelist if x.drawable == 0):  # == ScreenGroup
             metrix = self.metrix.group(node)
             box = [metrix.topLeft(), metrix.bottomRight()]
-            self.imageDraw.rectangle(box, fill=self.group)
+            self.imageDraw.rectangle(box, fill=node.color)
 
         for node in (x for x in nodelist if x.drawable):
             self.dropshadow(node, **kwargs)
