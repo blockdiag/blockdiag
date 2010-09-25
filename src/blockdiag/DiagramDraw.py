@@ -305,6 +305,57 @@ class EdgeMetrix:
 
         return head
 
+    def shaft(self):
+        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+
+        node1 = self.metrix.node(self.edge.node1)
+        node2 = self.metrix.node(self.edge.node2)
+
+        shaft = xylist()
+        if node1.x < node2.x and node1.y == node2.y:  # right, right(skipped)
+            shaft.add(node1.right())
+
+            if self.edge.node1.xy[0] + 1 < self.edge.node2.xy[0]:
+                shaft.add(node1.right().x + span.x / 2, node1.right().y)
+                shaft.add(node1.right().x + span.x / 2,
+                          node1.bottomRight().y + span.y / 2)
+                shaft.add(node2.left().x - span.x / 4,
+                          node2.bottomRight().y + span.y / 2)
+                shaft.add(node2.left().x - span.x / 4, node2.left().y)
+
+            shaft.add(node2.left())
+
+        elif node1.x < node2.x:  # right-up, right-down
+            shaft.add(node1.right())
+            shaft.add(node1.right().x + span.x / 2, node1.right().y)
+            shaft.add(node1.right().x + span.x / 2, node1.right().y)
+            shaft.add(node1.right().x + span.x / 2, node2.left().y)
+            shaft.add(node2.left().x - span.x / 2, node2.left().y)
+            shaft.add(node2.left())
+
+        elif node1.x == node2.x and node1.y > node2.y:  # up
+            shaft.add(node1.top())
+            shaft.add(node2.bottom())
+
+        elif node1.y >= node2.y:  # left, left-up
+            shaft.add(node1.right())
+            shaft.add(node1.right().x + span.x / 8, node1.right().y)
+            shaft.add(node1.right().x + span.x / 8, node2.top().y - span.y / 2)
+            shaft.add(node2.top().x, node2.top().y - span.y / 2)
+            shaft.add(node2.top())
+
+        elif node1.x > node2.x:  # left-down
+            shaft.add(node1.bottom())
+            shaft.add(node1.bottom().x, node2.top().y - span.y / 2)
+            shaft.add(node2.top().x, node2.top().y - span.y / 2)
+            shaft.add(node2.top())
+
+        else:  # down and misc.
+            pos = (node1.x, node1.y, node2.x, node2.y)
+            raise RuntimeError("Invalid edge: (%d, %d), (%d, %d)" % pos)
+
+        return shaft
+
 
 class xylist(list):
     def add(self, x, y=None):
@@ -376,63 +427,16 @@ class DiagramDraw(object):
             self.screennode(node, **kwargs)
 
     def edge(self, edge):
-        lines = xylist()
-        head = xylist()
-        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
-
-        node1 = self.metrix.node(edge.node1)
-        node2 = self.metrix.node(edge.node2)
-
-        if node1.x < node2.x and node1.y == node2.y:  # right, right(skipped)
-            lines.add(node1.right())
-
-            if edge.node1.xy[0] + 1 < edge.node2.xy[0]:
-                lines.add(node1.right().x + span.x / 2, node1.right().y)
-                lines.add(node1.right().x + span.x / 2,
-                          node1.bottomRight().y + span.y / 2)
-                lines.add(node2.left().x - span.x / 4,
-                          node2.bottomRight().y + span.y / 2)
-                lines.add(node2.left().x - span.x / 4, node2.left().y)
-
-            lines.add(node2.left())
-
-        elif node1.x < node2.x:  # right-up, right-down
-            lines.add(node1.right())
-            lines.add(node1.right().x + span.x / 2, node1.right().y)
-            lines.add(node1.right().x + span.x / 2, node1.right().y)
-            lines.add(node1.right().x + span.x / 2, node2.left().y)
-            lines.add(node2.left().x - span.x / 2, node2.left().y)
-            lines.add(node2.left())
-
-        elif node1.x == node2.x and node1.y > node2.y:  # up
-            lines.add(node1.top())
-            lines.add(node2.bottom())
-
-        elif node1.y >= node2.y:  # left, left-up
-            lines.add(node1.right())
-            lines.add(node1.right().x + span.x / 8, node1.right().y)
-            lines.add(node1.right().x + span.x / 8, node2.top().y - span.y / 2)
-            lines.add(node2.top().x, node2.top().y - span.y / 2)
-            lines.add(node2.top())
-
-        elif node1.x > node2.x:  # left-down
-            lines.add(node1.bottom())
-            lines.add(node1.bottom().x, node2.top().y - span.y / 2)
-            lines.add(node2.top().x, node2.top().y - span.y / 2)
-            lines.add(node2.top())
-
-        else:  # down and misc.
-            pos = (node1.x, node1.y, node2.x, node2.y)
-            raise RuntimeError("Invalid edge: (%d, %d), (%d, %d)" % pos)
+        metrix = self.metrix.edge(edge)
 
         if edge.color:
             color = edge.color
         else:
             color = self.fill
 
-        self.imageDraw.line(lines, fill=color)
+        shaft = metrix.shaft()
+        self.imageDraw.line(shaft, fill=color)
 
-        metrix = self.metrix.edge(edge)
         for head in metrix.heads():
             self.imageDraw.polygon(head, outline=color, fill=color)
 
