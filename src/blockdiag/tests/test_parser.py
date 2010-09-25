@@ -108,7 +108,7 @@ def test_node_attribute():
 
     assert nodelist[1].id == 'bar'
     assert nodelist[1].label == 'bar'
-    assert nodelist[1].color == (0, 0, 0)
+    assert nodelist[1].color == (255, 255, 255)
     assert nodelist[1].xy == (0, 1)
 
 

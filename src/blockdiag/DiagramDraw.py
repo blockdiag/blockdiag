@@ -95,6 +95,8 @@ class DiagramMetrix:
         self.nodeRows = kwargs.get('nodeRows', 5)
         self.spanColumns = kwargs.get('spanColumns', 8)
         self.spanRows = kwargs.get('spanRows', 5)
+        self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
+        self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
 
         self.pageMargin = self.cellSize * self.pageMargin
         self.nodeWidth = self.cellSize * self.nodeColumns
@@ -106,7 +108,7 @@ class DiagramMetrix:
         return NodeMetrix(node, self)
 
     def group(self, group):
-        return GroupMetrix(group, self)
+        return NodeMetrix(group, self)
 
     def edge(self, edge):
         return EdgeMetrix(edge, self)
@@ -136,7 +138,14 @@ class NodeMetrix:
         self.metrix = metrix
 
         if node:
+            self.width = node.width
+            self.height = node.height
             (self.x, self.y) = self._topLeft(node.xy[0], node.xy[1], metrix)
+        else:
+            self.width = 1
+            self.height = 1
+            self.x = 0
+            self.y = 0
 
     @classmethod
     def _topLeft(klass, x, y, metrix):
@@ -145,81 +154,87 @@ class NodeMetrix:
 
         return XY(x, y)
 
+    def box(self):
+        m = self.metrix
+        topLeft = self.topLeft()
+        bottomRight = self.bottomRight()
+
+        return (topLeft.x, topLeft.y, bottomRight.x, bottomRight.y)
+
+    def marginBox(self):
+        m = self.metrix
+        topLeft = self.topLeft()
+        bottomRight = self.bottomRight()
+
+        return (topLeft.x - m.spanWidth / 8,
+                topLeft.y - m.spanHeight / 4,
+                bottomRight.x + m.spanWidth / 4,
+                bottomRight.y + m.spanHeight / 2)
+
     def coreBox(self):
         m = self.metrix
-        x, y = self.topLeft()
+        topLeft = self.topLeft()
+        bottomRight = self.bottomRight()
 
-        return (x + m.nodePadding,
-                y + m.nodePadding,
-                x + m.nodeWidth - m.nodePadding * 2,
-                y + m.nodeHeight - m.nodePadding * 2)
+        return (topLeft.x + m.nodePadding,
+                topLeft.y + m.nodePadding,
+                bottomRight.x - m.nodePadding * 2,
+                bottomRight.y - m.nodePadding * 2)
+
+    def shadowBox(self):
+        m = self.metrix
+        topLeft = self.topLeft()
+        bottomRight = self.bottomRight()
+
+        return (topLeft.x + m.shadowOffsetX,
+                topLeft.y + m.shadowOffsetY,
+                bottomRight.x + m.shadowOffsetX,
+                bottomRight.y + m.shadowOffsetY)
+
+    def nodeWidth(self):
+        m = self.metrix
+        return self.width * m.nodeWidth + (self.width - 1) * m.spanWidth
+
+    def nodeHeight(self):
+        m = self.metrix
+        return self.height * m.nodeHeight + (self.height - 1) * m.spanHeight
 
     def topLeft(self):
         return XY(self.x, self.y)
 
     def topCenter(self):
         x, y = self.topLeft()
-        return XY(x + self.metrix.nodeWidth / 2, y)
+        return XY(x + self.nodeWidth() / 2, y)
 
     def topRight(self):
         x, y = self.topLeft()
-        return XY(x + self.metrix.nodeWidth, y)
+        return XY(x + self.nodeWidth(), y)
 
     def bottomLeft(self):
         x, y = self.topLeft()
-        return XY(x, y + self.metrix.nodeHeight)
+        return XY(x, y + self.nodeHeight())
 
     def bottomCenter(self):
-        m = self.metrix
         x, y = self.topLeft()
-        return XY(x + m.nodeWidth / 2, y + m.nodeHeight)
+        return XY(x + self.nodeWidth() / 2, y + self.nodeHeight())
 
     def bottomRight(self):
-        m = self.metrix
         x, y = self.topLeft()
-        return XY(x + m.nodeWidth, y + m.nodeHeight)
+        return XY(x + self.nodeWidth(), y + self.nodeHeight())
 
     def leftCenter(self):
         x, y = self.topLeft()
-        return XY(x, y + self.metrix.nodeHeight / 2)
+        return XY(x, y + self.nodeHeight() / 2)
 
     def rightCenter(self):
-        m = self.metrix
         x, y = self.topLeft()
-        return XY(x + m.nodeWidth, y + m.nodeHeight / 2)
+        return XY(x + self.nodeWidth(), y + self.nodeHeight() / 2)
 
     # method aliases
     top = topCenter
     bottom = bottomCenter
     right = rightCenter
     left = leftCenter
-
-
-class GroupMetrix:
-    def __init__(self, group, metrix):
-        self.metrix = metrix
-        self.width = group.width
-        self.height = group.height
-
-        if group:
-            (self.x, self.y) = self._topLeft(group.xy[0], group.xy[1], metrix)
-
-    @classmethod
-    def _topLeft(klass, x, y, m):
-        x = m.pageMargin + x * (m.nodeWidth + m.spanWidth) - m.spanWidth / 8
-        y = m.pageMargin + y * (m.nodeHeight + m.spanHeight) - m.spanHeight / 4
-
-        return XY(x, y)
-
-    def topLeft(self):
-        return XY(self.x, self.y)
-
-    def bottomRight(self):
-        m = self.metrix
-        x, y = self.topLeft()
-        x += self.width * m.nodeWidth + (self.width - 0.75) * m.spanWidth
-        y += self.height * m.nodeHeight + (self.height - 0.5) * m.spanHeight
-        return XY(x, y)
 
 
 class EdgeMetrix:
@@ -376,8 +391,6 @@ class DiagramDraw(object):
         self.defaultFill = kwargs.get('defaultFill', (255, 255, 255))
         self.group = kwargs.get('group', (243, 152, 0))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
-        self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
-        self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
 
     def getPaperSize(self, root):
         return self.metrix.pageSize(root)
@@ -400,12 +413,7 @@ class DiagramDraw(object):
 
     def dropshadow(self, node, **kwargs):
         metrix = self.metrix.node(node)
-
-        def shift(original):
-            return XY(original.x + self.shadowOffsetX,
-                      original.y + self.shadowOffsetY)
-        box = [shift(metrix.topLeft()), shift(metrix.bottomRight())]
-        self.imageDraw.rectangle(box, fill=self.shadow)
+        self.imageDraw.rectangle(metrix.shadowBox(), fill=self.shadow)
 
     def screennodelist(self, nodelist, **kwargs):
         self.image = Image.new(
@@ -413,9 +421,8 @@ class DiagramDraw(object):
         self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
 
         for node in (x for x in nodelist if x.drawable == 0):  # == ScreenGroup
-            metrix = self.metrix.group(node)
-            box = [metrix.topLeft(), metrix.bottomRight()]
-            self.imageDraw.rectangle(box, fill=self.group)
+            metrix = self.metrix.node(node)
+            self.imageDraw.rectangle(metrix.marginBox(), fill=node.color)
 
         for node in (x for x in nodelist if x.drawable):
             self.dropshadow(node, **kwargs)
