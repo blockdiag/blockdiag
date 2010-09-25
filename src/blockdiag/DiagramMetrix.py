@@ -262,7 +262,7 @@ class EdgeMetrix:
         if node1.x < node2.x and node1.y == node2.y:  # right, right(skipped)
             shaft.add(node1.right())
 
-            if self.edge.node1.xy[0] + 1 < self.edge.node2.xy[0]:
+            if self.edge.skipped:
                 shaft.add(node1.right().x + span.x / 2, node1.right().y)
                 shaft.add(node1.right().x + span.x / 2,
                           node1.bottomRight().y + span.y / 2)
