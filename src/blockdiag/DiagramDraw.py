@@ -88,40 +88,49 @@ class DiagramDraw(object):
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
 
-    def getPaperSize(self, root):
-        return self.metrix.pageSize(root)
+    def draw(self, screen, **kwargs):
+        ttfont = kwargs.get('font')
+        self.screen = screen
+
+        paperSize = self.metrix.pageSize(screen.nodes)
+        self.image = Image.new('RGB', paperSize, (256, 256, 256))
+        self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
+
+        self._drawBackground()
+
+        for node in (x for x in self.screen.nodes if x.drawable):
+            self.screennode(node, **kwargs)
+
+        for edge in self.screen.edges:
+            self.edge(edge)
+
+    def _drawBackground(self):
+        # Draw node groups.
+        for node in (x for x in self.screen.nodes if x.drawable == 0):
+            metrix = self.metrix.node(node)
+            self.imageDraw.rectangle(metrix.marginBox(), fill=node.color)
+
+        # Drop node shadows.
+        for node in (x for x in self.screen.nodes if x.drawable):
+            metrix = self.metrix.node(node)
+            self.imageDraw.rectangle(metrix.shadowBox(), fill=self.shadow)
+
+        # Smoothing back-ground images.
+        for i in range(15):
+            self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
+
+        self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def screennode(self, node, **kwargs):
         ttfont = kwargs.get('font')
 
         m = self.metrix.node(node)
+        print m.box()
         self.imageDraw.rectangle(m.box(), outline=self.fill, fill=node.color)
 
         draw = FoldedTextDraw(self.image)
         draw.text(m.coreBox(), node.label,
                   font=ttfont, lineSpacing=self.lineSpacing)
-
-    def dropshadow(self, node, **kwargs):
-        metrix = self.metrix.node(node)
-        self.imageDraw.rectangle(metrix.shadowBox(), fill=self.shadow)
-
-    def screennodelist(self, nodelist, **kwargs):
-        self.image = Image.new(
-            'RGB', self.getPaperSize(nodelist), (256, 256, 256))
-        self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
-
-        for node in (x for x in nodelist if x.drawable == 0):  # == ScreenGroup
-            metrix = self.metrix.node(node)
-            self.imageDraw.rectangle(metrix.marginBox(), fill=node.color)
-
-        for node in (x for x in nodelist if x.drawable):
-            self.dropshadow(node, **kwargs)
-        for i in range(15):
-            self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
-
-        self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
-        for node in (x for x in nodelist if x.drawable):
-            self.screennode(node, **kwargs)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
@@ -136,10 +145,6 @@ class DiagramDraw(object):
 
         for head in metrix.heads():
             self.imageDraw.polygon(head, outline=color, fill=color)
-
-    def edgelist(self, edgelist, **kwargs):
-        for edge in edgelist:
-            self.edge(edge)
 
     def save(self, filename, format):
         self.image.save(filename, format)
