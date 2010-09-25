@@ -125,7 +125,6 @@ class DiagramDraw(object):
         ttfont = kwargs.get('font')
 
         m = self.metrix.node(node)
-        print m.box()
         self.imageDraw.rectangle(m.box(), outline=self.fill, fill=node.color)
 
         draw = FoldedTextDraw(self.image)
