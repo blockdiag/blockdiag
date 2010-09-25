@@ -98,7 +98,8 @@ class DiagramDraw(object):
         self.imageDraw.rectangle(m.box(), outline=self.fill, fill=node.color)
 
         draw = FoldedTextDraw(self.image)
-        draw.text(m.coreBox(), node.label, font=ttfont, lineSpacing=self.lineSpacing)
+        draw.text(m.coreBox(), node.label,
+                  font=ttfont, lineSpacing=self.lineSpacing)
 
     def dropshadow(self, node, **kwargs):
         metrix = self.metrix.node(node)
