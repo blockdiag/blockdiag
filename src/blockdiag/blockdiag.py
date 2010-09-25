@@ -13,6 +13,12 @@ import diagparser
 from DiagramMetrix import XY
 
 
+class Screen:
+    def __init__(self, nodes, edges):
+        self.nodes = nodes
+        self.edges = edges
+
+
 class ScreenNode:
     @classmethod
     def getId(klass, node):
@@ -120,7 +126,9 @@ class ScreenNodeBuilder:
     def _build(self, tree):
         self.buildNodeList(tree)
 
-        return (self.uniqNodes.values(), self.uniqLinks.values())
+        nodes = self.uniqNodes.values()
+        edges = self.uniqLinks.values()
+        return Screen(nodes, edges)
 
     def getScreenNode(self, id):
         if id in self.uniqNodes:
@@ -250,13 +258,13 @@ class ScreenNodeBuilder:
                 edge = diagparser.Edge([node1_id, node2_id], [])
                 tree.stmts.append(edge)
 
-        nodes, edges = ScreenNodeBuilder.build(tree)
-        if not nodes:
+        screen = ScreenNodeBuilder.build(tree)
+        if not screen.nodes:
             return
 
-        group.setSize(nodes)
+        group.setSize(screen.nodes)
 
-        for node in nodes:
+        for node in screen.nodes:
             n = self.getScreenNode(node.id)
             if n.group:
                 msg = "ScreenNode could not belong to two groups"
@@ -266,7 +274,7 @@ class ScreenNodeBuilder:
 
             group.nodes.append(n)
 
-        for edge in edges:
+        for edge in screen.edges:
             e = self.getScreenEdge(edge.node1.id, edge.node2.id)
             e.copyAttributes(edge)
             e.group = group
@@ -340,10 +348,10 @@ def main():
 
     try:
         tree = diagparser.parse_file(infile)
-        nodelist, edgelist = ScreenNodeBuilder.build(tree)
+        screen = ScreenNodeBuilder.build(tree)
 
-        draw.screennodelist(nodelist, font=ttfont)
-        draw.edgelist(edgelist)
+        draw.screennodelist(screen.nodes, font=ttfont)
+        draw.edgelist(screen.edges)
     except Exception, e:
         import traceback
         traceback.print_exc()
