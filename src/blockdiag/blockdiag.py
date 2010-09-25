@@ -350,8 +350,7 @@ def main():
         tree = diagparser.parse_file(infile)
         screen = ScreenNodeBuilder.build(tree)
 
-        draw.screennodelist(screen.nodes, font=ttfont)
-        draw.edgelist(screen.edges)
+        draw.draw(screen, font=ttfont)
     except Exception, e:
         import traceback
         traceback.print_exc()
