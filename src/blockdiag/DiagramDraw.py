@@ -96,6 +96,7 @@ class DiagramDraw(object):
         self.image = Image.new('RGB', paperSize, (256, 256, 256))
         self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
 
+        self._prepareEdges()
         self._drawBackground()
 
         for node in (x for x in self.screen.nodes if x.drawable):
@@ -103,6 +104,17 @@ class DiagramDraw(object):
 
         for edge in self.screen.edges:
             self.edge(edge)
+
+    def _prepareEdges(self):
+        for edge in self.screen.edges:
+            m = self.metrix.edge(edge)
+            if m.direction() == 'right':
+                r = range(edge.node1.xy[0] + 1, edge.node2.xy[0])
+                for x in r:
+                    xy = (x, edge.node1.xy[1])
+                    nodes = [x for x in self.screen.nodes if x.xy == xy]
+                    if len(nodes) > 0:
+                        edge.skipped = 1
 
     def _drawBackground(self):
         # Draw node groups.
