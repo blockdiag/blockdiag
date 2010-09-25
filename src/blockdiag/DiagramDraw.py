@@ -86,7 +86,6 @@ class DiagramDraw(object):
         self.metrix = DiagramMetrix(**kwargs)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
-        self.group = kwargs.get('group', (243, 152, 0))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
 
     def getPaperSize(self, root):
