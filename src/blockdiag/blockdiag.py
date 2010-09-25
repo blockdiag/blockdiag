@@ -93,6 +93,7 @@ class ScreenGroup(ScreenNode):
         self.label = ''
         self.nodes = []
         self.edges = []
+        self.color = (243, 152, 0)
         self.width = 1
         self.height = 1
         self.drawable = 0

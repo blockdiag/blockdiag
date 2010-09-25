@@ -104,13 +104,16 @@ Requirements
 History
 =======
 
-0.1
----
-* first release
+0.3 (unreleased)
+------------------
 
-0.2
----
+0.2 (2010-09-23)
+------------------
 * Update layout engine.
 * Support group { ... } sentence for create Node-Groups.
 * Support numbered badge on node (cf. A [numbered = 5])
+
+0.1 (2010-09-20)
+-----------------
+* first release
 
