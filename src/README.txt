@@ -110,8 +110,10 @@ Python Software Foundation License.
 History
 =======
 
-0.3 (unreleased)
+0.2.1 (2010-09-25)
 ------------------
+* Fix bugs.
+* Fix package style.
 
 0.2 (2010-09-23)
 ------------------
