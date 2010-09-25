@@ -108,6 +108,9 @@ class DiagramMetrix:
     def group(self, group):
         return GroupMetrix(group, self)
 
+    def edge(self, edge):
+        return EdgeMetrix(edge, self)
+
     def pageSize(self, nodelist):
         x = 0
         y = 0
@@ -219,6 +222,90 @@ class GroupMetrix:
         return XY(x, y)
 
 
+class EdgeMetrix:
+    def __init__(self, edge, metrix):
+        self.metrix = metrix
+        self.edge = edge
+
+    def direction(self):
+        node1 = self.metrix.node(self.edge.node1)
+        node2 = self.metrix.node(self.edge.node2)
+
+        if node1.x > node2.x:
+            if node1.y < node2.y:
+                dir = 'left-up'
+            elif node1.y == node2.y:
+                dir = 'left'
+            else:
+                dir = 'left-down'
+        elif node1.x == node2.y:
+            if node1.y < node2.y:
+                dir = 'up'
+            elif node1.y == node2.y:
+                dir = 'same'
+            else:
+                dir = 'down'
+        else:
+            if node1.y < node2.y:
+                dir = 'right-up'
+            elif node1.y == node2.y:
+                dir = 'right'
+            else:
+                dir = 'right-down'
+
+        return dir
+
+    def heads(self):
+        heads = []
+        dir = self.direction()
+
+        if self.edge.dir in ('back', 'both'):
+            if dir in ('left-up', 'left', 'right-up', 'right', 'right-down'):
+                heads.append(self._head(self.edge.node1, 'left'))
+            elif dir == 'up':
+                heads.append(self._head(self.edge.node1, 'down'))
+            elif dir in ('left-down'):
+                heads.append(self._head(self.edge.node1, 'up'))
+
+        if self.edge.dir in ('forward', 'both'):
+            if dir in ('right-up', 'right', 'right-down'):
+                heads.append(self._head(self.edge.node2, 'right'))
+            elif dir == 'up':
+                heads.append(self._head(self.edge.node2, 'up'))
+            elif dir in ('left-up', 'left', 'left-down'):
+                heads.append(self._head(self.edge.node2, 'down'))
+
+        return heads
+
+    def _head(self, node, direct):
+        head = xylist()
+        cell = self.metrix.cellSize
+        node = self.metrix.node(node)
+
+        if direct == 'up':
+            xy = node.bottom()
+            head.add(xy)
+            head.add(xy.x - cell / 2, xy.y + cell)
+            head.add(xy.x + cell / 2, xy.y + cell)
+        elif direct == 'down':
+            xy = node.top()
+            head.add(xy)
+            head.add(xy.x - cell / 2, xy.y - cell)
+            head.add(xy.x + cell / 2, xy.y - cell)
+        elif direct == 'right':
+            xy = node.left()
+            head.add(xy)
+            head.add(xy.x - cell, xy.y - cell / 2)
+            head.add(xy.x - cell, xy.y + cell / 2)
+        elif direct == 'left':
+            xy = node.right()
+            head.add(xy)
+            head.add(xy.x + cell, xy.y - cell / 2)
+            head.add(xy.x + cell, xy.y + cell / 2)
+
+        return head
+
+
 class xylist(list):
     def add(self, x, y=None):
         if y is None:
@@ -288,30 +375,6 @@ class DiagramDraw(object):
         for node in (x for x in nodelist if x.drawable):
             self.screennode(node, **kwargs)
 
-    def arrow_head(self, xy, direct, **kwargs):
-        head = xylist(xy)
-        cell = self.metrix.cellSize
-
-        if direct == 'up':
-            head.add(xy.x - cell / 2, xy.y + cell)
-            head.add(xy.x + cell / 2, xy.y + cell)
-        elif direct == 'down':
-            head.add(xy.x - cell / 2, xy.y - cell)
-            head.add(xy.x + cell / 2, xy.y - cell)
-        elif direct == 'right':
-            head.add(xy.x - cell, xy.y - cell / 2)
-            head.add(xy.x - cell, xy.y + cell / 2)
-        elif direct == 'left':
-            head.add(xy.x + cell, xy.y - cell / 2)
-            head.add(xy.x + cell, xy.y + cell / 2)
-
-        if kwargs.get('color'):
-            color = kwargs.get('color')
-        else:
-            color = self.fill
-
-        self.imageDraw.polygon(head, outline=color, fill=color)
-
     def edge(self, edge):
         lines = xylist()
         head = xylist()
@@ -321,7 +384,6 @@ class DiagramDraw(object):
         node2 = self.metrix.node(edge.node2)
 
         if node1.x < node2.x and node1.y == node2.y:  # right, right(skipped)
-            # draw arrow line
             lines.add(node1.right())
 
             if edge.node1.xy[0] + 1 < edge.node2.xy[0]:
@@ -334,14 +396,7 @@ class DiagramDraw(object):
 
             lines.add(node2.left())
 
-            # draw arrow head
-            if edge.dir in ('back', 'both'):
-                self.arrow_head(node1.right(), 'left', color=edge.color)
-            if edge.dir in ('forward', 'both'):
-                self.arrow_head(node2.left(), 'right', color=edge.color)
-
         elif node1.x < node2.x:  # right-up, right-down
-            # draw arrow line
             lines.add(node1.right())
             lines.add(node1.right().x + span.x / 2, node1.right().y)
             lines.add(node1.right().x + span.x / 2, node1.right().y)
@@ -349,49 +404,22 @@ class DiagramDraw(object):
             lines.add(node2.left().x - span.x / 2, node2.left().y)
             lines.add(node2.left())
 
-            # draw arrow head
-            if edge.dir in ('back', 'both'):
-                self.arrow_head(node1.right(), 'left', color=edge.color)
-            if edge.dir in ('forward', 'both'):
-                self.arrow_head(node2.left(), 'right', color=edge.color)
-
         elif node1.x == node2.x and node1.y > node2.y:  # up
-            # draw arrow line
             lines.add(node1.top())
             lines.add(node2.bottom())
 
-            # draw arrow head
-            if edge.dir in ('back', 'both'):
-                self.arrow_head(node1.top(), 'down', color=edge.color)
-            if edge.dir in ('forward', 'both'):
-                self.arrow_head(node2.bottom(), 'up', color=edge.color)
-
         elif node1.y >= node2.y:  # left, left-up
-            # draw arrow line
             lines.add(node1.right())
             lines.add(node1.right().x + span.x / 8, node1.right().y)
             lines.add(node1.right().x + span.x / 8, node2.top().y - span.y / 2)
             lines.add(node2.top().x, node2.top().y - span.y / 2)
             lines.add(node2.top())
 
-            # draw arrow head
-            if edge.dir in ('back', 'both'):
-                self.arrow_head(node1.right(), 'left', color=edge.color)
-            if edge.dir in ('forward', 'both'):
-                self.arrow_head(node2.top(), 'down', color=edge.color)
-
         elif node1.x > node2.x:  # left-down
-            # draw arrow line
             lines.add(node1.bottom())
             lines.add(node1.bottom().x, node2.top().y - span.y / 2)
             lines.add(node2.top().x, node2.top().y - span.y / 2)
             lines.add(node2.top())
-
-            # draw arrow head
-            if edge.dir in ('back', 'both'):
-                self.arrow_head(node1.bottom(), 'up', color=edge.color)
-            if edge.dir in ('forward', 'both'):
-                self.arrow_head(node2.top(), 'down', color=edge.color)
 
         else:  # down and misc.
             pos = (node1.x, node1.y, node2.x, node2.y)
@@ -403,6 +431,10 @@ class DiagramDraw(object):
             color = self.fill
 
         self.imageDraw.line(lines, fill=color)
+
+        metrix = self.metrix.edge(edge)
+        for head in metrix.heads():
+            self.imageDraw.polygon(head, outline=color, fill=color)
 
     def edgelist(self, edgelist, **kwargs):
         for edge in edgelist:
