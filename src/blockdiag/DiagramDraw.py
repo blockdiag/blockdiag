@@ -320,16 +320,11 @@ class DiagramDraw(object):
         node1 = self.metrix.node(edge.node1)
         node2 = self.metrix.node(edge.node2)
 
-        if node1.x < node2.x:
+        if node1.x < node2.x and node1.y == node2.y:  # right, right(skipped)
             # draw arrow line
             lines.add(node1.right())
 
-            if edge.node1.xy[1] != edge.node2.xy[1]:
-                lines.add(node1.right().x + span.x / 2, node1.right().y)
-                lines.add(node1.right().x + span.x / 2, node1.right().y)
-                lines.add(node1.right().x + span.x / 2, node2.left().y)
-                lines.add(node2.left().x - span.x / 2, node2.left().y)
-            elif edge.node1.xy[0] + 1 < edge.node2.xy[0]:
+            if edge.node1.xy[0] + 1 < edge.node2.xy[0]:
                 lines.add(node1.right().x + span.x / 2, node1.right().y)
                 lines.add(node1.right().x + span.x / 2,
                           node1.bottomRight().y + span.y / 2)
@@ -345,7 +340,22 @@ class DiagramDraw(object):
             if edge.dir in ('forward', 'both'):
                 self.arrow_head(node2.left(), 'right', color=edge.color)
 
-        elif node1.x == node2.x and node1.y > node2.y:
+        elif node1.x < node2.x:  # right-up, right-down
+            # draw arrow line
+            lines.add(node1.right())
+            lines.add(node1.right().x + span.x / 2, node1.right().y)
+            lines.add(node1.right().x + span.x / 2, node1.right().y)
+            lines.add(node1.right().x + span.x / 2, node2.left().y)
+            lines.add(node2.left().x - span.x / 2, node2.left().y)
+            lines.add(node2.left())
+
+            # draw arrow head
+            if edge.dir in ('back', 'both'):
+                self.arrow_head(node1.right(), 'left', color=edge.color)
+            if edge.dir in ('forward', 'both'):
+                self.arrow_head(node2.left(), 'right', color=edge.color)
+
+        elif node1.x == node2.x and node1.y > node2.y:  # up
             # draw arrow line
             lines.add(node1.top())
             lines.add(node2.bottom())
@@ -356,7 +366,7 @@ class DiagramDraw(object):
             if edge.dir in ('forward', 'both'):
                 self.arrow_head(node2.bottom(), 'up', color=edge.color)
 
-        elif node1.y >= node2.y:
+        elif node1.y >= node2.y:  # left, left-up
             # draw arrow line
             lines.add(node1.right())
             lines.add(node1.right().x + span.x / 8, node1.right().y)
@@ -370,7 +380,7 @@ class DiagramDraw(object):
             if edge.dir in ('forward', 'both'):
                 self.arrow_head(node2.top(), 'down', color=edge.color)
 
-        elif node1.x > node2.x:
+        elif node1.x > node2.x:  # left-down
             # draw arrow line
             lines.add(node1.bottom())
             lines.add(node1.bottom().x, node2.top().y - span.y / 2)
@@ -383,7 +393,7 @@ class DiagramDraw(object):
             if edge.dir in ('forward', 'both'):
                 self.arrow_head(node2.top(), 'down', color=edge.color)
 
-        else:
+        else:  # down and misc.
             pos = (node1.x, node1.y, node2.x, node2.y)
             raise RuntimeError("Invalid edge: (%d, %d), (%d, %d)" % pos)
 
