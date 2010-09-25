@@ -95,8 +95,6 @@ class DiagramMetrix:
         self.nodeRows = kwargs.get('nodeRows', 5)
         self.spanColumns = kwargs.get('spanColumns', 8)
         self.spanRows = kwargs.get('spanRows', 5)
-        self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
-        self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
 
         self.pageMargin = self.cellSize * self.pageMargin
         self.nodeWidth = self.cellSize * self.nodeColumns
@@ -109,6 +107,9 @@ class DiagramMetrix:
 
     def group(self, group):
         return GroupMetrix(group, self)
+
+    def edge(self, edge):
+        return EdgeMetrix(edge, self)
 
     def pageSize(self, nodelist):
         x = 0
@@ -135,14 +136,7 @@ class NodeMetrix:
         self.metrix = metrix
 
         if node:
-            self.width = node.width
-            self.height = node.height
             (self.x, self.y) = self._topLeft(node.xy[0], node.xy[1], metrix)
-        else:
-            self.width = 1
-            self.height = 1
-            self.x = 0
-            self.y = 0
 
     @classmethod
     def _topLeft(klass, x, y, metrix):
@@ -151,87 +145,216 @@ class NodeMetrix:
 
         return XY(x, y)
 
-    def box(self):
-        m = self.metrix
-        topLeft = self.topLeft()
-        bottomRight = self.bottomRight()
-
-        return (topLeft.x, topLeft.y, bottomRight.x, bottomRight.y)
-
-    def marginBox(self):
-        m = self.metrix
-        topLeft = self.topLeft()
-        bottomRight = self.bottomRight()
-
-        return (topLeft.x - m.spanWidth / 8,
-                topLeft.y - m.spanHeight / 4,
-                bottomRight.x + m.spanWidth / 4,
-                bottomRight.y + m.spanHeight / 2)
-
     def coreBox(self):
         m = self.metrix
-        topLeft = self.topLeft()
-        bottomRight = self.bottomRight()
+        x, y = self.topLeft()
 
-        return (topLeft.x + m.nodePadding,
-                topLeft.y + m.nodePadding,
-                bottomRight.x - m.nodePadding * 2,
-                bottomRight.y - m.nodePadding * 2)
-
-    def shadowBox(self):
-        m = self.metrix
-        topLeft = self.topLeft()
-        bottomRight = self.bottomRight()
-
-        return (topLeft.x + m.shadowOffsetX,
-                topLeft.y + m.shadowOffsetY,
-                bottomRight.x + m.shadowOffsetX,
-                bottomRight.y + m.shadowOffsetY)
-
-    def nodeWidth(self):
-        m = self.metrix
-        return self.width * m.nodeWidth + (self.width - 1) * m.spanWidth
-
-    def nodeHeight(self):
-        m = self.metrix
-        return self.height * m.nodeHeight + (self.height - 1) * m.spanHeight
+        return (x + m.nodePadding,
+                y + m.nodePadding,
+                x + m.nodeWidth - m.nodePadding * 2,
+                y + m.nodeHeight - m.nodePadding * 2)
 
     def topLeft(self):
         return XY(self.x, self.y)
 
     def topCenter(self):
         x, y = self.topLeft()
-        return XY(x + self.nodeWidth() / 2, y)
+        return XY(x + self.metrix.nodeWidth / 2, y)
 
     def topRight(self):
         x, y = self.topLeft()
-        return XY(x + self.nodeWidth(), y)
+        return XY(x + self.metrix.nodeWidth, y)
 
     def bottomLeft(self):
         x, y = self.topLeft()
-        return XY(x, y + self.nodeHeight())
+        return XY(x, y + self.metrix.nodeHeight)
 
     def bottomCenter(self):
+        m = self.metrix
         x, y = self.topLeft()
-        return XY(x + self.nodeWidth() / 2, y + self.nodeHeight())
+        return XY(x + m.nodeWidth / 2, y + m.nodeHeight)
 
     def bottomRight(self):
+        m = self.metrix
         x, y = self.topLeft()
-        return XY(x + self.nodeWidth(), y + self.nodeHeight())
+        return XY(x + m.nodeWidth, y + m.nodeHeight)
 
     def leftCenter(self):
         x, y = self.topLeft()
-        return XY(x, y + self.nodeHeight() / 2)
+        return XY(x, y + self.metrix.nodeHeight / 2)
 
     def rightCenter(self):
+        m = self.metrix
         x, y = self.topLeft()
-        return XY(x + self.nodeWidth(), y + self.nodeHeight() / 2)
+        return XY(x + m.nodeWidth, y + m.nodeHeight / 2)
 
     # method aliases
     top = topCenter
     bottom = bottomCenter
     right = rightCenter
     left = leftCenter
+
+
+class GroupMetrix:
+    def __init__(self, group, metrix):
+        self.metrix = metrix
+        self.width = group.width
+        self.height = group.height
+
+        if group:
+            (self.x, self.y) = self._topLeft(group.xy[0], group.xy[1], metrix)
+
+    @classmethod
+    def _topLeft(klass, x, y, m):
+        x = m.pageMargin + x * (m.nodeWidth + m.spanWidth) - m.spanWidth / 8
+        y = m.pageMargin + y * (m.nodeHeight + m.spanHeight) - m.spanHeight / 4
+
+        return XY(x, y)
+
+    def topLeft(self):
+        return XY(self.x, self.y)
+
+    def bottomRight(self):
+        m = self.metrix
+        x, y = self.topLeft()
+        x += self.width * m.nodeWidth + (self.width - 0.75) * m.spanWidth
+        y += self.height * m.nodeHeight + (self.height - 0.5) * m.spanHeight
+        return XY(x, y)
+
+
+class EdgeMetrix:
+    def __init__(self, edge, metrix):
+        self.metrix = metrix
+        self.edge = edge
+
+    def direction(self):
+        node1 = self.metrix.node(self.edge.node1)
+        node2 = self.metrix.node(self.edge.node2)
+
+        if node1.x > node2.x:
+            if node1.y < node2.y:
+                dir = 'left-up'
+            elif node1.y == node2.y:
+                dir = 'left'
+            else:
+                dir = 'left-down'
+        elif node1.x == node2.y:
+            if node1.y < node2.y:
+                dir = 'up'
+            elif node1.y == node2.y:
+                dir = 'same'
+            else:
+                dir = 'down'
+        else:
+            if node1.y < node2.y:
+                dir = 'right-up'
+            elif node1.y == node2.y:
+                dir = 'right'
+            else:
+                dir = 'right-down'
+
+        return dir
+
+    def heads(self):
+        heads = []
+        dir = self.direction()
+
+        if self.edge.dir in ('back', 'both'):
+            if dir in ('left-up', 'left', 'right-up', 'right', 'right-down'):
+                heads.append(self._head(self.edge.node1, 'left'))
+            elif dir == 'up':
+                heads.append(self._head(self.edge.node1, 'down'))
+            elif dir in ('left-down'):
+                heads.append(self._head(self.edge.node1, 'up'))
+
+        if self.edge.dir in ('forward', 'both'):
+            if dir in ('right-up', 'right', 'right-down'):
+                heads.append(self._head(self.edge.node2, 'right'))
+            elif dir == 'up':
+                heads.append(self._head(self.edge.node2, 'up'))
+            elif dir in ('left-up', 'left', 'left-down'):
+                heads.append(self._head(self.edge.node2, 'down'))
+
+        return heads
+
+    def _head(self, node, direct):
+        head = xylist()
+        cell = self.metrix.cellSize
+        node = self.metrix.node(node)
+
+        if direct == 'up':
+            xy = node.bottom()
+            head.add(xy)
+            head.add(xy.x - cell / 2, xy.y + cell)
+            head.add(xy.x + cell / 2, xy.y + cell)
+        elif direct == 'down':
+            xy = node.top()
+            head.add(xy)
+            head.add(xy.x - cell / 2, xy.y - cell)
+            head.add(xy.x + cell / 2, xy.y - cell)
+        elif direct == 'right':
+            xy = node.left()
+            head.add(xy)
+            head.add(xy.x - cell, xy.y - cell / 2)
+            head.add(xy.x - cell, xy.y + cell / 2)
+        elif direct == 'left':
+            xy = node.right()
+            head.add(xy)
+            head.add(xy.x + cell, xy.y - cell / 2)
+            head.add(xy.x + cell, xy.y + cell / 2)
+
+        return head
+
+    def shaft(self):
+        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+
+        node1 = self.metrix.node(self.edge.node1)
+        node2 = self.metrix.node(self.edge.node2)
+
+        shaft = xylist()
+        if node1.x < node2.x and node1.y == node2.y:  # right, right(skipped)
+            shaft.add(node1.right())
+
+            if self.edge.node1.xy[0] + 1 < self.edge.node2.xy[0]:
+                shaft.add(node1.right().x + span.x / 2, node1.right().y)
+                shaft.add(node1.right().x + span.x / 2,
+                          node1.bottomRight().y + span.y / 2)
+                shaft.add(node2.left().x - span.x / 4,
+                          node2.bottomRight().y + span.y / 2)
+                shaft.add(node2.left().x - span.x / 4, node2.left().y)
+
+            shaft.add(node2.left())
+
+        elif node1.x < node2.x:  # right-up, right-down
+            shaft.add(node1.right())
+            shaft.add(node1.right().x + span.x / 2, node1.right().y)
+            shaft.add(node1.right().x + span.x / 2, node1.right().y)
+            shaft.add(node1.right().x + span.x / 2, node2.left().y)
+            shaft.add(node2.left().x - span.x / 2, node2.left().y)
+            shaft.add(node2.left())
+
+        elif node1.x == node2.x and node1.y > node2.y:  # up
+            shaft.add(node1.top())
+            shaft.add(node2.bottom())
+
+        elif node1.y >= node2.y:  # left, left-up
+            shaft.add(node1.right())
+            shaft.add(node1.right().x + span.x / 8, node1.right().y)
+            shaft.add(node1.right().x + span.x / 8, node2.top().y - span.y / 2)
+            shaft.add(node2.top().x, node2.top().y - span.y / 2)
+            shaft.add(node2.top())
+
+        elif node1.x > node2.x:  # left-down
+            shaft.add(node1.bottom())
+            shaft.add(node1.bottom().x, node2.top().y - span.y / 2)
+            shaft.add(node2.top().x, node2.top().y - span.y / 2)
+            shaft.add(node2.top())
+
+        else:  # down and misc.
+            pos = (node1.x, node1.y, node2.x, node2.y)
+            raise RuntimeError("Invalid edge: (%d, %d), (%d, %d)" % pos)
+
+        return shaft
 
 
 class xylist(list):
@@ -251,7 +374,10 @@ class DiagramDraw(object):
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.defaultFill = kwargs.get('defaultFill', (255, 255, 255))
+        self.group = kwargs.get('group', (243, 152, 0))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
+        self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
+        self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
 
     def getPaperSize(self, root):
         return self.metrix.pageSize(root)
@@ -260,20 +386,26 @@ class DiagramDraw(object):
         ttfont = kwargs.get('font')
 
         metrix = self.metrix.node(node)
+        box = [metrix.topLeft(), metrix.bottomRight()]
         if node.color:
-            self.imageDraw.rectangle(metrix.box(), outline=self.fill,
+            self.imageDraw.rectangle(box, outline=self.fill,
                                      fill=node.color)
         else:
-            self.imageDraw.rectangle(metrix.box(), outline=self.fill,
+            self.imageDraw.rectangle(box, outline=self.fill,
                                      fill=self.defaultFill)
 
+        box = self.metrix.node(node).coreBox()
         draw = FoldedTextDraw(self.image)
-        draw.text(metrix.coreBox(), node.label,
-                  font=ttfont, lineSpacing=self.lineSpacing)
+        draw.text(box, node.label, font=ttfont, lineSpacing=self.lineSpacing)
 
     def dropshadow(self, node, **kwargs):
         metrix = self.metrix.node(node)
-        self.imageDraw.rectangle(metrix.shadowBox(), fill=self.shadow)
+
+        def shift(original):
+            return XY(original.x + self.shadowOffsetX,
+                      original.y + self.shadowOffsetY)
+        box = [shift(metrix.topLeft()), shift(metrix.bottomRight())]
+        self.imageDraw.rectangle(box, fill=self.shadow)
 
     def screennodelist(self, nodelist, **kwargs):
         self.image = Image.new(
@@ -281,8 +413,9 @@ class DiagramDraw(object):
         self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
 
         for node in (x for x in nodelist if x.drawable == 0):  # == ScreenGroup
-            metrix = self.metrix.node(node)
-            self.imageDraw.rectangle(metrix.marginBox(), fill=node.color)
+            metrix = self.metrix.group(node)
+            box = [metrix.topLeft(), metrix.bottomRight()]
+            self.imageDraw.rectangle(box, fill=self.group)
 
         for node in (x for x in nodelist if x.drawable):
             self.dropshadow(node, **kwargs)
@@ -293,111 +426,19 @@ class DiagramDraw(object):
         for node in (x for x in nodelist if x.drawable):
             self.screennode(node, **kwargs)
 
-    def arrow_head(self, xy, direct, **kwargs):
-        head = xylist(xy)
-        cell = self.metrix.cellSize
-
-        if direct == 'up':
-            head.add(xy.x - cell / 2, xy.y + cell)
-            head.add(xy.x + cell / 2, xy.y + cell)
-        elif direct == 'down':
-            head.add(xy.x - cell / 2, xy.y - cell)
-            head.add(xy.x + cell / 2, xy.y - cell)
-        elif direct == 'right':
-            head.add(xy.x - cell, xy.y - cell / 2)
-            head.add(xy.x - cell, xy.y + cell / 2)
-        elif direct == 'left':
-            head.add(xy.x + cell, xy.y - cell / 2)
-            head.add(xy.x + cell, xy.y + cell / 2)
-
-        if kwargs.get('color'):
-            color = kwargs.get('color')
-        else:
-            color = self.fill
-
-        self.imageDraw.polygon(head, outline=color, fill=color)
-
     def edge(self, edge):
-        lines = xylist()
-        head = xylist()
-        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
-
-        node1 = self.metrix.node(edge.node1)
-        node2 = self.metrix.node(edge.node2)
-
-        if node1.x < node2.x:
-            # draw arrow line
-            lines.add(node1.right())
-
-            if edge.node1.xy[1] != edge.node2.xy[1]:
-                lines.add(node1.right().x + span.x / 2, node1.right().y)
-                lines.add(node1.right().x + span.x / 2, node1.right().y)
-                lines.add(node1.right().x + span.x / 2, node2.left().y)
-                lines.add(node2.left().x - span.x / 2, node2.left().y)
-            elif edge.node1.xy[0] + 1 < edge.node2.xy[0]:
-                lines.add(node1.right().x + span.x / 2, node1.right().y)
-                lines.add(node1.right().x + span.x / 2,
-                          node1.bottomRight().y + span.y / 2)
-                lines.add(node2.left().x - span.x / 4,
-                          node2.bottomRight().y + span.y / 2)
-                lines.add(node2.left().x - span.x / 4, node2.left().y)
-
-            lines.add(node2.left())
-
-            # draw arrow head
-            if edge.dir in ('back', 'both'):
-                self.arrow_head(node1.right(), 'left', color=edge.color)
-            if edge.dir in ('forward', 'both'):
-                self.arrow_head(node2.left(), 'right', color=edge.color)
-
-        elif node1.x == node2.x and node1.y > node2.y:
-            # draw arrow line
-            lines.add(node1.top())
-            lines.add(node2.bottom())
-
-            # draw arrow head
-            if edge.dir in ('back', 'both'):
-                self.arrow_head(node1.top(), 'down', color=edge.color)
-            if edge.dir in ('forward', 'both'):
-                self.arrow_head(node2.bottom(), 'up', color=edge.color)
-
-        elif node1.y >= node2.y:
-            # draw arrow line
-            lines.add(node1.right())
-            lines.add(node1.right().x + span.x / 8, node1.right().y)
-            lines.add(node1.right().x + span.x / 8, node2.top().y - span.y / 2)
-            lines.add(node2.top().x, node2.top().y - span.y / 2)
-            lines.add(node2.top())
-
-            # draw arrow head
-            if edge.dir in ('back', 'both'):
-                self.arrow_head(node1.right(), 'left', color=edge.color)
-            if edge.dir in ('forward', 'both'):
-                self.arrow_head(node2.top(), 'down', color=edge.color)
-
-        elif node1.x > node2.x:
-            # draw arrow line
-            lines.add(node1.bottom())
-            lines.add(node1.bottom().x, node2.top().y - span.y / 2)
-            lines.add(node2.top().x, node2.top().y - span.y / 2)
-            lines.add(node2.top())
-
-            # draw arrow head
-            if edge.dir in ('back', 'both'):
-                self.arrow_head(node1.bottom(), 'up', color=edge.color)
-            if edge.dir in ('forward', 'both'):
-                self.arrow_head(node2.top(), 'down', color=edge.color)
-
-        else:
-            pos = (node1.x, node1.y, node2.x, node2.y)
-            raise RuntimeError("Invalid edge: (%d, %d), (%d, %d)" % pos)
+        metrix = self.metrix.edge(edge)
 
         if edge.color:
             color = edge.color
         else:
             color = self.fill
 
-        self.imageDraw.line(lines, fill=color)
+        shaft = metrix.shaft()
+        self.imageDraw.line(shaft, fill=color)
+
+        for head in metrix.heads():
+            self.imageDraw.polygon(head, outline=color, fill=color)
 
     def edgelist(self, edgelist, **kwargs):
         for edge in edgelist:
