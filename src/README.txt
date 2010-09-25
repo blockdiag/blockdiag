@@ -101,6 +101,12 @@ Requirements
 * funcparserlib 0.3.4 or later.
 * setuptools or distriubte.
 
+
+License
+=======
+Python Software Foundation License.
+
+
 History
 =======
 
