@@ -10,7 +10,7 @@ import Image
 import ImageFont
 import DiagramDraw
 import diagparser
-from DiagramDraw import XY
+from DiagramMetrix import XY
 
 
 class ScreenNode:
