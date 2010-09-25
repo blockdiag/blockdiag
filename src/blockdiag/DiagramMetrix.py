@@ -185,8 +185,8 @@ class EdgeMetrix:
                 dir = 'left'
             else:
                 dir = 'left-down'
-        elif node1.x == node2.y:
-            if node1.y < node2.y:
+        elif node1.x == node2.x:
+            if node1.y > node2.y:
                 dir = 'up'
             elif node1.y == node2.y:
                 dir = 'same'
