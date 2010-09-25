@@ -86,7 +86,6 @@ class DiagramDraw(object):
         self.metrix = DiagramMetrix(**kwargs)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
-        self.defaultFill = kwargs.get('defaultFill', (255, 255, 255))
         self.group = kwargs.get('group', (243, 152, 0))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
 
@@ -96,18 +95,11 @@ class DiagramDraw(object):
     def screennode(self, node, **kwargs):
         ttfont = kwargs.get('font')
 
-        metrix = self.metrix.node(node)
-        box = [metrix.topLeft(), metrix.bottomRight()]
-        if node.color:
-            self.imageDraw.rectangle(box, outline=self.fill,
-                                     fill=node.color)
-        else:
-            self.imageDraw.rectangle(box, outline=self.fill,
-                                     fill=self.defaultFill)
+        m = self.metrix.node(node)
+        self.imageDraw.rectangle(m.box(), outline=self.fill, fill=node.color)
 
-        box = self.metrix.node(node).coreBox()
         draw = FoldedTextDraw(self.image)
-        draw.text(box, node.label, font=ttfont, lineSpacing=self.lineSpacing)
+        draw.text(m.coreBox(), node.label, font=ttfont, lineSpacing=self.lineSpacing)
 
     def dropshadow(self, node, **kwargs):
         metrix = self.metrix.node(node)
