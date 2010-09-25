@@ -40,10 +40,10 @@ def test_empty_diagram():
     str = ("diagram {\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
-    assert len(nodelist) == 0
-    assert len(edgelist) == 0
+    assert len(screen.nodes) == 0
+    assert len(screen.edges) == 0
 
 
 def test_single_node_diagram():
@@ -51,12 +51,12 @@ def test_single_node_diagram():
            "  A;\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
-    assert len(nodelist) == 1
-    assert len(edgelist) == 0
-    assert nodelist[0].label == 'A'
-    assert nodelist[0].xy == (0, 0)
+    assert len(screen.nodes) == 1
+    assert len(screen.edges) == 0
+    assert screen.nodes[0].label == 'A'
+    assert screen.nodes[0].xy == (0, 0)
 
 
 def test_single_edge_diagram():
@@ -64,16 +64,16 @@ def test_single_edge_diagram():
            "  A -> B;\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
-    assert len(nodelist) == 2
-    assert len(edgelist) == 1
-    assert nodelist[0].label == 'A'
-    assert nodelist[1].label == 'B'
+    assert len(screen.nodes) == 2
+    assert len(screen.edges) == 1
+    assert screen.nodes[0].label == 'A'
+    assert screen.nodes[1].label == 'B'
 
     assert_pos = {'A': (0, 0), 'B': (1, 0)}
     assert_label = {'A': 'A', 'B': 'B'}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
         assert node.label == assert_label[node.id]
 
@@ -83,13 +83,13 @@ def test_two_edges_diagram():
            "  A -> B -> C;\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
-    assert len(nodelist) == 3
-    assert len(edgelist) == 2
+    assert len(screen.nodes) == 3
+    assert len(screen.edges) == 2
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0)}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
 
@@ -99,17 +99,17 @@ def test_node_attribute():
            "  bar\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
-    assert nodelist[0].id == 'foo'
-    assert nodelist[0].label == 'bar'
-    assert nodelist[0].color == 'red'
-    assert nodelist[0].xy == (0, 0)
+    assert screen.nodes[0].id == 'foo'
+    assert screen.nodes[0].label == 'bar'
+    assert screen.nodes[0].color == 'red'
+    assert screen.nodes[0].xy == (0, 0)
 
-    assert nodelist[1].id == 'bar'
-    assert nodelist[1].label == 'bar'
-    assert nodelist[1].color == (255, 255, 255)
-    assert nodelist[1].xy == (0, 1)
+    assert screen.nodes[1].id == 'bar'
+    assert screen.nodes[1].label == 'bar'
+    assert screen.nodes[1].color == (255, 255, 255)
+    assert screen.nodes[1].xy == (0, 1)
 
 
 def test_edge_attribute():
@@ -118,14 +118,14 @@ def test_edge_attribute():
            "  D -> E [dir = none]\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (0, 1), 'E': (1, 1)}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
-    for edge in edgelist:
+    for edge in screen.edges:
         if edge.node1.id == 'D':
             assert edge.dir == 'none'
             assert edge.color == None
@@ -141,11 +141,11 @@ def test_branched_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (1, 1), 'E': (2, 1), 'Z': (0, 2)}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
 
@@ -156,11 +156,11 @@ def test_circular_ref_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (2, 1), 'Z': (0, 2)}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
 
@@ -171,11 +171,11 @@ def test_skipped_edge_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'Z': (0, 1)}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
 
@@ -186,10 +186,10 @@ def test_circular_skipped_edge_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'Z': (0, 1)}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
 
@@ -201,11 +201,11 @@ def test_triple_branched_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (0, 1), 'C': (0, 2),
                   'D': (1, 0), 'Z': (0, 3)}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
 
@@ -216,10 +216,10 @@ def test_twin_circular_ref_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'Z': (0, 2)}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
 
@@ -229,10 +229,10 @@ def test_self_ref_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'Z': (0, 1)}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
 
@@ -244,12 +244,12 @@ def test_noweight_edge_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (0, 1), 'E': (0, 2), 'F': (1, 1),
                   'Z': (0, 3)}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
 
@@ -260,11 +260,11 @@ def test_flowable_node_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'Z': (0, 1)}
-    for node in nodelist:
+    for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
 
@@ -280,7 +280,7 @@ def test_belongs_to_two_groups_diagram():
                "  Z\n"
                "}\n")
         tree = parse(tokenize(str))
-        nodelist, edgelist = ScreenNodeBuilder.build(tree)
+        screen = ScreenNodeBuilder.build(tree)
 
     assert_raises(RuntimeError, dummy)
 
@@ -297,7 +297,7 @@ def test_nested_groups_diagram():
                "  Z\n"
                "}\n")
         tree = parse(tokenize(str))
-        nodelist, edgelist = ScreenNodeBuilder.build(tree)
+        screen = ScreenNodeBuilder.build(tree)
 
     assert_raises(NoParseError, dummy)
 
@@ -311,7 +311,7 @@ def test_node_follows_group_diagram():
                "  Z\n"
                "}\n")
         tree = parse(tokenize(str))
-        nodelist, edgelist = ScreenNodeBuilder.build(tree)
+        screen = ScreenNodeBuilder.build(tree)
 
     assert_raises(NoParseError, dummy)
 
@@ -325,7 +325,7 @@ def test_group_follows_node_diagram():
                "  Z\n"
                "}\n")
         tree = parse(tokenize(str))
-        nodelist, edgelist = ScreenNodeBuilder.build(tree)
+        screen = ScreenNodeBuilder.build(tree)
 
     assert_raises(NoParseError, dummy)
 
@@ -337,10 +337,10 @@ def test_simple_group_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'Z': (0, 0)}
-    for node in (x for x in nodelist if x.drawable):
+    for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
 
@@ -353,11 +353,11 @@ def test_simple_group_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
                   'Z': (0, 2)}
-    for node in (x for x in nodelist if x.drawable):
+    for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
 
@@ -370,11 +370,11 @@ def test_group_and_node_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'Z': (0, 1)}
-    for node in (x for x in nodelist if x.drawable):
+    for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
 
@@ -387,11 +387,11 @@ def test_group_id_and_node_id_are_not_conflicted_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (0, 1),
                   'D': (1, 1), 'Z': (0, 2)}
-    for node in (x for x in nodelist if x.drawable):
+    for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
 
@@ -405,11 +405,11 @@ def test_group_and_childnode_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (2, 1), 'Z': (0, 2)}
-    for node in (x for x in nodelist if x.drawable):
+    for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
 
@@ -422,11 +422,11 @@ def test_group_and_parentnode_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'Z': (0, 1)}
-    for node in (x for x in nodelist if x.drawable):
+    for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
 
@@ -442,12 +442,12 @@ def test_large_group_and_node_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
                   'D': (1, 2), 'E': (1, 3), 'F': (2, 0),
                   'Z': (0, 4)}
-    for node in (x for x in nodelist if x.drawable):
+    for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
 
@@ -464,12 +464,12 @@ def test_large_group_and_two_node_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
                   'D': (1, 2), 'E': (1, 3), 'F': (2, 0),
                   'G': (2, 1), 'Z': (0, 4)}
-    for node in (x for x in nodelist if x.drawable):
+    for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
 
@@ -491,13 +491,13 @@ def test_multiple_groups_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (0, 1), 'C': (0, 2),
                   'D': (0, 3), 'E': (1, 0), 'F': (1, 1),
                   'G': (1, 2), 'H': (2, 0), 'I': (2, 1),
                   'J': (3, 0), 'Z': (0, 4)}
-    for node in (x for x in nodelist if x.drawable):
+    for node in (x for x in screen.nodes if x.drawable):
         print node.id, node.xy
         assert node.xy == assert_pos[node.id]
 
@@ -513,11 +513,11 @@ def test_group_as_node_decorator_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (3, 0),
                   'D': (2, 0), 'E': (1, 1), 'Z': (0, 2)}
-    for node in (x for x in nodelist if x.drawable):
+    for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
 
@@ -539,11 +539,11 @@ def test_reversed_multiple_groups_diagram():
            "  Z\n"
            "}\n")
     tree = parse(tokenize(str))
-    nodelist, edgelist = ScreenNodeBuilder.build(tree)
+    screen = ScreenNodeBuilder.build(tree)
 
     assert_pos = {'A': (3, 0), 'B': (3, 1), 'C': (3, 2),
                   'D': (3, 3), 'E': (2, 0), 'F': (2, 1),
                   'G': (2, 2), 'H': (1, 0), 'I': (1, 1),
                   'J': (0, 0), 'Z': (0, 4)}
-    for node in (x for x in nodelist if x.drawable):
+    for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
