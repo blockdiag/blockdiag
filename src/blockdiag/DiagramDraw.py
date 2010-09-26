@@ -153,7 +153,8 @@ class DiagramDraw(object):
         ttfont = kwargs.get('font')
 
         m = self.metrix.node(node)
-        self.imageDraw.thick_rectangle(m.box(), outline=self.fill, fill=node.color)
+        self.imageDraw.thick_rectangle(m.box(), outline=self.fill,
+                                       fill=node.color)
 
         self.imageDraw.text(m.coreBox(), node.label,
                             font=ttfont, lineSpacing=self.metrix.lineSpacing)
