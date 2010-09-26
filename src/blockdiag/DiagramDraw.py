@@ -188,10 +188,13 @@ class DiagramDraw(object):
         for head in metrix.heads():
             self.imageDraw.polygon(self.scale(head), outline=color, fill=color)
 
-    def save(self, filename, format):
-        x, y = self.image.size
-        x = int(x / self._scale)
-        y = int(y / self._scale)
+    def save(self, filename, format, size=None):
+        if size:
+            x, y = size
+        else:
+            x, y = self.image.size
+            x = int(x / self._scale)
+            y = int(y / self._scale)
 
         self.image.thumbnail((x, y), Image.ANTIALIAS)
         self.image.save(filename, format)
