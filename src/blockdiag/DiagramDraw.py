@@ -5,7 +5,7 @@ import math
 import Image
 import ImageDraw
 import ImageFilter
-from DiagramMetrix import DiagramMetrix
+from DiagramMetrix import DiagramMetrix, XY
 
 
 class ImageDrawEx(ImageDraw.ImageDraw):
@@ -100,16 +100,31 @@ class DiagramDraw(object):
         self.mode = None
         self.image = None
         self.imageDraw = None
+        self._scale = kwargs.get('scale', 1)
         self.metrix = DiagramMetrix(**kwargs)
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
+
+    def scale(self, value):
+        if isinstance(value, XY):
+            ret = XY(value.x * self._scale, value.y * self._scale)
+        elif isinstance(value, tuple):
+            ret = tuple([self.scale(x) for x in value])
+        elif isinstance(value, list):
+            ret = [self.scale(x) for x in value]
+        elif isinstance(value, int):
+            ret = value * self._scale
+        else:
+            ret = value
+
+        return ret
 
     def draw(self, screen, **kwargs):
         ttfont = kwargs.get('font')
         self.screen = screen
 
         paperSize = self.metrix.pageSize(screen.nodes)
-        self.image = Image.new('RGB', paperSize, (256, 256, 256))
+        self.image = Image.new('RGB', self.scale(paperSize), (256, 256, 256))
         self.imageDraw = ImageDrawEx(self.image, self.mode)
 
         self._prepareEdges()
@@ -135,16 +150,16 @@ class DiagramDraw(object):
     def _drawBackground(self):
         # Draw node groups.
         for node in (x for x in self.screen.nodes if x.drawable == 0):
-            metrix = self.metrix.node(node)
-            self.imageDraw.rectangle(metrix.marginBox(), fill=node.color)
+            marginBox = self.metrix.node(node).marginBox()
+            self.imageDraw.rectangle(self.scale(marginBox), fill=node.color)
 
         # Drop node shadows.
         for node in (x for x in self.screen.nodes if x.drawable):
-            metrix = self.metrix.node(node)
-            self.imageDraw.rectangle(metrix.shadowBox(), fill=self.shadow)
+            shadowBox = self.metrix.node(node).shadowBox()
+            self.imageDraw.rectangle(self.scale(shadowBox), fill=self.shadow)
 
         # Smoothing back-ground images.
-        for i in range(15):
+        for i in range(15 * self._scale):
             self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
 
         self.imageDraw = ImageDrawEx(self.image, self.mode)
@@ -153,10 +168,10 @@ class DiagramDraw(object):
         ttfont = kwargs.get('font')
 
         m = self.metrix.node(node)
-        self.imageDraw.thick_rectangle(m.box(), outline=self.fill,
+        self.imageDraw.thick_rectangle(self.scale(m.box()), outline=self.fill,
                                        fill=node.color)
 
-        self.imageDraw.text(m.coreBox(), node.label,
+        self.imageDraw.text(self.scale(m.coreBox()), node.label,
                             font=ttfont, lineSpacing=self.metrix.lineSpacing)
 
     def edge(self, edge):
@@ -168,10 +183,15 @@ class DiagramDraw(object):
             color = self.fill
 
         shaft = metrix.shaft()
-        self.imageDraw.line(shaft, fill=color)
+        self.imageDraw.line(self.scale(shaft), fill=color)
 
         for head in metrix.heads():
-            self.imageDraw.polygon(head, outline=color, fill=color)
+            self.imageDraw.polygon(self.scale(head), outline=color, fill=color)
 
     def save(self, filename, format):
+        x, y = self.image.size
+        x = int(x / self._scale)
+        y = int(y / self._scale)
+
+        self.image.thumbnail((x, y), Image.ANTIALIAS)
         self.image.save(filename, format)
