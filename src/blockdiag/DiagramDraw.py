@@ -84,7 +84,6 @@ class DiagramDraw(object):
         self.image = None
         self.imageDraw = None
         self.metrix = DiagramMetrix(**kwargs)
-        self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
 
@@ -141,7 +140,7 @@ class DiagramDraw(object):
 
         draw = FoldedTextDraw(self.image)
         draw.text(m.coreBox(), node.label,
-                  font=ttfont, lineSpacing=self.lineSpacing)
+                  font=ttfont, lineSpacing=self.metrix.lineSpacing)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
