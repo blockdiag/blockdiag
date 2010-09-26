@@ -7,7 +7,7 @@ import ImageFilter
 from DiagramMetrix import DiagramMetrix
 
 
-class FoldedTextDraw(ImageDraw.ImageDraw):
+class ImageDrawEx(ImageDraw.ImageDraw):
     def __init__(self, im, mode=None):
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
@@ -93,7 +93,7 @@ class DiagramDraw(object):
 
         paperSize = self.metrix.pageSize(screen.nodes)
         self.image = Image.new('RGB', paperSize, (256, 256, 256))
-        self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
+        self.imageDraw = ImageDrawEx(self.image, self.mode)
 
         self._prepareEdges()
         self._drawBackground()
@@ -130,7 +130,7 @@ class DiagramDraw(object):
         for i in range(15):
             self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
 
-        self.imageDraw = ImageDraw.ImageDraw(self.image, self.mode)
+        self.imageDraw = ImageDrawEx(self.image, self.mode)
 
     def screennode(self, node, **kwargs):
         ttfont = kwargs.get('font')
@@ -138,9 +138,8 @@ class DiagramDraw(object):
         m = self.metrix.node(node)
         self.imageDraw.rectangle(m.box(), outline=self.fill, fill=node.color)
 
-        draw = FoldedTextDraw(self.image)
-        draw.text(m.coreBox(), node.label,
-                  font=ttfont, lineSpacing=self.metrix.lineSpacing)
+        self.imageDraw.text(m.coreBox(), node.label,
+                            font=ttfont, lineSpacing=self.metrix.lineSpacing)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
