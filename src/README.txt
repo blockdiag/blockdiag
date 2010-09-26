@@ -110,6 +110,11 @@ Python Software Foundation License.
 History
 =======
 
+0.3 (2010-09-26)
+------------------
+* Add --antialias option.
+* Fix bugs.
+
 0.2.2 (2010-09-25)
 ------------------
 * Fix edge bugs.
