@@ -318,6 +318,8 @@ class ScreenNodeBuilder:
 def main():
     usage = "usage: %prog [options] infile"
     p = OptionParser(usage=usage)
+    p.add_option('-a', '--antialias', action='store_true',
+                 help='Pass diagram image to anti-alias filter')
     p.add_option('-o', dest='filename',
                  help='write diagram to FILE', metavar='FILE')
     p.add_option('-f', '--font', dest='font',
@@ -328,19 +330,21 @@ def main():
         p.print_help()
         exit(0)
 
+    if options.antialias:
+        scale = 2
+    else:
+        scale = 1
+
     fonts = [options.font,
              'c:/windows/fonts/VL-Gothic-Regular.ttf',
              'c:/windows/fonts/msmincho.ttf',
              '/usr/share/fonts/truetype/ipafont/ipagp.ttf',
              '/System/Library/Fonts/AppleGothic.ttf']
 
-    ttfont = None
+    fontpath = None
     for path in fonts:
         if path and os.path.isfile(path):
-            ttfont = ImageFont.truetype(path, 11)
-            break
-
-    draw = DiagramDraw.DiagramDraw()
+            fontpath = path
 
     infile = args[0]
     if options.filename:
@@ -352,6 +356,11 @@ def main():
         tree = diagparser.parse_file(infile)
         screen = ScreenNodeBuilder.build(tree)
 
+        ttfont = None
+        if fontpath:
+            ttfont = ImageFont.truetype(fontpath, 11 * scale)
+
+        draw = DiagramDraw.DiagramDraw(scale=scale)
         draw.draw(screen, font=ttfont)
     except Exception, e:
         import traceback
