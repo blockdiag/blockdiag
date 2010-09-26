@@ -124,11 +124,15 @@ class DiagramDraw(object):
         self.screen = screen
 
         paperSize = self.metrix.pageSize(screen.nodes)
-        self.image = Image.new('RGB', self.scale(paperSize), (256, 256, 256))
+        self.image = Image.new('RGB', paperSize, (256, 256, 256))
         self.imageDraw = ImageDrawEx(self.image, self.mode)
 
         self._prepareEdges()
         self._drawBackground()
+
+        if self._scale > 1:
+            self.image = self.image.resize(self.scale(paperSize), Image.ANTIALIAS)
+            self.imageDraw = ImageDrawEx(self.image, self.mode)
 
         for node in (x for x in self.screen.nodes if x.drawable):
             self.screennode(node, **kwargs)
@@ -148,6 +152,9 @@ class DiagramDraw(object):
                         edge.skipped = 1
 
     def _drawBackground(self):
+        originalScale = self._scale
+        self._scale = 1
+
         # Draw node groups.
         for node in (x for x in self.screen.nodes if x.drawable == 0):
             marginBox = self.metrix.node(node).marginBox()
@@ -159,10 +166,11 @@ class DiagramDraw(object):
             self.imageDraw.rectangle(self.scale(shadowBox), fill=self.shadow)
 
         # Smoothing back-ground images.
-        for i in range(15 * self._scale):
+        for i in range(15):
             self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
 
         self.imageDraw = ImageDrawEx(self.image, self.mode)
+        self._scale = originalScale
 
     def screennode(self, node, **kwargs):
         ttfont = kwargs.get('font')
