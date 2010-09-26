@@ -1,8 +1,9 @@
-diagram admin {
-  top_page [numbered = 1];
-  config [numbered = 2];
-  config_edit [numbered = 3];
-  config_confirm [numbered = 4];
+diagram {
+  A [numbered = 1];
+  B [numbered = 2];
+  C [numbered = 3];
+  D [numbered = 4];
 
-  top_page -> config -> config_edit -> config_confirm -> top_page;
+  A -> B -> C;
+  A -> D;
 }
