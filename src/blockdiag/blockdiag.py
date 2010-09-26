@@ -331,7 +331,8 @@ def main():
     fonts = [options.font,
              'c:/windows/fonts/VL-Gothic-Regular.ttf',
              'c:/windows/fonts/msmincho.ttf',
-             '/usr/share/fonts/truetype/ipafont/ipagp.ttf']
+             '/usr/share/fonts/truetype/ipafont/ipagp.ttf',
+             '/System/Library/Fonts/AppleGothic.ttf']
 
     ttfont = None
     for path in fonts:
