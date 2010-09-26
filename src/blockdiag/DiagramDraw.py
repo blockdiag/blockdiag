@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import math
 import Image
 import ImageDraw
 import ImageFilter
@@ -10,6 +11,22 @@ from DiagramMetrix import DiagramMetrix
 class ImageDrawEx(ImageDraw.ImageDraw):
     def __init__(self, im, mode=None):
         ImageDraw.ImageDraw.__init__(self, im, mode)
+
+    def thick_rectangle(self, box, thick=1, **kwargs):
+        outline = kwargs.get('outline')
+        fill = kwargs.get('fill')
+
+        if thick == 1:
+            d = 0
+        else:
+            d = math.ceil(thick / 2.0)
+
+        x1, y1, x2, y2 = box
+        self.rectangle(box, fill=fill)
+        self.line(((x1, y1 - d), (x1, y2 + d)), fill=outline, width=thick)
+        self.line(((x2, y1 - d), (x2, y2 + d)), fill=outline, width=thick)
+        self.line(((x1, y1), (x2, y1)), fill=outline, width=thick)
+        self.line(((x1, y2), (x2, y2)), fill=outline, width=thick)
 
     def text(self, box, string, **kwargs):
         ttfont = kwargs.get('font')
@@ -136,7 +153,7 @@ class DiagramDraw(object):
         ttfont = kwargs.get('font')
 
         m = self.metrix.node(node)
-        self.imageDraw.rectangle(m.box(), outline=self.fill, fill=node.color)
+        self.imageDraw.thick_rectangle(m.box(), outline=self.fill, fill=node.color)
 
         self.imageDraw.text(m.coreBox(), node.label,
                             font=ttfont, lineSpacing=self.metrix.lineSpacing)
