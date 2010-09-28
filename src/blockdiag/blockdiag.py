@@ -331,7 +331,7 @@ def main():
         exit(0)
 
     if options.antialias:
-        scale = 2
+        scale = 3
     else:
         scale = 1
 
