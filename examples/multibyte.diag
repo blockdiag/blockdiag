@@ -1,0 +1,11 @@
+diagram {
+  A [label = "朝食"];
+  B [label = "昼食"];
+  C [label = "おやつ"];
+  D [label = "夕飯"];
+  E [label = "夜食"];
+
+  "起" -> "承" -> "転" -> "結";
+  A -> B      -> D -> E;
+       B -> C -> D;
+}
