@@ -1,0 +1,13 @@
+diagram {
+  group {
+    A -> B -> C -> D;
+  }
+              C -> E;
+
+  A -> F -> G -> H;
+
+  group {
+    G;
+    H;
+  }
+}
