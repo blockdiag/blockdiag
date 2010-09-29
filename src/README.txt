@@ -110,6 +110,11 @@ Python Software Foundation License.
 History
 =======
 
+0.3.1 (2010-09-29)
+------------------
+* Fasten anti-alias process.
+* Fix text was broken on windows.
+
 0.3 (2010-09-26)
 ------------------
 * Add --antialias option.
