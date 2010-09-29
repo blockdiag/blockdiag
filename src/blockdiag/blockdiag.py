@@ -343,6 +343,7 @@ def main():
     for path in fonts:
         if path and os.path.isfile(path):
             fontpath = path
+            break
 
     infile = args[0]
     if options.filename:
