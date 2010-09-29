@@ -120,6 +120,7 @@ class ScreenNodeBuilder:
         self.uniqLinks = {}
         self.widthRefs = []
         self.heightRefs = []
+        self.tailNodes = []
         self.rows = 0
 
     def _build(self, tree):
@@ -215,8 +216,11 @@ class ScreenNodeBuilder:
         self.widthRefs.append(node_id)
         for child in self.getChildren(node_id):
             is_ref = child.id in self.widthRefs
+            is_tail = child.id in self.tailNodes
 
-            if is_ref and self.isCircularRef(node_id, child):
+            if not is_tail and is_ref and self.isCircularRef(node_id, child):
+                pass
+            elif node_id == child.id:
                 pass
             elif child.group:
                 pass
@@ -227,6 +231,7 @@ class ScreenNodeBuilder:
                     child.xy = XY(0, child.xy.y)
                 elif node.xy.x + 1 > child.xy.x:
                     child.xy = XY(node.xy.x + node.width, child.xy.y)
+                    self.tailNodes.append(child.id)
                 self.setNodeWidth(child)
 
     def setNodeHeight(self, node, baseHeight):

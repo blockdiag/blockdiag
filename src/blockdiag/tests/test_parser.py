@@ -223,6 +223,40 @@ def test_twin_circular_ref_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_skipped_circular_diagram():
+    str = ("diagram {\n"
+           "  A      -> C\n"
+           "  A -> B -> C\n"
+           "  C -> A\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    screen = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 1), 'C': (2, 0),
+                  'Z': (0, 2)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
+def test_nested_skipped_circular_diagram():
+    str = ("diagram {\n"
+           "  A -> B                -> F -> G\n"
+           "       B -> C      -> E -> F\n"
+           "            C -> D -> E\n"
+           "  F -> A\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    screen = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 1),
+                  'D': (3, 2), 'E': (4, 1), 'F': (5, 0),
+                  'G': (6, 0), 'Z': (0, 3)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
 def test_self_ref_diagram():
     str = ("diagram {\n"
            "  A -> B -> B\n"
