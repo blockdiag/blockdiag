@@ -271,7 +271,6 @@ class EdgeMetrix:
         elif node1.x < node2.x:  # right-up, right-down
             shaft.add(node1.right())
             shaft.add(node1.right().x + span.x / 2, node1.right().y)
-            shaft.add(node1.right().x + span.x / 2, node1.right().y)
             shaft.add(node1.right().x + span.x / 2, node2.left().y)
             shaft.add(node2.left().x - span.x / 2, node2.left().y)
             shaft.add(node2.left())
