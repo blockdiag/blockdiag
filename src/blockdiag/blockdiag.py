@@ -6,8 +6,6 @@ import sys
 import re
 import uuid
 from optparse import OptionParser
-import Image
-import ImageFont
 import DiagramDraw
 import diagparser
 from DiagramMetrix import XY
@@ -356,12 +354,8 @@ def main():
         tree = diagparser.parse_file(infile)
         screen = ScreenNodeBuilder.build(tree)
 
-        ttfont = None
-        if fontpath:
-            ttfont = ImageFont.truetype(fontpath, 11 * scale)
-
-        draw = DiagramDraw.DiagramDraw(scale=scale)
-        draw.draw(screen, font=ttfont)
+        draw = DiagramDraw.DiagramDraw(scale=scale, font=fontpath)
+        draw.draw(screen)
     except Exception, e:
         import traceback
         traceback.print_exc()

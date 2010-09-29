@@ -4,6 +4,7 @@
 import math
 import Image
 import ImageDraw
+import ImageFont
 import ImageFilter
 from DiagramMetrix import DiagramMetrix, XY
 
@@ -28,8 +29,20 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         self.line(((x1, y1), (x2, y1)), fill=outline, width=thick)
         self.line(((x1, y2), (x2, y2)), fill=outline, width=thick)
 
+    def setupFont(self, **kwargs):
+        font = kwargs.get('font')
+        fontsize = kwargs.get('fontsize', 11)
+
+        if font:
+            ttfont = ImageFont.truetype(font, fontsize)
+        else:
+            ttfont = None
+
+        return ttfont
+
     def text(self, box, string, **kwargs):
-        ttfont = kwargs.get('font')
+        ttfont = self.setupFont(**kwargs)
+
         lineSpacing = kwargs.get('lineSpacing', 2)
         size = (box[2] - box[0], box[3] - box[1])
 
@@ -104,6 +117,8 @@ class DiagramDraw(object):
         self.metrix = DiagramMetrix(**kwargs)
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.shadow = kwargs.get('shadow', (128, 128, 128))
+        self.font = kwargs.get('font')
+        self.fontsize = kwargs.get('fontsize', 11)
 
     def scale(self, value):
         if isinstance(value, XY):
@@ -120,7 +135,6 @@ class DiagramDraw(object):
         return ret
 
     def draw(self, screen, **kwargs):
-        ttfont = kwargs.get('font')
         self.screen = screen
 
         paperSize = self.metrix.pageSize(screen.nodes)
@@ -131,7 +145,8 @@ class DiagramDraw(object):
         self._drawBackground()
 
         if self._scale > 1:
-            self.image = self.image.resize(self.scale(paperSize), Image.ANTIALIAS)
+            self.image = self.image.resize(self.scale(paperSize),
+                                           Image.ANTIALIAS)
             self.imageDraw = ImageDrawEx(self.image, self.mode)
 
         for node in (x for x in self.screen.nodes if x.drawable):
@@ -173,14 +188,15 @@ class DiagramDraw(object):
         self._scale = originalScale
 
     def screennode(self, node, **kwargs):
-        ttfont = kwargs.get('font')
-
         m = self.metrix.node(node)
         self.imageDraw.thick_rectangle(self.scale(m.box()), outline=self.fill,
                                        fill=node.color)
 
+        fontsize = self.scale(self.fontsize)
+        lineSpacing = self.scale(self.metrix.lineSpacing)
         self.imageDraw.text(self.scale(m.coreBox()), node.label,
-                            font=ttfont, lineSpacing=self.metrix.lineSpacing)
+                            font=self.font, fontsize=fontsize,
+                            lineSpacing=lineSpacing)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
