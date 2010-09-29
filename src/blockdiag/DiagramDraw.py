@@ -185,7 +185,15 @@ class DiagramDraw(object):
     def _prepareEdges(self):
         for edge in self.screen.edges:
             m = self.metrix.edge(edge)
-            if m.direction() == 'right':
+            dir = m.direction()
+            if dir == 'right':
+                r = range(edge.node1.xy[0] + 1, edge.node2.xy[0])
+                for x in r:
+                    xy = (x, edge.node1.xy[1])
+                    nodes = [x for x in self.screen.nodes if x.xy == xy]
+                    if len(nodes) > 0:
+                        edge.skipped = 1
+            elif dir == 'right-down':
                 r = range(edge.node1.xy[0] + 1, edge.node2.xy[0])
                 for x in r:
                     xy = (x, edge.node1.xy[1])
