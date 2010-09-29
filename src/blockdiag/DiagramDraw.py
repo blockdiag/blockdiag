@@ -87,7 +87,8 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             x = (size[0] - textsize[0]) / 2
 
             draw_xy = (xy[0] + x, xy[1] + height)
-            self.truetypeText(draw_xy, string, fill=fill, font=font, fontsize=fontsize)
+            self.truetypeText(draw_xy, string, fill=fill,
+                              font=font, fontsize=fontsize)
 
             height += textsize[1] + lineSpacing
 
@@ -220,8 +221,8 @@ class DiagramDraw(object):
 
         fontsize = self.scale(self.fontsize)
         lineSpacing = self.scale(self.metrix.lineSpacing)
-        self.imageDraw.text(self.scale(m.coreBox()), node.label, fill=self.fill,
-                            font=self.font, fontsize=fontsize,
+        self.imageDraw.text(self.scale(m.coreBox()), node.label,
+                            fill=self.fill, font=self.font, fontsize=fontsize,
                             lineSpacing=lineSpacing)
 
     def edge(self, edge):
