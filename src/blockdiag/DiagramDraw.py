@@ -196,7 +196,7 @@ class DiagramDraw(object):
             elif dir == 'right-down':
                 r = range(edge.node1.xy[0] + 1, edge.node2.xy[0])
                 for x in r:
-                    xy = (x, edge.node1.xy[1])
+                    xy = (x, edge.node2.xy[1])
                     nodes = [x for x in self.screen.nodes if x.xy == xy]
                     if len(nodes) > 0:
                         edge.skipped = 1
