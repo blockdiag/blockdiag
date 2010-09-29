@@ -11,6 +11,8 @@ from DiagramMetrix import DiagramMetrix, XY
 
 class ImageDrawEx(ImageDraw.ImageDraw):
     def __init__(self, im, mode=None):
+        self.image = im
+        self.mode = mode
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
     def thick_rectangle(self, box, thick=1, **kwargs):
@@ -29,10 +31,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         self.line(((x1, y1), (x2, y1)), fill=outline, width=thick)
         self.line(((x1, y2), (x2, y2)), fill=outline, width=thick)
 
-    def setupFont(self, **kwargs):
-        font = kwargs.get('font')
-        fontsize = kwargs.get('fontsize', 11)
-
+    def setupFont(self, font, fontsize):
         if font:
             ttfont = ImageFont.truetype(font, fontsize)
         else:
@@ -40,8 +39,36 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
         return ttfont
 
+    def truetypeText(self, xy, string, **kwargs):
+        scale_bias = 4
+        fill = kwargs.get('fill')
+        font = kwargs.get('font')
+        fontsize = kwargs.get('fontsize', 11)
+
+        if font is None:
+            ttfont = self.setupFont(font, fontsize)
+            ImageDraw.ImageDraw.text(self, xy, string,
+                                     fill=fill, font=ttfont)
+        else:
+            ttfont = self.setupFont(font, fontsize * scale_bias)
+
+            size = self.textsize(string, font=ttfont)
+            image = Image.new('RGBA', size)
+            draw = ImageDraw.Draw(image)
+            draw.text((0, 0), string, fill=fill, font=ttfont)
+            del draw
+
+            basesize = (size[0] / scale_bias, size[1] / scale_bias)
+            text_image = image.resize(basesize, Image.ANTIALIAS)
+
+            self.image.paste(text_image, xy, text_image)
+            ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
+
     def text(self, box, string, **kwargs):
-        ttfont = self.setupFont(**kwargs)
+        font = kwargs.get('font')
+        fontsize = kwargs.get('fontsize', 11)
+        fill = kwargs.get('fill')
+        ttfont = self.setupFont(font, fontsize)
 
         lineSpacing = kwargs.get('lineSpacing', 2)
         size = (box[2] - box[0], box[3] - box[1])
@@ -60,8 +87,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             x = (size[0] - textsize[0]) / 2
 
             draw_xy = (xy[0] + x, xy[1] + height)
-            ImageDraw.ImageDraw.text(self, draw_xy, string,
-                                     fill=self.fill, font=ttfont)
+            self.truetypeText(draw_xy, string, fill=fill, font=font, fontsize=fontsize)
 
             height += textsize[1] + lineSpacing
 
@@ -194,7 +220,7 @@ class DiagramDraw(object):
 
         fontsize = self.scale(self.fontsize)
         lineSpacing = self.scale(self.metrix.lineSpacing)
-        self.imageDraw.text(self.scale(m.coreBox()), node.label,
+        self.imageDraw.text(self.scale(m.coreBox()), node.label, fill=self.fill,
                             font=self.font, fontsize=fontsize,
                             lineSpacing=lineSpacing)
 
