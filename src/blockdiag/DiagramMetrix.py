@@ -175,7 +175,7 @@ class EdgeMetrix:
         node2 = self.metrix.node(self.edge.node2)
 
         if node1.x > node2.x:
-            if node1.y < node2.y:
+            if node1.y > node2.y:
                 dir = 'left-up'
             elif node1.y == node2.y:
                 dir = 'left'
@@ -189,7 +189,7 @@ class EdgeMetrix:
             else:
                 dir = 'down'
         else:
-            if node1.y < node2.y:
+            if node1.y > node2.y:
                 dir = 'right-up'
             elif node1.y == node2.y:
                 dir = 'right'
@@ -268,11 +268,18 @@ class EdgeMetrix:
 
             shaft.add(node2.left())
 
-        elif node1.x < node2.x:  # right-up, right-down
+        elif node1.x < node2.x:  # right-up, right-down, right-down(skipped)
             shaft.add(node1.right())
             shaft.add(node1.right().x + span.x / 2, node1.right().y)
-            shaft.add(node1.right().x + span.x / 2, node2.left().y)
-            shaft.add(node2.left().x - span.x / 2, node2.left().y)
+
+            if self.edge.skipped:
+                shaft.add(node1.right().x + span.x / 2, node2.topLeft().y - span.y / 2)
+                shaft.add(node2.left().x - span.x / 4, node2.topLeft().y - span.y / 2)
+                shaft.add(node2.left().x - span.x / 4, node2.left().y)
+            else:
+                shaft.add(node1.right().x + span.x / 2, node2.left().y)
+                shaft.add(node2.left().x - span.x / 2, node2.left().y)
+
             shaft.add(node2.left())
 
         elif node1.x == node2.x and node1.y > node2.y:  # up
