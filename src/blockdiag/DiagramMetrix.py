@@ -273,8 +273,10 @@ class EdgeMetrix:
             shaft.add(node1.right().x + span.x / 2, node1.right().y)
 
             if self.edge.skipped:
-                shaft.add(node1.right().x + span.x / 2, node2.topLeft().y - span.y / 2)
-                shaft.add(node2.left().x - span.x / 4, node2.topLeft().y - span.y / 2)
+                shaft.add(node1.right().x + span.x / 2,
+                          node2.topLeft().y - span.y / 2)
+                shaft.add(node2.left().x - span.x / 4,
+                          node2.topLeft().y - span.y / 2)
                 shaft.add(node2.left().x - span.x / 4, node2.left().y)
             else:
                 shaft.add(node1.right().x + span.x / 2, node2.left().y)
