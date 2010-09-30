@@ -9,6 +9,7 @@ from optparse import OptionParser
 import DiagramDraw
 import diagparser
 from DiagramMetrix import XY
+import utils
 
 
 class Screen:
@@ -336,6 +337,8 @@ def main():
                  help='write diagram to FILE', metavar='FILE')
     p.add_option('-f', '--font', dest='font',
                  help='use FONT to draw diagram', metavar='FONT')
+    p.add_option('-P', '--pdb', dest='pdb', action='store_true', default=False,
+                 help='Drop into debugger on exception')
     (options, args) = p.parse_args()
 
     if len(args) == 0:
@@ -365,20 +368,14 @@ def main():
     else:
         outfile = re.sub('\..*', '', infile) + '.png'
 
-    try:
-        tree = diagparser.parse_file(infile)
-        screen = ScreenNodeBuilder.build(tree)
+    if options.pdb:
+        sys.excepthook = utils.postmortem
 
-        draw = DiagramDraw.DiagramDraw(scale=scale, font=fontpath)
-        draw.draw(screen)
-    except Exception, e:
-        import traceback
-        traceback.print_exc()
+    tree = diagparser.parse_file(infile)
+    screen = ScreenNodeBuilder.build(tree)
 
-        name = e.__class__.__name__
-        print "[%s] %s" % (name, e)
-        exit(1)
-
+    draw = DiagramDraw.DiagramDraw(scale=scale, font=fontpath)
+    draw.draw(screen)
     draw.save(outfile, 'PNG')
 
 
