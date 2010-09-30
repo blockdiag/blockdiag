@@ -40,7 +40,6 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         return ttfont
 
     def truetypeText(self, xy, string, **kwargs):
-        scale_bias = 4
         fill = kwargs.get('fill')
         font = kwargs.get('font')
         fontsize = kwargs.get('fontsize', 11)
@@ -50,18 +49,20 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             ImageDraw.ImageDraw.text(self, xy, string,
                                      fill=fill, font=ttfont)
         else:
-            ttfont = self.setupFont(font, fontsize * scale_bias)
+            ttfont = self.setupFont(font, fontsize)
 
             size = self.textsize(string, font=ttfont)
-            image = Image.new('RGBA', size)
+            # use '1' mode instead of 'RGBA' for Windows font issue.
+            # Windows font include BDF(bitmap font) and used when
+            # mode is not '1' and font-size less than 24pt.
+            # And background-color specifying because can't use ALPHA blending.
+            image = Image.new('1', size, color='#FFF')
             draw = ImageDraw.Draw(image)
-            draw.text((0, 0), string, fill=fill, font=ttfont)
+            # can't using 'fill' variable (0,0,0) here. Why? FIXME!
+            draw.text((0, 0), string, fill='#000', font=ttfont)
             del draw
 
-            basesize = (size[0] / scale_bias, size[1] / scale_bias)
-            text_image = image.resize(basesize, Image.ANTIALIAS)
-
-            self.image.paste(text_image, xy, text_image)
+            self.image.paste(image, xy)  # non masked pasting. FIXME!
             ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
 
     def text(self, box, string, **kwargs):
