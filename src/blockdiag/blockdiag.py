@@ -36,6 +36,7 @@ class ScreenNode:
         self.xy = XY(0, 0)
         self.color = (255, 255, 255)
         self.group = None
+        self.background = None
         self.width = 1
         self.height = 1
         self.drawable = 1
@@ -52,6 +53,8 @@ class ScreenNode:
                 self.label = value
             elif attr.name == 'color':
                 self.color = value
+            elif attr.name == 'background':
+                self.background = value
             else:
                 msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
                 raise AttributeError(msg)
