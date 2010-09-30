@@ -136,14 +136,10 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
     def loadImage(self, filename, box, scale):
         image = Image.open(filename)
-        if scale > 1:
-            w, h = image.size
-            image = image.resize((w * 2, h * 2))
+        w = min([box[2] - box[0], image.size[0] * scale])
+        h = min([box[3] - box[1], image.size[1] * scale])
 
-        w = min([box[2] - box[0], image.size[0]])
-        h = min([box[3] - box[1], image.size[1]])
-
-        self.image.paste(image.crop((0, 0, w, h)), (box[0], box[1]))
+        self.image.paste(image.resize((w, h)), (box[0], box[1]))
         ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
 
 
