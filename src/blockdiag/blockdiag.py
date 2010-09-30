@@ -44,6 +44,8 @@ class ScreenNode:
 
     def copyAttributes(self, other):
         self.label = other.label
+        self.width = other.width
+        self.height = other.height
         self.xy = other.xy
         self.color = other.color
         self.background = other.background
@@ -55,6 +57,10 @@ class ScreenNode:
                 self.label = value
             elif attr.name == 'color':
                 self.color = value
+            elif attr.name == 'width':
+                self.width = int(value)
+            elif attr.name == 'height':
+                self.height = int(value)
             elif attr.name == 'background':
                 if os.path.isfile(value):
                     self.background = value
