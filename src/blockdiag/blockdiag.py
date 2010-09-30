@@ -58,7 +58,8 @@ class ScreenNode:
                 if os.path.isfile(value):
                     self.background = value
                 else:
-                    msg = "WARNING: background image was not found: %s\n" % value
+                    msg = "WARNING: background image was not found: %s\n" % \
+                            value
                     sys.stderr.write(msg)
             else:
                 msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
