@@ -135,12 +135,28 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         return lines
 
     def loadImage(self, filename, box, scale):
+        box_width = box[2] - box[0]
+        box_height = box[3] - box[1]
+
+        # resize image.
         image = Image.open(filename)
-        w = min([box[2] - box[0], image.size[0] * scale])
-        h = min([box[3] - box[1], image.size[1] * scale])
+        w = min([box_width, image.size[0] * scale])
+        h = min([box_height, image.size[1] * scale])
         image.thumbnail((w, h), Image.ANTIALIAS)
 
-        self.image.paste(image, (box[0], box[1]))
+        # centering image.
+        w, h = image.size
+        if box_width > w:
+            x = box[0] + (box_width - w) / 2
+        else:
+            x = box[0]
+
+        if box_height > h:
+            y = box[1] + (box_height - h) / 2
+        else:
+            y = box[1]
+        
+        self.image.paste(image, (x, y))
         ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
 
 
