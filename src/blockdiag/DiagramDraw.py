@@ -84,7 +84,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         xy = (box[0], box[1])
         for string in lines:
             textsize = self.textsize(string, font=ttfont)
-            x = (size[0] - textsize[0]) / 2
+            x = int(math.ceil((size[0] - textsize[0]) / 2.0))
 
             draw_xy = (xy[0] + x, xy[1] + height)
             self.truetypeText(draw_xy, string, fill=fill,
@@ -168,6 +168,7 @@ class DiagramDraw(object):
         self._scale = kwargs.get('scale', 1)
         self.metrix = DiagramMetrix(**kwargs)
         self.fill = kwargs.get('fill', (0, 0, 0))
+        self.badgeFill = kwargs.get('badgeFill', 'pink')
         self.shadow = kwargs.get('shadow', (128, 128, 128))
         self.font = kwargs.get('font')
         self.fontsize = kwargs.get('fontsize', 11)
@@ -266,6 +267,15 @@ class DiagramDraw(object):
         self.imageDraw.text(self.scale(m.coreBox()), node.label,
                             fill=self.fill, font=self.font, fontsize=fontsize,
                             lineSpacing=lineSpacing)
+
+        if node.numbered != None:
+            xy = self.scale(m.topLeft())
+            r = self.scale(self.metrix.cellSize)
+
+            box = [xy.x - r, xy.y - r, xy.x + r, xy.y + r]
+            self.imageDraw.ellipse(box, outline=self.fill, fill=self.badgeFill)
+            self.imageDraw.text(box, node.numbered, fill=self.fill,
+                                font=self.font, fontsize=fontsize)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)

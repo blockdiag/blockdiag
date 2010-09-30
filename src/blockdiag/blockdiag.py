@@ -37,6 +37,7 @@ class ScreenNode:
         self.xy = XY(0, 0)
         self.color = (255, 255, 255)
         self.group = None
+        self.numbered = None
         self.background = None
         self.width = 1
         self.height = 1
@@ -48,6 +49,7 @@ class ScreenNode:
         self.height = other.height
         self.xy = other.xy
         self.color = other.color
+        self.numbered = other.numbered
         self.background = other.background
 
     def setAttributes(self, attrs):
@@ -67,6 +69,8 @@ class ScreenNode:
                 else:
                     msg = "WARNING: background image not found: %s\n" % value
                     sys.stderr.write(msg)
+            elif attr.name == 'numbered':
+                self.numbered = value
             else:
                 msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
                 raise AttributeError(msg)
