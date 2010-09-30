@@ -138,8 +138,9 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         image = Image.open(filename)
         w = min([box[2] - box[0], image.size[0] * scale])
         h = min([box[3] - box[1], image.size[1] * scale])
+        image.thumbnail((w, h), Image.ANTIALIAS)
 
-        self.image.paste(image.resize((w, h)), (box[0], box[1]))
+        self.image.paste(image, (box[0], box[1]))
         ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
 
 
