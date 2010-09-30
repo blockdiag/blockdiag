@@ -40,28 +40,26 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         return ttfont
 
     def truetypeText(self, xy, string, **kwargs):
-        scale_bias = 4
         fill = kwargs.get('fill')
         font = kwargs.get('font')
         fontsize = kwargs.get('fontsize', 11)
+        ttfont = self.setupFont(font, fontsize)
 
         if font is None:
-            ttfont = self.setupFont(font, fontsize)
             ImageDraw.ImageDraw.text(self, xy, string,
                                      fill=fill, font=ttfont)
         else:
-            ttfont = self.setupFont(font, fontsize * scale_bias)
-
             size = self.textsize(string, font=ttfont)
-            image = Image.new('RGBA', size)
-            draw = ImageDraw.Draw(image)
-            draw.text((0, 0), string, fill=fill, font=ttfont)
-            del draw
 
-            basesize = (size[0] / scale_bias, size[1] / scale_bias)
-            text_image = image.resize(basesize, Image.ANTIALIAS)
+            # Generate mask to support BDF(bitmap font)
+            mask = Image.new('1', size)
+            draw = ImageDraw.Draw(mask)
+            draw.text((0, 0), string, fill='white', font=ttfont)
 
-            self.image.paste(text_image, xy, text_image)
+            # Rendering text
+            filler = Image.new('RGB', size, fill)
+            self.image.paste(filler, xy, mask)
+
             ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
 
     def text(self, box, string, **kwargs):
