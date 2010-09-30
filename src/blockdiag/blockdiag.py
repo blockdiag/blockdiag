@@ -9,7 +9,6 @@ from optparse import OptionParser
 import DiagramDraw
 import diagparser
 from DiagramMetrix import XY
-import utils
 
 
 class Screen:
@@ -59,8 +58,7 @@ class ScreenNode:
                 if os.path.isfile(value):
                     self.background = value
                 else:
-                    msg = "WARNING: background image was not found: %s\n" % \
-                            value
+                    msg = "WARNING: background image not found: %s\n" % value
                     sys.stderr.write(msg)
             else:
                 msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
@@ -337,8 +335,6 @@ def main():
                  help='write diagram to FILE', metavar='FILE')
     p.add_option('-f', '--font', dest='font',
                  help='use FONT to draw diagram', metavar='FONT')
-    p.add_option('-P', '--pdb', dest='pdb', action='store_true', default=False,
-                 help='Drop into debugger on exception')
     (options, args) = p.parse_args()
 
     if len(args) == 0:
@@ -368,14 +364,20 @@ def main():
     else:
         outfile = re.sub('\..*', '', infile) + '.png'
 
-    if options.pdb:
-        sys.excepthook = utils.postmortem
+    try:
+        tree = diagparser.parse_file(infile)
+        screen = ScreenNodeBuilder.build(tree)
 
-    tree = diagparser.parse_file(infile)
-    screen = ScreenNodeBuilder.build(tree)
+        draw = DiagramDraw.DiagramDraw(scale=scale, font=fontpath)
+        draw.draw(screen)
+    except Exception, e:
+        import traceback
+        traceback.print_exc()
 
-    draw = DiagramDraw.DiagramDraw(scale=scale, font=fontpath)
-    draw.draw(screen)
+        name = e.__class__.__name__
+        print "[%s] %s" % (name, e)
+        exit(1)
+
     draw.save(outfile, 'PNG')
 
 
