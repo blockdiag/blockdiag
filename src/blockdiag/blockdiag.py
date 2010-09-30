@@ -45,6 +45,7 @@ class ScreenNode:
         self.label = other.label
         self.xy = other.xy
         self.color = other.color
+        self.background = other.background
 
     def setAttributes(self, attrs):
         for attr in attrs:
