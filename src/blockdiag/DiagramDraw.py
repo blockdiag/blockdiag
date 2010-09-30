@@ -155,7 +155,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             y = box[1] + (box_height - h) / 2
         else:
             y = box[1]
-        
+
         self.image.paste(image, (x, y))
         ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
 
