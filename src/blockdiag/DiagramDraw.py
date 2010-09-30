@@ -134,6 +134,18 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
         return lines
 
+    def loadImage(self, filename, box, scale):
+        image = Image.open(filename)
+        if scale > 1:
+            w, h = image.size
+            image = image.resize((w * 2, h * 2))
+
+        w = min([box[2] - box[0], image.size[0]])
+        h = min([box[3] - box[1], image.size[1]])
+
+        self.image.paste(image.crop((0, 0, w, h)), (box[0], box[1]))
+        ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
+
 
 class DiagramDraw(object):
     def __init__(self, mode=None, **kwargs):
@@ -224,8 +236,17 @@ class DiagramDraw(object):
 
     def screennode(self, node, **kwargs):
         m = self.metrix.node(node)
-        self.imageDraw.thick_rectangle(self.scale(m.box()), outline=self.fill,
-                                       fill=node.color)
+
+        if node.background:
+            self.imageDraw.thick_rectangle(self.scale(m.box()),
+                                           outline=self.fill, fill=node.color)
+            self.imageDraw.loadImage(node.background, self.scale(m.box()),
+                                     scale=self._scale)
+            self.imageDraw.thick_rectangle(self.scale(m.box()),
+                                           outline=self.fill)
+        else:
+            self.imageDraw.thick_rectangle(self.scale(m.box()),
+                                           outline=self.fill, fill=node.color)
 
         fontsize = self.scale(self.fontsize)
         lineSpacing = self.scale(self.metrix.lineSpacing)
