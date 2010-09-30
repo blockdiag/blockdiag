@@ -3,6 +3,7 @@
 
 import os
 import re
+import sys
 import uuid
 from optparse import OptionParser
 import DiagramDraw
@@ -53,7 +54,11 @@ class ScreenNode:
             elif attr.name == 'color':
                 self.color = value
             elif attr.name == 'background':
-                self.background = value
+                if os.path.isfile(value):
+                    self.background = value
+                else:
+                    msg = "WARNING: background image was not found: %s\n" % value
+                    sys.stderr.write(msg)
             else:
                 msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
                 raise AttributeError(msg)
