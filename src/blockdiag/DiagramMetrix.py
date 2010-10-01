@@ -13,9 +13,14 @@ XY = namedtuple('XY', 'x y')
 class xylist(list):
     def add(self, x, y=None):
         if y is None:
-            self.append(x)
+            elem = x
         else:
-            self.append(XY(x, y))
+            elem = XY(x, y)
+
+        if len(self) == 0:
+            self.append(elem)
+        elif self[-1] != elem:
+            self.append(elem)
 
 
 class DiagramMetrix:
