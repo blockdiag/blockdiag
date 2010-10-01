@@ -349,4 +349,4 @@ class EdgeMetrix:
             pos = (node1.x, node1.y, node2.x, node2.y)
             raise RuntimeError("Invalid edge: (%d, %d), (%d, %d)" % pos)
 
-        return shaft.polylines.pop()
+        return shaft

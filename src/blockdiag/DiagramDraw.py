@@ -283,8 +283,8 @@ class DiagramDraw(object):
         else:
             color = self.fill
 
-        shaft = metrix.shaft()
-        self.imageDraw.line(self.scale(shaft), fill=color)
+        for line in metrix.shaft().polylines:
+            self.imageDraw.line(self.scale(line), fill=color)
 
         for head in metrix.heads():
             self.imageDraw.polygon(self.scale(head), outline=color, fill=color)
