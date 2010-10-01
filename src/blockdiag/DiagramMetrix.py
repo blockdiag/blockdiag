@@ -58,9 +58,6 @@ class EdgeLines:
     def holizonalLines(self):
         return [x for x in self.lines() if x[0].x == x[1].x]
 
-    # alias
-    add = lineTo
-
 
 class DiagramMetrix:
     def __init__(self, **kwargs):
@@ -300,50 +297,52 @@ class EdgeMetrix:
 
         shaft = EdgeLines()
         if node1.x < node2.x and node1.y == node2.y:  # right, right(skipped)
-            shaft.add(node1.right())
+            shaft.moveTo(node1.right())
 
             if self.edge.skipped:
-                shaft.add(node1.right().x + span.x / 2, node1.right().y)
-                shaft.add(node1.right().x + span.x / 2,
-                          node1.bottomRight().y + span.y / 2)
-                shaft.add(node2.left().x - span.x / 4,
-                          node2.bottomRight().y + span.y / 2)
-                shaft.add(node2.left().x - span.x / 4, node2.left().y)
+                shaft.lineTo(node1.right().x + span.x / 2, node1.right().y)
+                shaft.lineTo(node1.right().x + span.x / 2,
+                             node1.bottomRight().y + span.y / 2)
+                shaft.lineTo(node2.left().x - span.x / 4,
+                             node2.bottomRight().y + span.y / 2)
+                shaft.lineTo(node2.left().x - span.x / 4, node2.left().y)
 
-            shaft.add(node2.left())
+            shaft.lineTo(node2.left())
 
         elif node1.x < node2.x:  # right-up, right-down, right-down(skipped)
-            shaft.add(node1.right())
-            shaft.add(node1.right().x + span.x / 2, node1.right().y)
+            shaft.moveTo(node1.right())
+            shaft.lineTo(node1.right().x + span.x / 2, node1.right().y)
 
             if self.edge.skipped:
-                shaft.add(node1.right().x + span.x / 2,
-                          node2.topLeft().y - span.y / 2)
-                shaft.add(node2.left().x - span.x / 4,
-                          node2.topLeft().y - span.y / 2)
-                shaft.add(node2.left().x - span.x / 4, node2.left().y)
+                shaft.lineTo(node1.right().x + span.x / 2,
+                             node2.topLeft().y - span.y / 2)
+                shaft.lineTo(node2.left().x - span.x / 4,
+                             node2.topLeft().y - span.y / 2)
+                shaft.lineTo(node2.left().x - span.x / 4, node2.left().y)
             else:
-                shaft.add(node1.right().x + span.x / 2, node2.left().y)
-                shaft.add(node2.left().x - span.x / 2, node2.left().y)
+                shaft.lineTo(node1.right().x + span.x / 2, node2.left().y)
+                shaft.lineTo(node2.left().x - span.x / 2, node2.left().y)
 
-            shaft.add(node2.left())
+            shaft.lineTo(node2.left())
 
         elif node1.x == node2.x and node1.y > node2.y:  # up
-            shaft.add(node1.top())
-            shaft.add(node2.bottom())
+            shaft.moveTo(node1.top())
+            shaft.lineTo(node2.bottom())
 
         elif node1.y >= node2.y:  # left, left-up
-            shaft.add(node1.right())
-            shaft.add(node1.right().x + span.x / 8, node1.right().y)
-            shaft.add(node1.right().x + span.x / 8, node2.top().y - span.y / 2)
-            shaft.add(node2.top().x, node2.top().y - span.y / 2)
-            shaft.add(node2.top())
+            shaft.lineTo(node1.right())
+            shaft.lineTo(node1.right().x + span.x / 8,
+                         node1.right().y)
+            shaft.lineTo(node1.right().x + span.x / 8,
+                         node2.top().y - span.y / 2)
+            shaft.lineTo(node2.top().x, node2.top().y - span.y / 2)
+            shaft.lineTo(node2.top())
 
         elif node1.x > node2.x:  # left-down
-            shaft.add(node1.bottom())
-            shaft.add(node1.bottom().x, node2.top().y - span.y / 2)
-            shaft.add(node2.top().x, node2.top().y - span.y / 2)
-            shaft.add(node2.top())
+            shaft.moveTo(node1.bottom())
+            shaft.lineTo(node1.bottom().x, node2.top().y - span.y / 2)
+            shaft.lineTo(node2.top().x, node2.top().y - span.y / 2)
+            shaft.lineTo(node2.top())
 
         else:  # down and misc.
             pos = (node1.x, node1.y, node2.x, node2.y)
