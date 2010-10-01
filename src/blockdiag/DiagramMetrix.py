@@ -40,6 +40,9 @@ class EdgeLines:
                 polyline.append(self.xy)
             self.polylines.append(polyline)
 
+        if len(self.polylines[-1]) > 0 and self.polylines[-1][-1] == elem:
+            return
+
         self.polylines[-1].append(elem)
 
     def lines(self):
