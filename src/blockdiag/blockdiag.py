@@ -84,6 +84,7 @@ class ScreenEdge:
         self.color = None
         self.noweight = None
         self.skipped = 0
+        self.crosspoints = []
         self.dir = 'forward'
 
     def copyAttributes(self, other):

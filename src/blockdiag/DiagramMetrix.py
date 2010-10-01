@@ -11,8 +11,9 @@ XY = namedtuple('XY', 'x y')
 
 
 class EdgeLines:
-    def __init__(self, points=None):
+    def __init__(self, metrix, points=None):
         self.xy = None
+        self.cellSize = metrix.cellSize
         self.stroking = False
         self.polylines = []
         self.crossPoints = []
@@ -40,10 +41,42 @@ class EdgeLines:
                 polyline.append(self.xy)
             self.polylines.append(polyline)
 
-        if len(self.polylines[-1]) > 0 and self.polylines[-1][-1] == elem:
-            return
+        if len(self.polylines[-1]) > 0:
+            if self.polylines[-1][-1] == elem:
+                return
+
+            start = self.polylines[-1][-1]
+            crosspoint = self.getCrosspoint(start, elem)
+            if crosspoint:
+                if start.y == crosspoint.y:  # holizonal line
+                    p = XY(point.x - self.cellSize, crosspoint.y)
+                    self.lineTo(p)
+
+                    p = XY(point.x + self.cellSize, crosspoint.y)
+                    self.moveTo(p)
+                    self.lineTo(elem)
+                    return
+                else:
+                    raise
 
         self.polylines[-1].append(elem)
+
+    def getCrosspoint(self, start, end):
+        if start.x > end.x:
+            p1 = end
+            p2 = start
+        else:
+            p1 = start
+            p2 = end
+
+        for p in self.crossPoints:
+            if p1.x <= p.x and p.x <= p2.x and \
+               ((p1.y <= p2.y and p1.y <= p.y and p.y <= p2.y) or \
+                (p1.y > p2.y and p2.y <= p.y and p.y <= p1.y)) and \
+               (p.y - p1.y) * (p2.x - p1.x) == (p2.y - p1.y) * (p.x - p1.x):
+                return p
+
+        return None
 
     def lines(self):
         lines = []
@@ -298,7 +331,7 @@ class EdgeMetrix:
         node1 = self.metrix.node(self.edge.node1)
         node2 = self.metrix.node(self.edge.node2)
 
-        shaft = EdgeLines()
+        shaft = EdgeLines(self.metrix, self.edge.crosspoints)
         if node1.x < node2.x and node1.y == node2.y:  # right, right(skipped)
             shaft.moveTo(node1.right())
 
