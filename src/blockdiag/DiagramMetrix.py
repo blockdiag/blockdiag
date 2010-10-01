@@ -22,6 +22,21 @@ class xylist(list):
         elif self[-1] != elem:
             self.append(elem)
 
+    def lines(self):
+        lines = []
+        start = self[0]
+        for elem in list(self[1:]):
+            lines.append((start, elem))
+            start = elem
+
+        return lines
+
+    def verticalLines(self):
+        return [x for x in self.lines() if x[0].y == x[1].y]
+
+    def holizonalLines(self):
+        return [x for x in self.lines() if x[0].x == x[1].x]
+
 
 class DiagramMetrix:
     def __init__(self, **kwargs):
