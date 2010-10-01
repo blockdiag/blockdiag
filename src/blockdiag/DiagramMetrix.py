@@ -10,24 +10,45 @@ except ImportError:
 XY = namedtuple('XY', 'x y')
 
 
-class xylist(list):
-    def add(self, x, y=None):
+class EdgeLines:
+    def __init__(self, points=None):
+        self.xy = None
+        self.stroking = False
+        self.polylines = []
+        self.crossPoints = []
+
+        if points:
+            self.crossPoints = points
+
+    def moveTo(self, x, y=None):
+        self.stroking = False
+        if y is None:
+            self.xy = x
+        else:
+            self.xy = XY(x, y)
+
+    def lineTo(self, x, y=None):
         if y is None:
             elem = x
         else:
             elem = XY(x, y)
 
-        if len(self) == 0:
-            self.append(elem)
-        elif self[-1] != elem:
-            self.append(elem)
+        if self.stroking == False:
+            self.stroking = True
+            polyline = []
+            if self.xy:
+                polyline.append(self.xy)
+            self.polylines.append(polyline)
+
+        self.polylines[-1].append(elem)
 
     def lines(self):
         lines = []
-        start = self[0]
-        for elem in list(self[1:]):
-            lines.append((start, elem))
-            start = elem
+        for line in self.polylines:
+            start = line[0]
+            for elem in list(line[1:]):
+                lines.append((start, elem))
+                start = elem
 
         return lines
 
@@ -36,6 +57,9 @@ class xylist(list):
 
     def holizonalLines(self):
         return [x for x in self.lines() if x[0].x == x[1].x]
+
+    # alias
+    add = lineTo
 
 
 class DiagramMetrix:
@@ -241,30 +265,30 @@ class EdgeMetrix:
         return heads
 
     def _head(self, node, direct):
-        head = xylist()
+        head = []
         cell = self.metrix.cellSize
         node = self.metrix.node(node)
 
         if direct == 'up':
             xy = node.bottom()
-            head.add(xy)
-            head.add(xy.x - cell / 2, xy.y + cell)
-            head.add(xy.x + cell / 2, xy.y + cell)
+            head.append(xy)
+            head.append((xy.x - cell / 2, xy.y + cell))
+            head.append((xy.x + cell / 2, xy.y + cell))
         elif direct == 'down':
             xy = node.top()
-            head.add(xy)
-            head.add(xy.x - cell / 2, xy.y - cell)
-            head.add(xy.x + cell / 2, xy.y - cell)
+            head.append(xy)
+            head.append((xy.x - cell / 2, xy.y - cell))
+            head.append((xy.x + cell / 2, xy.y - cell))
         elif direct == 'right':
             xy = node.left()
-            head.add(xy)
-            head.add(xy.x - cell, xy.y - cell / 2)
-            head.add(xy.x - cell, xy.y + cell / 2)
+            head.append(xy)
+            head.append((xy.x - cell, xy.y - cell / 2))
+            head.append((xy.x - cell, xy.y + cell / 2))
         elif direct == 'left':
             xy = node.right()
-            head.add(xy)
-            head.add(xy.x + cell, xy.y - cell / 2)
-            head.add(xy.x + cell, xy.y + cell / 2)
+            head.append(xy)
+            head.append((xy.x + cell, xy.y - cell / 2))
+            head.append((xy.x + cell, xy.y + cell / 2))
 
         return head
 
@@ -274,7 +298,7 @@ class EdgeMetrix:
         node1 = self.metrix.node(self.edge.node1)
         node2 = self.metrix.node(self.edge.node2)
 
-        shaft = xylist()
+        shaft = EdgeLines()
         if node1.x < node2.x and node1.y == node2.y:  # right, right(skipped)
             shaft.add(node1.right())
 
@@ -325,4 +349,4 @@ class EdgeMetrix:
             pos = (node1.x, node1.y, node2.x, node2.y)
             raise RuntimeError("Invalid edge: (%d, %d), (%d, %d)" % pos)
 
-        return shaft
+        return shaft.polylines.pop()
