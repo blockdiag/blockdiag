@@ -110,6 +110,9 @@ class DiagramMetrix:
         self.spanWidth = self.cellSize * kwargs.get('spanColumns', 8)
         self.spanHeight = self.cellSize * kwargs.get('spanRows', 5)
 
+    def originalMetrix(self):
+        return self
+
     def node(self, node):
         return NodeMetrix(node, self)
 
