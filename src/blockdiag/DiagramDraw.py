@@ -6,7 +6,7 @@ import Image
 import ImageDraw
 import ImageFont
 import ImageFilter
-from DiagramMetrix import DiagramMetrix, XY
+from PngDiagramMetrix import PngDiagramMetrix, XY
 
 
 class ImageDrawEx(ImageDraw.ImageDraw):
@@ -178,8 +178,8 @@ class DiagramDraw(object):
     def __init__(self, screen=None, **kwargs):
         self.screen = screen
         self.image = None
-        self._scale = kwargs.get('scale', 1)
-        self.metrix = DiagramMetrix(**kwargs)
+        self.scale_ratio = kwargs.get('scale', 1)
+        self.metrix = PngDiagramMetrix(**kwargs)
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.badgeFill = kwargs.get('badgeFill', 'pink')
         self.shadow = kwargs.get('shadow', (128, 128, 128))
@@ -188,26 +188,13 @@ class DiagramDraw(object):
 
         self.resetCanvas()
 
-    def scale(self, value):
-        if isinstance(value, XY):
-            ret = XY(value.x * self._scale, value.y * self._scale)
-        elif isinstance(value, tuple):
-            ret = tuple([self.scale(x) for x in value])
-        elif isinstance(value, list):
-            ret = [self.scale(x) for x in value]
-        elif isinstance(value, int):
-            ret = value * self._scale
-        else:
-            ret = value
-
-        return ret
-
     def resetCanvas(self):
         if self.screen is None:
             return
 
         if self.image is None:
-            pageSize = self.metrix.pageSize(self.screen.nodes)
+            metrix = self.metrix.originalMetrix()
+            pageSize = metrix.pageSize(self.screen.nodes)
             self.image = Image.new('RGB', pageSize, (256, 256, 256))
 
         self.imageDraw = ImageDrawEx(self.image, None)
@@ -221,9 +208,9 @@ class DiagramDraw(object):
         self._prepareEdges()
         self._drawBackground()
 
-        if self._scale > 1:
-            self.image = self.image.resize(self.scale(paperSize),
-                                           Image.ANTIALIAS)
+        if self.scale_ratio > 1:
+            pageSize = self.metrix.pageSize(self.screen.nodes)
+            self.image = self.image.resize(pageSize, Image.ANTIALIAS)
             self.resetCanvas()
 
         for node in (x for x in self.screen.nodes if x.drawable):
@@ -252,54 +239,52 @@ class DiagramDraw(object):
                         edge.skipped = 1
 
     def _drawBackground(self):
-        originalScale = self._scale
-        self._scale = 1
+        metrix = self.metrix.originalMetrix()
 
         # Draw node groups.
         for node in (x for x in self.screen.nodes if x.drawable == 0):
-            marginBox = self.metrix.node(node).marginBox()
-            self.imageDraw.rectangle(self.scale(marginBox), fill=node.color)
+            marginBox = metrix.node(node).marginBox()
+            self.imageDraw.rectangle(marginBox, fill=node.color)
 
         # Drop node shadows.
         for node in (x for x in self.screen.nodes if x.drawable):
-            shadowBox = self.metrix.node(node).shadowBox()
-            self.imageDraw.rectangle(self.scale(shadowBox), fill=self.shadow)
+            shadowBox = metrix.node(node).shadowBox()
+            self.imageDraw.rectangle(shadowBox, fill=self.shadow)
 
         # Smoothing back-ground images.
         for i in range(15):
             self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
 
         self.resetCanvas()
-        self._scale = originalScale
 
     def screennode(self, node, **kwargs):
         m = self.metrix.node(node)
 
         if node.background:
-            self.imageDraw.thick_rectangle(self.scale(m.box()),
+            self.imageDraw.thick_rectangle(m.box(),
                                            outline=self.fill, fill=node.color)
-            self.imageDraw.loadImage(node.background, self.scale(m.box()),
-                                     scale=self._scale)
-            self.imageDraw.thick_rectangle(self.scale(m.box()),
+            self.imageDraw.loadImage(node.background, m.box(),
+                                     scale=self.scale_ratio)
+            self.imageDraw.thick_rectangle(m.box(),
                                            outline=self.fill)
         else:
-            self.imageDraw.thick_rectangle(self.scale(m.box()),
+            self.imageDraw.thick_rectangle(m.box(),
                                            outline=self.fill, fill=node.color)
 
-        fontsize = self.scale(self.fontsize)
-        lineSpacing = self.scale(self.metrix.lineSpacing)
-        self.imageDraw.text(self.scale(m.coreBox()), node.label,
-                            fill=self.fill, scale=self._scale, font=self.font,
+        fontsize = self.fontsize * self.scale_ratio
+        lineSpacing = self.metrix.lineSpacing
+        self.imageDraw.text(m.coreBox(), node.label, fill=self.fill,
+                            scale=self.scale_ratio, font=self.font,
                             fontsize=fontsize, lineSpacing=lineSpacing)
 
         if node.numbered != None:
-            xy = self.scale(m.topLeft())
-            r = self.scale(self.metrix.cellSize)
+            xy = m.topLeft()
+            r = self.metrix.cellSize
 
             box = [xy.x - r, xy.y - r, xy.x + r, xy.y + r]
             self.imageDraw.ellipse(box, outline=self.fill, fill=self.badgeFill)
             self.imageDraw.text(box, node.numbered, fill=self.fill,
-                                scale=self._scale, font=self.font,
+                                scale=self.scale_ratio, font=self.font,
                                 fontsize=fontsize)
 
     def edge(self, edge):
@@ -311,18 +296,18 @@ class DiagramDraw(object):
             color = self.fill
 
         for line in metrix.shaft().polylines:
-            self.imageDraw.line(self.scale(line), fill=color)
+            self.imageDraw.line(line, fill=color)
 
         for head in metrix.heads():
-            self.imageDraw.polygon(self.scale(head), outline=color, fill=color)
+            self.imageDraw.polygon(head, outline=color, fill=color)
 
     def save(self, filename, format, size=None):
         if size:
             x, y = size
         else:
             x, y = self.image.size
-            x = int(x / self._scale)
-            y = int(y / self._scale)
+            x = int(x / self.scale_ratio)
+            y = int(y / self.scale_ratio)
 
         self.image.thumbnail((x, y), Image.ANTIALIAS)
         self.image.save(filename, format)
