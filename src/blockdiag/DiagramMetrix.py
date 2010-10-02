@@ -102,6 +102,7 @@ class DiagramMetrix:
         self.lineSpacing = kwargs.get('lineSpacing', 2)
         self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
         self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
+        self.fontSize = kwargs.get('fontSize', 11)
 
         self.pageMargin = self.cellSize * kwargs.get('pageMargin', 3)
         self.nodeWidth = self.cellSize * kwargs.get('nodeColumns', 16)

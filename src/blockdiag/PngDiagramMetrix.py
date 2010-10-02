@@ -55,6 +55,7 @@ class PngDiagramMetrix(Scaler):
         self.define_scale_attribute('lineSpacing')
         self.define_scale_attribute('spanWidth')
         self.define_scale_attribute('spanHeight')
+        self.define_scale_attribute('fontSize')
 
         # methods
         self.define_scale_method('pageSize')
