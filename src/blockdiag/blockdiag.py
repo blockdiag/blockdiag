@@ -16,13 +16,21 @@ class Screen:
     def __init__(self):
         self.nodes = []
         self.edges = []
+        self.rankdir = None
 
     def setAttributes(self, attrs):
         for attr in attrs:
             value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
 
-            msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
-            raise AttributeError(msg)
+            if attr.name.lower() == 'rankdir':
+                if value.upper() == 'LR':
+                    self.rankdir = value.upper()
+                else:
+                    msg = "WARNING: unknown rankdir: %s\n" % value
+                    sys.stderr.write(msg)
+            else:
+                msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
+                raise AttributeError(msg)
 
 
 class ScreenNode:
@@ -156,6 +164,15 @@ class ScreenNodeBuilder:
 
         self.screen.nodes = self.uniqNodes.values()
         self.screen.edges = self.uniqLinks.values()
+
+        if self.screen.rankdir == 'LR':
+            for node in self.screen.nodes:
+                i = node.width
+                node.width = node.height
+                node.height = i
+
+                node.xy = XY(node.xy.y, node.xy.x)
+
         return self.screen
 
     def getScreenNode(self, id):
