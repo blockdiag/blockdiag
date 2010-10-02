@@ -41,13 +41,25 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
     def truetypeText(self, xy, string, **kwargs):
         fill = kwargs.get('fill')
+        scale = kwargs.get('scale', 1)
         font = kwargs.get('font')
         fontsize = kwargs.get('fontsize', 11)
         ttfont = self.setupFont(font, fontsize)
 
-        if font is None:
-            ImageDraw.ImageDraw.text(self, xy, string,
-                                     fill=fill, font=ttfont)
+        if ttfont is None:
+            if scale == 1:
+                ImageDraw.ImageDraw.text(self, xy, string, fill=fill)
+            else:
+                size = self.textsize(string)
+                image = Image.new('RGBA', size)
+                draw = ImageDraw.Draw(image)
+                draw.text((0, 0), string, fill=fill)
+                del draw
+
+                basesize = (size[0] * 2, size[1] * 2)
+                text_image = image.resize(basesize, Image.ANTIALIAS)
+
+                self.image.paste(text_image, xy, text_image)
         else:
             size = self.textsize(string, font=ttfont)
 
@@ -63,9 +75,10 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
 
     def text(self, box, string, **kwargs):
+        fill = kwargs.get('fill')
+        scale = kwargs.get('scale', 1)
         font = kwargs.get('font')
         fontsize = kwargs.get('fontsize', 11)
-        fill = kwargs.get('fill')
         ttfont = self.setupFont(font, fontsize)
 
         lineSpacing = kwargs.get('lineSpacing', 2)
@@ -82,10 +95,13 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         xy = (box[0], box[1])
         for string in lines:
             textsize = self.textsize(string, font=ttfont)
-            x = int(math.ceil((size[0] - textsize[0]) / 2.0))
+            if ttfont:
+                x = int(math.ceil((size[0] - textsize[0]) / 2.0))
+            else:
+                x = int(math.ceil((size[0] - textsize[0] * scale) / 2.0))
 
             draw_xy = (xy[0] + x, xy[1] + height)
-            self.truetypeText(draw_xy, string, fill=fill,
+            self.truetypeText(draw_xy, string, fill=fill, scale=scale,
                               font=font, fontsize=fontsize)
 
             height += textsize[1] + lineSpacing
@@ -265,8 +281,8 @@ class DiagramDraw(object):
         fontsize = self.scale(self.fontsize)
         lineSpacing = self.scale(self.metrix.lineSpacing)
         self.imageDraw.text(self.scale(m.coreBox()), node.label,
-                            fill=self.fill, font=self.font, fontsize=fontsize,
-                            lineSpacing=lineSpacing)
+                            fill=self.fill, scale=self._scale, font=self.font,
+                            fontsize=fontsize, lineSpacing=lineSpacing)
 
         if node.numbered != None:
             xy = self.scale(m.topLeft())
@@ -275,7 +291,8 @@ class DiagramDraw(object):
             box = [xy.x - r, xy.y - r, xy.x + r, xy.y + r]
             self.imageDraw.ellipse(box, outline=self.fill, fill=self.badgeFill)
             self.imageDraw.text(box, node.numbered, fill=self.fill,
-                                font=self.font, fontsize=fontsize)
+                                scale=self._scale, font=self.font,
+                                fontsize=fontsize)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
