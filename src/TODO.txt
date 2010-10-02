@@ -8,7 +8,6 @@ Functionals
 * Specify shape of node (rounded rectangle, diamond, end-point, etc.)
 * Export diagram as vector data.
 * Support other block diagram structure.
-* Import node's background images.
 
 Environments
 -------------
