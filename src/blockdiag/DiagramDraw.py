@@ -10,8 +10,9 @@ from PngDiagramMetrix import PngDiagramMetrix, XY
 
 
 class ImageDrawEx(ImageDraw.ImageDraw):
-    def __init__(self, im, mode=None):
+    def __init__(self, im, scale_ratio, mode=None):
         self.image = im
+        self.scale_ratio = scale_ratio
         self.mode = mode
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
@@ -41,13 +42,12 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
     def truetypeText(self, xy, string, **kwargs):
         fill = kwargs.get('fill')
-        scale = kwargs.get('scale', 1)
         font = kwargs.get('font')
         fontsize = kwargs.get('fontsize', 11)
         ttfont = self.setupFont(font, fontsize)
 
         if ttfont is None:
-            if scale == 1:
+            if self.scale_ratio == 1:
                 ImageDraw.ImageDraw.text(self, xy, string, fill=fill)
             else:
                 size = self.textsize(string)
@@ -56,7 +56,8 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                 draw.text((0, 0), string, fill=fill)
                 del draw
 
-                basesize = (size[0] * 2, size[1] * 2)
+                basesize = (size[0] * self.scale_ratio,
+                            size[1] * self.scale_ratio)
                 text_image = image.resize(basesize, Image.ANTIALIAS)
 
                 self.image.paste(text_image, xy, text_image)
@@ -76,7 +77,6 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
     def text(self, box, string, **kwargs):
         fill = kwargs.get('fill')
-        scale = kwargs.get('scale', 1)
         font = kwargs.get('font')
         fontsize = kwargs.get('fontsize', 11)
         ttfont = self.setupFont(font, fontsize)
@@ -96,12 +96,13 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         for string in lines:
             textsize = self.textsize(string, font=ttfont)
             if ttfont:
-                x = int(math.ceil((size[0] - textsize[0]) / 2.0))
+                textspan = size[0] - textsize[0]
             else:
-                x = int(math.ceil((size[0] - textsize[0] * scale) / 2.0))
+                textspan = size[0] - textsize[0] * self.scale_ratio
 
+            x = int(math.ceil(textspan / 2.0))
             draw_xy = (xy[0] + x, xy[1] + height)
-            self.truetypeText(draw_xy, string, fill=fill, scale=scale,
+            self.truetypeText(draw_xy, string, fill=fill,
                               font=font, fontsize=fontsize)
 
             height += textsize[1] + lineSpacing
@@ -148,14 +149,14 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
         return lines
 
-    def loadImage(self, filename, box, scale):
+    def loadImage(self, filename, box):
         box_width = box[2] - box[0]
         box_height = box[3] - box[1]
 
         # resize image.
         image = Image.open(filename)
-        w = min([box_width, image.size[0] * scale])
-        h = min([box_height, image.size[1] * scale])
+        w = min([box_width, image.size[0] * self.scale_ratio])
+        h = min([box_height, image.size[1] * self.scale_ratio])
         image.thumbnail((w, h), Image.ANTIALIAS)
 
         # centering image.
@@ -197,7 +198,7 @@ class DiagramDraw(object):
             pageSize = metrix.pageSize(self.screen.nodes)
             self.image = Image.new('RGB', pageSize, (256, 256, 256))
 
-        self.imageDraw = ImageDrawEx(self.image, None)
+        self.imageDraw = ImageDrawEx(self.image, self.scale_ratio)
 
     def draw(self, screen=None, **kwargs):
         if screen:
@@ -263,8 +264,7 @@ class DiagramDraw(object):
         if node.background:
             self.imageDraw.thick_rectangle(m.box(),
                                            outline=self.fill, fill=node.color)
-            self.imageDraw.loadImage(node.background, m.box(),
-                                     scale=self.scale_ratio)
+            self.imageDraw.loadImage(node.background, m.box())
             self.imageDraw.thick_rectangle(m.box(),
                                            outline=self.fill)
         else:
@@ -274,8 +274,8 @@ class DiagramDraw(object):
         fontsize = self.fontsize * self.scale_ratio
         lineSpacing = self.metrix.lineSpacing
         self.imageDraw.text(m.coreBox(), node.label, fill=self.fill,
-                            scale=self.scale_ratio, font=self.font,
-                            fontsize=fontsize, lineSpacing=lineSpacing)
+                            font=self.font, fontsize=fontsize,
+                            lineSpacing=lineSpacing)
 
         if node.numbered != None:
             xy = m.topLeft()
@@ -284,8 +284,7 @@ class DiagramDraw(object):
             box = [xy.x - r, xy.y - r, xy.x + r, xy.y + r]
             self.imageDraw.ellipse(box, outline=self.fill, fill=self.badgeFill)
             self.imageDraw.text(box, node.numbered, fill=self.fill,
-                                scale=self.scale_ratio, font=self.font,
-                                fontsize=fontsize)
+                                font=self.font, fontsize=fontsize)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
