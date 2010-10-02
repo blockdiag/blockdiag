@@ -203,8 +203,7 @@ class DiagramDraw(object):
     def draw(self, screen=None, **kwargs):
         if screen:
             self.screen = screen
-
-        self.resetCanvas()
+            self.resetCanvas()
 
         self._prepareEdges()
         self._drawBackground()
@@ -262,11 +261,9 @@ class DiagramDraw(object):
         m = self.metrix.node(node)
 
         if node.background:
-            self.imageDraw.thick_rectangle(m.box(),
-                                           outline=self.fill, fill=node.color)
+            self.imageDraw.thick_rectangle(m.box(), fill=node.color)
             self.imageDraw.loadImage(node.background, m.box())
-            self.imageDraw.thick_rectangle(m.box(),
-                                           outline=self.fill)
+            self.imageDraw.thick_rectangle(m.box(), outline=self.fill)
         else:
             self.imageDraw.thick_rectangle(m.box(),
                                            outline=self.fill, fill=node.color)
