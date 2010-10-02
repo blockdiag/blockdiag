@@ -284,7 +284,7 @@ class EdgeMetrix:
                 heads.append(self._head(self.edge.node1, 'left'))
             elif dir == 'up':
                 heads.append(self._head(self.edge.node1, 'down'))
-            elif dir in ('left-down'):
+            elif dir in ('left-down', 'down'):
                 heads.append(self._head(self.edge.node1, 'up'))
 
         if self.edge.dir in ('forward', 'both'):
@@ -292,7 +292,7 @@ class EdgeMetrix:
                 heads.append(self._head(self.edge.node2, 'right'))
             elif dir == 'up':
                 heads.append(self._head(self.edge.node2, 'up'))
-            elif dir in ('left-up', 'left', 'left-down'):
+            elif dir in ('left-up', 'left', 'left-down', 'down'):
                 heads.append(self._head(self.edge.node2, 'down'))
 
         return heads
@@ -380,8 +380,8 @@ class EdgeMetrix:
             shaft.lineTo(node2.top().x, node2.top().y - span.y / 2)
             shaft.lineTo(node2.top())
 
-        else:  # down and misc.
-            pos = (node1.x, node1.y, node2.x, node2.y)
-            raise RuntimeError("Invalid edge: (%d, %d), (%d, %d)" % pos)
+        else:  # down
+            shaft.moveTo(node1.bottom())
+            shaft.lineTo(node2.top())
 
         return shaft
