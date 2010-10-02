@@ -183,7 +183,6 @@ class DiagramDraw(object):
         self.badgeFill = kwargs.get('badgeFill', 'pink')
         self.shadow = kwargs.get('shadow', (128, 128, 128))
         self.font = kwargs.get('font')
-        self.fontsize = kwargs.get('fontsize', 11)
 
         if kwargs.get('antialias') or kwargs.get('scale') > 1:
             self.scale_ratio = 2
@@ -273,11 +272,9 @@ class DiagramDraw(object):
             self.imageDraw.thick_rectangle(m.box(),
                                            outline=self.fill, fill=node.color)
 
-        fontsize = self.fontsize * self.scale_ratio
-        lineSpacing = self.metrix.lineSpacing
         self.imageDraw.text(m.coreBox(), node.label, fill=self.fill,
-                            font=self.font, fontsize=fontsize,
-                            lineSpacing=lineSpacing)
+                            font=self.font, fontsize=self.metrix.fontSize,
+                            lineSpacing=self.metrix.lineSpacing)
 
         if node.numbered != None:
             xy = m.topLeft()
@@ -286,7 +283,7 @@ class DiagramDraw(object):
             box = [xy.x - r, xy.y - r, xy.x + r, xy.y + r]
             self.imageDraw.ellipse(box, outline=self.fill, fill=self.badgeFill)
             self.imageDraw.text(box, node.numbered, fill=self.fill,
-                                font=self.font, fontsize=fontsize)
+                                font=self.font, fontsize=self.metrix.fontSize)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
