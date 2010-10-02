@@ -92,7 +92,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             height += self.textsize(string, font=ttfont)[1] + lineSpacing
 
         height = (size[1] - (height - lineSpacing)) / 2
-        xy = (box[0], box[1])
+        xy = XY(box[0], box[1])
         for string in lines:
             textsize = self.textsize(string, font=ttfont)
             if ttfont:
@@ -101,7 +101,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                 textspan = size[0] - textsize[0] * self.scale_ratio
 
             x = int(math.ceil(textspan / 2.0))
-            draw_xy = (xy[0] + x, xy[1] + height)
+            draw_xy = (xy.x + x, xy.y + height)
             self.truetypeText(draw_xy, string, fill=fill,
                               font=font, fontsize=fontsize)
 
@@ -229,16 +229,16 @@ class DiagramDraw(object):
             m = self.metrix.edge(edge)
             dir = m.direction()
             if dir == 'right':
-                r = range(edge.node1.xy[0] + 1, edge.node2.xy[0])
+                r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
                 for x in r:
-                    xy = (x, edge.node1.xy[1])
+                    xy = (x, edge.node1.xy.y)
                     nodes = [x for x in self.screen.nodes if x.xy == xy]
                     if len(nodes) > 0:
                         edge.skipped = 1
             elif dir == 'right-down':
-                r = range(edge.node1.xy[0] + 1, edge.node2.xy[0])
+                r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
                 for x in r:
-                    xy = (x, edge.node2.xy[1])
+                    xy = (x, edge.node2.xy.y)
                     nodes = [x for x in self.screen.nodes if x.xy == xy]
                     if len(nodes) > 0:
                         edge.skipped = 1

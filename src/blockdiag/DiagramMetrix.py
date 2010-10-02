@@ -122,13 +122,13 @@ class DiagramMetrix:
         x = 0
         y = 0
         for node in nodelist:
-            if x <= node.xy[0]:
-                x = node.xy[0]
-            if y <= node.xy[1]:
-                y = node.xy[1]
+            if x <= node.xy.x:
+                x = node.xy.x
+            if y <= node.xy.y:
+                y = node.xy.y
 
         DummyNode = namedtuple('DummyNode', 'width height xy')
-        node = DummyNode(x + 1, y + 1, (0, 0))
+        node = DummyNode(x + 1, y + 1, XY(0, 0))
         xy = NodeMetrix(node, self).bottomRight()
         return XY(xy.x + self.pageMargin, xy.y + self.pageMargin)
 
@@ -140,9 +140,9 @@ class NodeMetrix:
         self.height = node.height
 
         self.x = metrix.pageMargin + \
-                 node.xy[0] * (metrix.nodeWidth + metrix.spanWidth)
+                 node.xy.x * (metrix.nodeWidth + metrix.spanWidth)
         self.y = metrix.pageMargin + \
-                 node.xy[1] * (metrix.nodeHeight + metrix.spanHeight)
+                 node.xy.y * (metrix.nodeHeight + metrix.spanHeight)
 
     def box(self):
         m = self.metrix

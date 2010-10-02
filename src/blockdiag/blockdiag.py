@@ -362,7 +362,8 @@ class ScreenNodeBuilder:
         for node in self.nodeOrder:
             if isinstance(node, ScreenGroup):
                 for child in node.nodes:
-                    child.xy = (node.xy.x + child.xy.x, node.xy.y + child.xy.y)
+                    child.xy = XY(node.xy.x + child.xy.x,
+                                  node.xy.y + child.xy.y)
 
 
 def main():
