@@ -16,21 +16,23 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         self.mode = mode
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
-    def thick_rectangle(self, box, thick=1, **kwargs):
-        outline = kwargs.get('outline')
+    def rectangle(self, box, **kwargs):
+        thick = kwargs.get('width', self.scale_ratio)
         fill = kwargs.get('fill')
+        outline = kwargs.get('outline')
 
         if thick == 1:
-            d = 0
+            ImageDraw.ImageDraw.rectangle(self, box, **kwargs)
         else:
             d = math.ceil(thick / 2.0)
 
-        x1, y1, x2, y2 = box
-        self.rectangle(box, fill=fill)
-        self.line(((x1, y1 - d), (x1, y2 + d)), fill=outline, width=thick)
-        self.line(((x2, y1 - d), (x2, y2 + d)), fill=outline, width=thick)
-        self.line(((x1, y1), (x2, y1)), fill=outline, width=thick)
-        self.line(((x1, y2), (x2, y2)), fill=outline, width=thick)
+            ImageDraw.ImageDraw.rectangle(self, box, **kwargs)
+
+            x1, y1, x2, y2 = box
+            self.line(((x1, y1 - d), (x1, y2 + d)), fill=outline, width=thick)
+            self.line(((x2, y1 - d), (x2, y2 + d)), fill=outline, width=thick)
+            self.line(((x1, y1), (x2, y1)), fill=outline, width=thick)
+            self.line(((x1, y2), (x2, y2)), fill=outline, width=thick)
 
     def setupFont(self, font, fontsize):
         if font:
@@ -265,12 +267,12 @@ class DiagramDraw(object):
         m = self.metrix.node(node)
 
         if node.background:
-            self.imageDraw.thick_rectangle(m.box(), fill=node.color)
+            self.imageDraw.rectangle(m.box(), fill=node.color)
             self.imageDraw.loadImage(node.background, m.box())
-            self.imageDraw.thick_rectangle(m.box(), outline=self.fill)
+            self.imageDraw.rectangle(m.box(), outline=self.fill)
         else:
-            self.imageDraw.thick_rectangle(m.box(),
-                                           outline=self.fill, fill=node.color)
+            self.imageDraw.rectangle(m.box(), outline=self.fill,
+                                     fill=node.color)
 
         self.imageDraw.text(m.coreBox(), node.label, fill=self.fill,
                             font=self.font, fontsize=self.metrix.fontSize,
