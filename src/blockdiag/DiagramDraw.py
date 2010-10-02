@@ -159,8 +159,9 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
 
 class DiagramDraw(object):
-    def __init__(self, mode=None, **kwargs):
+    def __init__(self, screen=None, mode=None, **kwargs):
         self.mode = None
+        self.screen = screen
         self.image = None
         self.imageDraw = None
         self._scale = kwargs.get('scale', 1)
@@ -185,10 +186,11 @@ class DiagramDraw(object):
 
         return ret
 
-    def draw(self, screen, **kwargs):
-        self.screen = screen
+    def draw(self, screen=None, **kwargs):
+        if screen:
+            self.screen = screen
 
-        paperSize = self.metrix.pageSize(screen.nodes)
+        paperSize = self.metrix.pageSize(self.screen.nodes)
         self.image = Image.new('RGB', paperSize, (256, 256, 256))
         self.imageDraw = ImageDrawEx(self.image, self.mode)
 
