@@ -179,13 +179,18 @@ class DiagramDraw(object):
     def __init__(self, screen=None, **kwargs):
         self.screen = screen
         self.image = None
-        self.scale_ratio = kwargs.get('scale', 1)
-        self.metrix = PngDiagramMetrix(**kwargs)
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.badgeFill = kwargs.get('badgeFill', 'pink')
         self.shadow = kwargs.get('shadow', (128, 128, 128))
         self.font = kwargs.get('font')
         self.fontsize = kwargs.get('fontsize', 11)
+
+        if kwargs.get('antialias') or kwargs.get('scale') > 1:
+            self.scale_ratio = 2
+        else:
+            self.scale_ratio = 1
+
+        self.metrix = PngDiagramMetrix(scale=self.scale_ratio, **kwargs)
 
         self.resetCanvas()
 

@@ -382,11 +382,6 @@ def main():
         p.print_help()
         exit(0)
 
-    if options.antialias:
-        scale = 2
-    else:
-        scale = 1
-
     fonts = [options.font,
              'c:/windows/fonts/VL-Gothic-Regular.ttf',
              'c:/windows/fonts/msmincho.ttf',
@@ -411,7 +406,8 @@ def main():
     tree = diagparser.parse_file(infile)
     screen = ScreenNodeBuilder.build(tree)
 
-    draw = DiagramDraw.DiagramDraw(screen, scale=scale, font=fontpath)
+    draw = DiagramDraw.DiagramDraw(screen, font=fontpath,
+                                   antialias=options.antialias)
     draw.draw()
     draw.save(outfile, 'PNG')
 
