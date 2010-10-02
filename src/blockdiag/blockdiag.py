@@ -13,9 +13,16 @@ import utils
 
 
 class Screen:
-    def __init__(self, nodes, edges):
-        self.nodes = nodes
-        self.edges = edges
+    def __init__(self):
+        self.nodes = []
+        self.edges = []
+
+    def setAttributes(self, attrs):
+        for attr in attrs:
+            value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
+
+            msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
+            raise AttributeError(msg)
 
 
 class ScreenNode:
@@ -135,6 +142,7 @@ class ScreenNodeBuilder:
         return klass()._build(tree)
 
     def __init__(self):
+        self.screen = Screen()
         self.uniqNodes = {}
         self.nodeOrder = []
         self.uniqLinks = {}
@@ -146,9 +154,9 @@ class ScreenNodeBuilder:
     def _build(self, tree):
         self.buildNodeList(tree)
 
-        nodes = self.uniqNodes.values()
-        edges = self.uniqLinks.values()
-        return Screen(nodes, edges)
+        self.screen.nodes = self.uniqNodes.values()
+        self.screen.edges = self.uniqLinks.values()
+        return self.screen
 
     def getScreenNode(self, id):
         if id in self.uniqNodes:
@@ -318,6 +326,8 @@ class ScreenNodeBuilder:
             elif isinstance(stmt, diagparser.SubGraph):
                 group = self.getScreenGroup(stmt.id)
                 nodeGroups[group] = stmt
+            elif isinstance(stmt, diagparser.DefAttrs):
+                self.screen.setAttributes(stmt.attrs)
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))
 
@@ -384,8 +394,8 @@ def main():
     tree = diagparser.parse_file(infile)
     screen = ScreenNodeBuilder.build(tree)
 
-    draw = DiagramDraw.DiagramDraw(scale=scale, font=fontpath)
-    draw.draw(screen)
+    draw = DiagramDraw.DiagramDraw(screen, scale=scale, font=fontpath)
+    draw.draw()
     draw.save(outfile, 'PNG')
 
 
