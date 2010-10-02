@@ -208,32 +208,25 @@ class NodeMetrix:
         return XY(self.x, self.y)
 
     def topCenter(self):
-        x, y = self.topLeft()
-        return XY(x + self._nodeWidth() / 2, y)
+        return XY(self.x + self._nodeWidth() / 2, self.y)
 
     def topRight(self):
-        x, y = self.topLeft()
-        return XY(x + self._nodeWidth(), y)
+        return XY(self.x + self._nodeWidth(), self.y)
 
     def bottomLeft(self):
-        x, y = self.topLeft()
-        return XY(x, y + self._nodeHeight())
+        return XY(self.x, self.y + self._nodeHeight())
 
     def bottomCenter(self):
-        x, y = self.topLeft()
-        return XY(x + self._nodeWidth() / 2, y + self._nodeHeight())
+        return XY(self.x + self._nodeWidth() / 2, self.y + self._nodeHeight())
 
     def bottomRight(self):
-        x, y = self.topLeft()
-        return XY(x + self._nodeWidth(), y + self._nodeHeight())
+        return XY(self.x + self._nodeWidth(), self.y + self._nodeHeight())
 
     def leftCenter(self):
-        x, y = self.topLeft()
-        return XY(x, y + self._nodeHeight() / 2)
+        return XY(self.x, self.y + self._nodeHeight() / 2)
 
     def rightCenter(self):
-        x, y = self.topLeft()
-        return XY(x + self._nodeWidth(), y + self._nodeHeight() / 2)
+        return XY(self.x + self._nodeWidth(), self.y + self._nodeHeight() / 2)
 
     # method aliases
     top = topCenter
