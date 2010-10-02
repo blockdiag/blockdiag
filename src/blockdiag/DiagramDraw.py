@@ -175,11 +175,9 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
 
 class DiagramDraw(object):
-    def __init__(self, screen=None, mode=None, **kwargs):
-        self.mode = None
+    def __init__(self, screen=None, **kwargs):
         self.screen = screen
         self.image = None
-        self.imageDraw = None
         self._scale = kwargs.get('scale', 1)
         self.metrix = DiagramMetrix(**kwargs)
         self.fill = kwargs.get('fill', (0, 0, 0))
@@ -187,6 +185,8 @@ class DiagramDraw(object):
         self.shadow = kwargs.get('shadow', (128, 128, 128))
         self.font = kwargs.get('font')
         self.fontsize = kwargs.get('fontsize', 11)
+
+        self.resetCanvas()
 
     def scale(self, value):
         if isinstance(value, XY):
@@ -202,13 +202,21 @@ class DiagramDraw(object):
 
         return ret
 
+    def resetCanvas(self):
+        if self.screen is None:
+            return
+
+        if self.image is None:
+            pageSize = self.metrix.pageSize(self.screen.nodes)
+            self.image = Image.new('RGB', pageSize, (256, 256, 256))
+
+        self.imageDraw = ImageDrawEx(self.image, None)
+
     def draw(self, screen=None, **kwargs):
         if screen:
             self.screen = screen
 
-        paperSize = self.metrix.pageSize(self.screen.nodes)
-        self.image = Image.new('RGB', paperSize, (256, 256, 256))
-        self.imageDraw = ImageDrawEx(self.image, self.mode)
+        self.resetCanvas()
 
         self._prepareEdges()
         self._drawBackground()
@@ -216,7 +224,7 @@ class DiagramDraw(object):
         if self._scale > 1:
             self.image = self.image.resize(self.scale(paperSize),
                                            Image.ANTIALIAS)
-            self.imageDraw = ImageDrawEx(self.image, self.mode)
+            self.resetCanvas()
 
         for node in (x for x in self.screen.nodes if x.drawable):
             self.screennode(node, **kwargs)
@@ -261,7 +269,7 @@ class DiagramDraw(object):
         for i in range(15):
             self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
 
-        self.imageDraw = ImageDrawEx(self.image, self.mode)
+        self.resetCanvas()
         self._scale = originalScale
 
     def screennode(self, node, **kwargs):
