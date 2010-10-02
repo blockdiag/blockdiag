@@ -127,37 +127,22 @@ class DiagramMetrix:
             if y <= node.xy[1]:
                 y = node.xy[1]
 
-        x, y = NodeMetrix.new2(x, y, self).bottomRight()
-        return (x + self.pageMargin, y + self.pageMargin)
+        DummyNode = namedtuple('DummyNode', 'width height xy')
+        node = DummyNode(x + 1, y + 1, (0, 0))
+        xy = NodeMetrix(node, self).bottomRight()
+        return XY(xy.x + self.pageMargin, xy.y + self.pageMargin)
 
 
 class NodeMetrix:
-    @classmethod
-    def new2(klass, x, y, metrix):
-        o = klass(None, metrix)
-        (o.x, o.y) = klass._topLeft(x, y, metrix)
-
-        return o
-
     def __init__(self, node, metrix):
         self.metrix = metrix
+        self.width = node.width
+        self.height = node.height
 
-        if node:
-            self.width = node.width
-            self.height = node.height
-            (self.x, self.y) = self._topLeft(node.xy[0], node.xy[1], metrix)
-        else:
-            self.width = 1
-            self.height = 1
-            self.x = 0
-            self.y = 0
-
-    @classmethod
-    def _topLeft(klass, x, y, metrix):
-        x = metrix.pageMargin + x * (metrix.nodeWidth + metrix.spanWidth)
-        y = metrix.pageMargin + y * (metrix.nodeHeight + metrix.spanHeight)
-
-        return XY(x, y)
+        self.x = metrix.pageMargin + \
+                 node.xy[0] * (metrix.nodeWidth + metrix.spanWidth)
+        self.y = metrix.pageMargin + \
+                 node.xy[1] * (metrix.nodeHeight + metrix.spanHeight)
 
     def box(self):
         m = self.metrix
