@@ -13,6 +13,7 @@ def test_pep8():
         '--filename=*.py',
         '--show-source',
         '--repeat',
+        '--exclude=SVGdraw.py',
         #'--show-pep8',
         #'-qq',
         #'-v',

@@ -190,7 +190,7 @@ class SVGImageDraw:
 
     def rgb(self, color):
         if isinstance(color, tuple):
-             color = 'rgb(%d,%d,%d)' % color
+            color = 'rgb(%d,%d,%d)' % color
 
         return color
 
@@ -207,7 +207,8 @@ class SVGImageDraw:
         width = box[2] - box[0]
         height = box[3] - box[1]
 
-        r = rect(x, y, width, height, fill=self.rgb(fill), stroke=self.rgb(outline), stroke_width=thick)
+        r = rect(x, y, width, height, fill=self.rgb(fill),
+                 stroke=self.rgb(outline), stroke_width=thick)
         self.svg.addElement(r)
 
     def text(self, box, string, **kwargs):
