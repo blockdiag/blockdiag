@@ -377,10 +377,18 @@ def main():
                  help='use FONT to draw diagram', metavar='FONT')
     p.add_option('-P', '--pdb', dest='pdb', action='store_true', default=False,
                  help='Drop into debugger on exception')
+    p.add_option('-T', dest='type', default='PNG',
+                 help='Output diagram as TYPE format')
     (options, args) = p.parse_args()
 
     if len(args) == 0:
         p.print_help()
+        exit(0)
+
+    format = options.type.upper()
+    if not format in ('SVG', 'PNG'):
+        msg = "ERROR: unknown format: %s\n" % options.type
+        sys.stderr.write(msg)
         exit(0)
 
     fonts = [options.font,
@@ -399,7 +407,7 @@ def main():
     if options.filename:
         outfile = options.filename
     else:
-        outfile = re.sub('\..*', '', infile) + '.png'
+        outfile = re.sub('\..*', '', infile) + '.' + options.type.lower()
 
     if options.pdb:
         sys.excepthook = utils.postmortem
@@ -407,7 +415,7 @@ def main():
     tree = diagparser.parse_file(infile)
     screen = ScreenNodeBuilder.build(tree)
 
-    draw = DiagramDraw.DiagramDraw('PNG', screen, font=fontpath,
+    draw = DiagramDraw.DiagramDraw(format, screen, font=fontpath,
                                    antialias=options.antialias)
     draw.draw()
     draw.save(outfile)
