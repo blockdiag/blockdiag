@@ -31,17 +31,13 @@ class Scaler:
         setattr(self, name, self.scale(value))
 
     def define_scale_method(self, name):
-        def generate_method(name, *args, **kwargs):
-            def method(self, *args, **kwargs):
-                func = getattr(self.metrix, name)
-                ret = func(*args, **kwargs)
+        def scale_method(self, *args, **kwargs):
+            func = getattr(self.metrix, name)
+            ret = func(*args, **kwargs)
 
-                return self.scale(ret)
+            return self.scale(ret)
 
-            return method
-
-        func = generate_method(name)
-        method = MethodType(func, self, self.__class__)
+        method = MethodType(scale_method, self, self.__class__)
         setattr(self, name, method)
 
 
