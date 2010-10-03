@@ -407,10 +407,10 @@ def main():
     tree = diagparser.parse_file(infile)
     screen = ScreenNodeBuilder.build(tree)
 
-    draw = DiagramDraw.DiagramDraw(screen, font=fontpath,
+    draw = DiagramDraw.DiagramDraw('PNG', screen, font=fontpath,
                                    antialias=options.antialias)
     draw.draw()
-    draw.save(outfile, 'PNG')
+    draw.save(outfile)
 
 
 if __name__ == '__main__':
