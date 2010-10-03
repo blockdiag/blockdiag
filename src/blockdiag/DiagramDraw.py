@@ -178,7 +178,8 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
 
 class DiagramDraw(object):
-    def __init__(self, screen=None, **kwargs):
+    def __init__(self, format, screen=None, **kwargs):
+        self.format = format
         self.screen = screen
         self.image = None
         self.fill = kwargs.get('fill', (0, 0, 0))
@@ -301,7 +302,7 @@ class DiagramDraw(object):
         for head in metrix.heads():
             self.imageDraw.polygon(head, outline=color, fill=color)
 
-    def save(self, filename, format, size=None):
+    def save(self, filename, format=None, size=None):
         if size:
             x, y = size
         else:
@@ -309,5 +310,8 @@ class DiagramDraw(object):
             x = int(x / self.scale_ratio)
             y = int(y / self.scale_ratio)
 
+        if format:
+            self.format = format
+
         self.image.thumbnail((x, y), Image.ANTIALIAS)
-        self.image.save(filename, format)
+        self.image.save(filename, self.format)
