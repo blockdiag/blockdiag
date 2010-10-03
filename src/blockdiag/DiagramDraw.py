@@ -6,9 +6,10 @@ import Image
 import ImageDraw
 import ImageFont
 import ImageFilter
+from utils.XY import XY
 from SVGdraw import *
 from DiagramMetrix import DiagramMetrix
-from PngDiagramMetrix import PngDiagramMetrix, XY
+from PngDiagramMetrix import PngDiagramMetrix
 
 
 class ImageDrawEx(ImageDraw.ImageDraw):

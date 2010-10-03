@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from types import MethodType
+from utils.XY import XY
 from DiagramMetrix import *
 
 

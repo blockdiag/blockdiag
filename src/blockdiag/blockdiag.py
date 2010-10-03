@@ -8,7 +8,7 @@ import uuid
 from optparse import OptionParser
 import DiagramDraw
 import diagparser
-from DiagramMetrix import XY
+from utils.XY import XY
 import utils
 
 

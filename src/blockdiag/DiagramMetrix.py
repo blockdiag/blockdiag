@@ -1,13 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from utils.XY import XY
 try:
     from collections import namedtuple
 except ImportError:
     from utils.namedtuple import namedtuple
-
-
-XY = namedtuple('XY', 'x y')
 
 
 class EdgeLines:
