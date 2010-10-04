@@ -144,8 +144,8 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                 else:
                     truncated = string[0:-i] + ' ...'
 
-                size = self.textsize(truncated, font=ttfont)
-                if size[0] <= size[0]:
+                metrics = self.textsize(truncated, font=ttfont)
+                if metrics[0] <= size[0]:
                     lines.append(truncated)
                     break
 
