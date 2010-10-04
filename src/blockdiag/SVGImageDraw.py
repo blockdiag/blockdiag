@@ -38,18 +38,18 @@ class SVGImageDraw:
         self.svg.addElement(r)
 
     def text(self, box, string, **kwargs):
+        fill = kwargs.get('fill')
         fontname = kwargs.get('font')
         fontsize = kwargs.get('fontsize')
 
         # FIXME:
-        # * Ignore fill, lineSpacing
-        # * Ignore folding
+        # * Ignore folding (lineSpacing)
         # * Ignore Centering text.
 
         x = box[0]
         y = box[1] + (box[3] - box[1]) / 2
 
-        t = text(x, y, string, fontsize, fontname)
+        t = text(x, y, string, fontsize, fontname, fill=self.rgb(fill))
         self.svg.addElement(t)
 
     def line(self, xy, **kwargs):
