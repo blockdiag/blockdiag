@@ -9,6 +9,97 @@ import ImageFilter
 from utils.XY import XY
 
 
+class TextFolder:
+    def __init__(self, box, string, **kwargs):
+        font = kwargs.get('font')
+        if font:
+            fontsize = kwargs.get('fontsize', 11)
+            self.ttfont = ImageFont.truetype(font, fontsize)
+            self.scale = 1
+        else:
+            self.ttfont = None
+            self.scale = kwargs.get('scale', 1)
+
+        self.box = box
+        self.string = string
+        self.lineSpacing = kwargs.get('lineSpacing', 2)
+        self.image = Image.new('1', (1, 1))
+        self.draw = ImageDraw.Draw(self.image)
+
+        self._result = self._lines()
+
+    def textsize(self, string):
+        return self.draw.textsize(string, font=self.ttfont)
+
+    def height(self):
+        height = 0
+        for string in self._result:
+            height += self.textsize(string)[1]
+
+        if len(self._result) > 1:
+            height += (len(self._result) - 1) * self.lineSpacing
+
+        return height
+
+    def each_line(self):
+        size = XY(self.box[2] - self.box[0], self.box[3] - self.box[1])
+
+        height = int(math.ceil((size.y - self.height()) / 2.0))
+        base_xy = XY(self.box[0], self.box[1])
+
+        for string in self._result:
+            textsize = self.textsize(string)
+            halign = size.x - textsize[0] * self.scale
+
+            x = int(math.ceil(halign / 2.0))
+            draw_xy = XY(base_xy.x + x, base_xy.y + height)
+
+            yield string, draw_xy
+
+            height += textsize[1] + self.lineSpacing
+
+    def _lines(self):
+        lines = []
+        size = (self.box[2] - self.box[0], self.box[3] - self.box[1])
+
+        height = 0
+        truncated = 0
+        for line in self.string.splitlines():
+            while line:
+                string = line.strip()
+                for i in range(0, len(string)):
+                    length = len(string) - i
+                    metrics = self.textsize(string[0:length])
+
+                    if metrics[0] <= size[0]:
+                        break
+
+                if size[1] < height + metrics[1]:
+                    truncated = 1
+                    break
+
+                lines.append(string[0:length])
+                line = string[length:]
+
+                height += metrics[1] + self.lineSpacing
+
+        # truncate last line.
+        if truncated:
+            string = lines.pop()
+            for i in range(0, len(string)):
+                if i == 0:
+                    truncated = string + ' ...'
+                else:
+                    truncated = string[0:-i] + ' ...'
+
+                metrics = self.textsize(truncated)
+                if metrics[0] <= size[0]:
+                    lines.append(truncated)
+                    break
+
+        return lines
+
+
 class ImageDrawEx(ImageDraw.ImageDraw):
     def __init__(self, im, scale_ratio, mode=None):
         self.image = im
@@ -78,78 +169,9 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
 
     def text(self, box, string, **kwargs):
-        fill = kwargs.get('fill')
-        font = kwargs.get('font')
-        fontsize = kwargs.get('fontsize', 11)
-        ttfont = self.setupFont(font, fontsize)
-
-        lineSpacing = kwargs.get('lineSpacing', 2)
-        size = (box[2] - box[0], box[3] - box[1])
-
-        lines = self._getFoldedText(size, string,
-                                    font=ttfont, lineSpacing=lineSpacing)
-
-        height = 0
-        for string in lines:
-            height += self.textsize(string, font=ttfont)[1] + lineSpacing
-
-        height = (size[1] - (height - lineSpacing)) / 2
-        xy = XY(box[0], box[1])
-        for string in lines:
-            textsize = self.textsize(string, font=ttfont)
-            if ttfont:
-                textspan = size[0] - textsize[0]
-            else:
-                textspan = size[0] - textsize[0] * self.scale_ratio
-
-            x = int(math.ceil(textspan / 2.0))
-            draw_xy = (xy.x + x, xy.y + height)
-            self.truetypeText(draw_xy, string, fill=fill,
-                              font=font, fontsize=fontsize)
-
-            height += textsize[1] + lineSpacing
-
-    def _getFoldedText(self, size, string, **kwargs):
-        ttfont = kwargs.get('font')
-        lineSpacing = kwargs.get('lineSpacing', 2)
-        lines = []
-
-        height = 0
-        truncated = 0
-        for line in string.splitlines():
-            while line:
-                string = string.strip()
-                for i in range(0, len(string)):
-                    length = len(string) - i
-                    metrics = self.textsize(string[0:length], font=ttfont)
-
-                    if metrics[0] <= size[0]:
-                        break
-
-                if size[1] < height + metrics[1]:
-                    truncated = 1
-                    break
-
-                lines.append(line[0:length])
-                line = line[length:]
-
-                height += metrics[1] + lineSpacing
-
-        # truncate last line.
-        if truncated:
-            string = lines.pop()
-            for i in range(0, len(string)):
-                if i == 0:
-                    truncated = string + ' ...'
-                else:
-                    truncated = string[0:-i] + ' ...'
-
-                metrics = self.textsize(truncated, font=ttfont)
-                if metrics[0] <= size[0]:
-                    lines.append(truncated)
-                    break
-
-        return lines
+        lines = TextFolder(box, string, scale=self.scale_ratio, **kwargs)
+        for string, xy in lines.each_line():
+            self.truetypeText(xy, string, **kwargs)
 
     def loadImage(self, filename, box):
         box_width = box[2] - box[0]
