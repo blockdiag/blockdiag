@@ -160,8 +160,8 @@ class NodeMetrix:
 
         return (topLeft.x - m.spanWidth / 8,
                 topLeft.y - m.spanHeight / 4,
-                bottomRight.x + m.spanWidth / 4,
-                bottomRight.y + m.spanHeight / 2)
+                bottomRight.x + m.spanWidth / 8,
+                bottomRight.y + m.spanHeight / 4)
 
     def coreBox(self):
         m = self.metrix
