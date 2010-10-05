@@ -20,6 +20,11 @@ class TextFolder:
             self.ttfont = None
             self.scale = kwargs.get('scale', 1)
 
+        if kwargs.get('adjustBaseline'):
+            self.adjustBaseline = True
+        else:
+            self.adjustBaseline = False
+
         self.box = box
         self.string = string
         self.lineSpacing = kwargs.get('lineSpacing', 2)
@@ -51,12 +56,18 @@ class TextFolder:
             textsize = self.textsize(string)
             halign = size.x - textsize[0] * self.scale
 
+            if self.adjustBaseline:
+                height += textsize[1]
+
             x = int(math.ceil(halign / 2.0))
             draw_xy = XY(base_xy.x + x, base_xy.y + height)
 
             yield string, draw_xy
 
-            height += textsize[1] + self.lineSpacing
+            if self.adjustBaseline:
+                height += self.lineSpacing
+            else:
+                height += textsize[1] + self.lineSpacing
 
     def _lines(self):
         lines = []
