@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import sys
 from utils.XY import XY
 from SVGdraw import *
 from ImageDrawEx import TextFolder
@@ -68,3 +69,8 @@ class SVGImageDraw:
         points = [[p[0], p[1]] for p in xy]
         pg = polygon(points, fill=self.rgb(fill), stroke=self.rgb(outline))
         self.svg.addElement(pg)
+
+    def loadImage(self, filename, box):
+        msg = "WARNING: blockdiag does not support " \
+              "background image for SVG Image.\n"
+        sys.stderr.write(msg)
