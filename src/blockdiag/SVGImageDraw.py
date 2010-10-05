@@ -3,6 +3,7 @@
 
 from utils.XY import XY
 from SVGdraw import *
+from ImageDrawEx import TextFolder
 
 
 class SVGImageDraw:
@@ -46,11 +47,9 @@ class SVGImageDraw:
         self.svg.addElement(t)
 
     def textarea(self, box, string, **kwargs):
-        # FIXME:
-        # * Ignore folding (lineSpacing)
-        # * Ignore Centering text.
-        xy = XY(box[0], box[1] + (box[3] - box[1]) / 2)
-        self.text(xy, string, **kwargs)
+        lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
+        for string, xy in lines.each_line():
+            self.text(xy, string, **kwargs)
 
     def line(self, xy, **kwargs):
         fill = kwargs.get('fill')
