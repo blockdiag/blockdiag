@@ -37,20 +37,20 @@ class SVGImageDraw:
                  stroke=self.rgb(outline), stroke_width=thick)
         self.svg.addElement(r)
 
-    def text(self, box, string, **kwargs):
+    def text(self, xy, string, **kwargs):
         fill = kwargs.get('fill')
         fontname = kwargs.get('font')
         fontsize = kwargs.get('fontsize')
 
+        t = text(xy[0], xy[1], string, fontsize, fontname, fill=self.rgb(fill))
+        self.svg.addElement(t)
+
+    def textarea(self, box, string, **kwargs):
         # FIXME:
         # * Ignore folding (lineSpacing)
         # * Ignore Centering text.
-
-        x = box[0]
-        y = box[1] + (box[3] - box[1]) / 2
-
-        t = text(x, y, string, fontsize, fontname, fill=self.rgb(fill))
-        self.svg.addElement(t)
+        xy = XY(box[0], box[1] + (box[3] - box[1]) / 2)
+        self.text(xy, string, **kwargs)
 
     def line(self, xy, **kwargs):
         fill = kwargs.get('fill')

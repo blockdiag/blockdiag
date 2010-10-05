@@ -122,9 +122,9 @@ class DiagramDraw(object):
             self.imageDraw.rectangle(m.box(), outline=self.fill,
                                      fill=node.color)
 
-        self.imageDraw.text(m.coreBox(), node.label, fill=self.fill,
-                            font=self.font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
+        self.imageDraw.textarea(m.coreBox(), node.label, fill=self.fill,
+                                font=self.font, fontsize=self.metrix.fontSize,
+                                lineSpacing=self.metrix.lineSpacing)
 
         if node.numbered != None:
             xy = m.topLeft()

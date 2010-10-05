@@ -133,7 +133,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
         return ttfont
 
-    def truetypeText(self, xy, string, **kwargs):
+    def text(self, xy, string, **kwargs):
         fill = kwargs.get('fill')
         font = kwargs.get('font')
         fontsize = kwargs.get('fontsize', 11)
@@ -168,10 +168,10 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
             ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
 
-    def text(self, box, string, **kwargs):
+    def textarea(self, box, string, **kwargs):
         lines = TextFolder(box, string, scale=self.scale_ratio, **kwargs)
         for string, xy in lines.each_line():
-            self.truetypeText(xy, string, **kwargs)
+            self.text(xy, string, **kwargs)
 
     def loadImage(self, filename, box):
         box_width = box[2] - box[0]
