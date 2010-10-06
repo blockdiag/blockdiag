@@ -54,10 +54,20 @@ class SVGImageDraw:
 
     def line(self, xy, **kwargs):
         fill = kwargs.get('fill')
+        style = kwargs.get('style')
+
+        print style
+        if style == 'dotted':
+            len = 2
+        elif style == 'dashed':
+            len = 4
+        else:
+            len = None
 
         p1 = xy[0]
         for p2 in xy[1:]:
-            l = line(p1.x, p1.y, p2.x, p2.y, stroke=self.rgb(fill))
+            l = line(p1.x, p1.y, p2.x, p2.y,
+                     stroke=self.rgb(fill), stroke_dasharray=len)
             self.svg.addElement(l)
 
             p1 = p2
