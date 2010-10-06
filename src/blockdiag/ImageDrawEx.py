@@ -133,10 +133,10 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         def points():
             xy_iter = iter(xy)
             for pt in xy_iter:
-                if isinstance(pt, list) or isinstance(pt, XY):
-                    yield pt
-                else:
+                if isinstance(pt, int):
                     yield (pt, xy_iter.next())
+                else:
+                    yield pt
 
         def lines(points):
             last = points.next()
@@ -189,17 +189,27 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         outline = kwargs.get('outline')
 
         if thick == 1:
-            ImageDraw.ImageDraw.rectangle(self, box, **kwargs)
+            d = 0
         else:
             d = math.ceil(thick / 2.0)
 
-            ImageDraw.ImageDraw.rectangle(self, box, **kwargs)
+        style = kwargs.get('style')
+        if 'style' in kwargs:
+            del kwargs['style']
+        if 'outline' in kwargs:
+            del kwargs['outline']
 
-            x1, y1, x2, y2 = box
-            self.line(((x1, y1 - d), (x1, y2 + d)), fill=outline, width=thick)
-            self.line(((x2, y1 - d), (x2, y2 + d)), fill=outline, width=thick)
-            self.line(((x1, y1), (x2, y1)), fill=outline, width=thick)
-            self.line(((x1, y2), (x2, y2)), fill=outline, width=thick)
+        ImageDraw.ImageDraw.rectangle(self, box, fill=fill)
+
+        x1, y1, x2, y2 = box
+        self.line(((x1, y1 - d), (x1, y2 + d)),
+                  fill=outline, width=thick, style=style)
+        self.line(((x2, y1 - d), (x2, y2 + d)),
+                  fill=outline, width=thick, style=style)
+        self.line(((x1, y1), (x2, y1)),
+                  fill=outline, width=thick, style=style)
+        self.line(((x1, y2), (x2, y2)),
+                  fill=outline, width=thick, style=style)
 
     def setupFont(self, font, fontsize):
         if font:

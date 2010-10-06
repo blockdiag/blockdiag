@@ -30,13 +30,23 @@ class SVGImageDraw:
         thick = kwargs.get('width', 1)
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
+        style = kwargs.get('style')
+
+        if style == 'dotted':
+            len = 2
+        elif style == 'dashed':
+            len = 4
+        else:
+            len = None
+
         x = box[0]
         y = box[1]
         width = box[2] - box[0]
         height = box[3] - box[1]
 
         r = rect(x, y, width, height, fill=self.rgb(fill),
-                 stroke=self.rgb(outline), stroke_width=thick)
+                 stroke=self.rgb(outline), stroke_width=thick,
+                 stroke_dasharray=len)
         self.svg.addElement(r)
 
     def text(self, xy, string, **kwargs):

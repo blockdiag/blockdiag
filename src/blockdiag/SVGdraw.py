@@ -368,7 +368,7 @@ class rect(SVGelement):
     
     a rectangle is defined by a width and height and a xy pair 
     """
-    def __init__(self,x=None,y=None,width=None,height=None,fill=None,stroke=None,stroke_width=None,**args):
+    def __init__(self,x=None,y=None,width=None,height=None,fill=None,stroke=None,stroke_width=None,stroke_dasharray=None,**args):
         if width==None or height==None:
             if width<>None:
                 raise ValueError, 'height is required'
@@ -387,6 +387,8 @@ class rect(SVGelement):
             self.attributes['stroke']=stroke
         if stroke_width<>None:
             self.attributes['stroke-width']=stroke_width
+        if stroke_dasharray<>None:
+            self.attributes['stroke-dasharray']=stroke_dasharray
             
 class ellipse(SVGelement):
     """e=ellipse(rx,ry,x,y,fill,stroke,stroke_width,**args)

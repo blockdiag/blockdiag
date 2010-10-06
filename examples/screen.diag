@@ -3,7 +3,7 @@ diagram admin {
 
   group foo {
     foo_index [label = "List of FOOs"];
-    foo_detail [label = "Detail FOO"];
+    foo_detail [label = "Detail FOO", style = "dashed"];
     foo_add [label = "Add FOO"];
     foo_add_confirm [label = "Add FOO (confirm)"];
     foo_edit [label = "Edit FOO"];
@@ -12,7 +12,7 @@ diagram admin {
   }
 
   group bar {
-    bar_detail [label = "Detail of BAR"];
+    bar_detail [label = "Detail of BAR", style = "dotted"];
     bar_edit [label = "Edit BAR"];
     bar_edit_confirm [label = "Edit BAR (confirm)"];
   }

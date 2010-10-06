@@ -51,6 +51,7 @@ class ScreenNode:
             self.label = ''
         self.xy = XY(0, 0)
         self.color = (255, 255, 255)
+        self.style = None
         self.group = None
         self.numbered = None
         self.background = None
@@ -69,6 +70,8 @@ class ScreenNode:
             self.xy = other.xy
         if other.color:
             self.color = other.color
+        if other.style:
+            self.style = other.style
         if other.numbered:
             self.numbered = other.numbered
         if other.background:
@@ -81,6 +84,13 @@ class ScreenNode:
                 self.label = value
             elif attr.name == 'color':
                 self.color = value
+            elif attr.name == 'style':
+                style = value.lower()
+                if style in ('solid', 'dotted', 'dashed'):
+                    self.style = style
+                else:
+                    msg = "WARNING: unknown edge style: %s\n" % style
+                    sys.stderr.write(msg)
             elif attr.name == 'width':
                 self.width = int(value)
             elif attr.name == 'height':
