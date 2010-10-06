@@ -56,7 +56,6 @@ class SVGImageDraw:
         fill = kwargs.get('fill')
         style = kwargs.get('style')
 
-        print style
         if style == 'dotted':
             len = 2
         elif style == 'dashed':
