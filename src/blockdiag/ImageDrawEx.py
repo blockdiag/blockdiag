@@ -191,7 +191,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         if thick == 1:
             d = 0
         else:
-            d = math.ceil(thick / 2.0)
+            d = int(math.ceil(thick / 2.0))
 
         style = kwargs.get('style')
         if 'style' in kwargs:
@@ -202,14 +202,12 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         ImageDraw.ImageDraw.rectangle(self, box, fill=fill)
 
         x1, y1, x2, y2 = box
-        self.line(((x1, y1 - d), (x1, y2 + d)),
-                  fill=outline, width=thick, style=style)
-        self.line(((x2, y1 - d), (x2, y2 + d)),
-                  fill=outline, width=thick, style=style)
-        self.line(((x1, y1), (x2, y1)),
-                  fill=outline, width=thick, style=style)
-        self.line(((x1, y2), (x2, y2)),
-                  fill=outline, width=thick, style=style)
+        lines = (((x1, y1), (x2, y1)), ((x1, y2), (x2, y2)),  # horizonal
+                 ((x1, y1 - d), (x1, y2 + d)),  # vettical (left)
+                 ((x2, y1 - d), (x2, y2 + d)))  # vertical (right)
+
+        for line in lines:
+            self.line(line, fill=outline, width=thick, style=style)
 
     def setupFont(self, font, fontsize):
         if font:
