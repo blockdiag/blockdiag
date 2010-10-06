@@ -448,7 +448,7 @@ class line(SVGelement):
     
     A line is defined by a begin x,y pair and an end x,y pair
     """
-    def __init__(self,x1=None,y1=None,x2=None,y2=None,stroke=None,stroke_width=None,**args):
+    def __init__(self,x1=None,y1=None,x2=None,y2=None,stroke=None,stroke_width=None,stroke_dasharray=None,**args):
         SVGelement.__init__(self,'line',**args)
         if x1<>None:
             self.attributes['x1']=x1
@@ -462,6 +462,8 @@ class line(SVGelement):
             self.attributes['stroke-width']=stroke_width
         if stroke<>None:
             self.attributes['stroke']=stroke
+        if stroke_dasharray<>None:
+            self.attributes['stroke-dasharray']=stroke_dasharray
             
 class polyline(SVGelement):
     """pl=polyline([[x1,y1],[x2,y2],...],fill,stroke,stroke_width,**args)
