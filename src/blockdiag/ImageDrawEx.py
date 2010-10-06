@@ -3,6 +3,7 @@
 
 import math
 from itertools import izip, tee
+from utils.myitertools import istep
 import Image
 import ImageDraw
 import ImageFont
@@ -145,29 +146,22 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             return izip(p1, p2)
 
         def dotted_line(line, len):
-            if line[0][0] == line[1][0]:  # holizonal
-                if line[0][1] < line[1][1]:
-                    pt1 = line[0]
-                    pt2 = line[1]
-                else:
-                    pt1 = line[1]
-                    pt2 = line[0]
+            pt1, pt2 = line
+            if pt1[0] == pt2[0]:  # holizonal
+                if pt1[1] > pt2[1]:
+                    pt2, pt1 = line
 
-                y_iter = iter(range(pt1[1], pt2[1], len))
-                for y in y_iter:
-                    yield [(pt1[0], y), (pt1[0], y_iter.next())]
+                r = range(pt1[1], pt2[1], len)
+                for y1, y2 in istep(r):
+                    yield [(pt1[0], y1), (pt1[0], y2)]
 
-            elif line[0][1] == line[1][1]:  # vertical
-                if line[0][0] < line[1][0]:
-                    pt1 = line[0]
-                    pt2 = line[1]
-                else:
-                    pt1 = line[1]
-                    pt2 = line[0]
+            elif pt1[1] == pt2[1]:  # vertical
+                if pt1[0] > pt2[0]:
+                    pt2, pt1 = line
 
-                x_iter = iter(range(pt1[0], pt2[0], len))
-                for x in x_iter:
-                    yield [(x, pt1[1]), (x_iter.next(), pt1[1])]
+                r = range(pt1[0], pt2[0], len)
+                for x1, x2 in istep(r):
+                    yield [(x1, pt1[1]), (x2, pt1[1])]
             else:
                 yield line
 
