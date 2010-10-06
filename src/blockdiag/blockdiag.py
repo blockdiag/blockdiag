@@ -97,15 +97,21 @@ class ScreenEdge:
         self.node2 = node2
         self.group = None
         self.color = None
+        self.style = None
         self.noweight = None
         self.skipped = 0
         self.crosspoints = []
         self.dir = 'forward'
 
     def copyAttributes(self, other):
-        self.color = other.color
-        self.noweight = other.noweight
-        self.dir = other.dir
+        if other.color:
+            self.color = other.color
+        if other.noweight:
+            self.noweight = other.noweight
+        if other.dir:
+            self.dir = other.dir
+        if other.style:
+            self.style = other.style
 
     def setAttributes(self, attrs):
         for attr in attrs:
@@ -114,15 +120,23 @@ class ScreenEdge:
                 self.color = value
             elif attr.name == 'dir':
                 dir = value.lower()
-                if dir in ('back', 'both', 'none'):
+                if dir in ('back', 'both', 'none', 'forward'):
                     self.dir = dir
                 else:
-                    self.dir = 'forward'
+                    msg = "WARNING: unknown edge dir: %s\n" % dir
+                    sys.stderr.write(msg)
             elif attr.name == 'noweight':
                 if value.lower() == 'none':
                     self.noweight = None
                 else:
                     self.noweight = 1
+            elif attr.name == 'style':
+                style = value.lower()
+                if style in ('solid', 'dotted', 'dashed'):
+                    self.style = style
+                else:
+                    msg = "WARNING: unknown edge style: %s\n" % style
+                    sys.stderr.write(msg)
             else:
                 raise AttributeError("Unknown edge attribute: %s" % attr.name)
 
