@@ -187,17 +187,12 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         thick = kwargs.get('width', self.scale_ratio)
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
+        style = kwargs.get('style')
 
         if thick == 1:
             d = 0
         else:
             d = int(math.ceil(thick / 2.0))
-
-        style = kwargs.get('style')
-        if 'style' in kwargs:
-            del kwargs['style']
-        if 'outline' in kwargs:
-            del kwargs['outline']
 
         ImageDraw.ImageDraw.rectangle(self, box, fill=fill)
 
