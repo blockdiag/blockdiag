@@ -59,13 +59,20 @@ class ScreenNode:
         self.drawable = 1
 
     def copyAttributes(self, other):
-        self.label = other.label
-        self.width = other.width
-        self.height = other.height
-        self.xy = other.xy
-        self.color = other.color
-        self.numbered = other.numbered
-        self.background = other.background
+        if other.label:
+            self.label = other.label
+        if other.width:
+            self.width = other.width
+        if other.height:
+            self.height = other.height
+        if other.xy:
+            self.xy = other.xy
+        if other.color:
+            self.color = other.color
+        if other.numbered:
+            self.numbered = other.numbered
+        if other.background:
+            self.background = other.background
 
     def setAttributes(self, attrs):
         for attr in attrs:
