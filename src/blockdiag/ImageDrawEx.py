@@ -118,6 +118,71 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         self.mode = mode
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
+    def line(self, xy, **kwargs):
+        style = kwargs.get('style')
+
+        if style in ('dotted', 'dashed'):
+            self.dashed_line(xy, **kwargs)
+        else:
+            if 'style' in kwargs:
+                del kwargs['style']
+
+            ImageDraw.ImageDraw.line(self, xy, **kwargs)
+
+    def dashed_line(self, xy, **kwargs):
+        def points():
+            xy_iter = iter(xy)
+            for pt in xy_iter:
+                if isinstance(pt, list) or isinstance(pt, XY):
+                    yield pt
+                else:
+                    yield (pt, xy_iter.next())
+
+        def lines(points):
+            last = points.next()
+            for pt in points:
+                yield [last, pt]
+                last = pt
+
+        def dotted_line(line, len):
+            if line[0][0] == line[1][0]:  # holizonal
+                if line[0][1] < line[1][1]:
+                    pt1 = line[0]
+                    pt2 = line[1]
+                else:
+                    pt1 = line[1]
+                    pt2 = line[0]
+
+                y_iter = iter(range(pt1[1], pt2[1], len))
+                for y in y_iter:
+                    yield [(pt1[0], y), (pt1[0], y_iter.next())]
+
+            elif line[0][1] == line[1][1]:  # vertical
+                if line[0][0] < line[1][0]:
+                    pt1 = line[0]
+                    pt2 = line[1]
+                else:
+                    pt1 = line[1]
+                    pt2 = line[0]
+
+                x_iter = iter(range(pt1[0], pt2[0], len))
+                for x in x_iter:
+                    yield [(x, pt1[1]), (x_iter.next(), pt1[1])]
+            else:
+                yield line
+
+        style = kwargs.get('style')
+        del kwargs['style']
+
+        if style == 'dotted':
+            len = 2
+        elif style == 'dashed':
+            len = 4
+
+        for line in lines(points()):
+            for subline in dotted_line(line, len):
+                self.line(subline, **kwargs)
+
     def rectangle(self, box, **kwargs):
         thick = kwargs.get('width', self.scale_ratio)
         fill = kwargs.get('fill')

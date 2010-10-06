@@ -144,7 +144,7 @@ class DiagramDraw(object):
             color = self.fill
 
         for line in metrix.shaft().polylines:
-            self.imageDraw.line(line, fill=color)
+            self.imageDraw.line(line, fill=color, style=edge.style)
 
         for head in metrix.heads():
             self.imageDraw.polygon(head, outline=color, fill=color)
