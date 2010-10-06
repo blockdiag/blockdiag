@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import math
-from itertools import izip, tee
+from itertools import islice, izip, tee
 from utils.myitertools import istep
 import Image
 import ImageDraw
@@ -163,7 +163,33 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                 for x1, x2 in istep(r):
                     yield [(x1, pt1[1]), (x2, pt1[1])]
             else:
-                yield line
+                d = (pt2[0] - pt1[0], pt2[1] - pt1[1])
+                e = 0
+
+                locus = []
+                if d[0] > d[1]:
+                    x, y = pt1
+                    while x < pt2[0]:
+                        e += d[1]
+                        if e > d[0]:
+                            e -= d[0]
+                            y += 1
+
+                        locus.append((x, y))
+                        x += 1
+                else:
+                    x, y = pt1
+                    while y < pt2[1]:
+                        e += d[0]
+                        if e > d[1]:
+                            e -= d[1]
+                            x += 1
+
+                        locus.append((x, y))
+                        y += 1
+
+                for p1, p2 in istep(islice(locus, None, None, len)):
+                    yield (p1, p2)
 
         style = kwargs.get('style')
         del kwargs['style']
