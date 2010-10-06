@@ -117,10 +117,11 @@ class DiagramDraw(object):
         if node.background:
             self.imageDraw.rectangle(m.box(), fill=node.color)
             self.imageDraw.loadImage(node.background, m.box())
-            self.imageDraw.rectangle(m.box(), outline=self.fill)
+            self.imageDraw.rectangle(m.box(), outline=self.fill,
+                                     style=node.style)
         else:
             self.imageDraw.rectangle(m.box(), outline=self.fill,
-                                     fill=node.color)
+                                     fill=node.color, style=node.style)
 
         self.imageDraw.textarea(m.coreBox(), node.label, fill=self.fill,
                                 font=self.font, fontsize=self.metrix.fontSize,
