@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import math
+from itertools import izip, tee
 import Image
 import ImageDraw
 import ImageFont
@@ -139,10 +140,9 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                     yield pt
 
         def lines(points):
-            last = points.next()
-            for pt in points:
-                yield [last, pt]
-                last = pt
+            p1, p2 = tee(points)
+            p2.next()
+            return izip(p1, p2)
 
         def dotted_line(line, len):
             if line[0][0] == line[1][0]:  # holizonal
