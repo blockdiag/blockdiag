@@ -307,12 +307,13 @@ class EdgeMetrix:
 
     def shaft(self):
         span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+        dir = self.direction()
 
         node1 = self.metrix.node(self.edge.node1)
         node2 = self.metrix.node(self.edge.node2)
 
         shaft = EdgeLines(self.metrix, self.edge.crosspoints)
-        if node1.x < node2.x and node1.y == node2.y:  # right, right(skipped)
+        if dir == 'right':
             shaft.moveTo(node1.right())
 
             if self.edge.skipped:
@@ -325,7 +326,7 @@ class EdgeMetrix:
 
             shaft.lineTo(node2.left())
 
-        elif node1.x < node2.x:  # right-up, right-down, right-down(skipped)
+        elif dir in ('right-up', 'right-down'):
             shaft.moveTo(node1.right())
             shaft.lineTo(node1.right().x + span.x / 2, node1.right().y)
 
@@ -341,11 +342,11 @@ class EdgeMetrix:
 
             shaft.lineTo(node2.left())
 
-        elif node1.x == node2.x and node1.y > node2.y:  # up
+        elif dir == 'up':
             shaft.moveTo(node1.top())
             shaft.lineTo(node2.bottom())
 
-        elif node1.y >= node2.y:  # left, left-up
+        elif dir in ('left-up', 'left'):
             shaft.lineTo(node1.right())
             shaft.lineTo(node1.right().x + span.x / 8,
                          node1.right().y)
@@ -354,13 +355,13 @@ class EdgeMetrix:
             shaft.lineTo(node2.top().x, node2.top().y - span.y / 2)
             shaft.lineTo(node2.top())
 
-        elif node1.x > node2.x:  # left-down
+        elif dir == 'left-down':
             shaft.moveTo(node1.bottom())
             shaft.lineTo(node1.bottom().x, node2.top().y - span.y / 2)
             shaft.lineTo(node2.top().x, node2.top().y - span.y / 2)
             shaft.lineTo(node2.top())
 
-        else:  # down
+        elif dir == 'down':
             shaft.moveTo(node1.bottom())
             shaft.lineTo(node2.top())
 
