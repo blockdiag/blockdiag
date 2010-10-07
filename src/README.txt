@@ -110,6 +110,12 @@ Python Software Foundation License.
 History
 =======
 
+0.4 (2010-10-07)
+------------------
+* Support SVG exporting.
+* Support dashed edge drawing.
+* Support background image of nodes (PNG only)
+
 0.3.1 (2010-09-29)
 ------------------
 * Fasten anti-alias process.
