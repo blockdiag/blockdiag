@@ -4,7 +4,7 @@
 import sys
 from utils.XY import XY
 from SVGdraw import *
-from ImageDrawEx import TextFolder
+from utils.TextFolder import TextFolder
 
 
 class SVGImageDraw:
