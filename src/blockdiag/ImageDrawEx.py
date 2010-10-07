@@ -12,6 +12,57 @@ import ImageFilter
 from utils.XY import XY
 
 
+def point_pairs(xylist):
+    iterable = iter(xylist)
+    for pt in iterable:
+        if isinstance(pt, int):
+            yield (pt, iterable.next())
+        else:
+            yield pt
+
+
+def line_segments(xylist):
+    p1, p2 = tee(point_pairs(xylist))
+    p2.next()
+    return izip(p1, p2)
+
+
+def dashize_line(line, length):
+    pt1, pt2 = line
+    if pt1[0] == pt2[0]:  # holizonal
+        if pt1[1] > pt2[1]:
+            pt2, pt1 = line
+
+        r = range(pt1[1], pt2[1], length)
+        for y1, y2 in istep(r):
+            yield [(pt1[0], y1), (pt1[0], y2)]
+
+    elif pt1[1] == pt2[1]:  # vertical
+        if pt1[0] > pt2[0]:
+            pt2, pt1 = line
+
+        r = range(pt1[0], pt2[0], length)
+        for x1, x2 in istep(r):
+            yield [(x1, pt1[1]), (x2, pt1[1])]
+    else:  # diagonal
+        if pt1[0] > pt2[0]:
+            pt2, pt1 = line
+
+        # DDA (Digital Differential Analyzer) Algorithm
+        locus = []
+        m = float(pt2[1] - pt1[1]) / float(pt2[0] - pt1[0])
+        x = pt1[0]
+        y = pt1[1]
+
+        while x <= pt2[0]:
+            locus.append((int(x), int(round(y))))
+            x += 1
+            y += m
+
+        for p1, p2 in istep(islice(locus, None, None, length)):
+            yield (p1, p2)
+
+
 class ImageDrawEx(ImageDraw.ImageDraw):
     def __init__(self, im, scale_ratio, mode=None):
         self.image = im
@@ -31,54 +82,6 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             ImageDraw.ImageDraw.line(self, xy, **kwargs)
 
     def dashed_line(self, xy, **kwargs):
-        def points():
-            xy_iter = iter(xy)
-            for pt in xy_iter:
-                if isinstance(pt, int):
-                    yield (pt, xy_iter.next())
-                else:
-                    yield pt
-
-        def lines(points):
-            p1, p2 = tee(points)
-            p2.next()
-            return izip(p1, p2)
-
-        def dotted_line(line, len):
-            pt1, pt2 = line
-            if pt1[0] == pt2[0]:  # holizonal
-                if pt1[1] > pt2[1]:
-                    pt2, pt1 = line
-
-                r = range(pt1[1], pt2[1], len)
-                for y1, y2 in istep(r):
-                    yield [(pt1[0], y1), (pt1[0], y2)]
-
-            elif pt1[1] == pt2[1]:  # vertical
-                if pt1[0] > pt2[0]:
-                    pt2, pt1 = line
-
-                r = range(pt1[0], pt2[0], len)
-                for x1, x2 in istep(r):
-                    yield [(x1, pt1[1]), (x2, pt1[1])]
-            else:  # diagonal
-                if pt1[0] > pt2[0]:
-                    pt2, pt1 = line
-
-                # DDA (Digital Differential Analyzer) Algorithm
-                locus = []
-                m = float(pt2[1] - pt1[1]) / float(pt2[0] - pt1[0])
-                x = pt1[0]
-                y = pt1[1]
-
-                while x <= pt2[0]:
-                    locus.append((int(x), int(round(y))))
-                    x += 1
-                    y += m
-
-                for p1, p2 in istep(islice(locus, None, None, len)):
-                    yield (p1, p2)
-
         style = kwargs.get('style')
         del kwargs['style']
 
@@ -87,8 +90,8 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         elif style == 'dashed':
             len = 4
 
-        for line in lines(points()):
-            for subline in dotted_line(line, len):
+        for line in line_segments(xy):
+            for subline in dashize_line(line, len):
                 self.line(subline, **kwargs)
 
     def rectangle(self, box, **kwargs):
