@@ -294,7 +294,7 @@ class ScreenNodeBuilder:
             is_ref = child.id in self.widthRefs
             is_tail = child.id in self.tailNodes
 
-            if not is_tail and is_ref and self.isCircularRef(node_id, child):
+            if is_ref and self.isCircularRef(node_id, child):
                 pass
             elif node_id == child.id:
                 pass
