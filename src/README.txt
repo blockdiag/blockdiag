@@ -110,6 +110,10 @@ Python Software Foundation License.
 History
 =======
 
+0.4.1 (2010-10-07)
+------------------
+* Fix bugs.
+
 0.4 (2010-10-07)
 ------------------
 * Support SVG exporting.
