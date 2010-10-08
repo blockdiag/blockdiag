@@ -91,6 +91,37 @@ class DiagramDraw(object):
                     if len(nodes) > 0:
                         edge.skipped = 1
 
+        # Search crosspoints
+        from bisect import insort, bisect_left, bisect_right
+
+        lines = [(ed, ln) for ed in self.screen.edges
+                          for ln in self.metrix.edge(ed).shaft().lines()]
+        ytree = []
+        for i, (_, (st, ed)) in enumerate(lines):
+            if st.y == ed.y:  # horizonal line
+                insort(ytree, (st.y, 0, i))
+            else:             # vertical line
+                insort(ytree, (max(st.y, ed.y), -1, i))
+                insort(ytree, (min(st.y, ed.y), +1, i))
+
+        cross = []
+        xtree = []
+        for y, _, i in ytree:
+            edge, ((x1, y1), (x2, y2)) = lines[i]
+            if (x2 < x1):
+                x1, x2 = x2, x1
+            if (y2 < y1):
+                y1, y2 = y2, y1
+
+            if (y == y1):
+                insort(xtree, x1)
+
+            if (y == y2):
+                del xtree[bisect_left(xtree, x1)]
+                for x in xtree[bisect_right(xtree, x1):bisect_left(xtree, x2)]:
+                    if XY(x, y) not in edge.crosspoints:
+                        edge.crosspoints.append(XY(x, y))
+
     def _drawBackground(self):
         metrix = self.metrix.originalMetrix()
 
@@ -149,6 +180,11 @@ class DiagramDraw(object):
 
         for head in metrix.heads():
             self.imageDraw.polygon(head, outline=color, fill=color)
+
+        r = self.metrix.cellSize / 2
+        for jump in metrix.jumps():
+            box = (jump.x - r, jump.y - r, jump.x + r, jump.y + r)
+            self.imageDraw.arc(box, 180, 0, fill=color)
 
     def save(self, filename, format=None, size=None):
         if format:
