@@ -500,7 +500,7 @@ class path(SVGelement):
 
     a path is defined by a path object and optional width, stroke and fillcolor
     """
-    def __init__(self,pathdata,fill=None,stroke=None,stroke_width=None,id=None,**args):
+    def __init__(self,pathdata,fill=None,stroke=None,stroke_width=None,id=None,stroke_dasharray=None,**args):
         SVGelement.__init__(self,'path',{'d':str(pathdata)},**args)
         if stroke<>None:
             self.attributes['stroke']=stroke
@@ -510,6 +510,8 @@ class path(SVGelement):
             self.attributes['stroke-width']=stroke_width
         if id<>None:
             self.attributes['id']=id
+        if stroke_dasharray<>None:
+            self.attributes['stroke-dasharray']=stroke_dasharray
         
         
 class text(SVGelement):
