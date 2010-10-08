@@ -33,11 +33,11 @@ class SVGImageDraw:
         style = kwargs.get('style')
 
         if style == 'dotted':
-            len = 2
+            length = 2
         elif style == 'dashed':
-            len = 4
+            length = 4
         else:
-            len = None
+            length = None
 
         x = box[0]
         y = box[1]
@@ -46,7 +46,7 @@ class SVGImageDraw:
 
         r = rect(x, y, width, height, fill=self.rgb(fill),
                  stroke=self.rgb(outline), stroke_width=thick,
-                 stroke_dasharray=len)
+                 stroke_dasharray=length)
         self.svg.addElement(r)
 
     def text(self, xy, string, **kwargs):
@@ -67,17 +67,18 @@ class SVGImageDraw:
         style = kwargs.get('style')
 
         if style == 'dotted':
-            len = 2
+            length = 2
         elif style == 'dashed':
-            len = 4
+            length = 4
         else:
-            len = None
+            length = None
 
         pd = pathdata(xy[0].x, xy[0].y)
         for pt in xy[1:]:
             pd.line(pt.x, pt.y)
 
-        p = path(pd, fill="none", stroke=self.rgb(fill), stroke_dasharray=len)
+        p = path(pd, fill="none", stroke=self.rgb(fill),
+                 stroke_dasharray=length)
         self.svg.addElement(p)
 
     def arc(self, xy, start, end, **kwargs):
@@ -85,11 +86,11 @@ class SVGImageDraw:
         style = kwargs.get('style')
 
         if style == 'dotted':
-            len = 2
+            length = 2
         elif style == 'dashed':
-            len = 4
+            length = 4
         else:
-            len = None
+            length = None
 
         w = (xy[2] - xy[0]) / 2
         h = (xy[3] - xy[1]) / 2
@@ -98,7 +99,8 @@ class SVGImageDraw:
 
         pd = pathdata(pt1.x, pt1.y)
         pd.ellarc(w, h, 0, 0, 1, pt2.x, pt2.y)
-        p = path(pd, fill="none", stroke=self.rgb(fill), stroke_dasharray=len)
+        p = path(pd, fill="none", stroke=self.rgb(fill),
+                 stroke_dasharray=length)
         self.svg.addElement(p)
 
     def polygon(self, xy, **kwargs):
