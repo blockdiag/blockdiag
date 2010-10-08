@@ -30,4 +30,6 @@ diagram admin {
   foo_index -> foo_delete_confirm -> foo_index;
 
   bar_detail -> bar_edit -> bar_edit_confirm -> bar_detail [dir = both, style = dotted];
+
+  foo_index -> foo_edit [style = dotted];
 }
