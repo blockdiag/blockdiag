@@ -73,13 +73,12 @@ class SVGImageDraw:
         else:
             len = None
 
-        p1 = xy[0]
-        for p2 in xy[1:]:
-            l = line(p1.x, p1.y, p2.x, p2.y,
-                     stroke=self.rgb(fill), stroke_dasharray=len)
-            self.svg.addElement(l)
+        pd = pathdata(xy[0].x, xy[0].y)
+        for pt in xy[1:]:
+            pd.line(pt.x, pt.y)
 
-            p1 = p2
+        p = path(pd, fill="none", stroke=self.rgb(fill), stroke_dasharray=len)
+        self.svg.addElement(p)
 
     def arc(self, xy, start, end, **kwargs):
         fill = kwargs.get('fill')
