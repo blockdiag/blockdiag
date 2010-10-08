@@ -86,12 +86,12 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         del kwargs['style']
 
         if style == 'dotted':
-            len = 2
+            length = 2
         elif style == 'dashed':
-            len = 4
+            length = 4
 
         for line in line_segments(xy):
-            for subline in dashize_line(line, len):
+            for subline in dashize_line(line, length):
                 self.line(subline, **kwargs)
 
     def rectangle(self, box, **kwargs):
