@@ -184,7 +184,7 @@ class DiagramDraw(object):
         r = self.metrix.cellSize / 2
         for jump in metrix.jumps():
             box = (jump.x - r, jump.y - r, jump.x + r, jump.y + r)
-            self.imageDraw.arc(box, 180, 0, fill=color)
+            self.imageDraw.arc(box, 180, 0, fill=color, style=edge.style)
 
     def save(self, filename, format=None, size=None):
         if format:

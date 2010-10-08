@@ -82,6 +82,14 @@ class SVGImageDraw:
 
     def arc(self, xy, start, end, **kwargs):
         fill = kwargs.get('fill')
+        style = kwargs.get('style')
+
+        if style == 'dotted':
+            len = 2
+        elif style == 'dashed':
+            len = 4
+        else:
+            len = None
 
         w = (xy[2] - xy[0]) / 2
         h = (xy[3] - xy[1]) / 2
@@ -90,7 +98,7 @@ class SVGImageDraw:
 
         pd = pathdata(pt1.x, pt1.y)
         pd.ellarc(w, h, 0, 0, 1, pt2.x, pt2.y)
-        p = path(pd, fill="none", stroke=self.rgb(fill))
+        p = path(pd, fill="none", stroke=self.rgb(fill), stroke_dasharray=len)
         self.svg.addElement(p)
 
     def polygon(self, xy, **kwargs):
