@@ -47,10 +47,10 @@ class EdgeLines:
             crosspoint = self.getCrosspoint(start, elem)
             if crosspoint:
                 if start.y == crosspoint.y:  # holizonal line
-                    p = XY(point.x - self.cellSize, crosspoint.y)
+                    p = XY(crosspoint.x - self.cellSize / 2, crosspoint.y)
                     self.lineTo(p)
 
-                    p = XY(point.x + self.cellSize, crosspoint.y)
+                    p = XY(crosspoint.x + self.cellSize / 2, crosspoint.y)
                     self.moveTo(p)
                     self.lineTo(elem)
                     return
@@ -85,12 +85,6 @@ class EdgeLines:
                 start = elem
 
         return lines
-
-    def verticalLines(self):
-        return [x for x in self.lines() if x[0].y == x[1].y]
-
-    def holizonalLines(self):
-        return [x for x in self.lines() if x[0].x == x[1].x]
 
 
 class DiagramMetrix:
@@ -366,3 +360,6 @@ class EdgeMetrix:
             shaft.lineTo(node2.top())
 
         return shaft
+
+    def jumps(self):
+        return self.edge.crosspoints

@@ -81,6 +81,19 @@ class SVGImageDraw:
 
             p1 = p2
 
+    def arc(self, xy, start, end, **kwargs):
+        fill = kwargs.get('fill')
+
+        w = (xy[2] - xy[0]) / 2
+        h = (xy[3] - xy[1]) / 2
+        pt1 = XY(xy[0], xy[1] + w)
+        pt2 = XY(xy[2], xy[3] - w)
+
+        pd = pathdata(pt1.x, pt1.y)
+        pd.ellarc(w, h, 0, 0, 1, pt2.x, pt2.y)
+        p = path(pd, fill="none", stroke=self.rgb(fill))
+        self.svg.addElement(p)
+
     def polygon(self, xy, **kwargs):
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
