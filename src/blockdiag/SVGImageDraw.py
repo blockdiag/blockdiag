@@ -103,6 +103,18 @@ class SVGImageDraw:
                  stroke_dasharray=length)
         self.svg.addElement(p)
 
+    def ellipse(self, xy, **kwargs):
+        fill = kwargs.get('fill')
+        outline = kwargs.get('outline')
+
+        w = (xy[2] - xy[0]) / 2
+        h = (xy[3] - xy[1]) / 2
+        pt = XY(xy[0] + w, xy[1] + h)
+
+        e = ellipse(pt.x, pt.y, w, h, fill=self.rgb(fill),
+                    stroke=self.rgb(outline))
+        self.svg.addElement(e)
+
     def polygon(self, xy, **kwargs):
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
