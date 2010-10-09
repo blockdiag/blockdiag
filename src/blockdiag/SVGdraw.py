@@ -259,6 +259,10 @@ class SVGelement:
             f.write(' '+_escape(str(attkey))+'='+_quoteattr(str(self.attributes[attkey])))
         if self.namespace:
             f.write(' xmlns="'+ _escape(str(self.namespace))+'" ')
+        if hasattr(self, 'namespaces') and self.namespaces:
+            for ns in self.namespaces:
+                uri = self.namespaces[ns]
+                f.write(' xmlns:'+ _escape(str(ns))+'="'+ _escape(str(uri))+'" ')
         if self.elements or self.text or self.cdata:
             f.write('>')
         if self.elements:
@@ -881,6 +885,7 @@ class svg(SVGelement):
         if height<>None:
             self.attributes['height']=height
         self.namespace="http://www.w3.org/2000/svg"
+        self.namespaces={}
         
 class drawing:
     """d=drawing()

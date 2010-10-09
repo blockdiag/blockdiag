@@ -128,12 +128,14 @@ class DiagramDraw(object):
         # Draw node groups.
         for node in (x for x in self.screen.nodes if x.drawable == 0):
             marginBox = metrix.node(node).marginBox()
-            self.imageDraw.rectangle(marginBox, fill=node.color)
+            self.imageDraw.rectangle(marginBox, fill=node.color,
+                                     filter='blur')
 
         # Drop node shadows.
         for node in (x for x in self.screen.nodes if x.drawable):
             shadowBox = metrix.node(node).shadowBox()
-            self.imageDraw.rectangle(shadowBox, fill=self.shadow)
+            self.imageDraw.rectangle(shadowBox, fill=self.shadow,
+                                     filter='blur')
 
         # Smoothing back-ground images.
         if self.format == 'PNG':
