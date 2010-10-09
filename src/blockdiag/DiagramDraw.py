@@ -164,8 +164,9 @@ class DiagramDraw(object):
 
             box = [xy.x - r, xy.y - r, xy.x + r, xy.y + r]
             self.imageDraw.ellipse(box, outline=self.fill, fill=self.badgeFill)
-            self.imageDraw.text(box, node.numbered, fill=self.fill,
-                                font=self.font, fontsize=self.metrix.fontSize)
+            self.imageDraw.textarea(box, node.numbered,
+                                    fill=self.fill, font=self.font,
+                                    fontsize=self.metrix.fontSize)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
