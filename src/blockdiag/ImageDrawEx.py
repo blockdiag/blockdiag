@@ -70,6 +70,12 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         self.mode = mode
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
+    def arc(self, box, start, end, **kwargs):
+        if 'style' in kwargs:
+            del kwargs['style']
+
+        ImageDraw.ImageDraw.arc(self, box, start, end, **kwargs)
+
     def line(self, xy, **kwargs):
         style = kwargs.get('style')
 
