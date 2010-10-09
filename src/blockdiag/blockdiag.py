@@ -16,18 +16,21 @@ class Screen:
     def __init__(self):
         self.nodes = []
         self.edges = []
+        self.color = None
         self.rankdir = None
 
     def setAttributes(self, attrs):
         for attr in attrs:
             value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
 
-            if attr.name.lower() == 'rankdir':
+            if attr.name == 'rankdir':
                 if value.upper() == 'LR':
                     self.rankdir = value.upper()
                 else:
                     msg = "WARNING: unknown rankdir: %s\n" % value
                     sys.stderr.write(msg)
+            elif attr.name == 'color':
+                self.color = value
             else:
                 msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
                 raise AttributeError(msg)
@@ -178,8 +181,8 @@ class ScreenGroup(ScreenNode):
 
 class ScreenNodeBuilder:
     @classmethod
-    def build(klass, tree):
-        return klass()._build(tree)
+    def build(klass, tree, group=False):
+        return klass()._build(tree, group)
 
     def __init__(self):
         self.screen = Screen()
@@ -189,7 +192,7 @@ class ScreenNodeBuilder:
         self.heightRefs = []
         self.rows = 0
 
-    def _build(self, tree):
+    def _build(self, tree, group=False):
         self.buildNodeList(tree)
 
         self.screen.nodes = self.uniqNodes.values()
@@ -202,6 +205,12 @@ class ScreenNodeBuilder:
                 node.height = i
 
                 node.xy = XY(node.xy.y, node.xy.x)
+
+        if not group:
+            if self.screen.color:
+                msg = "WARNING: diagram.color was ignored: %s\n" % \
+                      self.screen.color
+                sys.stderr.write(msg)
 
         return self.screen
 
@@ -338,9 +347,12 @@ class ScreenNodeBuilder:
                 edge = diagparser.Edge([node1_id, node2_id], [])
                 tree.stmts.append(edge)
 
-        screen = ScreenNodeBuilder.build(tree)
+        screen = ScreenNodeBuilder.build(tree, group=True)
         if not screen.nodes:
             return
+
+        if screen.color:
+            group.color = screen.color
 
         group.setSize(screen.nodes)
 

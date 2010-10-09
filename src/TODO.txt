@@ -6,7 +6,6 @@ Functionals
 * Description to nodes.
 * Description to edges.
 * Description to node groups.
-* Specify node group's background color.
 * Specify shape of node (rounded rectangle, diamond, end-point, etc.)
 * Support other block diagram structure.
 
