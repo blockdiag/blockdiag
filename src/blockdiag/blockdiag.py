@@ -112,6 +112,7 @@ class ScreenEdge:
     def __init__(self, node1, node2):
         self.node1 = node1
         self.node2 = node2
+        self.circular = False
         self.group = None
         self.color = None
         self.style = None
@@ -185,9 +186,7 @@ class ScreenNodeBuilder:
         self.uniqNodes = {}
         self.nodeOrder = []
         self.uniqLinks = {}
-        self.widthRefs = []
         self.heightRefs = []
-        self.tailNodes = []
         self.rows = 0
 
     def _build(self, tree):
@@ -248,13 +247,15 @@ class ScreenNodeBuilder:
 
         uniq = {}
         for edge in self.uniqLinks.values():
-            if edge.noweight == None:
-                if node_id == None:
-                    uniq[edge.node1] = 1
-                elif edge.node1.id == node_id:
-                    uniq[edge.node2] = 1
-                elif edge.node1.group and edge.node1.group.id == node_id:
-                    uniq[edge.node2] = 1
+            if edge.noweight or edge.circular:
+                continue
+
+            if node_id == None:
+                uniq[edge.node1] = 1
+            elif edge.node1.id == node_id:
+                uniq[edge.node2] = 1
+            elif edge.node1.group and edge.node1.group.id == node_id:
+                uniq[edge.node2] = 1
 
         children = []
         for node in uniq.keys():
@@ -286,29 +287,28 @@ class ScreenNodeBuilder:
 
         return referenced
 
-    def setNodeWidth(self, node=None):
-        node_id = ScreenNode.getId(node)
+    def setNodeWidth(self, depth=0):
+        count = 0
+        for node in self.nodeOrder:
+            if node.xy.x != depth or node.group is not None:
+                continue
 
-        self.widthRefs.append(node_id)
-        for child in self.getChildren(node_id):
-            is_ref = child.id in self.widthRefs
-            is_tail = child.id in self.tailNodes
+            o1 = self.nodeOrder.index(node)
+            for child in self.getChildren(node):
+                o2 = self.nodeOrder.index(child)
+                if o1 > o2 and self.isCircularRef(node, child):
+                    edge = self.getScreenEdge(node.id, child.id)
+                    edge.circular = True
+                elif node == child:
+                    pass
+                elif child.group:
+                    pass
+                else:
+                    count += 1
+                    child.xy = XY(depth + node.width, 0)
 
-            if is_ref and self.isCircularRef(node_id, child):
-                pass
-            elif node_id == child.id:
-                pass
-            elif child.group:
-                pass
-            elif is_ref and node_id == None:
-                pass
-            else:
-                if node_id == None:
-                    child.xy = XY(0, child.xy.y)
-                elif node.xy.x + 1 > child.xy.x:
-                    child.xy = XY(node.xy.x + node.width, child.xy.y)
-                    self.tailNodes.append(child.id)
-                self.setNodeWidth(child)
+        if count > 0:
+            self.setNodeWidth(depth + 1)
 
     def setNodeHeight(self, node, baseHeight):
         node.xy = XY(node.xy.x, baseHeight)
