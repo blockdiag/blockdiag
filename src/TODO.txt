@@ -18,5 +18,5 @@ Environments
 Known Issues
 -------------
 * SVG outputs does not support node's background attr.
-* Not yet.
-
+* Jumped edge was not dot'ized.
+* Fix some experimental features.
