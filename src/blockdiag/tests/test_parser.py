@@ -149,9 +149,24 @@ def test_branched_diagram():
         assert node.xy == assert_pos[node.id]
 
 
-def test_circular_ref_diagram():
+def test_circular_ref_to_root_diagram():
     str = ("diagram {\n"
            "  A -> B -> C -> A\n"
+           "       B -> D\n"
+           "  Z\n"
+           "}\n")
+    tree = parse(tokenize(str))
+    screen = ScreenNodeBuilder.build(tree)
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'D': (2, 1), 'Z': (0, 2)}
+    for node in screen.nodes:
+        assert node.xy == assert_pos[node.id]
+
+
+def test_circular_ref_diagram():
+    str = ("diagram {\n"
+           "  A -> B -> C -> B\n"
            "       B -> D\n"
            "  Z\n"
            "}\n")
