@@ -121,19 +121,15 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         for line in lines:
             self.line(line, fill=outline, width=thick, style=style)
 
-    def setupFont(self, font, fontsize):
-        if font:
-            ttfont = ImageFont.truetype(font, fontsize)
-        else:
-            ttfont = None
-
-        return ttfont
-
     def text(self, xy, string, **kwargs):
         fill = kwargs.get('fill')
         font = kwargs.get('font')
         fontsize = kwargs.get('fontsize', 11)
-        ttfont = self.setupFont(font, fontsize)
+
+        if font:
+            ttfont = ImageFont.truetype(font, fontsize)
+        else:
+            ttfont = None
 
         if ttfont is None:
             if self.scale_ratio == 1:
