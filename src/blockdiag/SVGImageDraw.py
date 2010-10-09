@@ -7,6 +7,20 @@ from SVGdraw import *
 from utils.TextFolder import TextFolder
 
 
+class filter(SVGelement):
+    def __init__(self, inkspace_collect=None, **args):
+        SVGelement.__init__(self, 'filter', **args)
+        if inkspace_collect != None:
+            self.attributes['inkspace:collect'] = inkspace_collect
+
+
+class feGaussianBlur(SVGelement):
+    def __init__(self, inkspace_collect=None, **args):
+        SVGelement.__init__(self, 'feGaussianBlur', **args)
+        if inkspace_collect != None:
+            self.attributes['inkspace:collect'] = inkspace_collect
+
+
 class SVGImageDraw:
     def __init__(self):
         self.drawing = drawing()
@@ -14,6 +28,20 @@ class SVGImageDraw:
 
     def resetCanvas(self, size):
         self.svg = svg((0, 0, size[0], size[1]))
+
+        uri = 'http://www.inkscape.org/namespaces/inkscape'
+        self.svg.namespaces['inkspace'] = uri
+
+        # inkspace's Gaussian filter
+        fgb = feGaussianBlur(id='feGaussianBlur3780', stdDeviation=4.2,
+                             inkspace_collect='always')
+        f = filter(id='filter_blur', inkspace_collect='always',
+                   x=-0.07875, y=-0.252, width=1.1575, height=1.504)
+        f.addElement(fgb)
+        d = defs(id='defs_block')
+        d.addElement(f)
+        self.svg.addElement(d)
+
         self.svg.addElement(title('blockdiag'))
 
     def rgb(self, color):
@@ -31,6 +59,7 @@ class SVGImageDraw:
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
         style = kwargs.get('style')
+        filter = kwargs.get('filter')
 
         if style == 'dotted':
             length = 2
@@ -39,6 +68,11 @@ class SVGImageDraw:
         else:
             length = None
 
+        if filter == 'blur':
+            filter = "filter:url(#filter_blur)"
+        else:
+            filter = None
+
         x = box[0]
         y = box[1]
         width = box[2] - box[0]
@@ -46,7 +80,7 @@ class SVGImageDraw:
 
         r = rect(x, y, width, height, fill=self.rgb(fill),
                  stroke=self.rgb(outline), stroke_width=thick,
-                 stroke_dasharray=length)
+                 stroke_dasharray=length, style=filter)
         self.svg.addElement(r)
 
     def text(self, xy, string, **kwargs):
