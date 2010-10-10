@@ -29,51 +29,32 @@ class Screen:
         for attr in attrs:
             value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
 
-            if attr.name == 'rankdir':
-                if self.subdiagram and value.upper() == 'LR':
-                    self.rankdir = value.upper()
-                else:
-                    msg = "WARNING: unknown rankdir: %s\n" % value
-                    sys.stderr.write(msg)
-            elif attr.name == 'color':
-                if self.subdiagram:
+            if self.subdiagram:
+                if attr.name == 'color':
                     self.color = value
                 else:
-                    msg = "WARNING: diagram.color is ignored: %s\n" % value
-                    sys.stderr.write(msg)
-            elif attr.name == 'node_width':
-                if not self.subdiagram:
+                    msg = "Unknown node attribute: group.%s" % attr.name
+                    raise AttributeError(msg)
+            else:
+                if attr.name == 'rankdir':
+                    if value.upper() == 'LR':
+                        self.rankdir = value.upper()
+                    else:
+                        msg = "WARNING: unknown rankdir: %s\n" % value
+                        sys.stderr.write(msg)
+                elif attr.name == 'node_width':
                     self.node_width = int(value)
-                else:
-                    msg = "WARNING: group.node_width is ignored: %s\n" % value
-                    sys.stderr.write(msg)
-            elif attr.name == 'node_height':
-                if not self.subdiagram:
+                elif attr.name == 'node_height':
                     self.node_height = int(value)
-                else:
-                    msg = "WARNING: group.node_height is ignored: %s\n" % value
-                    sys.stderr.write(msg)
-            elif attr.name == 'span_width':
-                if not self.subdiagram:
+                elif attr.name == 'span_width':
                     self.span_width = int(value)
-                else:
-                    msg = "WARNING: group.span_width is ignored: %s\n" % value
-                    sys.stderr.write(msg)
-            elif attr.name == 'span_height':
-                if not self.subdiagram:
+                elif attr.name == 'span_height':
                     self.span_height = int(value)
-                else:
-                    msg = "WARNING: group.span_height is ignored: %s\n" % value
-                    sys.stderr.write(msg)
-            elif attr.name == 'fontsize':
-                if not self.subdiagram:
+                elif attr.name == 'fontsize':
                     self.fontsize = int(value)
                 else:
-                    msg = "WARNING: group.fontsize is ignored: %s\n" % value
-                    sys.stderr.write(msg)
-            else:
-                msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
-                raise AttributeError(msg)
+                    msg = "Unknown node attribute: diagram.%s" % attr.name
+                    raise AttributeError(msg)
 
 
 class ScreenNode:
