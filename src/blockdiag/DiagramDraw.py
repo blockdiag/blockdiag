@@ -72,6 +72,9 @@ class DiagramDraw(object):
         for edge in self.screen.edges:
             self.edge(edge)
 
+        for edge in (x for x in self.screen.edges if x.label):
+            self.edge_label(edge)
+
     def _prepareEdges(self):
         for edge in self.screen.edges:
             m = self.metrix.edge(edge)
@@ -188,6 +191,9 @@ class DiagramDraw(object):
         for jump in metrix.jumps():
             box = (jump.x - r, jump.y - r, jump.x + r, jump.y + r)
             self.imageDraw.arc(box, 180, 0, fill=color, style=edge.style)
+
+    def edge_label(self, edge):
+        metrix = self.metrix.edge(edge)
 
         if edge.label:
             self.imageDraw.label(metrix.labelbox(), edge.label,
