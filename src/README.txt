@@ -36,6 +36,8 @@ spec-text setting sample
 ========================
 
 Few examples are available.
+You can get more examples at
+`tk0miya.bitbucket.org <http://http://tk0miya.bitbucket.org/blockdiag/build/html/index.html>`_ .
 
 simple.diag
 ------------
@@ -109,6 +111,12 @@ Python Software Foundation License.
 
 History
 =======
+
+0.4.2 (2010-10-10)
+------------------
+* Support background-color of node groups.
+* Draw edge has jumped at edge's cross-points.
+* Fix bugs.
 
 0.4.1 (2010-10-07)
 ------------------
