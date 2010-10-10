@@ -130,12 +130,15 @@ class ScreenEdge:
         self.crosspoints = []
         self.skipped = 0
 
+        self.label = None
         self.dir = 'forward'
         self.color = None
         self.style = None
         self.noweight = None
 
     def copyAttributes(self, other):
+        if other.label:
+            self.label = other.label
         if other.dir:
             self.dir = other.dir
         if other.color:
@@ -148,7 +151,9 @@ class ScreenEdge:
     def setAttributes(self, attrs):
         for attr in attrs:
             value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
-            if attr.name == 'dir':
+            if attr.name == 'label':
+                self.label = value
+            elif attr.name == 'dir':
                 dir = value.lower()
                 if dir in ('back', 'both', 'none', 'forward'):
                     self.dir = dir

@@ -361,5 +361,48 @@ class EdgeMetrix:
 
         return shaft
 
+    def labelbox(self):
+        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+
+        dir = self.direction()
+        node1 = self.metrix.node(self.edge.node1)
+        node2 = self.metrix.node(self.edge.node2)
+
+        if dir == 'right':
+            if self.edge.skipped:
+                box = (node1.bottomRight().x + span.x,
+                       node1.bottomRight().y,
+                       node2.bottomLeft().x - span.x,
+                       node2.bottomLeft().y + span.y / 2)
+            else:
+                box = (node1.topRight().x,
+                       node1.topRight().y,
+                       node2.left().x,
+                       node2.left().y)
+
+        elif dir in ('right-up'):
+            box = (node2.left().x - span.x,
+                   node2.left().y,
+                   node2.bottomLeft().x,
+                   node2.bottomLeft().y)
+
+        elif dir in ('right-down'):
+            box = (node1.right().x,
+                   node2.topLeft().y,
+                   node1.right().x + span.x,
+                   node2.left().y)
+
+        elif dir in ('up', 'down', 'left-up', 'left', 'left-down'):
+            box = (node2.top().x,
+                   node2.top().y - span.y / 2,
+                   node2.topRight().x,
+                   node2.topRight().y)
+
+        # shrink box
+        box = (box[0] + span.x / 8, box[1],
+               box[2] - span.x / 8, box[3])
+
+        return box
+
     def jumps(self):
         return self.edge.crosspoints
