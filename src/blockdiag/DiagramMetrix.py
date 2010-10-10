@@ -388,9 +388,9 @@ class EdgeMetrix:
 
         elif dir in ('right-down'):
             box = (node1.right().x,
-                   node2.topLeft().y,
+                   node2.topLeft().y - span.y / 4,
                    node1.right().x + span.x,
-                   node2.left().y)
+                   node2.left().y - span.y / 4)
 
         elif dir in ('up', 'down', 'left-up', 'left', 'left-down'):
             box = (node2.top().x,
