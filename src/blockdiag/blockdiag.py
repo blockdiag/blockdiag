@@ -25,13 +25,13 @@ class Screen:
             value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
 
             if attr.name == 'rankdir':
-                if value.upper() == 'LR':
+                if self.subdiagram and value.upper() == 'LR':
                     self.rankdir = value.upper()
                 else:
                     msg = "WARNING: unknown rankdir: %s\n" % value
                     sys.stderr.write(msg)
             elif attr.name == 'color':
-                if self.subdiagram == True:
+                if self.subdiagram:
                     self.color = value
                 else:
                     msg = "WARNING: diagram.color was ignored: %s\n" % value
