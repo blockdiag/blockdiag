@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import os, sys
 
-version = '0.4.1'
+version = '0.4.2'
 long_description = \
         open(os.path.join("src","README.txt")).read() + \
         open(os.path.join("src","TODO.txt")).read()
@@ -27,7 +27,7 @@ setup(
      keywords=['diagram','generator'],
      author='Takeshi Komiya',
      author_email='i.tkomiya at gmail.com',
-     url='http://bitbucket.org/tk0miya/blockdiag',
+     url='http://tk0miya.bitbucket.org/blockdiag/build/html/index.html',
      license='PSL',
      packages=find_packages('src'),
      package_dir={'': 'src'},
