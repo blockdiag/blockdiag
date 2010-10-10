@@ -12,7 +12,7 @@ from PngDiagramMetrix import PngDiagramMetrix
 
 
 class DiagramDraw(object):
-    def __init__(self, format, screen=None, **kwargs):
+    def __init__(self, format, screen, **kwargs):
         self.format = format.upper()
         self.screen = screen
         self.image = None
@@ -24,14 +24,15 @@ class DiagramDraw(object):
         if self.format == 'SVG':
             self.scale_ratio = 1
             self.imageDraw = SVGImageDraw.SVGImageDraw()
-            self.metrix = DiagramMetrix(**kwargs)
+            self.metrix = DiagramMetrix(screen, **kwargs)
         else:
             if kwargs.get('antialias') or kwargs.get('scale') > 1:
                 self.scale_ratio = 2
             else:
                 self.scale_ratio = 1
 
-            self.metrix = PngDiagramMetrix(scale=self.scale_ratio, **kwargs)
+            self.metrix = PngDiagramMetrix(screen, scale=self.scale_ratio,
+                                           **kwargs)
 
         self.resetCanvas()
 

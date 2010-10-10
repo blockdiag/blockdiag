@@ -19,6 +19,11 @@ class Screen:
         self.subdiagram = False
         self.rankdir = None
         self.color = None
+        self.node_width = None
+        self.node_height = None
+        self.span_width = None
+        self.span_height = None
+        self.fontsize = None
 
     def setAttributes(self, attrs):
         for attr in attrs:
@@ -34,7 +39,37 @@ class Screen:
                 if self.subdiagram:
                     self.color = value
                 else:
-                    msg = "WARNING: diagram.color was ignored: %s\n" % value
+                    msg = "WARNING: diagram.color is ignored: %s\n" % value
+                    sys.stderr.write(msg)
+            elif attr.name == 'node_width':
+                if not self.subdiagram:
+                    self.node_width = int(value)
+                else:
+                    msg = "WARNING: group.node_width is ignored: %s\n" % value
+                    sys.stderr.write(msg)
+            elif attr.name == 'node_height':
+                if not self.subdiagram:
+                    self.node_height = int(value)
+                else:
+                    msg = "WARNING: group.node_height is ignored: %s\n" % value
+                    sys.stderr.write(msg)
+            elif attr.name == 'span_width':
+                if not self.subdiagram:
+                    self.span_width = int(value)
+                else:
+                    msg = "WARNING: group.span_width is ignored: %s\n" % value
+                    sys.stderr.write(msg)
+            elif attr.name == 'span_height':
+                if not self.subdiagram:
+                    self.span_height = int(value)
+                else:
+                    msg = "WARNING: group.span_height is ignored: %s\n" % value
+                    sys.stderr.write(msg)
+            elif attr.name == 'fontsize':
+                if not self.subdiagram:
+                    self.fontsize = int(value)
+                else:
+                    msg = "WARNING: group.fontsize is ignored: %s\n" % value
                     sys.stderr.write(msg)
             else:
                 msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
