@@ -71,10 +71,31 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         ImageDraw.ImageDraw.__init__(self, im, mode)
 
     def arc(self, box, start, end, **kwargs):
+        style = kwargs.get('style')
         if 'style' in kwargs:
             del kwargs['style']
 
-        ImageDraw.ImageDraw.arc(self, box, start, end, **kwargs)
+        if style:
+            if style == 'dotted':
+                length = 6
+            elif style == 'dashed':
+                length = 3
+
+            if end == 0:
+                end = 360
+
+            diff = (end - start) / length
+
+            for i in range(length):
+                s = start + diff * (i * 2)
+                e = start + diff * (i * 2 + 1)
+
+                if e > end:
+                    continue
+
+                ImageDraw.ImageDraw.arc(self, box, s, e, **kwargs)
+        else:
+            ImageDraw.ImageDraw.arc(self, box, start, end, **kwargs)
 
     def line(self, xy, **kwargs):
         style = kwargs.get('style')
