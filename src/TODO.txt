@@ -12,7 +12,6 @@ Functionals
 Environments
 -------------
 * Font configuration.
-* Documention of diag format.
 
 Known Issues
 -------------
