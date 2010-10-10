@@ -190,9 +190,9 @@ class DiagramDraw(object):
             self.imageDraw.arc(box, 180, 0, fill=color, style=edge.style)
 
         if edge.label:
-            self.imageDraw.textarea(metrix.labelbox(), edge.label,
-                                    fill=self.fill, font=self.font,
-                                    fontsize=self.metrix.fontSize)
+            self.imageDraw.label(metrix.labelbox(), edge.label,
+                                 fill=self.fill, font=self.font,
+                                 fontsize=self.metrix.fontSize)
 
     def save(self, filename, format=None, size=None):
         if format:

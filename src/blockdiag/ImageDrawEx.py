@@ -142,6 +142,12 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         for line in lines:
             self.line(line, fill=outline, width=thick, style=style)
 
+    def label(self, box, string, **kwargs):
+        lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
+
+        self.rectangle(lines.outlineBox(), fill='white', outline='black')
+        self.textarea(box, string, **kwargs)
+
     def text(self, xy, string, **kwargs):
         fill = kwargs.get('fill')
         font = kwargs.get('font')

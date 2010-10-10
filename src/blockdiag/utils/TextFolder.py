@@ -67,6 +67,27 @@ class TextFolder:
             else:
                 height += textsize[1] + self.lineSpacing
 
+    def outlineBox(self):
+        corners = []
+        for string, xy in self.each_line():
+            textsize = self.textsize(string)
+            width = textsize[0] * self.scale
+            height = textsize[1] * self.scale
+
+            if self.adjustBaseline:
+                xy = XY(xy.x, xy.y - textsize[1])
+
+            corners.append(xy)
+            corners.append(XY(xy.x + width, xy.y + height))
+
+        margin = 2  # this is MAGIC number
+        box = (min(p.x for p in corners) - margin,
+               min(p.y for p in corners) - margin,
+               max(p.x for p in corners) + margin,
+               max(p.y for p in corners) + margin)
+
+        return box
+
     def _lines(self):
         lines = []
         size = (self.box[2] - self.box[0], self.box[3] - self.box[1])
