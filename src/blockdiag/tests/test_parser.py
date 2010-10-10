@@ -6,6 +6,16 @@ from blockdiag.diagparser import *
 from nose.tools import assert_raises
 
 
+def __build_diagram(filename):
+    import os
+    testdir = os.path.dirname(__file__)
+    pathname = "%s/diagrams/%s" % (testdir, filename)
+
+    str = open(pathname).read()
+    tree = parse(tokenize(str))
+    return ScreenNodeBuilder.build(tree)
+
+
 def test_diagparser_basic():
     # basic digram
     str = ("diagram test {\n"
@@ -37,21 +47,14 @@ def test_diagparser_parenthesis_ness():
 
 
 def test_empty_diagram():
-    str = ("diagram {\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('empty.diag')
 
     assert len(screen.nodes) == 0
     assert len(screen.edges) == 0
 
 
 def test_single_node_diagram():
-    str = ("diagram {\n"
-           "  A;\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('single_node.diag')
 
     assert len(screen.nodes) == 1
     assert len(screen.edges) == 0
@@ -60,11 +63,7 @@ def test_single_node_diagram():
 
 
 def test_single_edge_diagram():
-    str = ("diagram {\n"
-           "  A -> B;\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('single_edge.diag')
 
     assert len(screen.nodes) == 2
     assert len(screen.edges) == 1
@@ -79,11 +78,7 @@ def test_single_edge_diagram():
 
 
 def test_two_edges_diagram():
-    str = ("diagram {\n"
-           "  A -> B -> C;\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('two_edges.diag')
 
     assert len(screen.nodes) == 3
     assert len(screen.edges) == 2
@@ -94,31 +89,21 @@ def test_two_edges_diagram():
 
 
 def test_node_attribute():
-    str = ("diagram {\n"
-           "  foo [label = bar, color = red];\n"
-           "  bar\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('node_attribute.diag')
 
-    assert screen.nodes[0].id == 'foo'
-    assert screen.nodes[0].label == 'bar'
+    assert screen.nodes[0].id == 'A'
+    assert screen.nodes[0].label == 'B'
     assert screen.nodes[0].color == 'red'
     assert screen.nodes[0].xy == (0, 0)
 
-    assert screen.nodes[1].id == 'bar'
-    assert screen.nodes[1].label == 'bar'
+    assert screen.nodes[1].id == 'B'
+    assert screen.nodes[1].label == 'B'
     assert screen.nodes[1].color == (255, 255, 255)
     assert screen.nodes[1].xy == (0, 1)
 
 
 def test_edge_attribute():
-    str = ("diagram {\n"
-           "  A -> B -> C [color = red]\n"
-           "  D -> E [dir = none]\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('edge_attribute.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (0, 1), 'E': (1, 1)}
@@ -135,13 +120,7 @@ def test_edge_attribute():
 
 
 def test_branched_diagram():
-    str = ("diagram {\n"
-           "  A -> B -> C\n"
-           "  A -> D -> E\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('branched.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (1, 1), 'E': (2, 1), 'Z': (0, 2)}
@@ -150,13 +129,7 @@ def test_branched_diagram():
 
 
 def test_circular_ref_to_root_diagram():
-    str = ("diagram {\n"
-           "  A -> B -> C -> A\n"
-           "       B -> D\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('circular_ref_to_root.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (2, 1), 'Z': (0, 2)}
@@ -165,13 +138,7 @@ def test_circular_ref_to_root_diagram():
 
 
 def test_circular_ref_diagram():
-    str = ("diagram {\n"
-           "  A -> B -> C -> B\n"
-           "       B -> D\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('circular_ref.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (2, 1), 'Z': (0, 2)}
@@ -180,13 +147,7 @@ def test_circular_ref_diagram():
 
 
 def test_skipped_edge_diagram():
-    str = ("diagram {\n"
-           "  A -> B -> C\n"
-           "  A      -> C\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('skipped_edge.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'Z': (0, 1)}
@@ -195,13 +156,7 @@ def test_skipped_edge_diagram():
 
 
 def test_circular_skipped_edge_diagram():
-    str = ("diagram {\n"
-           "  A -> B -> C -> A\n"
-           "  A      -> C\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('circular_skipped_edge.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'Z': (0, 1)}
     for node in screen.nodes:
@@ -209,14 +164,7 @@ def test_circular_skipped_edge_diagram():
 
 
 def test_triple_branched_diagram():
-    str = ("diagram {\n"
-           "  A -> D\n"
-           "  B -> D\n"
-           "  C -> D\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('triple_branched.diag')
 
     assert_pos = {'A': (0, 0), 'B': (0, 1), 'C': (0, 2),
                   'D': (1, 0), 'Z': (0, 3)}
@@ -225,13 +173,7 @@ def test_triple_branched_diagram():
 
 
 def test_twin_circular_ref_diagram():
-    str = ("diagram {\n"
-           "  A -> B -> A\n"
-           "  A -> C -> A\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('twin_circular_ref.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'Z': (0, 2)}
     for node in screen.nodes:
@@ -239,14 +181,7 @@ def test_twin_circular_ref_diagram():
 
 
 def test_skipped_circular_diagram():
-    str = ("diagram {\n"
-           "  A      -> C\n"
-           "  A -> B -> C\n"
-           "  C -> A\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('skipped_circular.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 1), 'C': (2, 0),
                   'Z': (0, 2)}
@@ -255,15 +190,7 @@ def test_skipped_circular_diagram():
 
 
 def test_nested_skipped_circular_diagram():
-    str = ("diagram {\n"
-           "  A -> B                -> F -> G\n"
-           "       B -> C      -> E -> F\n"
-           "            C -> D -> E\n"
-           "  F -> A\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('nested_skipped_circular.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 1),
                   'D': (3, 2), 'E': (4, 1), 'F': (5, 0),
@@ -273,12 +200,7 @@ def test_nested_skipped_circular_diagram():
 
 
 def test_self_ref_diagram():
-    str = ("diagram {\n"
-           "  A -> B -> B\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('self_ref.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'Z': (0, 1)}
     for node in screen.nodes:
@@ -286,14 +208,7 @@ def test_self_ref_diagram():
 
 
 def test_noweight_edge_diagram():
-    str = ("diagram {\n"
-           "  A -> B -> C\n"
-           "       B -> D -> E[noweight = 1]\n"
-           "  D -> F\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('noweight_edge.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (0, 1), 'E': (0, 2), 'F': (1, 1),
@@ -303,13 +218,7 @@ def test_noweight_edge_diagram():
 
 
 def test_flowable_node_diagram():
-    str = ("diagram {\n"
-           "  B -> C\n"
-           "  A -> B\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('flowable_node.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'Z': (0, 1)}
@@ -319,74 +228,34 @@ def test_flowable_node_diagram():
 
 def test_belongs_to_two_groups_diagram():
     def dummy():
-        str = ("diagram {\n"
-               "  group {\n"
-               "    A\n"
-               "  }\n"
-               "  group {\n"
-               "    A\n"
-               "  }\n"
-               "  Z\n"
-               "}\n")
-        tree = parse(tokenize(str))
-        screen = ScreenNodeBuilder.build(tree)
+        screen = __build_diagram('belongs_to_two_groups.diag')
 
     assert_raises(RuntimeError, dummy)
 
 
 def test_nested_groups_diagram():
     def dummy():
-        str = ("diagram {\n"
-               "  group {\n"
-               "    A\n"
-               "    group {\n"
-               "      B\n"
-               "    }\n"
-               "  }\n"
-               "  Z\n"
-               "}\n")
-        tree = parse(tokenize(str))
-        screen = ScreenNodeBuilder.build(tree)
+        screen = __build_diagram('nested_groups.diag')
 
     assert_raises(NoParseError, dummy)
 
 
 def test_node_follows_group_diagram():
     def dummy():
-        str = ("diagram {\n"
-               "  A -> group {\n"
-               "    B\n"
-               "  }\n"
-               "  Z\n"
-               "}\n")
-        tree = parse(tokenize(str))
-        screen = ScreenNodeBuilder.build(tree)
+        screen = __build_diagram('node_follows_group.diag')
 
     assert_raises(NoParseError, dummy)
 
 
 def test_group_follows_node_diagram():
     def dummy():
-        str = ("diagram {\n"
-               "  A -> group {\n"
-               "    B\n"
-               "  }\n"
-               "  Z\n"
-               "}\n")
-        tree = parse(tokenize(str))
-        screen = ScreenNodeBuilder.build(tree)
+        screen = __build_diagram('group_follows_node.diag')
 
     assert_raises(NoParseError, dummy)
 
 
 def test_simple_group_diagram():
-    str = ("diagram {\n"
-           "  group {\n"
-           "  }\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('empty_group.diag')
 
     assert_pos = {'Z': (0, 0)}
     for node in (x for x in screen.nodes if x.drawable):
@@ -394,15 +263,7 @@ def test_simple_group_diagram():
 
 
 def test_simple_group_diagram():
-    str = ("diagram {\n"
-           "  group {\n"
-           "    A -> B\n"
-           "    A -> C\n"
-           "  }\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('simple_group.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
                   'Z': (0, 2)}
@@ -410,16 +271,8 @@ def test_simple_group_diagram():
         assert node.xy == assert_pos[node.id]
 
 
-def test_group_and_node_diagram():
-    str = ("diagram {\n"
-           "  group {\n"
-           "    A -> B\n"
-           "  }\n"
-           "  B -> C\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+def test_node_in_group_follows_outer_node_diagram():
+    screen = __build_diagram('node_in_group_follows_outer_node.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'Z': (0, 1)}
@@ -428,15 +281,7 @@ def test_group_and_node_diagram():
 
 
 def test_group_id_and_node_id_are_not_conflicted_diagram():
-    str = ("diagram {\n"
-           "  A -> B\n"
-           "  group B {\n"
-           "    C -> D\n"
-           "  }\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('group_id_and_node_id_are_not_conflicted.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (0, 1),
                   'D': (1, 1), 'Z': (0, 2)}
@@ -444,34 +289,8 @@ def test_group_id_and_node_id_are_not_conflicted_diagram():
         assert node.xy == assert_pos[node.id]
 
 
-def test_group_and_childnode_diagram():
-    str = ("diagram {\n"
-           "  group {\n"
-           "    A -> B\n"
-           "  }\n"
-           "  B -> C\n"
-           "  B -> D\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
-
-    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
-                  'D': (2, 1), 'Z': (0, 2)}
-    for node in (x for x in screen.nodes if x.drawable):
-        assert node.xy == assert_pos[node.id]
-
-
-def test_group_and_parentnode_diagram():
-    str = ("diagram {\n"
-           "  group {\n"
-           "    B -> C\n"
-           "  }\n"
-           "  A -> B\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+def test_outer_node_follows_node_in_group_diagram():
+    screen = __build_diagram('outer_node_follows_node_in_group.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'Z': (0, 1)}
@@ -480,18 +299,7 @@ def test_group_and_parentnode_diagram():
 
 
 def test_large_group_and_node_diagram():
-    str = ("diagram {\n"
-           "  group {\n"
-           "    A -> B\n"
-           "    A -> C\n"
-           "    A -> D\n"
-           "    A -> E\n"
-           "  }\n"
-           "  B -> F\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('large_group_and_node.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
                   'D': (1, 2), 'E': (1, 3), 'F': (2, 0),
@@ -500,20 +308,8 @@ def test_large_group_and_node_diagram():
         assert node.xy == assert_pos[node.id]
 
 
-def test_large_group_and_two_node_diagram():
-    str = ("diagram {\n"
-           "  group {\n"
-           "    A -> B\n"
-           "    A -> C\n"
-           "    A -> D\n"
-           "    A -> E\n"
-           "  }\n"
-           "  B -> F\n"
-           "  C -> G\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+def test_large_group_and_two_nodes_diagram():
+    screen = __build_diagram('large_group_and_two_nodes.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
                   'D': (1, 2), 'E': (1, 3), 'F': (2, 0),
@@ -523,24 +319,7 @@ def test_large_group_and_two_node_diagram():
 
 
 def test_multiple_groups_diagram():
-    str = ("diagram {\n"
-           "  group {\n"
-           "    A;  B;  C;  D\n"
-           "  }\n"
-           "  group {\n"
-           "    E;  F;  G\n"
-           "  }\n"
-           "  group {\n"
-           "    H;  I\n"
-           "  }\n"
-           "  group {\n"
-           "    J\n"
-           "  }\n"
-           "  A -> E -> H -> J\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('multiple_groups.diag')
 
     assert_pos = {'A': (0, 0), 'B': (0, 1), 'C': (0, 2),
                   'D': (0, 3), 'E': (1, 0), 'F': (1, 1),
@@ -551,18 +330,8 @@ def test_multiple_groups_diagram():
         assert node.xy == assert_pos[node.id]
 
 
-def test_group_as_node_decorator_diagram():
-    str = ("diagram {\n"
-           "  A -> B -> C\n"
-           "  A -> B -> D\n"
-           "  A -> E\n"
-           "  group {\n"
-           "    A; B; D; E\n"
-           "  }\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+def test_group_works_node_decorator_diagram():
+    screen = __build_diagram('group_works_node_decorator.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (3, 0),
                   'D': (2, 0), 'E': (1, 1), 'Z': (0, 2)}
@@ -571,24 +340,7 @@ def test_group_as_node_decorator_diagram():
 
 
 def test_reversed_multiple_groups_diagram():
-    str = ("diagram {\n"
-           "  group {\n"
-           "    A;  B;  C;  D\n"
-           "  }\n"
-           "  group {\n"
-           "    E;  F;  G\n"
-           "  }\n"
-           "  group {\n"
-           "    H;  I\n"
-           "  }\n"
-           "  group {\n"
-           "    J\n"
-           "  }\n"
-           "  J -> H -> E -> A\n"
-           "  Z\n"
-           "}\n")
-    tree = parse(tokenize(str))
-    screen = ScreenNodeBuilder.build(tree)
+    screen = __build_diagram('reverse_multiple_groups.diag')
 
     assert_pos = {'A': (3, 0), 'B': (3, 1), 'C': (3, 2),
                   'D': (3, 3), 'E': (2, 0), 'F': (2, 1),
