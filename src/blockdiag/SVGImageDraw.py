@@ -83,6 +83,12 @@ class SVGImageDraw:
                  stroke_dasharray=length, style=filter)
         self.svg.addElement(r)
 
+    def label(self, box, string, **kwargs):
+        lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
+
+        self.rectangle(lines.outlineBox(), fill='white', outline='black')
+        self.textarea(box, string, **kwargs)
+
     def text(self, xy, string, **kwargs):
         fill = kwargs.get('fill')
         fontname = kwargs.get('font')
