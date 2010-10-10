@@ -387,9 +387,9 @@ class EdgeMetrix:
                        node2.bottomLeft().y + span.y / 2)
             else:
                 box = (node1.topRight().x,
-                       node1.topRight().y,
+                       node1.topRight().y - span.y / 8,
                        node2.left().x,
-                       node2.left().y)
+                       node2.left().y - span.y / 8)
 
         elif dir in ('right-up'):
             box = (node2.left().x - span.x,
@@ -399,15 +399,21 @@ class EdgeMetrix:
 
         elif dir in ('right-down'):
             box = (node1.right().x,
-                   node2.topLeft().y - span.y / 4,
+                   node2.topLeft().y - span.y / 8,
                    node1.right().x + span.x,
-                   node2.left().y - span.y / 4)
+                   node2.left().y - span.y / 8)
 
         elif dir in ('up', 'down', 'left-up', 'left', 'left-down'):
-            box = (node2.top().x,
-                   node2.top().y - span.y / 2,
-                   node2.topRight().x,
-                   node2.topRight().y)
+            if self.edge.node2.xy.y < self.edge.node1.xy.y:
+                box = (node1.topRight().x - span.x / 2 + span.x / 8,
+                       node1.topRight().y - span.y / 2,
+                       node1.topRight().x + span.x / 2 + span.x / 8,
+                       node1.topRight().y)
+            else:
+                box = (node1.top().x + span.x / 4,
+                       node1.top().y - span.y,
+                       node1.topRight().x + span.x / 4,
+                       node1.topRight().y - span.y / 2)
 
         # shrink box
         box = (box[0] + span.x / 8, box[1],
