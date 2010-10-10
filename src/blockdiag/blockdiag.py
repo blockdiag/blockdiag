@@ -16,8 +16,8 @@ class Screen:
     def __init__(self):
         self.nodes = []
         self.edges = []
-        self.color = None
         self.rankdir = None
+        self.color = None
 
     def setAttributes(self, attrs):
         for attr in attrs:
@@ -48,29 +48,26 @@ class ScreenNode:
 
     def __init__(self, id):
         self.id = id
+        self.xy = XY(0, 0)
+        self.group = None
+        self.drawable = 1
+
         if id:
             self.label = re.sub('^"?(.*?)"?$', '\\1', id)
         else:
             self.label = ''
-        self.xy = XY(0, 0)
         self.color = (255, 255, 255)
         self.style = None
-        self.group = None
         self.numbered = None
         self.background = None
         self.width = 1
         self.height = 1
-        self.drawable = 1
 
     def copyAttributes(self, other):
-        if other.label:
-            self.label = other.label
-        if other.width:
-            self.width = other.width
-        if other.height:
-            self.height = other.height
         if other.xy:
             self.xy = other.xy
+        if other.label:
+            self.label = other.label
         if other.color:
             self.color = other.color
         if other.style:
@@ -79,6 +76,10 @@ class ScreenNode:
             self.numbered = other.numbered
         if other.background:
             self.background = other.background
+        if other.width:
+            self.width = other.width
+        if other.height:
+            self.height = other.height
 
     def setAttributes(self, attrs):
         for attr in attrs:
@@ -94,18 +95,18 @@ class ScreenNode:
                 else:
                     msg = "WARNING: unknown edge style: %s\n" % style
                     sys.stderr.write(msg)
-            elif attr.name == 'width':
-                self.width = int(value)
-            elif attr.name == 'height':
-                self.height = int(value)
+            elif attr.name == 'numbered':
+                self.numbered = value
             elif attr.name == 'background':
                 if os.path.isfile(value):
                     self.background = value
                 else:
                     msg = "WARNING: background image not found: %s\n" % value
                     sys.stderr.write(msg)
-            elif attr.name == 'numbered':
-                self.numbered = value
+            elif attr.name == 'width':
+                self.width = int(value)
+            elif attr.name == 'height':
+                self.height = int(value)
             else:
                 msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
                 raise AttributeError(msg)
@@ -116,41 +117,36 @@ class ScreenEdge:
         self.node1 = node1
         self.node2 = node2
         self.circular = False
-        self.group = None
+        self.crosspoints = []
+        self.skipped = 0
+
+        self.dir = 'forward'
         self.color = None
         self.style = None
         self.noweight = None
-        self.skipped = 0
-        self.crosspoints = []
-        self.dir = 'forward'
 
     def copyAttributes(self, other):
-        if other.color:
-            self.color = other.color
-        if other.noweight:
-            self.noweight = other.noweight
         if other.dir:
             self.dir = other.dir
+        if other.color:
+            self.color = other.color
         if other.style:
             self.style = other.style
+        if other.noweight:
+            self.noweight = other.noweight
 
     def setAttributes(self, attrs):
         for attr in attrs:
             value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
-            if attr.name == 'color':
-                self.color = value
-            elif attr.name == 'dir':
+            if attr.name == 'dir':
                 dir = value.lower()
                 if dir in ('back', 'both', 'none', 'forward'):
                     self.dir = dir
                 else:
                     msg = "WARNING: unknown edge dir: %s\n" % dir
                     sys.stderr.write(msg)
-            elif attr.name == 'noweight':
-                if value.lower() == 'none':
-                    self.noweight = None
-                else:
-                    self.noweight = 1
+            elif attr.name == 'color':
+                self.color = value
             elif attr.name == 'style':
                 style = value.lower()
                 if style in ('solid', 'dotted', 'dashed'):
@@ -158,6 +154,11 @@ class ScreenEdge:
                 else:
                     msg = "WARNING: unknown edge style: %s\n" % style
                     sys.stderr.write(msg)
+            elif attr.name == 'noweight':
+                if value.lower() == 'none':
+                    self.noweight = None
+                else:
+                    self.noweight = 1
             else:
                 raise AttributeError("Unknown edge attribute: %s" % attr.name)
 
