@@ -37,7 +37,7 @@ spec-text setting sample
 
 Few examples are available.
 You can get more examples at
-`tk0miya.bitbucket.org <http://http://tk0miya.bitbucket.org/blockdiag/build/html/index.html>`_ .
+`tk0miya.bitbucket.org <http://tk0miya.bitbucket.org/blockdiag/build/html/index.html>`_ .
 
 simple.diag
 ------------
