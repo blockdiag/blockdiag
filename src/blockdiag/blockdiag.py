@@ -297,7 +297,6 @@ class ScreenNodeBuilder:
         return referenced
 
     def setNodeWidth(self, depth=0):
-        count = 0
         for node in self.nodeOrder:
             if node.xy.x != depth or node.group is not None:
                 continue
@@ -313,10 +312,10 @@ class ScreenNodeBuilder:
                 elif child.group:
                     pass
                 else:
-                    count += 1
-                    child.xy = XY(depth + node.width, 0)
+                    child.xy = XY(node.xy.x + node.width, 0)
 
-        if count > 0:
+        depther_node = [x for x in self.nodeOrder if x.xy.x > depth]
+        if len(depther_node) > 0:
             self.setNodeWidth(depth + 1)
 
     def setNodeHeight(self, node, baseHeight):
