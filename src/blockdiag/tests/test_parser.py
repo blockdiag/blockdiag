@@ -308,6 +308,16 @@ def test_large_group_and_node_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_large_group_and_node2_diagram():
+    screen = __build_diagram('large_group_and_node2.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'D': (3, 0), 'E': (4, 0), 'F': (5, 0),
+                  'Z': (0, 1)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
 def test_large_group_and_two_nodes_diagram():
     screen = __build_diagram('large_group_and_two_nodes.diag')
 
