@@ -65,6 +65,7 @@ class ScreenNode:
         self.style = None
         self.numbered = None
         self.background = None
+        self.description = None
         self.width = 1
         self.height = 1
 
@@ -81,6 +82,8 @@ class ScreenNode:
             self.numbered = other.numbered
         if other.background:
             self.background = other.background
+        if other.description:
+            self.description = other.description
         if other.width:
             self.width = other.width
         if other.height:
@@ -108,6 +111,8 @@ class ScreenNode:
                 else:
                     msg = "WARNING: background image not found: %s\n" % value
                     sys.stderr.write(msg)
+            elif attr.name == 'description':
+                self.description = value
             elif attr.name == 'width':
                 self.width = int(value)
             elif attr.name == 'height':
