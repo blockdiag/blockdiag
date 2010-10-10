@@ -3,8 +3,6 @@ Todos
 
 Functionals
 ------------
-* Description to nodes.
-* Description to edges.
 * Description to node groups.
 * Specify shape of node (rounded rectangle, diamond, end-point, etc.)
 * Support other block diagram structure.
