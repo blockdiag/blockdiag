@@ -348,7 +348,9 @@ class ScreenNodeBuilder:
                 tree.stmts.append(edge)
 
         screen = ScreenNodeBuilder.build(tree, group=True)
-        if not screen.nodes:
+        if len(screen.nodes) == 0:
+            del self.uniqNodes[group.id]
+            self.nodeOrder.remove(group)
             return
 
         if screen.color:
