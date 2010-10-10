@@ -16,6 +16,7 @@ class Screen:
     def __init__(self):
         self.nodes = []
         self.edges = []
+        self.subdiagram = False
         self.rankdir = None
         self.color = None
 
@@ -30,7 +31,11 @@ class Screen:
                     msg = "WARNING: unknown rankdir: %s\n" % value
                     sys.stderr.write(msg)
             elif attr.name == 'color':
-                self.color = value
+                if self.subdiagram == True:
+                    self.color = value
+                else:
+                    msg = "WARNING: diagram.color was ignored: %s\n" % value
+                    sys.stderr.write(msg)
             else:
                 msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
                 raise AttributeError(msg)
@@ -194,6 +199,7 @@ class ScreenNodeBuilder:
         self.rows = 0
 
     def _build(self, tree, group=False):
+        self.screen.subdiagram = group
         self.buildNodeList(tree)
 
         self.screen.nodes = self.uniqNodes.values()
@@ -206,12 +212,6 @@ class ScreenNodeBuilder:
                 node.height = i
 
                 node.xy = XY(node.xy.y, node.xy.x)
-
-        if not group:
-            if self.screen.color:
-                msg = "WARNING: diagram.color was ignored: %s\n" % \
-                      self.screen.color
-                sys.stderr.write(msg)
 
         return self.screen
 
