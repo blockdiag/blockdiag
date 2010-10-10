@@ -254,7 +254,7 @@ def test_group_follows_node_diagram():
     assert_raises(NoParseError, dummy)
 
 
-def test_simple_group_diagram():
+def test_empty_group_diagram():
     screen = __build_diagram('empty_group.diag')
 
     assert_pos = {'Z': (0, 0)}
