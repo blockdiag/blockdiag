@@ -1,0 +1,4 @@
+diagram {
+  A [label="B", color=red];
+  B;
+}
