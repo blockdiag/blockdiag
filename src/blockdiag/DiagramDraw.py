@@ -36,9 +36,6 @@ class DiagramDraw(object):
         self.resetCanvas()
 
     def resetCanvas(self):
-        if self.screen is None:
-            return
-
         if self.format == 'SVG':
             if self.imageDraw.svg is None:
                 metrix = self.metrix.originalMetrix()
@@ -53,11 +50,7 @@ class DiagramDraw(object):
 
         self.imageDraw = ImageDrawEx.ImageDrawEx(self.image, self.scale_ratio)
 
-    def draw(self, screen=None, **kwargs):
-        if screen:
-            self.screen = screen
-            self.resetCanvas()
-
+    def draw(self, **kwargs):
         self._prepareEdges()
         self._drawBackground()
 
