@@ -1,7 +1,7 @@
 diagram {
-  A [label = "foo"];
-  B [label = "bar"];
-  C [label = "baz"];
+  A [label = "foo", color = "red"];
+  B [label = "bar", color = "#888888"];
+  C [label = "baz", color = "blue"];
 
   A -> B -> C;
 

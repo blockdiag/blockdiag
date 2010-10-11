@@ -288,9 +288,12 @@ def test_node_attribute_and_group_diagram():
                   'Z': (0, 1)}
     assert_labels = {'A': 'foo', 'B': 'bar', 'C': 'baz',
                      'Z': 'Z'}
+    assert_colors = {'A': 'red', 'B': '#888888', 'C': 'blue',
+                     'Z': (255, 255, 255)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
         assert node.label == assert_labels[node.id]
+        assert node.color == assert_colors[node.id]
 
 
 def test_node_in_group_follows_outer_node_diagram():
