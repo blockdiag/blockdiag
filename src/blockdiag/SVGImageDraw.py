@@ -70,6 +70,8 @@ class SVGImageDraw:
 
         if filter == 'blur':
             filter = "filter:url(#filter_blur)"
+        elif filter == 'transp-blur':
+            filter = "filter:url(#filter_blur);opacity:0.7;fill-opacity:1"
         else:
             filter = None
 

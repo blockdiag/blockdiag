@@ -18,14 +18,15 @@ class DiagramDraw(object):
         self.image = None
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.badgeFill = kwargs.get('badgeFill', 'pink')
-        self.shadow = kwargs.get('shadow', (128, 128, 128))
         self.font = kwargs.get('font')
 
         if self.format == 'SVG':
+            self.shadow = kwargs.get('shadow', (0, 0, 0))
             self.scale_ratio = 1
             self.imageDraw = SVGImageDraw.SVGImageDraw()
             self.metrix = DiagramMetrix(screen, **kwargs)
         else:
+            self.shadow = kwargs.get('shadow', (64, 64, 64))
             if kwargs.get('antialias') or kwargs.get('scale') > 1:
                 self.scale_ratio = 2
             else:
@@ -132,7 +133,7 @@ class DiagramDraw(object):
         for node in (x for x in self.screen.nodes if x.drawable):
             shadowBox = metrix.node(node).shadowBox()
             self.imageDraw.rectangle(shadowBox, fill=self.shadow,
-                                     filter='blur')
+                                     filter='transp-blur')
 
         # Smoothing back-ground images.
         if self.format == 'PNG':
