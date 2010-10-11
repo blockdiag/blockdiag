@@ -1,0 +1,14 @@
+diagram {
+  A [label = "foo"];
+  B [label = "bar"];
+  C [label = "baz"];
+
+  A -> B -> C;
+
+  group {
+    A;
+    B;
+  }
+
+  Z;
+}
