@@ -88,7 +88,7 @@ class ScreenNode:
     def copyAttributes(self, other):
         if other.xy:
             self.xy = other.xy
-        if other.label:
+        if other.label and other.id != other.label:
             self.label = other.label
         if other.color:
             self.color = other.color
