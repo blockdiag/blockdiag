@@ -62,6 +62,16 @@ def test_single_node_diagram():
     assert screen.nodes[0].xy == (0, 0)
 
 
+def test_node_has_multilined_label_diagram():
+    screen = __build_diagram('node_has_multilined_label.diag')
+
+    assert_pos = {'A': (0, 0), 'Z': (0, 1)}
+    assert_label = {'A': "foo\nbar", 'Z': 'Z'}
+    for node in screen.nodes:
+        assert node.xy == assert_pos[node.id]
+        assert node.label == assert_label[node.id]
+
+
 def test_single_edge_diagram():
     screen = __build_diagram('single_edge.diag')
 
