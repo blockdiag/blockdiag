@@ -43,9 +43,9 @@ class Scaler:
 
 
 class PngDiagramMetrix(Scaler):
-    def __init__(self, scale, **kwargs):
+    def __init__(self, diagram, scale, **kwargs):
         self.scale_ratio = scale
-        self.metrix = DiagramMetrix(**kwargs)
+        self.metrix = DiagramMetrix(diagram, **kwargs)
 
         # variables
         self.define_scale_attribute('cellSize')
