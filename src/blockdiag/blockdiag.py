@@ -27,7 +27,7 @@ class Screen:
 
     def setAttributes(self, attrs):
         for attr in attrs:
-            value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
+            value = re.sub('(\A"|"\Z)', '', attr.value, re.M)
 
             if self.subdiagram:
                 if attr.name == 'color':
@@ -74,7 +74,7 @@ class ScreenNode:
         self.drawable = 1
 
         if id:
-            self.label = re.sub('^"?(.*?)"?$', '\\1', id)
+            self.label = re.sub('(\A"|"\Z)', '', id, re.M)
         else:
             self.label = ''
         self.color = (255, 255, 255)
@@ -107,7 +107,7 @@ class ScreenNode:
 
     def setAttributes(self, attrs):
         for attr in attrs:
-            value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
+            value = re.sub('(\A"|"\Z)', '', attr.value, re.M)
             if attr.name == 'label':
                 self.label = value
             elif attr.name == 'color':
@@ -166,7 +166,7 @@ class ScreenEdge:
 
     def setAttributes(self, attrs):
         for attr in attrs:
-            value = re.sub('^"?(.*?)"?$', '\\1', attr.value)
+            value = re.sub('(\A"|"\Z)', '', attr.value, re.M)
             if attr.name == 'label':
                 self.label = value
             elif attr.name == 'dir':
