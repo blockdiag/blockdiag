@@ -90,7 +90,7 @@ class ScreenNode:
             self.xy = other.xy
         if other.label and other.id != other.label:
             self.label = other.label
-        if other.color:
+        if other.color and other.color != (255, 255, 255):
             self.color = other.color
         if other.style:
             self.style = other.style
@@ -155,7 +155,7 @@ class ScreenEdge:
     def copyAttributes(self, other):
         if other.label:
             self.label = other.label
-        if other.dir:
+        if other.dir and other.dir != 'forward':
             self.dir = other.dir
         if other.color:
             self.color = other.color
