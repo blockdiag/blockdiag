@@ -13,5 +13,4 @@ Environments
 
 Known Issues
 -------------
-* SVG outputs does not support node's background attr.
 * Fix some experimental features.
