@@ -170,7 +170,7 @@ class SVGImageDraw:
 
     def loadImage(self, filename, box):
         string = open(filename).read()
-        url = "data:image/png;base64," + base64.b64encode(string)
+        url = "data:;base64," + base64.b64encode(string)
 
         x = box[0]
         y = box[1]
