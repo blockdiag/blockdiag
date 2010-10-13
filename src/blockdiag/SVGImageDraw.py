@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import base64
 from utils.XY import XY
 from SVGdraw import *
 from utils.TextFolder import TextFolder
@@ -31,6 +32,8 @@ class SVGImageDraw:
 
         uri = 'http://www.inkscape.org/namespaces/inkscape'
         self.svg.namespaces['inkspace'] = uri
+        uri = 'http://www.w3.org/1999/xlink'
+        self.svg.namespaces['xlink'] = uri
 
         # inkspace's Gaussian filter
         fgb = feGaussianBlur(id='feGaussianBlur3780', stdDeviation=4.2,
@@ -56,7 +59,7 @@ class SVGImageDraw:
 
     def rectangle(self, box, **kwargs):
         thick = kwargs.get('width', 1)
-        fill = kwargs.get('fill')
+        fill = kwargs.get('fill', 'none')
         outline = kwargs.get('outline')
         style = kwargs.get('style')
         filter = kwargs.get('filter')
@@ -166,6 +169,13 @@ class SVGImageDraw:
         self.svg.addElement(pg)
 
     def loadImage(self, filename, box):
-        msg = "WARNING: blockdiag does not support " \
-              "background image for SVG Image.\n"
-        sys.stderr.write(msg)
+        string = open(filename).read()
+        url = "data:image/png;base64," + base64.b64encode(string)
+
+        x = box[0]
+        y = box[1]
+        w = box[2] - box[0]
+        h = box[3] - box[1]
+
+        im = image(url, x, y, w, h)
+        self.svg.addElement(im)
