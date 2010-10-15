@@ -112,6 +112,12 @@ Python Software Foundation License.
 History
 =======
 
+0.5 (2010-10-15)
+------------------
+* Support background-image of node (SVG)
+* Support labels for edge.
+* Fix bugs.
+
 0.4.2 (2010-10-10)
 ------------------
 * Support background-color of node groups.
