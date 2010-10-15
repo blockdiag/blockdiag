@@ -12,9 +12,9 @@ from PngDiagramMetrix import PngDiagramMetrix
 
 
 class DiagramDraw(object):
-    def __init__(self, format, screen, **kwargs):
+    def __init__(self, format, diagram, **kwargs):
         self.format = format.upper()
-        self.screen = screen
+        self.diagram = diagram
         self.image = None
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.badgeFill = kwargs.get('badgeFill', 'pink')
@@ -24,7 +24,7 @@ class DiagramDraw(object):
             self.shadow = kwargs.get('shadow', (0, 0, 0))
             self.scale_ratio = 1
             self.imageDraw = SVGImageDraw.SVGImageDraw()
-            self.metrix = DiagramMetrix(screen, **kwargs)
+            self.metrix = DiagramMetrix(diagram, **kwargs)
         else:
             self.shadow = kwargs.get('shadow', (64, 64, 64))
             if kwargs.get('antialias') or kwargs.get('scale') > 1:
@@ -32,7 +32,7 @@ class DiagramDraw(object):
             else:
                 self.scale_ratio = 1
 
-            self.metrix = PngDiagramMetrix(screen, scale=self.scale_ratio,
+            self.metrix = PngDiagramMetrix(diagram, scale=self.scale_ratio,
                                            **kwargs)
 
         self.resetCanvas()
@@ -41,13 +41,13 @@ class DiagramDraw(object):
         if self.format == 'SVG':
             if self.imageDraw.svg is None:
                 metrix = self.metrix.originalMetrix()
-                pageSize = metrix.pageSize(self.screen.nodes)
+                pageSize = metrix.pageSize(self.diagram.nodes)
                 self.imageDraw.resetCanvas(pageSize)
             return
 
         if self.image is None:
             metrix = self.metrix.originalMetrix()
-            pageSize = metrix.pageSize(self.screen.nodes)
+            pageSize = metrix.pageSize(self.diagram.nodes)
             self.image = Image.new('RGB', pageSize, (256, 256, 256))
 
         self.imageDraw = ImageDrawEx.ImageDrawEx(self.image, self.scale_ratio)
@@ -57,42 +57,42 @@ class DiagramDraw(object):
         self._drawBackground()
 
         if self.scale_ratio > 1:
-            pageSize = self.metrix.pageSize(self.screen.nodes)
+            pageSize = self.metrix.pageSize(self.diagram.nodes)
             self.image = self.image.resize(pageSize, Image.ANTIALIAS)
             self.resetCanvas()
 
-        for node in (x for x in self.screen.nodes if x.drawable):
-            self.screennode(node, **kwargs)
+        for node in (x for x in self.diagram.nodes if x.drawable):
+            self.node(node, **kwargs)
 
-        for edge in self.screen.edges:
+        for edge in self.diagram.edges:
             self.edge(edge)
 
-        for edge in (x for x in self.screen.edges if x.label):
+        for edge in (x for x in self.diagram.edges if x.label):
             self.edge_label(edge)
 
     def _prepareEdges(self):
-        for edge in self.screen.edges:
+        for edge in self.diagram.edges:
             m = self.metrix.edge(edge)
             dir = m.direction()
             if dir == 'right':
                 r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
                 for x in r:
                     xy = (x, edge.node1.xy.y)
-                    nodes = [x for x in self.screen.nodes if x.xy == xy]
+                    nodes = [x for x in self.diagram.nodes if x.xy == xy]
                     if len(nodes) > 0:
                         edge.skipped = 1
             elif dir == 'right-down':
                 r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
                 for x in r:
                     xy = (x, edge.node2.xy.y)
-                    nodes = [x for x in self.screen.nodes if x.xy == xy]
+                    nodes = [x for x in self.diagram.nodes if x.xy == xy]
                     if len(nodes) > 0:
                         edge.skipped = 1
 
         # Search crosspoints
         from bisect import insort, bisect_left, bisect_right
 
-        lines = [(ed, ln) for ed in self.screen.edges
+        lines = [(ed, ln) for ed in self.diagram.edges
                           for ln in self.metrix.edge(ed).shaft().lines()]
         ytree = []
         for i, (_, (st, ed)) in enumerate(lines):
@@ -124,13 +124,13 @@ class DiagramDraw(object):
         metrix = self.metrix.originalMetrix()
 
         # Draw node groups.
-        for node in (x for x in self.screen.nodes if x.drawable == 0):
+        for node in (x for x in self.diagram.nodes if x.drawable == 0):
             marginBox = metrix.node(node).marginBox()
             self.imageDraw.rectangle(marginBox, fill=node.color,
                                      filter='blur')
 
         # Drop node shadows.
-        for node in (x for x in self.screen.nodes if x.drawable):
+        for node in (x for x in self.diagram.nodes if x.drawable):
             shadowBox = metrix.node(node).shadowBox()
             self.imageDraw.rectangle(shadowBox, fill=self.shadow,
                                      filter='transp-blur')
@@ -142,7 +142,7 @@ class DiagramDraw(object):
 
         self.resetCanvas()
 
-    def screennode(self, node, **kwargs):
+    def node(self, node, **kwargs):
         m = self.metrix.node(node)
 
         if node.background:
