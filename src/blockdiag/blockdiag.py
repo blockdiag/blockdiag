@@ -12,7 +12,7 @@ from utils.XY import XY
 import utils
 
 
-class Screen:
+class Diagram:
     def __init__(self):
         self.nodes = []
         self.edges = []
@@ -57,7 +57,7 @@ class Screen:
                     raise AttributeError(msg)
 
 
-class ScreenNode:
+class DiagramNode:
     @classmethod
     def getId(klass, node):
         try:
@@ -138,7 +138,7 @@ class ScreenNode:
                 raise AttributeError(msg)
 
 
-class ScreenEdge:
+class DiagramEdge:
     def __init__(self, node1, node2):
         self.node1 = node1
         self.node2 = node2
@@ -194,9 +194,9 @@ class ScreenEdge:
                 raise AttributeError("Unknown edge attribute: %s" % attr.name)
 
 
-class ScreenGroup(ScreenNode):
+class NodeGroup(DiagramNode):
     def __init__(self, id):
-        ScreenNode.__init__(self, id)
+        DiagramNode.__init__(self, id)
         self.label = ''
         self.nodes = []
         self.edges = []
@@ -217,7 +217,7 @@ class ScreenNodeBuilder:
         return klass()._build(tree, group)
 
     def __init__(self):
-        self.screen = Screen()
+        self.diagram = Diagram()
         self.uniqNodes = {}
         self.nodeOrder = []
         self.uniqLinks = {}
@@ -225,61 +225,61 @@ class ScreenNodeBuilder:
         self.rows = 0
 
     def _build(self, tree, group=False):
-        self.screen.subdiagram = group
+        self.diagram.subdiagram = group
         self.buildNodeList(tree)
 
-        self.screen.nodes = self.uniqNodes.values()
-        self.screen.edges = self.uniqLinks.values()
+        self.diagram.nodes = self.uniqNodes.values()
+        self.diagram.edges = self.uniqLinks.values()
 
-        if self.screen.rankdir == 'LR':
-            for node in self.screen.nodes:
+        if self.diagram.rankdir == 'LR':
+            for node in self.diagram.nodes:
                 i = node.width
                 node.width = node.height
                 node.height = i
 
                 node.xy = XY(node.xy.y, node.xy.x)
 
-        return self.screen
+        return self.diagram
 
-    def getScreenNode(self, id):
+    def getDiagramNode(self, id):
         if id in self.uniqNodes:
             node = self.uniqNodes[id]
         else:
-            node = ScreenNode(id)
+            node = DiagramNode(id)
             self.uniqNodes[id] = node
             self.nodeOrder.append(node)
 
         return node
 
-    def getScreenGroup(self, id):
+    def getDiagramGroup(self, id):
         if id is None:
             # generate new id
-            id = 'ScreenGroup %s' % uuid.uuid1()
+            id = 'DiagramGroup %s' % uuid.uuid1()
         else:
-            id = 'ScreenGroup %s' % id
+            id = 'DiagramGroup %s' % id
 
         if id in self.uniqNodes:
             group = self.uniqNodes[id]
         else:
-            group = ScreenGroup(id)
+            group = NodeGroup(id)
             self.uniqNodes[id] = group
             self.nodeOrder.append(group)
 
         return group
 
-    def getScreenEdge(self, id1, id2):
-        link = (self.getScreenNode(id1), self.getScreenNode(id2))
+    def getDiagramEdge(self, id1, id2):
+        link = (self.getDiagramNode(id1), self.getDiagramNode(id2))
 
         if link in self.uniqLinks:
             edge = self.uniqLinks[link]
         else:
-            edge = ScreenEdge(link[0], link[1])
+            edge = DiagramEdge(link[0], link[1])
             self.uniqLinks[link] = edge
 
         return edge
 
     def getChildren(self, node):
-        node_id = ScreenNode.getId(node)
+        node_id = DiagramNode.getId(node)
 
         uniq = {}
         for edge in self.uniqLinks.values():
@@ -306,7 +306,7 @@ class ScreenNodeBuilder:
         return children
 
     def isCircularRef(self, node1, node2):
-        node1_id = ScreenNode.getId(node1)
+        node1_id = DiagramNode.getId(node1)
 
         referenced = False
         children = [node2]
@@ -332,7 +332,7 @@ class ScreenNodeBuilder:
             for child in self.getChildren(node):
                 o2 = self.nodeOrder.index(child)
                 if o1 > o2 and self.isCircularRef(node, child):
-                    edge = self.getScreenEdge(node.id, child.id)
+                    edge = self.getDiagramEdge(node.id, child.id)
                     edge.circular = True
                 elif node == child:
                     pass
@@ -373,29 +373,29 @@ class ScreenNodeBuilder:
                 edge = diagparser.Edge([node1_id, node2_id], [])
                 tree.stmts.append(edge)
 
-        screen = ScreenNodeBuilder.build(tree, group=True)
-        if len(screen.nodes) == 0:
+        diagram = ScreenNodeBuilder.build(tree, group=True)
+        if len(diagram.nodes) == 0:
             del self.uniqNodes[group.id]
             self.nodeOrder.remove(group)
             return
 
-        if screen.color:
-            group.color = screen.color
+        if diagram.color:
+            group.color = diagram.color
 
-        group.setSize(screen.nodes)
+        group.setSize(diagram.nodes)
 
-        for node in screen.nodes:
-            n = self.getScreenNode(node.id)
+        for node in diagram.nodes:
+            n = self.getDiagramNode(node.id)
             if n.group:
-                msg = "ScreenNode could not belong to two groups"
+                msg = "DiagramNode could not belong to two groups"
                 raise RuntimeError(msg)
             n.copyAttributes(node)
             n.group = group
 
             group.nodes.append(n)
 
-        for edge in screen.edges:
-            e = self.getScreenEdge(edge.node1.id, edge.node2.id)
+        for edge in diagram.edges:
+            e = self.getDiagramEdge(edge.node1.id, edge.node2.id)
             e.copyAttributes(edge)
             e.group = group
 
@@ -405,17 +405,18 @@ class ScreenNodeBuilder:
         nodeGroups = {}
         for stmt in tree.stmts:
             if isinstance(stmt, diagparser.Node):
-                node = self.getScreenNode(stmt.id)
+                node = self.getDiagramNode(stmt.id)
                 node.setAttributes(stmt.attrs)
             elif isinstance(stmt, diagparser.Edge):
                 while len(stmt.nodes) >= 2:
-                    edge = self.getScreenEdge(stmt.nodes.pop(0), stmt.nodes[0])
+                    edge = self.getDiagramEdge(stmt.nodes.pop(0),
+                                               stmt.nodes[0])
                     edge.setAttributes(stmt.attrs)
             elif isinstance(stmt, diagparser.SubGraph):
-                group = self.getScreenGroup(stmt.id)
+                group = self.getDiagramGroup(stmt.id)
                 nodeGroups[group] = stmt
             elif isinstance(stmt, diagparser.DefAttrs):
-                self.screen.setAttributes(stmt.attrs)
+                self.diagram.setAttributes(stmt.attrs)
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))
 
@@ -431,7 +432,7 @@ class ScreenNodeBuilder:
                 height += self.setNodeHeight(node, height)
 
         for node in self.nodeOrder:
-            if isinstance(node, ScreenGroup):
+            if isinstance(node, NodeGroup):
                 for child in node.nodes:
                     child.xy = XY(node.xy.x + child.xy.x,
                                   node.xy.y + child.xy.y)
@@ -484,9 +485,9 @@ def main():
         sys.excepthook = utils.postmortem
 
     tree = diagparser.parse_file(infile)
-    screen = ScreenNodeBuilder.build(tree)
+    diagram = ScreenNodeBuilder.build(tree)
 
-    draw = DiagramDraw.DiagramDraw(format, screen, font=fontpath,
+    draw = DiagramDraw.DiagramDraw(format, diagram, font=fontpath,
                                    antialias=options.antialias)
     draw.draw()
     draw.save(outfile)
