@@ -142,7 +142,6 @@ class DiagramEdge:
     def __init__(self, node1, node2):
         self.node1 = node1
         self.node2 = node2
-        self.circular = False
         self.crosspoints = []
         self.skipped = 0
 
@@ -222,6 +221,7 @@ class ScreenNodeBuilder:
         self.nodeOrder = []
         self.uniqLinks = {}
         self.heightRefs = []
+        self.circulars = []
         self.rows = 0
 
     def _build(self, tree, group=False):
@@ -278,12 +278,37 @@ class ScreenNodeBuilder:
 
         return edge
 
+    def getParents(self, node):
+        node_id = DiagramNode.getId(node)
+
+        uniq = {}
+        for edge in self.uniqLinks.values():
+            if edge.noweight:
+                continue
+
+            if edge.node2.id == node_id:
+                uniq[edge.node1] = 1
+            elif edge.node2.group and edge.node2.group.id == node_id:
+                uniq[edge.node1] = 1
+
+        children = []
+        for node in uniq.keys():
+            if node.group:
+                children.append(node.group)
+            else:
+                children.append(node)
+
+        order = self.nodeOrder
+        children.sort(lambda x, y: cmp(order.index(x), order.index(y)))
+
+        return children
+
     def getChildren(self, node):
         node_id = DiagramNode.getId(node)
 
         uniq = {}
         for edge in self.uniqLinks.values():
-            if edge.noweight or edge.circular:
+            if edge.noweight:
                 continue
 
             if node_id == None:
@@ -305,35 +330,57 @@ class ScreenNodeBuilder:
 
         return children
 
+    def detectCirculars(self):
+        for node in self.nodeOrder:
+            if not [x for x in self.circulars if node in x]:
+                self.detectCircularsSub(node, [node])
+
+        # remove part of other circular
+        for c1 in self.circulars:
+            for c2 in self.circulars:
+                intersect = set(c1) & set(c2)
+
+                if c1 != c2 and set(c1) == intersect:
+                    self.circulars.remove(c1)
+
+    def detectCircularsSub(self, node, parents):
+        for child in self.getChildren(node):
+            if child in parents:
+                i = parents.index(child)
+                self.circulars.append(parents[i:])
+            else:
+                self.detectCircularsSub(child, parents + [child])
+
     def isCircularRef(self, node1, node2):
-        node1_id = DiagramNode.getId(node1)
+        for circular in self.circulars:
+            if node1 in circular and node2 in circular:
+                parents = []
+                for node in circular:
+                    for parent in self.getParents(node):
+                        if not parent in circular:
+                            parents.append(parent)
 
-        referenced = False
-        children = [node2]
-        uniqNodes = {}
-        for child in children:
-            if node1_id == child.id:
-                referenced = True
-                break
+                if parents:
+                    for parent in parents:
+                        if node2 in self.getChildren(parent):
+                            return True
+                else:
+                    o1 = circular.index(node1)
+                    o2 = circular.index(node2)
 
-            for node in self.getChildren(child):
-                if not node in uniqNodes:
-                    children.append(node)
-                    uniqNodes[node] = 1
+                    if o1 > o2:
+                        return True
 
-        return referenced
+        return False
 
     def setNodeWidth(self, depth=0):
         for node in self.nodeOrder:
             if node.xy.x != depth or node.group is not None:
                 continue
 
-            o1 = self.nodeOrder.index(node)
             for child in self.getChildren(node):
-                o2 = self.nodeOrder.index(child)
-                if o1 > o2 and self.isCircularRef(node, child):
-                    edge = self.getDiagramEdge(node.id, child.id)
-                    edge.circular = True
+                if self.isCircularRef(node, child):
+                    pass
                 elif node == child:
                     pass
                 elif child.group:
@@ -423,6 +470,7 @@ class ScreenNodeBuilder:
         for group in nodeGroups:
             self.buildNodeGroup(group, nodeGroups[group])
 
+        self.detectCirculars()
         self.setNodeWidth()
 
         height = 0
