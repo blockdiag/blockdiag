@@ -46,11 +46,16 @@ class EdgeLines:
             start = self.polylines[-1][-1]
             crosspoint = self.getCrosspoint(start, elem)
             if crosspoint:
+                if start.x > elem.x:  # line goes right to left
+                    jump_width = - (self.cellSize / 2)
+                else:
+                    jump_width = self.cellSize / 2
+
                 if start.y == crosspoint.y:  # holizonal line
-                    p = XY(crosspoint.x - self.cellSize / 2, crosspoint.y)
+                    p = XY(crosspoint.x - jump_width, crosspoint.y)
                     self.lineTo(p)
 
-                    p = XY(crosspoint.x + self.cellSize / 2, crosspoint.y)
+                    p = XY(crosspoint.x + jump_width, crosspoint.y)
                     self.moveTo(p)
                     self.lineTo(elem)
                     return
