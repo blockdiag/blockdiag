@@ -342,6 +342,7 @@ class ScreenNodeBuilder:
 
                 if c1 != c2 and set(c1) == intersect:
                     self.circulars.remove(c1)
+                    break
 
     def detectCircularsSub(self, node, parents):
         for child in self.getChildren(node):
@@ -360,10 +361,21 @@ class ScreenNodeBuilder:
                         if not parent in circular:
                             parents.append(parent)
 
-                if parents:
-                    for parent in parents:
-                        if node2 in self.getChildren(parent):
+                parents.sort(lambda x, y: cmp(self.nodeOrder.index(x),
+                                              self.nodeOrder.index(y)))
+
+                for parent in parents:
+                    children = self.getChildren(parent)
+                    if node1 in children and node2 in children:
+                        o1 = circular.index(node1)
+                        o2 = circular.index(node2)
+
+                        if o1 > o2:
                             return True
+                    elif node2 in children:
+                        return True
+                    elif node1 in children:
+                        return False
                 else:
                     o1 = circular.index(node1)
                     o2 = circular.index(node2)
@@ -397,10 +409,12 @@ class ScreenNodeBuilder:
         self.heightRefs.append(node.id)
 
         height = 0
-        for child in self.getChildren(node):
+        children = self.getChildren(node)
+        children.sort(lambda x, y: cmp(x.xy.x, y.xy.y))
+        for child in children:
             if child.id in self.heightRefs:
                 pass
-            elif node.xy.x < child.xy.y:
+            elif node.xy.x >= child.xy.x:
                 pass
             else:
                 height += self.setNodeHeight(child, baseHeight + height)
