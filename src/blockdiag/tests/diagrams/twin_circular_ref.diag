@@ -1,5 +1,5 @@
-diagram {
-  A -> B -> A
-  A -> C -> A
-  Z
+{
+  A -> B -> C -> B;
+  A -> D -> C -> D;
+  Z;
 }

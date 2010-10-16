@@ -191,10 +191,19 @@ def test_triple_branched_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_twin_circular_ref_to_root_diagram():
+    screen = __build_diagram('twin_circular_ref_to_root.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'Z': (0, 2)}
+    for node in screen.nodes:
+        assert node.xy == assert_pos[node.id]
+
+
 def test_twin_circular_ref_diagram():
     screen = __build_diagram('twin_circular_ref.diag')
 
-    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'Z': (0, 2)}
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'D': (1, 1), 'Z': (0, 2)}
     for node in screen.nodes:
         assert node.xy == assert_pos[node.id]
 
