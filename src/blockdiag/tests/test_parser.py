@@ -156,6 +156,15 @@ def test_circular_ref_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_labeled_circular_ref_diagram():
+    screen = __build_diagram('labeled_circular_ref.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (2, 0), 'C': (1, 0),
+                  'Z': (0, 1)}
+    for node in screen.nodes:
+        assert node.xy == assert_pos[node.id]
+
+
 def test_skipped_edge_diagram():
     screen = __build_diagram('skipped_edge.diag')
 
