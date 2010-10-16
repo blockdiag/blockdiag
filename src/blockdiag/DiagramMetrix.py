@@ -101,7 +101,6 @@ class DiagramMetrix:
         self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
         self.fontSize = kwargs.get('fontSize', 11)
 
-        self.pageMargin = self.cellSize * kwargs.get('pageMargin', 3)
         self.nodeWidth = self.cellSize * kwargs.get('nodeColumns', 16)
         self.nodeHeight = self.cellSize * kwargs.get('nodeRows', 5)
         self.spanWidth = self.cellSize * kwargs.get('spanColumns', 8)
@@ -117,6 +116,12 @@ class DiagramMetrix:
             self.spanHeight = diagram.span_height
         if diagram.fontsize:
             self.fontSize = diagram.fontsize
+
+        pageMargin = self.cellSize * kwargs.get('pageMargin', 3)
+        if pageMargin < self.spanHeight:
+            self.pageMargin = XY(pageMargin, self.spanHeight)
+        else:
+            self.pageMargin = XY(pageMargin, pageMargin)
 
     def originalMetrix(self):
         return self
@@ -142,7 +147,7 @@ class DiagramMetrix:
         DummyNode = namedtuple('DummyNode', 'width height xy')
         node = DummyNode(x + 1, y + 1, XY(0, 0))
         xy = NodeMetrix(node, self).bottomRight()
-        return XY(xy.x + self.pageMargin, xy.y + self.pageMargin)
+        return XY(xy.x + self.pageMargin.x, xy.y + self.pageMargin.y)
 
 
 class NodeMetrix:
@@ -151,9 +156,9 @@ class NodeMetrix:
         self.width = node.width
         self.height = node.height
 
-        self.x = metrix.pageMargin + \
+        self.x = metrix.pageMargin.x + \
                  node.xy.x * (metrix.nodeWidth + metrix.spanWidth)
-        self.y = metrix.pageMargin + \
+        self.y = metrix.pageMargin.y + \
                  node.xy.y * (metrix.nodeHeight + metrix.spanHeight)
 
     def box(self):
