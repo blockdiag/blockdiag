@@ -19,15 +19,18 @@ diagram admin {
 
   logout;
 
-  top_page -> foo_index [color = "red", dir = none];
-  top_page -> bar_detail [style = dashed];
+  top_page -> foo_index [color = "red", dir = none, label = "button"];
+  top_page -> bar_detail [style = dashed, label = "link"];
 
   foo_index -> foo_detail;
                foo_detail -> foo_edit;
                foo_detail -> foo_delete_confirm;
-  foo_index -> foo_add -> foo_add_confirm -> foo_index;
-  foo_index -> foo_edit -> foo_edit_confirm -> foo_index;
-  foo_index -> foo_delete_confirm -> foo_index;
+  foo_index -> foo_add -> foo_add_confirm;
+                          foo_add_confirm -> foo_index [label = "added"];
+  foo_index -> foo_edit -> foo_edit_confirm;
+                           foo_edit_confirm -> foo_index [label = "changed"];
+  foo_index -> foo_delete_confirm;
+               foo_delete_confirm -> foo_index [label = "deleted"];
 
   bar_detail -> bar_edit -> bar_edit_confirm -> bar_detail [dir = both, style = dotted];
 
