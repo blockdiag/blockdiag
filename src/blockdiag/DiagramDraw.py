@@ -195,10 +195,7 @@ class DiagramDraw(object):
                                  fill=self.fill, font=self.font,
                                  fontsize=self.metrix.fontSize)
 
-    def save(self, filename, format=None, size=None):
-        if format:
-            self.format = format
-
+    def save(self, filename, size=None):
         if size:
             x, y = size
         elif self.format == 'PNG':
