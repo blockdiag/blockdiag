@@ -381,8 +381,9 @@ class EdgeMetrix:
             shaft.lineTo(node1.right().x + span.x / 8,
                          node1.right().y)
             shaft.lineTo(node1.right().x + span.x / 8,
-                         node2.top().y - span.y / 2)
-            shaft.lineTo(node2.top().x, node2.top().y - span.y / 2)
+                         node2.top().y - span.y / 2 + span.y / 8)
+            shaft.lineTo(node2.top().x,
+                         node2.top().y - span.y / 2 + span.y / 8)
             shaft.lineTo(node2.top())
 
         elif dir == 'left-down':
@@ -391,12 +392,15 @@ class EdgeMetrix:
                 shaft.lineTo(node1.right().x + span.x / 2,
                              node1.right().y)
                 shaft.lineTo(node1.right().x + span.x / 2,
-                             node2.top().y - span.y / 2)
-                shaft.lineTo(node2.top().x, node2.top().y - span.y / 2)
+                             node2.top().y - span.y / 2 + span.y / 8)
+                shaft.lineTo(node2.top().x,
+                             node2.top().y - span.y / 2 + span.y / 8)
             else:
                 shaft.moveTo(node1.bottom())
-                shaft.lineTo(node1.bottom().x, node2.top().y - span.y / 2)
-                shaft.lineTo(node2.top().x, node2.top().y - span.y / 2)
+                shaft.lineTo(node1.bottom().x,
+                             node2.top().y - span.y / 2 + span.y / 8)
+                shaft.lineTo(node2.top().x,
+                             node2.top().y - span.y / 2 + span.y / 8)
 
             shaft.lineTo(node2.top())
 
@@ -406,8 +410,9 @@ class EdgeMetrix:
                 shaft.lineTo(node1.right().x + span.x / 2,
                              node1.right().y)
                 shaft.lineTo(node1.right().x + span.x / 2,
-                             node2.top().y - span.y / 2)
-                shaft.lineTo(node2.top().x, node2.top().y - span.y / 2)
+                             node2.top().y - span.y / 2 + span.y / 8)
+                shaft.lineTo(node2.top().x,
+                             node2.top().y - span.y / 2 + span.y / 8)
             else:
                 shaft.moveTo(node1.bottom())
 
