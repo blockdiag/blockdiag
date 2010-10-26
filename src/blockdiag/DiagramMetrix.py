@@ -275,7 +275,8 @@ class EdgeMetrix:
         dir = self.direction()
 
         if self.edge.dir in ('back', 'both'):
-            if dir in ('left-up', 'left', 'right-up', 'right', 'right-down'):
+            if dir in ('left-up', 'left', 'same',
+                       'right-up', 'right', 'right-down'):
                 heads.append(self._head(self.edge.node1, 'left'))
             elif dir == 'up':
                 if self.edge.skipped:
@@ -293,7 +294,7 @@ class EdgeMetrix:
                 heads.append(self._head(self.edge.node2, 'right'))
             elif dir == 'up':
                 heads.append(self._head(self.edge.node2, 'up'))
-            elif dir in ('left-up', 'left', 'left-down', 'down'):
+            elif dir in ('left-up', 'left', 'left-down', 'down', 'same'):
                 heads.append(self._head(self.edge.node2, 'down'))
 
         return heads
@@ -376,7 +377,7 @@ class EdgeMetrix:
 
             shaft.lineTo(node2.bottom())
 
-        elif dir in ('left-up', 'left'):
+        elif dir in ('left-up', 'left', 'same'):
             shaft.lineTo(node1.right())
             shaft.lineTo(node1.right().x + span.x / 8,
                          node1.right().y)
