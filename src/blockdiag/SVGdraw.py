@@ -278,7 +278,7 @@ class SVGelement:
             if type(self.text)==type(''): #If the text is only text
                 f.write(_escape(str(self.text)))
             else:                         #If the text is a spannedtext class
-                f.write(str(self.text))
+                f.write(self.text.encode('utf-8'))
         if self.elements:
             f.write('\t'*level+'</'+self.type+'>\n')
         elif self.text: 
