@@ -88,6 +88,20 @@ class DiagramDraw(object):
                     nodes = [x for x in self.diagram.nodes if x.xy == xy]
                     if len(nodes) > 0:
                         edge.skipped = 1
+            elif dir in ('left-down', 'down'):
+                r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
+                for y in r:
+                    xy = (edge.node1.xy.x, y)
+                    nodes = [x for x in self.diagram.nodes if x.xy == xy]
+                    if len(nodes) > 0:
+                        edge.skipped = 1
+            elif dir == 'up':
+                r = range(edge.node2.xy.y + 1, edge.node1.xy.y)
+                for y in r:
+                    xy = (edge.node1.xy.x, y)
+                    nodes = [x for x in self.diagram.nodes if x.xy == xy]
+                    if len(nodes) > 0:
+                        edge.skipped = 1
 
         # Search crosspoints
         from bisect import insort, bisect_left, bisect_right
