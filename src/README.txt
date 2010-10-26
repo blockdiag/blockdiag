@@ -112,6 +112,11 @@ Python Software Foundation License.
 History
 =======
 
+0.5.1 (2010-10-26)
+------------------
+* Fix license text on diagparser.py
+* Update layout engine.
+
 0.5 (2010-10-15)
 ------------------
 * Support background-image of node (SVG)
