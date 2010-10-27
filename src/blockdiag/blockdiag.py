@@ -526,10 +526,11 @@ def main():
         exit(0)
 
     fonts = [options.font,
-             'c:/windows/fonts/VL-Gothic-Regular.ttf',
-             'c:/windows/fonts/msmincho.ttf',
-             '/usr/share/fonts/truetype/ipafont/ipagp.ttf',
-             '/System/Library/Fonts/AppleGothic.ttf']
+             'c:/windows/fonts/VL-Gothic-Regular.ttf',  # for Windows
+             'c:/windows/fonts/msmincho.ttf',  # for Windows
+             '/usr/share/fonts/truetype/ipafont/ipagp.ttf',  # for Debian
+             '/usr/local/share/font-ipa/ipagp.otf',  # for FreeBSD
+             '/System/Library/Fonts/AppleGothic.ttf']  # for MaxOS
 
     fontpath = None
     for path in fonts:
