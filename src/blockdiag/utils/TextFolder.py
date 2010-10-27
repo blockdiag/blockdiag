@@ -92,9 +92,14 @@ class TextFolder:
         lines = []
         size = (self.box[2] - self.box[0], self.box[3] - self.box[1])
 
+        def splitlines(string):
+            for line in string.splitlines():
+                for subline in line.split("\\n"):
+                    yield subline
+
         height = 0
         truncated = 0
-        for line in self.string.splitlines():
+        for line in splitlines(self.string):
             while line:
                 string = line.strip()
                 for i in range(0, len(string)):
