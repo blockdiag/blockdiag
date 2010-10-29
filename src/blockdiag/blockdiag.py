@@ -222,6 +222,7 @@ class ScreenNodeBuilder:
         self.uniqLinks = {}
         self.heightRefs = []
         self.circulars = []
+        self.coordinates = []
         self.rows = 0
 
     def _build(self, tree, group=False):
@@ -404,25 +405,43 @@ class ScreenNodeBuilder:
         if len(depther_node) > 0:
             self.setNodeWidth(depth + 1)
 
-    def setNodeHeight(self, node, baseHeight):
-        node.xy = XY(node.xy.x, baseHeight)
-        self.heightRefs.append(node.id)
+    def markXY(self, xy, width, height):
+        for w in range(width):
+            for h in range(height):
+                self.coordinates.append(XY(xy.x + w, xy.y + h))
 
-        height = 0
+    def setNodeHeight(self, node, height=0):
+        xy = XY(node.xy.x, height)
+        if xy in self.coordinates:
+            return False
+        node.xy = xy
+
+        count = 0
         children = self.getChildren(node)
         children.sort(lambda x, y: cmp(x.xy.x, y.xy.y))
         for child in children:
             if child.id in self.heightRefs:
                 pass
-            elif node.xy.x >= child.xy.x:
+            elif node is not None and node.xy.x >= child.xy.x:
                 pass
             else:
-                height += self.setNodeHeight(child, baseHeight + height)
+                while True:
+                    if self.setNodeHeight(child, height):
+                        child.xy = XY(child.xy.x, height)
+                        self.markXY(child.xy, child.width, child.height)
+                        self.heightRefs.append(child.id)
 
-        if height < node.height:
-            height = node.height
+                        count += 1
+                        break
+                    else:
+                        if count == 0:
+                            return False
 
-        return height
+                        height += 1
+
+                height += 1
+
+        return True
 
     def buildNodeGroup(self, group, tree):
         nodes = [x.id for x in tree.stmts if isinstance(x, diagparser.Node)]
@@ -491,7 +510,8 @@ class ScreenNodeBuilder:
         toplevel_nodes = [x for x in self.nodeOrder if x.xy.x == 0]
         for node in toplevel_nodes:
             if not node.group:
-                height += self.setNodeHeight(node, height)
+                self.setNodeHeight(node, height)
+                height = max(x.xy.y for x in self.nodeOrder) + 1
 
         for node in self.nodeOrder:
             if isinstance(node, NodeGroup):
