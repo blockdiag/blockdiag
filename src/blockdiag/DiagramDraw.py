@@ -37,18 +37,22 @@ class DiagramDraw(object):
 
         self.resetCanvas()
 
+    def pageSize(self, scaled=False):
+        if scaled:
+            metrix = self.metrix
+        else:
+            metrix = self.metrix.originalMetrix()
+
+        return metrix.pageSize(self.diagram.nodes)
+
     def resetCanvas(self):
         if self.format == 'SVG':
             if self.imageDraw.svg is None:
-                metrix = self.metrix.originalMetrix()
-                pageSize = metrix.pageSize(self.diagram.nodes)
-                self.imageDraw.resetCanvas(pageSize)
+                self.imageDraw.resetCanvas(self.pageSize())
             return
 
         if self.image is None:
-            metrix = self.metrix.originalMetrix()
-            pageSize = metrix.pageSize(self.diagram.nodes)
-            self.image = Image.new('RGB', pageSize, (256, 256, 256))
+            self.image = Image.new('RGB', self.pageSize(), (256, 256, 256))
 
         self.imageDraw = ImageDrawEx.ImageDrawEx(self.image, self.scale_ratio)
 
@@ -57,7 +61,7 @@ class DiagramDraw(object):
         self._drawBackground()
 
         if self.scale_ratio > 1:
-            pageSize = self.metrix.pageSize(self.diagram.nodes)
+            pageSize = self.pageSize(scaled=True)
             self.image = self.image.resize(pageSize, Image.ANTIALIAS)
             self.resetCanvas()
 
