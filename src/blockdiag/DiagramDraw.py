@@ -3,10 +3,7 @@
 
 import math
 from utils.XY import XY
-import ImageDrawEx
-import SVGImageDraw
 from DiagramMetrix import DiagramMetrix
-from PngDiagramMetrix import PngDiagramMetrix
 
 
 class DiagramDraw(object):
@@ -18,11 +15,16 @@ class DiagramDraw(object):
         self.font = kwargs.get('font')
 
         if self.format == 'SVG':
+            import SVGImageDraw
+
             self.shadow = kwargs.get('shadow', (0, 0, 0))
             self.scale_ratio = 1
             self.metrix = DiagramMetrix(diagram, **kwargs)
             self.drawer = SVGImageDraw.SVGImageDraw(self.pageSize())
         else:
+            import ImageDrawEx
+            from PngDiagramMetrix import PngDiagramMetrix
+
             self.shadow = kwargs.get('shadow', (64, 64, 64))
             if kwargs.get('antialias') or kwargs.get('scale') > 1:
                 self.scale_ratio = 2
