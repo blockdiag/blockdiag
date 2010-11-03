@@ -53,7 +53,9 @@ class SVGImageDraw:
 
         return color
 
-    def save(self, filename):
+    def save(self, filename, size, format):
+        # Ignore size and format parameter; compatibility for ImageDrawEx.
+
         self.drawing.setSVG(self.svg)
         self.drawing.toXml(filename)
 

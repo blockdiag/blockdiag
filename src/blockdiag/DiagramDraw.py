@@ -210,15 +210,9 @@ class DiagramDraw(object):
                                  fontsize=self.metrix.fontSize)
 
     def save(self, filename, size=None):
-        if size:
-            x, y = size
-        elif self.format == 'PNG':
-            x, y = self.image.size
-            x = int(x / self.scale_ratio)
-            y = int(y / self.scale_ratio)
+        if size is None and self.format == 'PNG':
+            x = int(self.image.size[0] / self.scale_ratio)
+            y = int(self.image.size[1] / self.scale_ratio)
+            size = (x, y)
 
-        if self.format == 'SVG':
-            self.imageDraw.save(filename)
-        else:
-            self.image.thumbnail((x, y), Image.ANTIALIAS)
-            self.image.save(filename, self.format)
+        self.imageDraw.save(filename, size, self.format)
