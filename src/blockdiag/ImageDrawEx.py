@@ -216,3 +216,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
         self.image.paste(image, (x, y))
         ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
+
+    def save(self, filename, size, format):
+        self.image.thumbnail(size, Image.ANTIALIAS)
+        self.image.save(filename, format)
