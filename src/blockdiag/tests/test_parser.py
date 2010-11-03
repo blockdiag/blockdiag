@@ -129,6 +129,15 @@ def test_edge_attribute():
             assert edge.color == 'red'
 
 
+def test_node_height_diagram():
+    screen = __build_diagram('node_height.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'D': (2, 1), 'E': (1, 1), 'Z': (0, 2)}
+    for node in screen.nodes:
+        assert node.xy == assert_pos[node.id]
+
+
 def test_branched_diagram():
     screen = __build_diagram('branched.diag')
 
@@ -367,6 +376,15 @@ def test_large_group_and_two_nodes_diagram():
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
                   'D': (1, 2), 'E': (1, 3), 'F': (2, 0),
                   'G': (2, 1), 'Z': (0, 4)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
+def test_group_height_diagram():
+    screen = __build_diagram('group_height.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'D': (2, 1), 'E': (1, 2), 'Z': (0, 3)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
