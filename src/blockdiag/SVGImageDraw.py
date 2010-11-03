@@ -23,11 +23,8 @@ class feGaussianBlur(SVGelement):
 
 
 class SVGImageDraw:
-    def __init__(self):
+    def __init__(self, size):
         self.drawing = drawing()
-        self.svg = None
-
-    def resetCanvas(self, size):
         self.svg = svg((0, 0, size[0], size[1]))
 
         uri = 'http://www.inkscape.org/namespaces/inkscape'

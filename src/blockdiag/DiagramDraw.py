@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import math
-import Image
-import ImageFilter
 from utils.XY import XY
 import ImageDrawEx
 import SVGImageDraw
@@ -15,7 +13,6 @@ class DiagramDraw(object):
     def __init__(self, format, diagram, **kwargs):
         self.format = format.upper()
         self.diagram = diagram
-        self.image = None
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.badgeFill = kwargs.get('badgeFill', 'pink')
         self.font = kwargs.get('font')
@@ -23,8 +20,8 @@ class DiagramDraw(object):
         if self.format == 'SVG':
             self.shadow = kwargs.get('shadow', (0, 0, 0))
             self.scale_ratio = 1
-            self.imageDraw = SVGImageDraw.SVGImageDraw()
             self.metrix = DiagramMetrix(diagram, **kwargs)
+            self.imageDraw = SVGImageDraw.SVGImageDraw(self.pageSize())
         else:
             self.shadow = kwargs.get('shadow', (64, 64, 64))
             if kwargs.get('antialias') or kwargs.get('scale') > 1:
@@ -34,8 +31,8 @@ class DiagramDraw(object):
 
             self.metrix = PngDiagramMetrix(diagram, scale=self.scale_ratio,
                                            **kwargs)
-
-        self.resetCanvas()
+            self.imageDraw = ImageDrawEx.ImageDrawEx(self.pageSize(),
+                                                     self.scale_ratio)
 
     def pageSize(self, scaled=False):
         if scaled:
@@ -45,25 +42,13 @@ class DiagramDraw(object):
 
         return metrix.pageSize(self.diagram.nodes)
 
-    def resetCanvas(self):
-        if self.format == 'SVG':
-            if self.imageDraw.svg is None:
-                self.imageDraw.resetCanvas(self.pageSize())
-            return
-
-        if self.image is None:
-            self.image = Image.new('RGB', self.pageSize(), (256, 256, 256))
-
-        self.imageDraw = ImageDrawEx.ImageDrawEx(self.image, self.scale_ratio)
-
     def draw(self, **kwargs):
         self._prepareEdges()
         self._drawBackground()
 
         if self.scale_ratio > 1:
             pageSize = self.pageSize(scaled=True)
-            self.image = self.image.resize(pageSize, Image.ANTIALIAS)
-            self.resetCanvas()
+            self.imageDraw = self.imageDraw.resizeCanvas(pageSize)
 
         for node in (x for x in self.diagram.nodes if x.drawable):
             self.node(node, **kwargs)
@@ -155,10 +140,7 @@ class DiagramDraw(object):
 
         # Smoothing back-ground images.
         if self.format == 'PNG':
-            for i in range(15):
-                self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
-
-        self.resetCanvas()
+            self.imageDraw = self.imageDraw.smoothCanvas()
 
     def node(self, node, **kwargs):
         m = self.metrix.node(node)
@@ -215,8 +197,8 @@ class DiagramDraw(object):
 
     def save(self, filename, size=None):
         if size is None and self.format == 'PNG':
-            x = int(self.image.size[0] / self.scale_ratio)
-            y = int(self.image.size[1] / self.scale_ratio)
+            x = int(self.imageDraw.image.size[0] / self.scale_ratio)
+            y = int(self.imageDraw.image.size[1] / self.scale_ratio)
             size = (x, y)
 
         self.imageDraw.save(filename, size, self.format)
