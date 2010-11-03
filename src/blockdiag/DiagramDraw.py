@@ -21,7 +21,7 @@ class DiagramDraw(object):
             self.shadow = kwargs.get('shadow', (0, 0, 0))
             self.scale_ratio = 1
             self.metrix = DiagramMetrix(diagram, **kwargs)
-            self.imageDraw = SVGImageDraw.SVGImageDraw(self.pageSize())
+            self.drawer = SVGImageDraw.SVGImageDraw(self.pageSize())
         else:
             self.shadow = kwargs.get('shadow', (64, 64, 64))
             if kwargs.get('antialias') or kwargs.get('scale') > 1:
@@ -31,8 +31,8 @@ class DiagramDraw(object):
 
             self.metrix = PngDiagramMetrix(diagram, scale=self.scale_ratio,
                                            **kwargs)
-            self.imageDraw = ImageDrawEx.ImageDrawEx(self.pageSize(),
-                                                     self.scale_ratio)
+            self.drawer = ImageDrawEx.ImageDrawEx(self.pageSize(),
+                                                  self.scale_ratio)
 
     def pageSize(self, scaled=False):
         if scaled:
@@ -48,7 +48,7 @@ class DiagramDraw(object):
 
         if self.scale_ratio > 1:
             pageSize = self.pageSize(scaled=True)
-            self.imageDraw = self.imageDraw.resizeCanvas(pageSize)
+            self.drawer = self.drawer.resizeCanvas(pageSize)
 
         for node in (x for x in self.diagram.nodes if x.drawable):
             self.node(node, **kwargs)
@@ -128,45 +128,42 @@ class DiagramDraw(object):
 
         # Draw node groups.
         for node in (x for x in self.diagram.nodes if x.drawable == 0):
-            marginBox = metrix.node(node).marginBox()
-            self.imageDraw.rectangle(marginBox, fill=node.color,
-                                     filter='blur')
+            box = metrix.node(node).marginBox()
+            self.drawer.rectangle(box, fill=node.color, filter='blur')
 
         # Drop node shadows.
         for node in (x for x in self.diagram.nodes if x.drawable):
-            shadowBox = metrix.node(node).shadowBox()
-            self.imageDraw.rectangle(shadowBox, fill=self.shadow,
-                                     filter='transp-blur')
+            box = metrix.node(node).shadowBox()
+            self.drawer.rectangle(box, fill=self.shadow, filter='transp-blur')
 
         # Smoothing back-ground images.
         if self.format == 'PNG':
-            self.imageDraw = self.imageDraw.smoothCanvas()
+            self.drawer = self.drawer.smoothCanvas()
 
     def node(self, node, **kwargs):
         m = self.metrix.node(node)
 
         if node.background:
-            self.imageDraw.rectangle(m.box(), fill=node.color)
-            self.imageDraw.loadImage(node.background, m.box())
-            self.imageDraw.rectangle(m.box(), outline=self.fill,
-                                     style=node.style)
+            self.drawer.rectangle(m.box(), fill=node.color)
+            self.drawer.loadImage(node.background, m.box())
+            self.drawer.rectangle(m.box(), outline=self.fill, style=node.style)
         else:
-            self.imageDraw.rectangle(m.box(), outline=self.fill,
-                                     fill=node.color, style=node.style)
+            self.drawer.rectangle(m.box(), outline=self.fill,
+                                  fill=node.color, style=node.style)
 
-        self.imageDraw.textarea(m.coreBox(), node.label, fill=self.fill,
-                                font=self.font, fontsize=self.metrix.fontSize,
-                                lineSpacing=self.metrix.lineSpacing)
+        self.drawer.textarea(m.coreBox(), node.label, fill=self.fill,
+                             font=self.font, fontsize=self.metrix.fontSize,
+                             lineSpacing=self.metrix.lineSpacing)
 
         if node.numbered != None:
             xy = m.topLeft()
             r = self.metrix.cellSize
 
             box = [xy.x - r, xy.y - r, xy.x + r, xy.y + r]
-            self.imageDraw.ellipse(box, outline=self.fill, fill=self.badgeFill)
-            self.imageDraw.textarea(box, node.numbered,
-                                    fill=self.fill, font=self.font,
-                                    fontsize=self.metrix.fontSize)
+            self.drawer.ellipse(box, outline=self.fill, fill=self.badgeFill)
+            self.drawer.textarea(box, node.numbered,
+                                 fill=self.fill, font=self.font,
+                                 fontsize=self.metrix.fontSize)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
@@ -177,28 +174,27 @@ class DiagramDraw(object):
             color = self.fill
 
         for line in metrix.shaft().polylines:
-            self.imageDraw.line(line, fill=color, style=edge.style)
+            self.drawer.line(line, fill=color, style=edge.style)
 
         for head in metrix.heads():
-            self.imageDraw.polygon(head, outline=color, fill=color)
+            self.drawer.polygon(head, outline=color, fill=color)
 
         r = self.metrix.cellSize / 2
         for jump in metrix.jumps():
             box = (jump.x - r, jump.y - r, jump.x + r, jump.y + r)
-            self.imageDraw.arc(box, 180, 0, fill=color, style=edge.style)
+            self.drawer.arc(box, 180, 0, fill=color, style=edge.style)
 
     def edge_label(self, edge):
         metrix = self.metrix.edge(edge)
 
         if edge.label:
-            self.imageDraw.label(metrix.labelbox(), edge.label,
-                                 fill=self.fill, font=self.font,
-                                 fontsize=self.metrix.fontSize)
+            self.drawer.label(metrix.labelbox(), edge.label, fill=self.fill,
+                              font=self.font, fontsize=self.metrix.fontSize)
 
     def save(self, filename, size=None):
         if size is None and self.format == 'PNG':
-            x = int(self.imageDraw.image.size[0] / self.scale_ratio)
-            y = int(self.imageDraw.image.size[1] / self.scale_ratio)
+            x = int(self.drawer.image.size[0] / self.scale_ratio)
+            y = int(self.drawer.image.size[1] / self.scale_ratio)
             size = (x, y)
 
-        self.imageDraw.save(filename, size, self.format)
+        self.drawer.save(filename, size, self.format)
