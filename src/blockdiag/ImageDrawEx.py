@@ -4,7 +4,7 @@
 import math
 from itertools import islice, izip, tee
 from utils.myitertools import istep
-from utils.TextFolder import TextFolder
+from utils.PILTextFolder import PILTextFolder as TextFolder
 import Image
 import ImageDraw
 import ImageFont

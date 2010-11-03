@@ -1,38 +1,54 @@
 # -*- coding: utf-8 -*-
 
 import math
-import Image
-import ImageDraw
-import ImageFont
+import unicodedata
 from XY import XY
+
+
+def is_zenkaku(char):
+    char_width = unicodedata.east_asian_width(char)
+    return char_width in u"WFA"
+
+
+def zenkaku_len(string):
+    return len([x for x in string  if is_zenkaku(x)])
+
+
+def hankaku_len(string):
+    return len([x for x in string  if not is_zenkaku(x)])
+
+
+def string_width(string):
+    width = 0
+    for c in string:
+        char_width = unicodedata.east_asian_width(c)
+        if char_width in u"WFA":
+            width += 2
+        else:
+            width += 1
+
+    return width
 
 
 class TextFolder:
     def __init__(self, box, string, **kwargs):
-        font = kwargs.get('font')
-        if font:
-            fontsize = kwargs.get('fontsize', 11)
-            self.ttfont = ImageFont.truetype(font, fontsize)
-            self.scale = 1
-        else:
-            self.ttfont = None
-            self.scale = kwargs.get('scale', 1)
+        self.box = box
+        self.string = string
+        self.scale = 1
+        self.fontsize = kwargs.get('fontsize', 11)
+        self.lineSpacing = kwargs.get('lineSpacing', 2)
 
         if kwargs.get('adjustBaseline'):
             self.adjustBaseline = True
         else:
             self.adjustBaseline = False
 
-        self.box = box
-        self.string = string
-        self.lineSpacing = kwargs.get('lineSpacing', 2)
-        self.image = Image.new('1', (1, 1))
-        self.draw = ImageDraw.Draw(self.image)
-
         self._result = self._lines()
 
     def textsize(self, string):
-        return self.draw.textsize(string, font=self.ttfont)
+        width = zenkaku_len(string) * self.fontsize + \
+                hankaku_len(string) * self.fontsize * 0.55
+        return (int(math.ceil(width)), self.fontsize)
 
     def height(self):
         height = 0

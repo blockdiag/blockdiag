@@ -5,7 +5,11 @@ import sys
 import base64
 from utils.XY import XY
 from SVGdraw import *
-from utils.TextFolder import TextFolder
+
+try:
+    from utils.PILTextFolder import PILTextFolder as TextFolder
+except ImportError:
+    from utils.TextFolder import TextFolder
 
 
 class filter(SVGelement):
