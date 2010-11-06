@@ -2,14 +2,13 @@
 from setuptools import setup, find_packages
 import os, sys
 
-version = '0.5.1'
+version = '0.5.2'
 long_description = \
         open(os.path.join("src","README.txt")).read() + \
         open(os.path.join("src","TODO.txt")).read()
 
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    #"Development Status :: 4 - Beta",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: System Administrators",
     "License :: OSI Approved :: Python Software Foundation License",
     "Programming Language :: Python",
