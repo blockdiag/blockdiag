@@ -112,6 +112,11 @@ Python Software Foundation License.
 History
 =======
 
+0.5.2 (2010-11-06)
+------------------
+* Fix unicode errors for UTF-8'ed SVG exportion.
+* Refactoring codes for running on GAE.
+
 0.5.1 (2010-10-26)
 ------------------
 * Fix license text on diagparser.py
