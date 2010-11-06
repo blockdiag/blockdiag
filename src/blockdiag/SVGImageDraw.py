@@ -58,7 +58,7 @@ class SVGImageDraw:
         # Ignore size and format parameter; compatibility for ImageDrawEx.
 
         self.drawing.setSVG(self.svg)
-        self.drawing.toXml(filename)
+        return self.drawing.toXml(filename)
 
     def rectangle(self, box, **kwargs):
         thick = kwargs.get('width', 1)

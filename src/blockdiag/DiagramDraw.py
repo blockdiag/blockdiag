@@ -199,4 +199,4 @@ class DiagramDraw(object):
             y = int(self.drawer.image.size[1] / self.scale_ratio)
             size = (x, y)
 
-        self.drawer.save(filename, size, self.format)
+        return self.drawer.save(filename, size, self.format)
