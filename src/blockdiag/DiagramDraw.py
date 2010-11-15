@@ -55,6 +55,9 @@ class DiagramDraw(object):
         for node in (x for x in self.diagram.nodes if x.drawable):
             self.node(node, **kwargs)
 
+        for node in (x for x in self.diagram.nodes if x.drawable == 0):
+            self.group_label(node, **kwargs)
+
         for edge in self.diagram.edges:
             self.edge(edge)
 
@@ -164,6 +167,14 @@ class DiagramDraw(object):
             box = [xy.x - r, xy.y - r, xy.x + r, xy.y + r]
             self.drawer.ellipse(box, outline=self.fill, fill=self.badgeFill)
             self.drawer.textarea(box, node.numbered,
+                                 fill=self.fill, font=self.font,
+                                 fontsize=self.metrix.fontSize)
+
+    def group_label(self, group):
+        m = self.metrix.node(group)
+
+        if group.label:
+            self.drawer.textarea(m.groupLabelBox(), group.label,
                                  fill=self.fill, font=self.font,
                                  fontsize=self.metrix.fontSize)
 

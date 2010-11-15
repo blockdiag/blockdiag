@@ -19,6 +19,7 @@ class Diagram:
         self.subdiagram = False
         self.rankdir = None
         self.color = None
+        self.label = None
         self.node_width = None
         self.node_height = None
         self.span_width = None
@@ -32,6 +33,8 @@ class Diagram:
             if self.subdiagram:
                 if attr.name == 'color':
                     self.color = value
+                elif attr.name == 'label':
+                    self.label = value
                 else:
                     msg = "Unknown node attribute: group.%s" % attr.name
                     raise AttributeError(msg)
@@ -461,6 +464,8 @@ class ScreenNodeBuilder:
 
         if diagram.color:
             group.color = diagram.color
+        if diagram.label:
+            group.label = diagram.label
 
         group.setSize(diagram.nodes)
 
