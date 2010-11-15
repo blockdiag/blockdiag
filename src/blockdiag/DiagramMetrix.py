@@ -198,6 +198,16 @@ class NodeMetrix:
                 bottomRight.x + m.shadowOffsetX,
                 bottomRight.y + m.shadowOffsetY)
 
+    def groupLabelBox(self):
+        m = self.metrix
+        topLeft = self.topLeft()
+        topRight = self.topRight()
+
+        return (topLeft.x,
+                topLeft.y - m.spanHeight / 2,
+                topRight.x,
+                topRight.y)
+
     def _nodeWidth(self):
         m = self.metrix
         return self.width * m.nodeWidth + (self.width - 1) * m.spanWidth
