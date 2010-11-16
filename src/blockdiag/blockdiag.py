@@ -212,11 +212,17 @@ class NodeGroup(DiagramNode):
             self.width = max(x.xy.x for x in nodes) + 1
             self.height = max(x.xy.y for x in nodes) + 1
 
+    def copyAttributes(self, other):
+        if other.label:
+            self.label = other.label
+        if other.color and other.color != (243, 152, 0):
+            self.color = other.color
+
 
 class ScreenNodeBuilder:
     @classmethod
-    def build(klass, tree, group=False):
-        return klass()._build(tree, group)
+    def build(klass, tree, group=False, separate=False):
+        return klass()._build(tree, group, separate)
 
     def __init__(self):
         self.diagram = Diagram()
@@ -227,9 +233,11 @@ class ScreenNodeBuilder:
         self.circulars = []
         self.coordinates = []
         self.rows = 0
+        self.separate = False
 
-    def _build(self, tree, group=False):
+    def _build(self, tree, group=False, separate=False):
         self.diagram.subdiagram = group
+        self.separate = separate
         self.buildNodeList(tree)
 
         self.diagram.nodes = self.uniqNodes.values()
@@ -456,35 +464,56 @@ class ScreenNodeBuilder:
                 edge = diagparser.Edge([node1_id, node2_id], [])
                 tree.stmts.append(edge)
 
-        diagram = ScreenNodeBuilder.build(tree, group=True)
+        diagram = ScreenNodeBuilder.build(tree, group=True,
+                                          separate=self.separate)
+        group.copyAttributes(diagram)
         if len(diagram.nodes) == 0:
             del self.uniqNodes[group.id]
             self.nodeOrder.remove(group)
             return
 
-        if diagram.color:
-            group.color = diagram.color
-        if diagram.label:
-            group.label = diagram.label
+        if self.separate:
+            for node in diagram.nodes:
+                if node.id in self.uniqNodes:
+                    del self.uniqNodes[node.id]
+                for _node in self.nodeOrder:
+                    if node.id == _node.id:
+                        self.nodeOrder.remove(_node)
 
-        group.setSize(diagram.nodes)
+                for link in self.uniqLinks.keys():
+                    if link[0].id == node.id:
+                        del self.uniqLinks[link]
 
-        for node in diagram.nodes:
-            n = self.getDiagramNode(node.id)
-            if n.group:
-                msg = "DiagramNode could not belong to two groups"
-                raise RuntimeError(msg)
-            n.copyAttributes(node)
-            n.group = group
+                        if link[1] != group:
+                            link = (group, link[1])
+                            edge = DiagramEdge(link[0], link[1])
+                            self.uniqLinks[link] = edge
+                    elif link[1].id == node.id:
+                        del self.uniqLinks[link]
 
-            group.nodes.append(n)
+                        if link[0] != group:
+                            link = (link[0], group)
+                            edge = DiagramEdge(link[0], link[1])
+                            self.uniqLinks[link] = edge
+        else:
+            group.setSize(diagram.nodes)
 
-        for edge in diagram.edges:
-            e = self.getDiagramEdge(edge.node1.id, edge.node2.id)
-            e.copyAttributes(edge)
-            e.group = group
+            for node in diagram.nodes:
+                n = self.getDiagramNode(node.id)
+                if n.group:
+                    msg = "DiagramNode could not belong to two groups"
+                    raise RuntimeError(msg)
+                n.copyAttributes(node)
+                n.group = group
 
-            group.edges.append(e)
+                group.nodes.append(n)
+
+            for edge in diagram.edges:
+                e = self.getDiagramEdge(edge.node1.id, edge.node2.id)
+                e.copyAttributes(edge)
+                e.group = group
+
+                group.edges.append(e)
 
     def buildNodeList(self, tree):
         nodeGroups = {}
@@ -536,6 +565,8 @@ def main():
                  help='use FONT to draw diagram', metavar='FONT')
     p.add_option('-P', '--pdb', dest='pdb', action='store_true', default=False,
                  help='Drop into debugger on exception')
+    p.add_option('-s', '--separate', action='store_true',
+                 help='Separate diagram images for each group (SVG only)')
     p.add_option('-T', dest='type', default='PNG',
                  help='Output diagram as TYPE format')
     (options, args) = p.parse_args()
@@ -547,6 +578,11 @@ def main():
     format = options.type.upper()
     if not format in ('SVG', 'PNG'):
         msg = "ERROR: unknown format: %s\n" % options.type
+        sys.stderr.write(msg)
+        exit(0)
+
+    if options.separate and format != 'SVG':
+        msg = "ERROR: --separate option work in SVG images.\n"
         sys.stderr.write(msg)
         exit(0)
 
@@ -573,7 +609,7 @@ def main():
         sys.excepthook = utils.postmortem
 
     tree = diagparser.parse_file(infile)
-    diagram = ScreenNodeBuilder.build(tree)
+    diagram = ScreenNodeBuilder.build(tree, separate=options.separate)
 
     draw = DiagramDraw.DiagramDraw(format, diagram, font=fontpath,
                                    antialias=options.antialias)
