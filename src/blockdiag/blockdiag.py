@@ -570,7 +570,7 @@ class ScreenNodeBuilder:
                 height = max(x.xy.y for x in self.nodeOrder) + 1
 
         for node in self.nodeOrder:
-            if isinstance(node, NodeGroup):
+            if isinstance(node, NodeGroup) and not self.separate:
                 for child in node.nodes:
                     child.xy = XY(node.xy.x + child.xy.x,
                                   node.xy.y + child.xy.y)
