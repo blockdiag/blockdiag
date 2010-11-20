@@ -633,6 +633,19 @@ def main():
     tree = diagparser.parse_file(infile)
     diagram = ScreenNodeBuilder.build(tree, separate=options.separate)
 
+    if options.separate:
+        i = 0
+        for node in diagram.traverse_nodes():
+            if isinstance(node, NodeGroup):
+                i += 1
+                draw = DiagramDraw.DiagramDraw(format, node, font=fontpath,
+                                               basediagram=diagram,
+                                               antialias=options.antialias)
+                draw.draw()
+                outfile2 = re.sub('.svg$', '_%d.svg' % i, outfile)
+                draw.save(outfile2)
+                node.href = './%s' % os.path.basename(outfile2)
+
     draw = DiagramDraw.DiagramDraw(format, diagram, font=fontpath,
                                    antialias=options.antialias)
     draw.draw()
