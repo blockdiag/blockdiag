@@ -134,7 +134,11 @@ class DiagramDraw(object):
         # Draw node groups.
         for node in (x for x in self.diagram.nodes if x.drawable == 0):
             box = metrix.node(node).marginBox()
-            self.drawer.rectangle(box, fill=node.color, filter='blur')
+            if self.format == 'SVG' and node.href:
+                drawer = self.drawer.link(node.href)
+                drawer.rectangle(box, fill=node.color, filter='blur')
+            else:
+                self.drawer.rectangle(box, fill=node.color, filter='blur')
 
         # Drop node shadows.
         for node in (x for x in self.diagram.nodes if x.drawable):
