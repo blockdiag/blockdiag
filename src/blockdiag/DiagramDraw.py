@@ -13,13 +13,14 @@ class DiagramDraw(object):
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.badgeFill = kwargs.get('badgeFill', 'pink')
         self.font = kwargs.get('font')
+        base_diagram = kwargs.get('basediagram', diagram)
 
         if self.format == 'SVG':
             import SVGImageDraw
 
             self.shadow = kwargs.get('shadow', (0, 0, 0))
             self.scale_ratio = 1
-            self.metrix = DiagramMetrix(diagram, **kwargs)
+            self.metrix = DiagramMetrix(base_diagram, **kwargs)
             self.drawer = SVGImageDraw.SVGImageDraw(self.pageSize())
         else:
             import ImageDrawEx
@@ -31,8 +32,8 @@ class DiagramDraw(object):
             else:
                 self.scale_ratio = 1
 
-            self.metrix = PngDiagramMetrix(diagram, scale=self.scale_ratio,
-                                           **kwargs)
+            self.metrix = PngDiagramMetrix(base_diagram,
+                                           scale=self.scale_ratio, **kwargs)
             self.drawer = ImageDrawEx.ImageDrawEx(self.pageSize(),
                                                   self.scale_ratio)
 
