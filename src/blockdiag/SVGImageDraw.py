@@ -26,39 +26,15 @@ class feGaussianBlur(SVGelement):
             self.attributes['inkspace:collect'] = inkspace_collect
 
 
-class SVGImageDraw:
-    def __init__(self, size):
-        self.drawing = drawing()
-        self.svg = svg((0, 0, size[0], size[1]))
-
-        uri = 'http://www.inkscape.org/namespaces/inkscape'
-        self.svg.namespaces['inkspace'] = uri
-        uri = 'http://www.w3.org/1999/xlink'
-        self.svg.namespaces['xlink'] = uri
-
-        # inkspace's Gaussian filter
-        fgb = feGaussianBlur(id='feGaussianBlur3780', stdDeviation=4.2,
-                             inkspace_collect='always')
-        f = filter(id='filter_blur', inkspace_collect='always',
-                   x=-0.07875, y=-0.252, width=1.1575, height=1.504)
-        f.addElement(fgb)
-        d = defs(id='defs_block')
-        d.addElement(f)
-        self.svg.addElement(d)
-
-        self.svg.addElement(title('blockdiag'))
+class SVGImageDrawElement:
+    def __init__(self, svg):
+        self.svg = svg
 
     def rgb(self, color):
         if isinstance(color, tuple):
             color = 'rgb(%d,%d,%d)' % color
 
         return color
-
-    def save(self, filename, size, format):
-        # Ignore size and format parameter; compatibility for ImageDrawEx.
-
-        self.drawing.setSVG(self.svg)
-        return self.drawing.toXml(filename)
 
     def rectangle(self, box, **kwargs):
         thick = kwargs.get('width', 1)
@@ -182,3 +158,38 @@ class SVGImageDraw:
 
         im = image(url, x, y, w, h)
         self.svg.addElement(im)
+
+    def link(self, href):
+        a = link(href)
+        self.svg.addElement(a)
+
+        return SVGImageDrawElement(a)
+
+
+class SVGImageDraw(SVGImageDrawElement):
+    def __init__(self, size):
+        self.drawing = drawing()
+        self.svg = svg((0, 0, size[0], size[1]))
+
+        uri = 'http://www.inkscape.org/namespaces/inkscape'
+        self.svg.namespaces['inkspace'] = uri
+        uri = 'http://www.w3.org/1999/xlink'
+        self.svg.namespaces['xlink'] = uri
+
+        # inkspace's Gaussian filter
+        fgb = feGaussianBlur(id='feGaussianBlur3780', stdDeviation=4.2,
+                             inkspace_collect='always')
+        f = filter(id='filter_blur', inkspace_collect='always',
+                   x=-0.07875, y=-0.252, width=1.1575, height=1.504)
+        f.addElement(fgb)
+        d = defs(id='defs_block')
+        d.addElement(f)
+        self.svg.addElement(d)
+
+        self.svg.addElement(title('blockdiag'))
+
+    def save(self, filename, size, format):
+        # Ignore size and format parameter; compatibility for ImageDrawEx.
+
+        self.drawing.setSVG(self.svg)
+        return self.drawing.toXml(filename)
