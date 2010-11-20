@@ -178,8 +178,12 @@ class DiagramDraw(object):
     def group_label(self, group):
         m = self.metrix.node(group)
 
-        if group.label:
+        if group.label and not group.separated:
             self.drawer.textarea(m.groupLabelBox(), group.label,
+                                 fill=self.fill, font=self.font,
+                                 fontsize=self.metrix.fontSize)
+        elif group.label:
+            self.drawer.textarea(m.coreBox(), group.label,
                                  fill=self.fill, font=self.font,
                                  fontsize=self.metrix.fontSize)
 
