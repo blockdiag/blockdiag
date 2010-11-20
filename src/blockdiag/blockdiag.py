@@ -26,6 +26,15 @@ class Diagram:
         self.span_height = None
         self.fontsize = None
 
+    def traverse_nodes(self):
+        for node in self.nodes:
+            if isinstance(node, NodeGroup):
+                yield node
+                for subnode in node.traverse_nodes():
+                    yield subnode
+            else:
+                yield node
+
     def setAttributes(self, attrs):
         for attr in attrs:
             value = re.sub('(\A"|"\Z)', '', attr.value, re.M)
@@ -200,12 +209,22 @@ class NodeGroup(DiagramNode):
     def __init__(self, id):
         DiagramNode.__init__(self, id)
         self.label = ''
+        self.href = None
         self.nodes = []
         self.edges = []
         self.color = (243, 152, 0)
         self.width = 1
         self.height = 1
         self.drawable = 0
+
+    def traverse_nodes(self):
+        for node in self.nodes:
+            if isinstance(node, NodeGroup):
+                yield node
+                for subnode in node.traverse_nodes():
+                    yield subnode
+            else:
+                yield node
 
     def setSize(self, nodes):
         if len(nodes) > 0:
@@ -472,7 +491,29 @@ class ScreenNodeBuilder:
             self.nodeOrder.remove(group)
             return
 
+        group.setSize(diagram.nodes)
+
+        for node in diagram.nodes:
+            n = self.getDiagramNode(node.id)
+            if n.group:
+                msg = "DiagramNode could not belong to two groups"
+                raise RuntimeError(msg)
+            n.copyAttributes(node)
+            n.group = group
+
+            group.nodes.append(n)
+
+        for edge in diagram.edges:
+            e = self.getDiagramEdge(edge.node1.id, edge.node2.id)
+            e.copyAttributes(edge)
+            e.group = group
+
+            group.edges.append(e)
+
         if self.separate:
+            group.width = 1
+            group.height = 1
+
             for node in diagram.nodes:
                 if node.id in self.uniqNodes:
                     del self.uniqNodes[node.id]
@@ -495,25 +536,6 @@ class ScreenNodeBuilder:
                             link = (link[0], group)
                             edge = DiagramEdge(link[0], link[1])
                             self.uniqLinks[link] = edge
-        else:
-            group.setSize(diagram.nodes)
-
-            for node in diagram.nodes:
-                n = self.getDiagramNode(node.id)
-                if n.group:
-                    msg = "DiagramNode could not belong to two groups"
-                    raise RuntimeError(msg)
-                n.copyAttributes(node)
-                n.group = group
-
-                group.nodes.append(n)
-
-            for edge in diagram.edges:
-                e = self.getDiagramEdge(edge.node1.id, edge.node2.id)
-                e.copyAttributes(edge)
-                e.group = group
-
-                group.edges.append(e)
 
     def buildNodeList(self, tree):
         nodeGroups = {}
