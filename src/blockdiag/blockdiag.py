@@ -210,6 +210,7 @@ class NodeGroup(DiagramNode):
         DiagramNode.__init__(self, id)
         self.label = ''
         self.href = None
+        self.separated = False
         self.nodes = []
         self.edges = []
         self.color = (243, 152, 0)
@@ -513,6 +514,7 @@ class ScreenNodeBuilder:
         if self.separate:
             group.width = 1
             group.height = 1
+            group.separated = True
 
             for node in diagram.nodes:
                 if node.id in self.uniqNodes:
