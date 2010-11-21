@@ -97,6 +97,15 @@ class DiagramNode:
         self.width = 1
         self.height = 1
 
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.id == other
+        else:
+            return self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)
+
     def copyAttributes(self, other):
         if other.xy:
             self.xy = other.xy
@@ -217,6 +226,15 @@ class NodeGroup(DiagramNode):
         self.width = 1
         self.height = 1
         self.drawable = 0
+
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.id == other
+        else:
+            return self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)
 
     def traverse_nodes(self):
         for node in self.nodes:
@@ -519,19 +537,18 @@ class ScreenNodeBuilder:
             for node in diagram.nodes:
                 if node.id in self.uniqNodes:
                     del self.uniqNodes[node.id]
-                for _node in self.nodeOrder:
-                    if node.id == _node.id:
-                        self.nodeOrder.remove(_node)
+                if node in self.nodeOrder:
+                    self.nodeOrder.remove(node)
 
                 for link in self.uniqLinks.keys():
-                    if link[0].id == node.id:
+                    if link[0] == node:
                         del self.uniqLinks[link]
 
                         if link[1] != group:
                             link = (group, link[1])
                             edge = DiagramEdge(link[0], link[1])
                             self.uniqLinks[link] = edge
-                    elif link[1].id == node.id:
+                    elif link[1] == node:
                         del self.uniqLinks[link]
 
                         if link[0] != group:
