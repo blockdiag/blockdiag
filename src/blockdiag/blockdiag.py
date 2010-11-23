@@ -84,6 +84,7 @@ class DiagramNode:
         self.xy = XY(0, 0)
         self.group = None
         self.drawable = 1
+        self.order = 0
 
         if id:
             self.label = re.sub('(\A"|"\Z)', '', id, re.M)
@@ -226,6 +227,7 @@ class NodeGroup(DiagramNode):
         self.width = 1
         self.height = 1
         self.drawable = 0
+        self.order = 0
 
     def __eq__(self, other):
         if isinstance(other, str):
@@ -348,9 +350,7 @@ class ScreenNodeBuilder:
             else:
                 children.append(node)
 
-        order = self.nodeOrder
-        children.sort(lambda x, y: cmp(order.index(x), order.index(y)))
-
+        children.sort(lambda x, y: cmp(x.order, y.order))
         return children
 
     def getChildren(self, node):
@@ -375,9 +375,7 @@ class ScreenNodeBuilder:
             else:
                 children.append(node)
 
-        order = self.nodeOrder
-        children.sort(lambda x, y: cmp(order.index(x), order.index(y)))
-
+        children.sort(lambda x, y: cmp(x.order, y.order))
         return children
 
     def detectCirculars(self):
@@ -411,8 +409,7 @@ class ScreenNodeBuilder:
                         if not parent in circular:
                             parents.append(parent)
 
-                parents.sort(lambda x, y: cmp(self.nodeOrder.index(x),
-                                              self.nodeOrder.index(y)))
+                parents.sort(lambda x, y: cmp(x.order, y.order))
 
                 for parent in parents:
                     children = self.getChildren(parent)
@@ -577,6 +574,9 @@ class ScreenNodeBuilder:
 
         for group in nodeGroups:
             self.buildNodeGroup(group, nodeGroups[group])
+
+        for i in range(len(self.nodeOrder)):
+            self.nodeOrder[i].order = i
 
         self.detectCirculars()
         self.setNodeWidth()
