@@ -665,10 +665,8 @@ def main():
     diagram = ScreenNodeBuilder.build(tree, separate=options.separate)
 
     if options.separate:
-        i = 0
-        for node in diagram.traverse_nodes():
+        for i, node in enumerate(diagram.traverse_nodes()):
             if isinstance(node, NodeGroup):
-                i += 1
                 draw = DiagramDraw.DiagramDraw(options.type, node,
                                                font=fontpath,
                                                basediagram=diagram,
