@@ -595,7 +595,7 @@ class ScreenNodeBuilder:
                                   node.xy.y + child.xy.y)
 
 
-def main():
+def parse_option():
     usage = "usage: %prog [options] infile"
     p = OptionParser(usage=usage)
     p.add_option('-a', '--antialias', action='store_true',
@@ -610,11 +610,17 @@ def main():
                  help='Separate diagram images for each group (SVG only)')
     p.add_option('-T', dest='type', default='PNG',
                  help='Output diagram as TYPE format')
-    (options, args) = p.parse_args()
+    options, args = p.parse_args()
 
     if len(args) == 0:
         p.print_help()
-        exit(0)
+        sys.exit(0)
+
+    return options, args
+
+
+def main():
+    options, args = parse_option()
 
     format = options.type.upper()
     if not format in ('SVG', 'PNG'):
