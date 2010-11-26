@@ -616,19 +616,19 @@ def parse_option():
         p.print_help()
         sys.exit(0)
 
+    options.type = options.type.upper()
+    if not options.type in ('SVG', 'PNG'):
+        msg = "ERROR: unknown format: %s\n" % options.type
+        sys.stderr.write(msg)
+        exit(0)
+
     return options, args
 
 
 def main():
     options, args = parse_option()
 
-    format = options.type.upper()
-    if not format in ('SVG', 'PNG'):
-        msg = "ERROR: unknown format: %s\n" % options.type
-        sys.stderr.write(msg)
-        exit(0)
-
-    if options.separate and format != 'SVG':
+    if options.separate and options.type != 'SVG':
         msg = "ERROR: --separate option work in SVG images.\n"
         sys.stderr.write(msg)
         exit(0)
@@ -663,7 +663,8 @@ def main():
         for node in diagram.traverse_nodes():
             if isinstance(node, NodeGroup):
                 i += 1
-                draw = DiagramDraw.DiagramDraw(format, node, font=fontpath,
+                draw = DiagramDraw.DiagramDraw(options.type, node,
+                                               font=fontpath,
                                                basediagram=diagram,
                                                antialias=options.antialias)
                 draw.draw()
@@ -671,7 +672,7 @@ def main():
                 draw.save(outfile2)
                 node.href = './%s' % os.path.basename(outfile2)
 
-    draw = DiagramDraw.DiagramDraw(format, diagram, font=fontpath,
+    draw = DiagramDraw.DiagramDraw(options.type, diagram, font=fontpath,
                                    antialias=options.antialias)
     draw.draw()
     draw.save(outfile)
