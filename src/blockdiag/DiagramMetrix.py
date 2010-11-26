@@ -370,7 +370,6 @@ class EdgeMetrix:
                 shaft.lineTo(node2.left().x - span.x / 4, node2.left().y)
             else:
                 shaft.lineTo(node1.right().x + span.x / 2, node2.left().y)
-                shaft.lineTo(node2.left().x - span.x / 2, node2.left().y)
 
             shaft.lineTo(node2.left())
 
