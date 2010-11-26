@@ -620,18 +620,18 @@ def parse_option():
     if not options.type in ('SVG', 'PNG'):
         msg = "ERROR: unknown format: %s\n" % options.type
         sys.stderr.write(msg)
-        exit(0)
+        sys.exit(0)
+
+    if options.separate and options.type != 'SVG':
+        msg = "ERROR: --separate option work in SVG images.\n"
+        sys.stderr.write(msg)
+        sys.exit(0)
 
     return options, args
 
 
 def main():
     options, args = parse_option()
-
-    if options.separate and options.type != 'SVG':
-        msg = "ERROR: --separate option work in SVG images.\n"
-        sys.stderr.write(msg)
-        exit(0)
 
     fonts = [options.font,
              'c:/windows/fonts/VL-Gothic-Regular.ttf',  # for Windows
