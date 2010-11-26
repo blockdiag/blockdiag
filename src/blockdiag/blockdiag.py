@@ -630,9 +630,7 @@ def parse_option():
     return options, args
 
 
-def main():
-    options, args = parse_option()
-
+def detectfont(options):
     fonts = [options.font,
              'c:/windows/fonts/VL-Gothic-Regular.ttf',  # for Windows
              'c:/windows/fonts/msmincho.ttf',  # for Windows
@@ -646,6 +644,12 @@ def main():
             fontpath = path
             break
 
+    return fontpath
+
+
+def main():
+    options, args = parse_option()
+
     infile = args[0]
     if options.filename:
         outfile = options.filename
@@ -654,6 +658,8 @@ def main():
 
     if options.pdb:
         sys.excepthook = utils.postmortem
+
+    fontpath = detectfont(options)
 
     tree = diagparser.parse_file(infile)
     diagram = ScreenNodeBuilder.build(tree, separate=options.separate)
