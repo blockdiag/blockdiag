@@ -358,7 +358,22 @@ class EdgeMetrix:
 
             shaft.lineTo(node2.left())
 
-        elif dir in ('right-up', 'right-down'):
+        elif dir == 'right-up':
+            shaft.moveTo(node1.right())
+            shaft.lineTo(node1.right().x + span.x / 2, node1.right().y)
+
+            if self.edge.skipped:
+                shaft.lineTo(node1.right().x + span.x / 2,
+                             node2.bottomLeft().y + span.y / 2)
+                shaft.lineTo(node2.left().x - span.x / 4,
+                             node2.bottomLeft().y + span.y / 2)
+                shaft.lineTo(node2.left().x - span.x / 4, node2.left().y)
+            else:
+                shaft.lineTo(node1.right().x + span.x / 2, node2.left().y)
+
+            shaft.lineTo(node2.left())
+
+        elif dir == 'right-down':
             shaft.moveTo(node1.right())
             shaft.lineTo(node1.right().x + span.x / 2, node1.right().y)
 
