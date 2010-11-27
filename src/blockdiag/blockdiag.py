@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import uuid
+from ConfigParser import SafeConfigParser
 from optparse import OptionParser
 import DiagramDraw
 import diagparser
@@ -600,9 +601,11 @@ def parse_option():
     p = OptionParser(usage=usage)
     p.add_option('-a', '--antialias', action='store_true',
                  help='Pass diagram image to anti-alias filter')
+    p.add_option('-c', '--config',
+                 help='read configurations from FILE', metavar='FILE')
     p.add_option('-o', dest='filename',
                  help='write diagram to FILE', metavar='FILE')
-    p.add_option('-f', '--font', dest='font',
+    p.add_option('-f', '--font', default=[], action='append',
                  help='use FONT to draw diagram', metavar='FONT')
     p.add_option('-P', '--pdb', dest='pdb', action='store_true', default=False,
                  help='Drop into debugger on exception')
@@ -627,12 +630,26 @@ def parse_option():
         sys.stderr.write(msg)
         sys.exit(0)
 
+    if options.config and not os.path.isfile(options.config):
+        msg = "ERROR: config file is not found: %s\n" % options.config
+        sys.stderr.write(msg)
+        sys.exit(0)
+
+    configpath = options.config or "%s/.blockdiagrc" % os.environ.get('HOME')
+    if os.path.isfile(configpath):
+        config = SafeConfigParser()
+        config.read(configpath)
+
+        if config.has_option('blockdiag', 'fontpath'):
+            fontpath = config.get('blockdiag', 'fontpath')
+            options.font.append(fontpath)
+
     return options, args
 
 
 def detectfont(options):
-    fonts = [options.font,
-             'c:/windows/fonts/VL-Gothic-Regular.ttf',  # for Windows
+    fonts = options.font + \
+            ['c:/windows/fonts/VL-Gothic-Regular.ttf',  # for Windows
              'c:/windows/fonts/msmincho.ttf',  # for Windows
              '/usr/share/fonts/truetype/ipafont/ipagp.ttf',  # for Debian
              '/usr/local/share/font-ipa/ipagp.otf',  # for FreeBSD
