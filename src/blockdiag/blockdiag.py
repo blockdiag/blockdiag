@@ -490,6 +490,17 @@ class ScreenNodeBuilder:
 
         return True
 
+    def adjustNodeOrder(self):
+        for node in self.nodeOrder:
+            parents = self.getParents(node)
+            if len(set(parents)) > 1:
+                for i in range(1, len(parents)):
+                    idx1 = self.nodeOrder.index(parents[i - 1])
+                    idx2 = self.nodeOrder.index(parents[i])
+                    if idx1 < idx2:
+                        self.nodeOrder.remove(parents[i])
+                        self.nodeOrder.insert(idx1 + 1, parents[i])
+
     def buildNodeGroup(self, group, tree):
         nodes = [x.id for x in tree.stmts if isinstance(x, diagparser.Node)]
         for edge in self.uniqLinks.values():
@@ -581,6 +592,7 @@ class ScreenNodeBuilder:
 
         self.detectCirculars()
         self.setNodeWidth()
+        self.adjustNodeOrder()
 
         height = 0
         toplevel_nodes = [x for x in self.nodeOrder if x.xy.x == 0]
