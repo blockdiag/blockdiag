@@ -504,6 +504,9 @@ class ScreenNodeBuilder:
                         self.nodeOrder.remove(parents[i - 1])
                         self.nodeOrder.insert(idx2 + 1, parents[i - 1])
 
+        for i in range(len(self.nodeOrder)):
+            self.nodeOrder[i].order = i
+
     def buildNodeGroup(self, group, tree):
         nodes = [x.id for x in tree.stmts if isinstance(x, diagparser.Node)]
         for edge in self.uniqLinks.values():
