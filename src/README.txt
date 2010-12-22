@@ -6,6 +6,9 @@ Features
 * Generate block-diagram from dot like text (basic feature).
 * Multilingualization for node-label (utf-8 only).
 
+You can get some examples and generated images on 
+`tk0miya.bitbucket.org <http://tk0miya.bitbucket.org/blockdiag/build/html/index.html>`_ .
+
 Setup
 =====
 
@@ -111,6 +114,13 @@ Python Software Foundation License.
 
 History
 =======
+
+0.5.3 (2010-12-23)
+------------------
+* Support NodeGroup.label.
+* Implement --separate option (experimental)
+* Fix right-up edge overrapped on other nodes.
+* Support configration file: .blockdiagrc
 
 0.5.2 (2010-11-06)
 ------------------
