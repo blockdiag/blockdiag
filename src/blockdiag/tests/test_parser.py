@@ -238,8 +238,8 @@ def test_twin_circular_ref_diagram():
 def test_skipped_circular_diagram():
     screen = __build_diagram('skipped_circular.diag')
 
-    assert_pos = {'A': (0, 0), 'B': (1, 1), 'C': (2, 0),
-                  'Z': (0, 2)}
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'Z': (0, 1)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
