@@ -156,6 +156,15 @@ def test_multiple_parent_node_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_twin_multiple_parent_node_diagram():
+    screen = __build_diagram('twin_multiple_parent_node.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (0, 1),
+                  'D': (1, 1), 'E': (0, 2), 'Z': (0, 3)}
+    for node in screen.nodes:
+        assert node.xy == assert_pos[node.id]
+
+
 def test_circular_ref_to_root_diagram():
     screen = __build_diagram('circular_ref_to_root.diag')
 

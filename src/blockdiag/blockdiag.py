@@ -500,6 +500,9 @@ class ScreenNodeBuilder:
                     if idx1 < idx2:
                         self.nodeOrder.remove(parents[i])
                         self.nodeOrder.insert(idx1 + 1, parents[i])
+                    else:
+                        self.nodeOrder.remove(parents[i - 1])
+                        self.nodeOrder.insert(idx2 + 1, parents[i - 1])
 
     def buildNodeGroup(self, group, tree):
         nodes = [x.id for x in tree.stmts if isinstance(x, diagparser.Node)]
