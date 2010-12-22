@@ -115,6 +115,10 @@ Python Software Foundation License.
 History
 =======
 
+0.5.4 (2010-12-23)
+------------------
+* Remove debug codes.
+
 0.5.3 (2010-12-23)
 ------------------
 * Support NodeGroup.label.

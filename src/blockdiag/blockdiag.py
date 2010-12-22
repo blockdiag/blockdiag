@@ -511,7 +511,6 @@ class ScreenNodeBuilder:
                     self.nodeOrder.insert(idx + 1, node)
 
         for i in range(len(self.nodeOrder)):
-            print self.nodeOrder[i].id, i
             self.nodeOrder[i].order = i
 
     def buildNodeGroup(self, group, tree):
