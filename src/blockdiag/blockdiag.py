@@ -195,6 +195,14 @@ class DiagramEdge:
                 dir = value.lower()
                 if dir in ('back', 'both', 'none', 'forward'):
                     self.dir = dir
+                elif dir == '->':
+                    self.dir = 'forward'
+                elif dir == '<-':
+                    self.dir = 'back'
+                elif dir == '<->':
+                    self.dir = 'both'
+                elif dir == '--':
+                    self.dir = 'none'
                 else:
                     msg = "WARNING: unknown edge dir: %s\n" % dir
                     sys.stderr.write(msg)
@@ -320,7 +328,18 @@ class ScreenNodeBuilder:
 
         return group
 
-    def getDiagramEdge(self, id1, id2):
+    def getDiagramEdge(self, edge_from, edge_to):
+        if isinstance(edge_from, tuple):
+            id1 = edge_from[1]
+        else:
+            id1 = edge_from
+
+        if isinstance(edge_to, tuple):
+            type, id2 = edge_to
+        else:
+            id2 = edge_to
+            type = None
+
         link = (self.getDiagramNode(id1), self.getDiagramNode(id2))
 
         if link in self.uniqLinks:
@@ -328,6 +347,9 @@ class ScreenNodeBuilder:
         else:
             edge = DiagramEdge(link[0], link[1])
             self.uniqLinks[link] = edge
+
+        if type:
+            edge.setAttributes([diagparser.Attr('dir', type)])
 
         return edge
 

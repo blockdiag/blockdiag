@@ -112,6 +112,20 @@ def test_node_attribute():
     assert screen.nodes[1].xy == (0, 1)
 
 
+def test_edge_shape():
+    screen = __build_diagram('edge_shape.diag')
+
+    for edge in screen.edges:
+        if edge.node1.id == 'A':
+            assert edge.dir == 'none'
+        elif edge.node1.id == 'B':
+            assert edge.dir == 'forward'
+        elif edge.node1.id == 'C':
+            assert edge.dir == 'back'
+        elif edge.node1.id == 'D':
+            assert edge.dir == 'both'
+
+
 def test_edge_attribute():
     screen = __build_diagram('edge_attribute.diag')
 

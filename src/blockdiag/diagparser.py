@@ -68,7 +68,7 @@ def tokenize(str):
         ('NL',      (r'[\r\n]+',)),
         ('Space',   (r'[ \t\r\n]+',)),
         ('Name',    (r'[A-Za-z\200-\377_][A-Za-z\200-\377_0-9]*',)),
-        ('Op',      (r'[{};,=\[\]]|(->)|(--)',)),
+        ('Op',      (r'[{};,=\[\]]|(<->)|(<-)|(--)|(->)',)),
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),
         ('String',  (r'"[^"]*"',)),  # '\"' escapes are ignored
     ]
@@ -88,7 +88,7 @@ def parse(seq):
     id = some(lambda t:
         t.type in ['Name', 'Number', 'String']).named('id') >> tokval
     make_graph_attr = lambda args: DefAttrs(u'graph', [Attr(*args)])
-    make_edge = lambda x, xs, attrs: Edge([x] + xs, attrs)
+    make_edge = lambda x, x2, xs, attrs: Edge([x, x2] + xs, attrs)
 
     node_id = id  # + maybe(port)
     a_list = (
@@ -108,10 +108,11 @@ def parse(seq):
     # We use a forward_decl becaue of circular definitions like (stmt_list ->
     # stmt -> subgraph -> stmt_list)
     subgraph = forward_decl()
-    edge_rhs = skip(op('->') | op('--')) + node_id
+    edge_rhs = (op('->') | op('--') | op('<-') | op('<->')) + node_id
     edge_stmt = (
         node_id +
-        oneplus(edge_rhs) +
+        edge_rhs +
+        many(edge_rhs) +
         attr_list
         >> unarg(make_edge))
     subgraph_stmt = (
