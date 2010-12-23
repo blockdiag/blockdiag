@@ -141,15 +141,15 @@ class ScreenNodeBuilder:
             elif edge.node1.group and edge.node1.group.id == node_id:
                 uniq[edge.node2] = 1
 
-        children = []
+        parents = []
         for node in uniq.keys():
             if node.group:
-                children.append(node.group)
+                parents.append(node.group)
             else:
-                children.append(node)
+                parents.append(node)
 
-        children.sort(lambda x, y: cmp(x.order, y.order))
-        return children
+        parents.sort(lambda x, y: cmp(x.order, y.order))
+        return parents
 
     def detectCirculars(self):
         for node in self.nodeOrder:
