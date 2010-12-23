@@ -341,6 +341,23 @@ def test_node_attribute_and_group_diagram():
         assert node.color == assert_colors[node.id]
 
 
+def test_group_order_diagram():
+    screen = __build_diagram('group_order.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'Z': (0, 2)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
+def test_group_order2_diagram():
+    screen = __build_diagram('group_order2.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
+                  'D': (2, 1), 'E': (1, 2), 'F': (2, 2), 'Z': (0, 3)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
 def test_node_in_group_follows_outer_node_diagram():
     screen = __build_diagram('node_in_group_follows_outer_node.diag')
 
