@@ -231,6 +231,7 @@ class ScreenNodeBuilder:
         if xy in self.coordinates:
             return False
         node.xy = xy
+        self.markXY(node.xy, node.width, node.height)
 
         count = 0
         children = self.getChildren(node)
@@ -380,7 +381,7 @@ class ScreenNodeBuilder:
         for node in toplevel_nodes:
             if not node.group:
                 self.setNodeHeight(node, height)
-                height = max(x.xy.y for x in self.nodeOrder) + 1
+                height = max(xy.y for xy in self.coordinates) + 1
 
         for node in self.nodeOrder:
             if isinstance(node, NodeGroup) and not self.separate:
