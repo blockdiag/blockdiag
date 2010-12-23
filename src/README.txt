@@ -115,6 +115,11 @@ Python Software Foundation License.
 History
 =======
 
+0.5.5 (2010-12-24)
+------------------
+* Specify direction of edges as syntax (->, --, <-, <->)
+* Fix bugs.
+
 0.5.4 (2010-12-23)
 ------------------
 * Remove debug codes.
