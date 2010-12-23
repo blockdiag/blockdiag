@@ -28,6 +28,11 @@ class Diagram:
             else:
                 yield node
 
+    def fixiate_group_coordinates(self):
+        for group in (g for g in self.nodes if isinstance(g, NodeGroup)):
+            if not group.group:
+                group.fixiate_group_coordinates()
+
     def setAttributes(self, attrs):
         for attr in attrs:
             value = re.sub('(\A"|"\Z)', '', attr.value, re.M)
@@ -247,6 +252,15 @@ class NodeGroup(DiagramNode):
                     yield subnode
             else:
                 yield node
+
+    def fixiate_group_coordinates(self):
+        for child in self.nodes:
+            if child.group:
+                child.xy = XY(self.xy.x + child.xy.x,
+                              self.xy.y + child.xy.y)
+
+                if isinstance(child, NodeGroup):
+                    child.fixiate_group_coordinates()
 
     def setSize(self, nodes):
         if len(nodes) > 0:

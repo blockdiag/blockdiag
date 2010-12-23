@@ -38,6 +38,9 @@ class ScreenNodeBuilder:
         self.diagram.nodes = self.uniqNodes.values()
         self.diagram.edges = self.uniqLinks.values()
 
+        if not self.separate:
+            self.diagram.fixiate_group_coordinates()
+
         if self.diagram.rankdir == 'LR':
             for node in self.diagram.nodes:
                 i = node.width
@@ -274,7 +277,7 @@ class ScreenNodeBuilder:
                         self.nodeOrder.remove(parents[i - 1])
                         self.nodeOrder.insert(idx2 + 1, parents[i - 1])
 
-            if isinstance(node, NodeGroup):
+            if isinstance(node, NodeGroup) and node.nodes:
                 idx = min(self.nodeOrder.index(n) for n in node.nodes)
                 if idx < self.nodeOrder.index(node):
                     self.nodeOrder.remove(node)
@@ -304,7 +307,11 @@ class ScreenNodeBuilder:
         group.setSize(diagram.nodes)
 
         for node in diagram.nodes:
-            n = self.getDiagramNode(node.id)
+            if isinstance(node, NodeGroup):
+                n = self.getDiagramGroup(node.id)
+            else:
+                n = self.getDiagramNode(node.id)
+
             if n.group:
                 msg = "DiagramNode could not belong to two groups"
                 raise RuntimeError(msg)
@@ -382,12 +389,6 @@ class ScreenNodeBuilder:
             if not node.group:
                 self.setNodeHeight(node, height)
                 height = max(xy.y for xy in self.coordinates) + 1
-
-        for node in self.nodeOrder:
-            if isinstance(node, NodeGroup) and not self.separate:
-                for child in node.nodes:
-                    child.xy = XY(node.xy.x + child.xy.x,
-                                  node.xy.y + child.xy.y)
 
 
 def parse_option():
