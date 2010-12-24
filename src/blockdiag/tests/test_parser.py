@@ -303,10 +303,11 @@ def test_belongs_to_two_groups_diagram():
 
 
 def test_nested_groups_diagram():
-    def dummy():
-        screen = __build_diagram('nested_groups.diag')
+    screen = __build_diagram('nested_groups.diag')
 
-    assert_raises(NoParseError, dummy)
+    assert_pos = {'A': (0, 0), 'B': (0, 1), 'Z': (0, 2)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
 
 
 def test_node_follows_group_diagram():

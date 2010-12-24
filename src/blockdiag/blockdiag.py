@@ -36,6 +36,7 @@ class ScreenNodeBuilder:
         self.buildNodeList(tree)
 
         self.diagram.nodes = self.uniqNodes.values()
+        self.diagram.nodes.sort(lambda x, y: cmp(x.order, y.order))
         self.diagram.edges = self.uniqLinks.values()
 
         if not self.separate:
@@ -65,7 +66,7 @@ class ScreenNodeBuilder:
         if id is None:
             # generate new id
             id = 'DiagramGroup %s' % uuid.uuid1()
-        else:
+        elif not re.search('DiagramGroup', id):
             id = 'DiagramGroup %s' % id
 
         if id in self.uniqNodes:

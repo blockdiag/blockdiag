@@ -9,6 +9,9 @@ class Diagram:
     def __init__(self):
         self.nodes = []
         self.edges = []
+        self.xy = None
+        self.width = None
+        self.height = None
         self.subdiagram = False
         self.rankdir = None
         self.color = None
@@ -268,6 +271,12 @@ class NodeGroup(DiagramNode):
             self.height = max(x.xy.y for x in nodes) + 1
 
     def copyAttributes(self, other):
+        if other.xy:
+            self.xy = other.xy
+        if other.width:
+            self.width = other.width
+        if other.height:
+            self.height = other.height
         if other.label:
             self.label = other.label
         if other.color and other.color != (243, 152, 0):
