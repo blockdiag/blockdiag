@@ -278,11 +278,13 @@ class ScreenNodeBuilder:
                         self.nodeOrder.remove(parents[i - 1])
                         self.nodeOrder.insert(idx2 + 1, parents[i - 1])
 
-            if isinstance(node, NodeGroup) and node.nodes:
-                idx = min(self.nodeOrder.index(n) for n in node.nodes)
-                if idx < self.nodeOrder.index(node):
-                    self.nodeOrder.remove(node)
-                    self.nodeOrder.insert(idx + 1, node)
+            if isinstance(node, NodeGroup):
+                nodes = [n for n in node.nodes if n in self.nodeOrder]
+                if nodes:
+                    idx = min(self.nodeOrder.index(n) for n in nodes)
+                    if idx < self.nodeOrder.index(node):
+                        self.nodeOrder.remove(node)
+                        self.nodeOrder.insert(idx + 1, node)
 
         for i in range(len(self.nodeOrder)):
             self.nodeOrder[i].order = i
