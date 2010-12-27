@@ -141,11 +141,12 @@ class ScreenNodeBuilder:
                 uniq[edge.node2] = 1
 
         parents = []
-        for node in uniq.keys():
-            if node.group:
-                parents.append(node.group)
+        for uniq_node in uniq.keys():
+            if uniq_node.group:
+                if node != uniq_node.group:
+                    parents.append(uniq_node.group)
             else:
-                parents.append(node)
+                parents.append(uniq_node)
 
         parents.sort(lambda x, y: cmp(x.order, y.order))
         return parents
