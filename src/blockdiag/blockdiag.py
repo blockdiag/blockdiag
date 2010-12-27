@@ -188,20 +188,14 @@ class ScreenNodeBuilder:
                 for parent in parents:
                     children = self.getChildren(parent)
                     if node1 in children and node2 in children:
-                        o1 = circular.index(node1)
-                        o2 = circular.index(node2)
-
-                        if o1 > o2:
+                        if circular.index(node1) > circular.index(node2):
                             return True
                     elif node2 in children:
                         return True
                     elif node1 in children:
                         return False
                 else:
-                    o1 = circular.index(node1)
-                    o2 = circular.index(node2)
-
-                    if o1 > o2:
+                    if circular.index(node1) > circular.index(node2):
                         return True
 
         return False
