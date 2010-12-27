@@ -62,6 +62,12 @@ class ScreenNodeBuilder:
 
         return node
 
+    def removeDiagramNode(self, id):
+        group = self.getDiagramNode(id)
+
+        del self.uniqNodes[group.id]
+        self.nodeOrder.remove(group)
+
     def getDiagramGroup(self, id):
         if id is None:
             # generate new id
@@ -77,6 +83,12 @@ class ScreenNodeBuilder:
             self.nodeOrder.append(group)
 
         return group
+
+    def removeDiagramGroup(self, id):
+        group = self.getDiagramGroup(id)
+
+        del self.uniqNodes[group.id]
+        self.nodeOrder.remove(group)
 
     def getDiagramEdge(self, id1, id2, type=None):
         link = (self.getDiagramNode(id1), self.getDiagramNode(id2))
@@ -269,17 +281,17 @@ class ScreenNodeBuilder:
 
         diagram = ScreenNodeBuilder.build(tree, group=True,
                                           separate=self.separate)
-        group.copyAttributes(diagram)
         if len(diagram.nodes) == 0:
-            del self.uniqNodes[group.id]
-            self.nodeOrder.remove(group)
+            self.removeDiagramGroup(group.id)
             return
 
+        group.copyAttributes(diagram)
         group.setSize(diagram.nodes)
 
         for node in diagram.nodes:
             if isinstance(node, NodeGroup):
                 n = self.getDiagramGroup(node.id)
+                n.nodes = node.nodes
             else:
                 n = self.getDiagramNode(node.id)
 
@@ -304,10 +316,7 @@ class ScreenNodeBuilder:
             group.separated = True
 
             for node in diagram.nodes:
-                if node.id in self.uniqNodes:
-                    del self.uniqNodes[node.id]
-                if node in self.nodeOrder:
-                    self.nodeOrder.remove(node)
+                self.removeDiagramNode(node.id)
 
                 for link in self.uniqLinks.keys():
                     if link[0] == node:

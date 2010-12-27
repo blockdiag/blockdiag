@@ -8,6 +8,7 @@ from utils.XY import XY
 
 class Diagram:
     def __init__(self):
+        self.separated = False
         self.nodes = []
         self.edges = []
         self.xy = None
@@ -26,9 +27,9 @@ class Diagram:
     def traverse_nodes(self):
         for node in self.nodes:
             if isinstance(node, NodeGroup):
-                yield node
                 for subnode in node.traverse_nodes():
                     yield subnode
+                yield node
             else:
                 yield node
 
@@ -242,9 +243,9 @@ class NodeGroup(DiagramNode):
     def traverse_nodes(self):
         for node in self.nodes:
             if isinstance(node, NodeGroup):
-                yield node
                 for subnode in node.traverse_nodes():
                     yield subnode
+                yield node
             else:
                 yield node
 
@@ -273,3 +274,5 @@ class NodeGroup(DiagramNode):
             self.label = other.label
         if other.color and other.color != (243, 152, 0):
             self.color = other.color
+        if other.separated:
+            self.separated = other.separated
