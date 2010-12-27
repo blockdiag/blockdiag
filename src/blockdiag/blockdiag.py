@@ -92,49 +92,39 @@ class ScreenNodeBuilder:
 
         return edge
 
-    def getParents(self, node):
+    def getRelatedNodes(self, node, parent=False, child=False):
         uniq = {}
         for edge in self.uniqLinks.values():
             if edge.noweight:
                 continue
 
-            if edge.node2.id == node.id:
-                uniq[edge.node1] = 1
-            elif edge.node2.group and edge.node2.group.id == node.id:
-                uniq[edge.node1] = 1
+            if parent:
+                if edge.node2.id == node.id:
+                    uniq[edge.node1] = 1
+                elif edge.node2.group and edge.node2.group.id == node.id:
+                    uniq[edge.node1] = 1
+            elif child:
+                if edge.node1.id == node.id:
+                    uniq[edge.node2] = 1
+                elif edge.node1.group and edge.node1.group.id == node.id:
+                    uniq[edge.node2] = 1
 
-        children = []
+        related = []
         for uniq_node in uniq.keys():
             if uniq_node.group:
                 if node != uniq_node.group:
-                    children.append(uniq_node.group)
+                    related.append(uniq_node.group)
             else:
-                children.append(uniq_node)
+                related.append(uniq_node)
 
-        children.sort(lambda x, y: cmp(x.order, y.order))
-        return children
+        related.sort(lambda x, y: cmp(x.order, y.order))
+        return related
+
+    def getParents(self, node):
+        return self.getRelatedNodes(node, parent=True)
 
     def getChildren(self, node):
-        uniq = {}
-        for edge in self.uniqLinks.values():
-            if edge.noweight:
-                continue
-
-            if edge.node1.id == node.id:
-                uniq[edge.node2] = 1
-            elif edge.node1.group and edge.node1.group.id == node.id:
-                uniq[edge.node2] = 1
-
-        parents = []
-        for uniq_node in uniq.keys():
-            if uniq_node.group:
-                if node != uniq_node.group:
-                    parents.append(uniq_node.group)
-            else:
-                parents.append(uniq_node)
-
-        parents.sort(lambda x, y: cmp(x.order, y.order))
-        return parents
+        return self.getRelatedNodes(node, child=True)
 
     def detectCirculars(self):
         for node in self.nodeOrder:
