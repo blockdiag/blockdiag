@@ -78,18 +78,7 @@ class ScreenNodeBuilder:
 
         return group
 
-    def getDiagramEdge(self, edge_from, edge_to):
-        if isinstance(edge_from, tuple):
-            id1 = edge_from[1]
-        else:
-            id1 = edge_from
-
-        if isinstance(edge_to, tuple):
-            type, id2 = edge_to
-        else:
-            id2 = edge_to
-            type = None
-
+    def getDiagramEdge(self, id1, id2, type=None):
         link = (self.getDiagramNode(id1), self.getDiagramNode(id2))
 
         if link in self.uniqLinks:
@@ -285,7 +274,7 @@ class ScreenNodeBuilder:
             node2_id = edge.node2.id
 
             if node1_id in nodes and node2_id in nodes:
-                edge = diagparser.Edge([node1_id, node2_id], [])
+                edge = diagparser.Edge([node1_id, (None, node2_id)], [])
                 tree.stmts.append(edge)
 
         diagram = ScreenNodeBuilder.build(tree, group=True,
@@ -353,10 +342,13 @@ class ScreenNodeBuilder:
                 node = self.getDiagramNode(stmt.id)
                 node.setAttributes(stmt.attrs)
             elif isinstance(stmt, diagparser.Edge):
-                while len(stmt.nodes) >= 2:
-                    edge = self.getDiagramEdge(stmt.nodes.pop(0),
-                                               stmt.nodes[0])
+                edge_from = stmt.nodes.pop(0)
+                while len(stmt.nodes):
+                    type, edge_to = stmt.nodes.pop(0)
+                    edge = self.getDiagramEdge(edge_from, edge_to, type)
                     edge.setAttributes(stmt.attrs)
+
+                    edge_from = edge_to
             elif isinstance(stmt, diagparser.SubGraph):
                 group = self.getDiagramGroup(stmt.id)
                 nodeGroups[group] = stmt
