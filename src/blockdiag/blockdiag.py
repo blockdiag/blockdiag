@@ -104,16 +104,14 @@ class ScreenNodeBuilder:
         return edge
 
     def getParents(self, node):
-        node_id = DiagramNode.getId(node)
-
         uniq = {}
         for edge in self.uniqLinks.values():
             if edge.noweight:
                 continue
 
-            if edge.node2.id == node_id:
+            if edge.node2.id == node.id:
                 uniq[edge.node1] = 1
-            elif edge.node2.group and edge.node2.group.id == node_id:
+            elif edge.node2.group and edge.node2.group.id == node.id:
                 uniq[edge.node1] = 1
 
         children = []
@@ -128,16 +126,14 @@ class ScreenNodeBuilder:
         return children
 
     def getChildren(self, node):
-        node_id = DiagramNode.getId(node)
-
         uniq = {}
         for edge in self.uniqLinks.values():
             if edge.noweight:
                 continue
 
-            if edge.node1.id == node_id:
+            if edge.node1.id == node.id:
                 uniq[edge.node2] = 1
-            elif edge.node1.group and edge.node1.group.id == node_id:
+            elif edge.node1.group and edge.node1.group.id == node.id:
                 uniq[edge.node2] = 1
 
         parents = []
