@@ -135,9 +135,7 @@ class ScreenNodeBuilder:
             if edge.noweight:
                 continue
 
-            if node_id == None:
-                uniq[edge.node1] = 1
-            elif edge.node1.id == node_id:
+            if edge.node1.id == node_id:
                 uniq[edge.node2] = 1
             elif edge.node1.group and edge.node1.group.id == node_id:
                 uniq[edge.node2] = 1
