@@ -72,15 +72,6 @@ class Diagram:
 
 
 class DiagramNode:
-    @classmethod
-    def getId(klass, node):
-        try:
-            node_id = node.id
-        except AttributeError:
-            node_id = node
-
-        return node_id
-
     def __init__(self, id):
         self.id = id
         self.xy = XY(0, 0)
