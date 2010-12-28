@@ -38,8 +38,7 @@ class ScreenNodeBuilder:
         self.separate = separate
         self.buildNodeList(tree)
 
-        self.diagram.nodes = self.uniqNodes.values()
-        self.diagram.nodes.sort(lambda x, y: cmp(x.order, y.order))
+        self.diagram.nodes = self.nodeOrder
         self.diagram.edges = self.uniqLinks.values()
 
         self.diagram.fixiate_group_coordinates()
