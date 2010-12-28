@@ -270,7 +270,16 @@ class ScreenNodeBuilder:
             self.nodeOrder[i].order = i
 
     def buildNodeGroup(self, group, tree):
-        nodes = [x.id for x in tree.stmts if isinstance(x, diagparser.Node)]
+        def picknodes(tree, list):
+            for node in tree.stmts:
+                if isinstance(node, diagparser.Node):
+                    list.append(node.id)
+                elif isinstance(node, diagparser.SubGraph):
+                    picknodes(node, list)
+
+            return list
+
+        nodes = picknodes(tree, [])
         for edge in self.uniqLinks.values():
             node1_id = edge.node1.id
             node2_id = edge.node2.id
