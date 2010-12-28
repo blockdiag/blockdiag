@@ -14,7 +14,6 @@ class Diagram:
         self.xy = None
         self.width = None
         self.height = None
-        self.subdiagram = False
         self.rankdir = None
         self.color = None
         self.label = None
@@ -42,34 +41,25 @@ class Diagram:
         for attr in attrs:
             value = re.sub('(\A"|"\Z)', '', attr.value, re.M)
 
-            if self.subdiagram:
-                if attr.name == 'color':
-                    self.color = value
-                elif attr.name == 'label':
-                    self.label = value
+            if attr.name == 'rankdir':
+                if value.upper() == 'LR':
+                    self.rankdir = value.upper()
                 else:
-                    msg = "Unknown node attribute: group.%s" % attr.name
-                    raise AttributeError(msg)
+                    msg = "WARNING: unknown rankdir: %s\n" % value
+                    sys.stderr.write(msg)
+            elif attr.name == 'node_width':
+                self.node_width = int(value)
+            elif attr.name == 'node_height':
+                self.node_height = int(value)
+            elif attr.name == 'span_width':
+                self.span_width = int(value)
+            elif attr.name == 'span_height':
+                self.span_height = int(value)
+            elif attr.name == 'fontsize':
+                self.fontsize = int(value)
             else:
-                if attr.name == 'rankdir':
-                    if value.upper() == 'LR':
-                        self.rankdir = value.upper()
-                    else:
-                        msg = "WARNING: unknown rankdir: %s\n" % value
-                        sys.stderr.write(msg)
-                elif attr.name == 'node_width':
-                    self.node_width = int(value)
-                elif attr.name == 'node_height':
-                    self.node_height = int(value)
-                elif attr.name == 'span_width':
-                    self.span_width = int(value)
-                elif attr.name == 'span_height':
-                    self.span_height = int(value)
-                elif attr.name == 'fontsize':
-                    self.fontsize = int(value)
-                else:
-                    msg = "Unknown node attribute: diagram.%s" % attr.name
-                    raise AttributeError(msg)
+                msg = "Unknown node attribute: diagram.%s" % attr.name
+                raise AttributeError(msg)
 
 
 class DiagramNode:
@@ -223,6 +213,7 @@ class NodeGroup(DiagramNode):
         self.label = ''
         self.href = None
         self.separated = False
+        self.rankdir = None
         self.nodes = []
         self.edges = []
         self.color = (243, 152, 0)
@@ -250,10 +241,16 @@ class NodeGroup(DiagramNode):
                 yield node
 
     def fixiate_group_coordinates(self):
+        if self.separated:
+            return
+
         for child in self.nodes:
             if child.group:
                 child.xy = XY(self.xy.x + child.xy.x,
                               self.xy.y + child.xy.y)
+
+            if isinstance(child, NodeGroup):
+                child.fixiate_group_coordinates()
 
     def setSize(self, nodes):
         if len(nodes) > 0:
