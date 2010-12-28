@@ -1,8 +1,10 @@
 diagram {
+  A -> B -> C;
+
   group {
-    A;
+    B;
     group {
-      B;
+      C;
     }
   }
   Z;

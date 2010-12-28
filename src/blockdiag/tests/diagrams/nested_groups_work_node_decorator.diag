@@ -1,9 +1,11 @@
 diagram {
+  A; B;
+
   group {
-    A;
+    A
     group {
-      B;
+      B
     }
   }
-  Z;
+  Z
 }
