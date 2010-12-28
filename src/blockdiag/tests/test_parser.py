@@ -310,6 +310,14 @@ def test_nested_groups_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_nested_groups_and_edges_diagram():
+    screen = __build_diagram('nested_groups_and_edges.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'Z': (0, 1)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
 def test_node_follows_group_diagram():
     def dummy():
         screen = __build_diagram('node_follows_group.diag')
@@ -326,6 +334,14 @@ def test_group_follows_node_diagram():
 
 def test_empty_group_diagram():
     screen = __build_diagram('empty_group.diag')
+
+    assert_pos = {'Z': (0, 0)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
+def test_empty_nested_group_diagram():
+    screen = __build_diagram('empty_nested_group.diag')
 
     assert_pos = {'Z': (0, 0)}
     for node in (x for x in screen.nodes if x.drawable):
@@ -451,11 +467,29 @@ def test_multiple_groups_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_multiple_nested_groups_diagram():
+    screen = __build_diagram('multiple_nested_groups.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
+                  'Z': (0, 2)}
+    for node in (x for x in screen.nodes if x.drawable):
+        print node.id, node.xy
+        assert node.xy == assert_pos[node.id]
+
+
 def test_group_works_node_decorator_diagram():
     screen = __build_diagram('group_works_node_decorator.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (3, 0),
                   'D': (2, 0), 'E': (1, 1), 'Z': (0, 2)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
+def test_nested_groups_work_node_decorator_diagram():
+    screen = __build_diagram('nested_groups_work_node_decorator.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (0, 1), 'Z': (0, 2)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 

@@ -1,8 +1,6 @@
 diagram {
   group {
-    A;
     group {
-      B;
     }
   }
   Z;
