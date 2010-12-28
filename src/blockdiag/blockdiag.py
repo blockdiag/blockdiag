@@ -31,7 +31,6 @@ class ScreenNodeBuilder:
         self.heightRefs = []
         self.circulars = []
         self.coordinates = []
-        self.rows = 0
         self.separate = False
 
     def _build(self, tree, separate=False):
