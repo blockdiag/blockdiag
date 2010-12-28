@@ -32,10 +32,10 @@ class Diagram:
             else:
                 yield node
 
-    def fixiate_group_coordinates(self):
-        for group in (g for g in self.nodes if isinstance(g, NodeGroup)):
-            if not group.group:
-                group.fixiate_group_coordinates()
+    def fixiate(self):
+        for node in self.nodes:
+            if isinstance(node, NodeGroup):
+                node.fixiate()
 
     def setAttributes(self, attrs):
         for attr in attrs:
@@ -240,22 +240,23 @@ class NodeGroup(DiagramNode):
             else:
                 yield node
 
-    def fixiate_group_coordinates(self):
+    def fixiate(self):
         if self.separated:
+            self.width = 1
+            self.height = 1
+
             return
+        elif len(self.nodes) > 0:
+            self.width = max(x.xy.x + x.width for x in self.nodes)
+            self.height = max(x.xy.y + x.height for x in self.nodes)
 
-        for child in self.nodes:
-            if child.group:
-                child.xy = XY(self.xy.x + child.xy.x,
-                              self.xy.y + child.xy.y)
+        for node in self.nodes:
+            if node.group:
+                node.xy = XY(self.xy.x + node.xy.x,
+                             self.xy.y + node.xy.y)
 
-            if isinstance(child, NodeGroup):
-                child.fixiate_group_coordinates()
-
-    def setSize(self, nodes):
-        if len(nodes) > 0:
-            self.width = max(x.xy.x for x in nodes) + 1
-            self.height = max(x.xy.y for x in nodes) + 1
+            if isinstance(node, NodeGroup):
+                node.fixiate()
 
     def copyAttributes(self, other):
         if other.xy:

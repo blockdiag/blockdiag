@@ -35,12 +35,12 @@ class ScreenNodeBuilder:
 
     def _build(self, tree, separate=False):
         self.separate = separate
+        self.diagram.separated = separate
         self.buildNodeList(tree)
 
         self.diagram.nodes = self.nodeOrder
         self.diagram.edges = self.uniqLinks.values()
-
-        self.diagram.fixiate_group_coordinates()
+        self.diagram.fixiate()
 
         if self.diagram.rankdir == 'LR':
             for node in self.diagram.nodes:
@@ -295,7 +295,6 @@ class ScreenNodeBuilder:
             return
 
         group.copyAttributes(diagram)
-        group.setSize(diagram.nodes)
 
         for node in diagram.nodes:
             if isinstance(node, NodeGroup):
@@ -320,8 +319,6 @@ class ScreenNodeBuilder:
             group.edges.append(e)
 
         if self.separate:
-            group.width = 1
-            group.height = 1
             group.separated = True
 
             for node in diagram.nodes:
