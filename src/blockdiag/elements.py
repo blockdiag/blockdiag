@@ -255,9 +255,6 @@ class NodeGroup(DiagramNode):
                 child.xy = XY(self.xy.x + child.xy.x,
                               self.xy.y + child.xy.y)
 
-                if isinstance(child, NodeGroup):
-                    child.fixiate_group_coordinates()
-
     def setSize(self, nodes):
         if len(nodes) > 0:
             self.width = max(x.xy.x for x in nodes) + 1
