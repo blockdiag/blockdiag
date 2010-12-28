@@ -16,11 +16,15 @@ import utils
 
 class ScreenNodeBuilder:
     @classmethod
-    def build(klass, tree, group=False, separate=False):
-        return klass()._build(tree, group, separate)
+    def build(klass, tree, subdiagram=False, separate=False):
+        return klass(subdiagram)._build(tree, separate)
 
-    def __init__(self):
-        self.diagram = Diagram()
+    def __init__(self, subdiagram=False):
+        if subdiagram:
+            self.diagram = NodeGroup('')
+        else:
+            self.diagram = Diagram()
+
         self.uniqNodes = {}
         self.nodeOrder = []
         self.uniqLinks = {}
@@ -30,8 +34,7 @@ class ScreenNodeBuilder:
         self.rows = 0
         self.separate = False
 
-    def _build(self, tree, group=False, separate=False):
-        self.diagram.subdiagram = group
+    def _build(self, tree, separate=False):
         self.separate = separate
         self.buildNodeList(tree)
 
@@ -39,8 +42,7 @@ class ScreenNodeBuilder:
         self.diagram.nodes.sort(lambda x, y: cmp(x.order, y.order))
         self.diagram.edges = self.uniqLinks.values()
 
-        if not self.separate:
-            self.diagram.fixiate_group_coordinates()
+        self.diagram.fixiate_group_coordinates()
 
         if self.diagram.rankdir == 'LR':
             for node in self.diagram.nodes:
@@ -288,7 +290,7 @@ class ScreenNodeBuilder:
                 edge = diagparser.Edge([node1_id, (None, node2_id)], [])
                 tree.stmts.append(edge)
 
-        diagram = ScreenNodeBuilder.build(tree, group=True,
+        diagram = ScreenNodeBuilder.build(tree, subdiagram=True,
                                           separate=self.separate)
         if len(diagram.nodes) == 0:
             self.removeDiagramGroup(group.id)
