@@ -115,6 +115,10 @@ Python Software Foundation License.
 History
 =======
 
+0.6.0 (2011-01-02)
+------------------
+* Support nested groups.
+
 0.5.5 (2010-12-24)
 ------------------
 * Specify direction of edges as syntax (->, --, <-, <->)
