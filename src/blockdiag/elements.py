@@ -32,9 +32,9 @@ class Diagram:
             else:
                 yield node
 
-    def fixiate(self):
+    def fixiate(self, fixiate_only_groups=False):
         for node in self.nodes:
-            if isinstance(node, NodeGroup):
+            if isinstance(node, NodeGroup) and not node.group:
                 node.fixiate()
 
     def setAttributes(self, attrs):
@@ -240,7 +240,7 @@ class NodeGroup(DiagramNode):
             else:
                 yield node
 
-    def fixiate(self):
+    def fixiate(self, fixiate_only_groups=False):
         if self.separated:
             self.width = 1
             self.height = 1
@@ -251,12 +251,13 @@ class NodeGroup(DiagramNode):
             self.height = max(x.xy.y + x.height for x in self.nodes)
 
         for node in self.nodes:
-            if node.group:
+            if node.group and node.group == self and \
+               fixiate_only_groups == False:
                 node.xy = XY(self.xy.x + node.xy.x,
                              self.xy.y + node.xy.y)
 
             if isinstance(node, NodeGroup):
-                node.fixiate()
+                node.fixiate(fixiate_only_groups)
 
     def copyAttributes(self, other):
         if other.xy:
@@ -271,3 +272,10 @@ class NodeGroup(DiagramNode):
             self.color = other.color
         if other.separated:
             self.separated = other.separated
+
+    def isOwned(self, node):
+        for n in self.traverse_nodes():
+            if node == n:
+                return True
+
+        return False

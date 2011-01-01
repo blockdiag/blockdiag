@@ -20,7 +20,8 @@ class ScreenNodeBuilder:
         return klass(subdiagram)._build(tree, separate)
 
     def __init__(self, subdiagram=False):
-        if subdiagram:
+        self.subdiagram = subdiagram
+        if self.subdiagram:
             self.diagram = NodeGroup('')
         else:
             self.diagram = Diagram()
@@ -40,7 +41,7 @@ class ScreenNodeBuilder:
 
         self.diagram.nodes = self.nodeOrder
         self.diagram.edges = self.uniqLinks.values()
-        self.diagram.fixiate()
+        self.diagram.fixiate(fixiate_only_groups=self.subdiagram)
 
         if self.diagram.rankdir == 'LR':
             for node in self.diagram.nodes:
@@ -296,20 +297,28 @@ class ScreenNodeBuilder:
 
         group.copyAttributes(diagram)
 
-        for node in diagram.nodes:
-            if isinstance(node, NodeGroup):
-                n = self.getDiagramGroup(node.id)
-                n.nodes = node.nodes
-            else:
-                n = self.getDiagramNode(node.id)
+        def duplicate_nodes(self, group, diagram):
+            nodes = [x for x in diagram.nodes if isinstance(x, NodeGroup)] + \
+                    [x for x in diagram.nodes if not isinstance(x, NodeGroup)]
 
-            if n.group:
-                msg = "DiagramNode could not belong to two groups"
-                raise RuntimeError(msg)
-            n.copyAttributes(node)
-            n.group = group
+            for node in nodes:
+                if isinstance(node, NodeGroup):
+                    n = self.getDiagramGroup(node.id)
+                    duplicate_nodes(self, n, node)
+                else:
+                    n = self.getDiagramNode(node.id)
 
-            group.nodes.append(n)
+                if n.group:
+                    if not group.isOwned(n):
+                        msg = "DiagramNode could not belong to two groups"
+                        raise RuntimeError(msg)
+                else:
+                    n.group = group
+
+                n.copyAttributes(node)
+                group.nodes.append(n)
+
+        duplicate_nodes(self, group, diagram)
 
         for edge in diagram.edges:
             e = self.getDiagramEdge(edge.node1.id, edge.node2.id)
@@ -477,6 +486,7 @@ def main():
                 draw.save(outfile2)
                 node.href = './%s' % os.path.basename(outfile2)
 
+    diagram.nodes = [x for x in diagram.nodes if not x.group]
     draw = DiagramDraw.DiagramDraw(options.type, diagram, font=fontpath,
                                    antialias=options.antialias)
     draw.draw()
