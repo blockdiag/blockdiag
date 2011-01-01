@@ -178,14 +178,17 @@ class DiagramDraw(object):
     def group_label(self, group):
         m = self.metrix.node(group)
 
+        if self.format == 'SVG' and group.href:
+            drawer = self.drawer.link(group.href)
+        else:
+            drawer = self.drawer
+
         if group.label and not group.separated:
-            self.drawer.textarea(m.groupLabelBox(), group.label,
-                                 fill=self.fill, font=self.font,
-                                 fontsize=self.metrix.fontSize)
+            drawer.textarea(m.groupLabelBox(), group.label, fill=self.fill,
+                            font=self.font, fontsize=self.metrix.fontSize)
         elif group.label:
-            self.drawer.textarea(m.coreBox(), group.label,
-                                 fill=self.fill, font=self.font,
-                                 fontsize=self.metrix.fontSize)
+            drawer.textarea(m.coreBox(), group.label, fill=self.fill,
+                            font=self.font, fontsize=self.metrix.fontSize)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
