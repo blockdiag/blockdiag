@@ -486,7 +486,9 @@ def main():
                 draw.save(outfile2)
                 node.href = './%s' % os.path.basename(outfile2)
 
-    diagram.nodes = [x for x in diagram.nodes if not x.group]
+    if options.separate:
+        diagram.nodes = [x for x in diagram.nodes if not x.group]
+
     draw = DiagramDraw.DiagramDraw(options.type, diagram, font=fontpath,
                                    antialias=options.antialias)
     draw.draw()
