@@ -115,7 +115,7 @@ Python Software Foundation License.
 History
 =======
 
-0.6.0 (2011-01-02)
+0.6 (2011-01-02)
 ------------------
 * Support nested groups.
 
