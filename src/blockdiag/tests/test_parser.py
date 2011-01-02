@@ -276,8 +276,8 @@ def test_self_ref_diagram():
         assert node.xy == assert_pos[node.id]
 
 
-def test_noweight_edge_diagram():
-    screen = __build_diagram('noweight_edge.diag')
+def test_folded_edge_diagram():
+    screen = __build_diagram('folded_edge.diag')
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (0, 1), 'E': (0, 2), 'F': (1, 1),

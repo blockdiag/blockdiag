@@ -1,6 +1,0 @@
-diagram {
-  A -> B -> C
-       B -> D -> E[noweight = 1]
-  D -> F
-  Z
-}
