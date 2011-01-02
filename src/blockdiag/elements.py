@@ -16,6 +16,19 @@ def unquote(string):
 
 class Element:
     basecolor = (255, 255, 255)
+    namespace = {}
+
+    @classmethod
+    def get(self, id):
+        if id not in self.namespace:
+            obj = self(id)
+            self.namespace[id] = obj
+
+        return self.namespace[id]
+
+    @classmethod
+    def clear(self):
+        self.namespace = {}
 
     def __init__(self, id):
         self.id = id

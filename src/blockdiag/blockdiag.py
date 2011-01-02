@@ -43,15 +43,33 @@ class ScreenNodeBuilder:
         self.diagram.edges = self.uniqLinks.values()
         self.diagram.fixiate(fixiate_only_groups=self.subdiagram)
 
+        self.checkNodeUniqueness()
+
         return self.diagram
+
+    def checkNodeUniqueness(self):
+        map = {}
+        for node in self.diagram.traverse_nodes():
+            if node.id in map:
+                msg = "DiagramNode could not belong to two groups"
+                raise RuntimeError(msg)
+
+            map[node.id] = 1
+
+    def setDiagramNode(self, id, node):
+        self.uniqNodes[id] = node
+        if node in self.nodeOrder:
+            index = self.nodeOrder.index(node)
+            self.nodeOrder[index] = node
+        else:
+            self.nodeOrder.append(node)
 
     def getDiagramNode(self, id):
         if id in self.uniqNodes:
             node = self.uniqNodes[id]
         else:
-            node = DiagramNode(id)
-            self.uniqNodes[id] = node
-            self.nodeOrder.append(node)
+            node = DiagramNode.get(id)
+            self.setDiagramNode(id, node)
 
         return node
 
@@ -60,6 +78,14 @@ class ScreenNodeBuilder:
 
         del self.uniqNodes[group.id]
         self.nodeOrder.remove(group)
+
+    def setDiagramGroup(self, id, group):
+        self.uniqNodes[id] = group
+        if group in self.nodeOrder:
+            index = self.nodeOrder.index(group)
+            self.nodeOrder[index] = group
+        else:
+            self.nodeOrder.append(group)
 
     def getDiagramGroup(self, id):
         if id is None:
@@ -71,9 +97,8 @@ class ScreenNodeBuilder:
         if id in self.uniqNodes:
             group = self.uniqNodes[id]
         else:
-            group = NodeGroup(id)
-            self.uniqNodes[id] = group
-            self.nodeOrder.append(group)
+            group = NodeGroup.get(id)
+            self.setDiagramGroup(id, group)
 
         return group
 
@@ -239,29 +264,35 @@ class ScreenNodeBuilder:
 
     def adjustNodeOrder(self):
         for node in self.nodeOrder:
-            if not node.group:
-                parents = self.getParents(node)
-                if len(set(parents)) > 1:
-                    for i in range(1, len(parents)):
-                        idx1 = self.nodeOrder.index(parents[i - 1])
-                        idx2 = self.nodeOrder.index(parents[i])
-                        if idx1 < idx2:
-                            self.nodeOrder.remove(parents[i])
-                            self.nodeOrder.insert(idx1 + 1, parents[i])
-                        else:
-                            self.nodeOrder.remove(parents[i - 1])
-                            self.nodeOrder.insert(idx2 + 1, parents[i - 1])
+            parents = self.getParents(node)
+            if len(set(parents)) > 1:
+                for i in range(1, len(parents)):
+                    idx1 = self.nodeOrder.index(parents[i - 1])
+                    idx2 = self.nodeOrder.index(parents[i])
+                    if idx1 < idx2:
+                        self.nodeOrder.remove(parents[i])
+                        self.nodeOrder.insert(idx1 + 1, parents[i])
+                    else:
+                        self.nodeOrder.remove(parents[i - 1])
+                        self.nodeOrder.insert(idx2 + 1, parents[i - 1])
 
-                if isinstance(node, NodeGroup):
-                    nodes = [n for n in node.nodes if n in self.nodeOrder]
-                    if nodes:
-                        idx = min(self.nodeOrder.index(n) for n in nodes)
-                        if idx < self.nodeOrder.index(node):
-                            self.nodeOrder.remove(node)
-                            self.nodeOrder.insert(idx + 1, node)
+            if isinstance(node, NodeGroup):
+                nodes = [n for n in node.nodes if n in self.nodeOrder]
+                if nodes:
+                    idx = min(self.nodeOrder.index(n) for n in nodes)
+                    if idx < self.nodeOrder.index(node):
+                        self.nodeOrder.remove(node)
+                        self.nodeOrder.insert(idx + 1, node)
 
         for i in range(len(self.nodeOrder)):
             self.nodeOrder[i].order = i
+
+    def adjustGroupOrder(self, node, group):
+        idx1 = self.nodeOrder.index(node)
+        idx2 = self.nodeOrder.index(group)
+        if idx1 < idx2:
+            self.nodeOrder.remove(group)
+            self.nodeOrder.insert(idx1 + 1, group)
 
     def buildNodeGroup(self, group, tree):
         def picknodes(tree, list):
@@ -284,48 +315,29 @@ class ScreenNodeBuilder:
 
         diagram = ScreenNodeBuilder.build(tree, subdiagram=True,
                                           separate=self.separate)
+        diagram.id = group.id
         if len(diagram.nodes) == 0:
             self.removeDiagramGroup(group.id)
             return
 
-        group.copyAttributes(diagram)
-
-        def duplicate_nodes(self, group, diagram):
-            nodes = [x for x in diagram.nodes if isinstance(x, NodeGroup)] + \
-                    [x for x in diagram.nodes if not isinstance(x, NodeGroup)]
-
-            for node in nodes:
-                if isinstance(node, NodeGroup):
-                    n = self.getDiagramGroup(node.id)
-                    duplicate_nodes(self, n, node)
-                else:
-                    n = self.getDiagramNode(node.id)
-
-                if n.group:
-                    if not group.isOwned(n):
-                        msg = "DiagramNode could not belong to two groups"
-                        raise RuntimeError(msg)
-                else:
-                    n.group = group
-
-                n.copyAttributes(node)
-                group.nodes.append(n)
-
-        duplicate_nodes(self, group, diagram)
-
-        for edge in diagram.edges:
-            e = self.getDiagramEdge(edge.node1.id, edge.node2.id)
-            e.copyAttributes(edge)
-            e.group = group
-
-            group.edges.append(e)
-
-        if self.separate:
-            group.separated = True
-
-            for node in diagram.nodes:
+        self.setDiagramGroup(group.id, diagram)
+        for node in diagram.traverse_nodes():
+            if node.id in self.uniqNodes:
+                self.uniqNodes[node.id].copyAttributes(node)
+                node = self.uniqNodes[node.id]
+                self.adjustGroupOrder(node, diagram)
                 self.removeDiagramNode(node.id)
 
+            if node in diagram.nodes:
+                index = diagram.nodes.index(node)
+                diagram.nodes[index] = node
+
+                node.group = diagram
+
+        if self.separate:
+            diagram.separated = True
+
+            for node in diagram.nodes:
                 for link in self.uniqLinks.keys():
                     if link[0] == node:
                         del self.uniqLinks[link]
@@ -482,9 +494,6 @@ def main():
                 outfile2 = re.sub('.svg$', '_%d.svg' % i, outfile)
                 draw.save(outfile2)
                 node.href = './%s' % os.path.basename(outfile2)
-
-    if options.separate:
-        diagram.nodes = [x for x in diagram.nodes if not x.group]
 
     draw = DiagramDraw.DiagramDraw(options.type, diagram, font=fontpath,
                                    antialias=options.antialias)
