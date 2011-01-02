@@ -118,12 +118,17 @@ class NodeGroup(Element):
         self.nodes = []
         self.edges = []
 
-    def traverse_nodes(self):
+    def traverse_nodes(self, preorder=False):
         for node in self.nodes:
             if isinstance(node, NodeGroup):
+                if preorder:
+                    yield node
+
                 for subnode in node.traverse_nodes():
                     yield subnode
-                yield node
+
+                if not preorder:
+                    yield node
             else:
                 yield node
 
