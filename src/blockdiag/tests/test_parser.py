@@ -366,6 +366,15 @@ def test_group_attribute():
         node.label = 'group label'
 
 
+def test_merge_groups_diagram():
+    screen = __build_diagram('merge_groups.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (0, 1),
+                  'D': (1, 1), 'Z': (0, 2)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
 def test_node_attribute_and_group_diagram():
     screen = __build_diagram('node_attribute_and_group.diag')
 
