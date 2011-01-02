@@ -3,6 +3,7 @@
 
 import os
 import re
+import sys
 from utils.XY import XY
 
 
@@ -207,11 +208,19 @@ class DiagramEdge:
                 else:
                     msg = "WARNING: unknown edge style: %s\n" % style
                     sys.stderr.write(msg)
+            elif attr.name == 'folded':
+                self.noweight = True
+            elif attr.name == 'nofolded':
+                self.noweight = False
             elif attr.name == 'noweight':
+                msg = "WARNING: edge.noweight is obsoleted, " + \
+                      "use edge.folded or edge.nofolded\n"
+                sys.stderr.write(msg)
+
                 if value.lower() == 'none':
-                    self.noweight = None
+                    self.noweight = False
                 else:
-                    self.noweight = 1
+                    self.noweight = True
             else:
                 raise AttributeError("Unknown edge attribute: %s" % attr.name)
 
