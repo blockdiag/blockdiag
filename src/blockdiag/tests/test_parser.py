@@ -2,6 +2,7 @@
 
 import tempfile
 from blockdiag.blockdiag import *
+from blockdiag.elements import *
 from blockdiag.diagparser import *
 from nose.tools import assert_raises
 
@@ -355,6 +356,14 @@ def test_simple_group_diagram():
                   'Z': (0, 2)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
+
+
+def test_group_attribute():
+    screen = __build_diagram('group_attribute.diag')
+
+    for node in (x for x in screen.nodes if not x.drawable):
+        node.color = 'red'
+        node.label = 'group label'
 
 
 def test_node_attribute_and_group_diagram():
