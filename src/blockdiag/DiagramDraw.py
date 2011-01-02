@@ -43,7 +43,14 @@ class DiagramDraw(object):
         else:
             metrix = self.metrix.originalMetrix()
 
-        return metrix.pageSize(self.diagram.width, self.diagram.height)
+        if self.diagram.separated:
+            width = max(n.xy.x + n.width for n in self.diagram.nodes)
+            height = max(n.xy.y + n.height for n in self.diagram.nodes)
+        else:
+            width = self.diagram.width
+            height = self.diagram.height
+
+        return metrix.pageSize(width, height)
 
     def draw(self, **kwargs):
         self._prepareEdges()
