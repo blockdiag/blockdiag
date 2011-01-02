@@ -191,6 +191,15 @@ class Diagram(NodeGroup):
         self.fontsize = None
 
     def fixiate(self, fixiate_only_groups=False):
+        if self.separated:
+            self.width = 1
+            self.height = 1
+
+            return
+        elif len(self.nodes) > 0:
+            self.width = max(x.xy.x + x.width for x in self.nodes)
+            self.height = max(x.xy.y + x.height for x in self.nodes)
+
         for node in self.nodes:
             if isinstance(node, NodeGroup) and not node.group:
                 node.fixiate()
