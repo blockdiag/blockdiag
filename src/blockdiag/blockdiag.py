@@ -358,6 +358,10 @@ class ScreenNodeBuilder:
                     edge_from = edge_to
             elif isinstance(stmt, diagparser.SubGraph):
                 group = self.getDiagramGroup(stmt.id)
+                if group in nodeGroups:
+                    statements = nodeGroups[group].stmts + stmt.stmts
+                    stmt = diagparser.SubGraph(stmt.id, statements)
+
                 nodeGroups[group] = stmt
             elif isinstance(stmt, diagparser.DefAttrs):
                 self.diagram.setAttributes(stmt.attrs)
