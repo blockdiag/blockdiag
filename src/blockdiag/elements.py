@@ -161,6 +161,18 @@ class NodeGroup(Element):
         if other.separated:
             self.separated = other.separated
 
+    def setAttributes(self, attrs):
+        for attr in attrs:
+            value = unquote(attr.value)
+
+            if attr.name == 'label':
+                self.label = value
+            elif attr.name == 'color':
+                self.color = value
+            else:
+                msg = "Unknown group attribute: group.%s" % attr.name
+                raise AttributeError(msg)
+
     def isOwned(self, node):
         for n in self.traverse_nodes():
             if node == n:
