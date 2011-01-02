@@ -43,14 +43,6 @@ class ScreenNodeBuilder:
         self.diagram.edges = self.uniqLinks.values()
         self.diagram.fixiate(fixiate_only_groups=self.subdiagram)
 
-        if self.diagram.rankdir == 'LR':
-            for node in self.diagram.nodes:
-                i = node.width
-                node.width = node.height
-                node.height = i
-
-                node.xy = XY(node.xy.y, node.xy.x)
-
         return self.diagram
 
     def getDiagramNode(self, id):
