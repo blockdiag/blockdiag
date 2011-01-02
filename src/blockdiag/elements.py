@@ -14,17 +14,40 @@ def unquote(string):
         return string
 
 
-class Diagram:
+class Element:
+    basecolor = (255, 255, 255)
+
+    def __init__(self, id):
+        self.id = id
+        self.label = ''
+        self.xy = XY(0, 0)
+        self.group = None
+        self.drawable = False
+        self.order = 0
+        self.color = self.__class__.basecolor
+        self.width = 1
+        self.height = 1
+
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+        elif isinstance(other, str):
+            return self.id == other
+        else:
+            return self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)
+
+
+class Diagram(Element):
     def __init__(self):
+        Element.__init__(self, None)
+
         self.separated = False
         self.nodes = []
         self.edges = []
-        self.xy = None
-        self.width = None
-        self.height = None
         self.rankdir = None
-        self.color = None
-        self.label = None
         self.node_width = None
         self.node_height = None
         self.span_width = None
@@ -70,34 +93,18 @@ class Diagram:
                 raise AttributeError(msg)
 
 
-class DiagramNode:
-    def __init__(self, id):
-        self.id = id
-        self.xy = XY(0, 0)
-        self.group = None
-        self.drawable = 1
-        self.order = 0
+class DiagramNode(Element):
+    basecolor = (255, 255, 255)
 
-        if id:
-            self.label = unquote(id)
-        else:
-            self.label = ''
-        self.color = (255, 255, 255)
+    def __init__(self, id):
+        Element.__init__(self, id)
+
+        self.label = unquote(id) or ''
         self.style = None
         self.numbered = None
         self.background = None
         self.description = None
-        self.width = 1
-        self.height = 1
-
-    def __eq__(self, other):
-        if isinstance(other, str):
-            return self.id == other
-        else:
-            return self.id == other.id
-
-    def __hash__(self):
-        return hash(self.id)
+        self.drawable = True
 
     def copyAttributes(self, other):
         if other.xy:
@@ -225,29 +232,17 @@ class DiagramEdge:
                 raise AttributeError("Unknown edge attribute: %s" % attr.name)
 
 
-class NodeGroup(DiagramNode):
+class NodeGroup(Element):
+    basecolor = (255, 255, 255)
+
     def __init__(self, id):
-        DiagramNode.__init__(self, id)
-        self.label = ''
+        Element.__init__(self, id)
+
         self.href = None
         self.separated = False
         self.rankdir = None
         self.nodes = []
         self.edges = []
-        self.color = (243, 152, 0)
-        self.width = 1
-        self.height = 1
-        self.drawable = 0
-        self.order = 0
-
-    def __eq__(self, other):
-        if isinstance(other, str):
-            return self.id == other
-        else:
-            return self.id == other.id
-
-    def __hash__(self):
-        return hash(self.id)
 
     def traverse_nodes(self):
         for node in self.nodes:
