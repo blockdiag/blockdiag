@@ -16,17 +16,16 @@ import utils
 
 class ScreenNodeBuilder:
     @classmethod
-    def build(klass, tree, subdiagram=False, separate=False):
-        return klass(subdiagram)._build(tree, separate)
+    def build(klass, tree, subdiagram=False, group_id=None, separate=False):
+        return klass(subdiagram, group_id)._build(tree, separate)
 
-    def __init__(self, subdiagram=False):
+    def __init__(self, subdiagram=False, group_id=None):
         self.subdiagram = subdiagram
         if self.subdiagram:
-            self.diagram = NodeGroup('')
+            self.diagram = NodeGroup(group_id or uuid.uuid1())
         else:
             self.diagram = Diagram()
 
-        self.uniqNodes = {}
         self.nodeOrder = []
         self.uniqLinks = {}
         self.heightRefs = []
@@ -57,7 +56,6 @@ class ScreenNodeBuilder:
             map[node.id] = 1
 
     def setDiagramNode(self, id, node):
-        self.uniqNodes[id] = node
         if node in self.nodeOrder:
             index = self.nodeOrder.index(node)
             self.nodeOrder[index] = node
@@ -65,22 +63,17 @@ class ScreenNodeBuilder:
             self.nodeOrder.append(node)
 
     def getDiagramNode(self, id):
-        if id in self.uniqNodes:
-            node = self.uniqNodes[id]
-        else:
-            node = DiagramNode.get(id)
-            self.setDiagramNode(id, node)
+        node = DiagramNode.get(id)
+        self.setDiagramNode(id, node)
 
         return node
 
     def removeDiagramNode(self, id):
         group = self.getDiagramNode(id)
 
-        del self.uniqNodes[group.id]
         self.nodeOrder.remove(group)
 
     def setDiagramGroup(self, id, group):
-        self.uniqNodes[id] = group
         if group in self.nodeOrder:
             index = self.nodeOrder.index(group)
             self.nodeOrder[index] = group
@@ -94,18 +87,14 @@ class ScreenNodeBuilder:
         elif not re.search('DiagramGroup', id):
             id = 'DiagramGroup %s' % id
 
-        if id in self.uniqNodes:
-            group = self.uniqNodes[id]
-        else:
-            group = NodeGroup.get(id)
-            self.setDiagramGroup(id, group)
+        group = NodeGroup.get(id)
+        self.setDiagramGroup(id, group)
 
         return group
 
     def removeDiagramGroup(self, id):
         group = self.getDiagramGroup(id)
 
-        del self.uniqNodes[group.id]
         self.nodeOrder.remove(group)
 
     def getDiagramEdge(self, id1, id2, type=None):
@@ -314,17 +303,15 @@ class ScreenNodeBuilder:
                 tree.stmts.append(edge)
 
         diagram = ScreenNodeBuilder.build(tree, subdiagram=True,
+                                          group_id=group.id,
                                           separate=self.separate)
-        diagram.id = group.id
         if len(diagram.nodes) == 0:
             self.removeDiagramGroup(group.id)
             return
 
         self.setDiagramGroup(group.id, diagram)
         for node in diagram.traverse_nodes():
-            if node.id in self.uniqNodes:
-                self.uniqNodes[node.id].copyAttributes(node)
-                node = self.uniqNodes[node.id]
+            if node in self.nodeOrder:
                 self.adjustGroupOrder(node, diagram)
                 self.removeDiagramNode(node.id)
 
