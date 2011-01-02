@@ -40,59 +40,6 @@ class Element:
         return hash(self.id)
 
 
-class Diagram(Element):
-    def __init__(self):
-        Element.__init__(self, None)
-
-        self.separated = False
-        self.nodes = []
-        self.edges = []
-        self.rankdir = None
-        self.node_width = None
-        self.node_height = None
-        self.span_width = None
-        self.span_height = None
-        self.fontsize = None
-
-    def traverse_nodes(self):
-        for node in self.nodes:
-            if isinstance(node, NodeGroup):
-                for subnode in node.traverse_nodes():
-                    yield subnode
-                yield node
-            else:
-                yield node
-
-    def fixiate(self, fixiate_only_groups=False):
-        for node in self.nodes:
-            if isinstance(node, NodeGroup) and not node.group:
-                node.fixiate()
-
-    def setAttributes(self, attrs):
-        for attr in attrs:
-            value = unquote(attr.value)
-
-            if attr.name == 'rankdir':
-                if value.upper() == 'LR':
-                    self.rankdir = value.upper()
-                else:
-                    msg = "WARNING: unknown rankdir: %s\n" % value
-                    sys.stderr.write(msg)
-            elif attr.name == 'node_width':
-                self.node_width = int(value)
-            elif attr.name == 'node_height':
-                self.node_height = int(value)
-            elif attr.name == 'span_width':
-                self.span_width = int(value)
-            elif attr.name == 'span_height':
-                self.span_height = int(value)
-            elif attr.name == 'fontsize':
-                self.fontsize = int(value)
-            else:
-                msg = "Unknown node attribute: diagram.%s" % attr.name
-                raise AttributeError(msg)
-
-
 class DiagramNode(Element):
     basecolor = (255, 255, 255)
 
@@ -157,6 +104,108 @@ class DiagramNode(Element):
                 self.height = int(value)
             else:
                 msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
+                raise AttributeError(msg)
+
+
+class NodeGroup(Element):
+    basecolor = (255, 255, 255)
+
+    def __init__(self, id):
+        Element.__init__(self, id)
+
+        self.href = None
+        self.separated = False
+        self.rankdir = None
+        self.nodes = []
+        self.edges = []
+
+    def traverse_nodes(self):
+        for node in self.nodes:
+            if isinstance(node, NodeGroup):
+                for subnode in node.traverse_nodes():
+                    yield subnode
+                yield node
+            else:
+                yield node
+
+    def fixiate(self, fixiate_only_groups=False):
+        if self.separated:
+            self.width = 1
+            self.height = 1
+
+            return
+        elif len(self.nodes) > 0:
+            self.width = max(x.xy.x + x.width for x in self.nodes)
+            self.height = max(x.xy.y + x.height for x in self.nodes)
+
+        for node in self.nodes:
+            if node.group and node.group == self and \
+               fixiate_only_groups == False:
+                node.xy = XY(self.xy.x + node.xy.x,
+                             self.xy.y + node.xy.y)
+
+            if isinstance(node, NodeGroup):
+                node.fixiate(fixiate_only_groups)
+
+    def copyAttributes(self, other):
+        if other.xy:
+            self.xy = other.xy
+        if other.width:
+            self.width = other.width
+        if other.height:
+            self.height = other.height
+        if other.label:
+            self.label = other.label
+        if other.color and other.color != (243, 152, 0):
+            self.color = other.color
+        if other.separated:
+            self.separated = other.separated
+
+    def isOwned(self, node):
+        for n in self.traverse_nodes():
+            if node == n:
+                return True
+
+        return False
+
+
+class Diagram(NodeGroup):
+    def __init__(self):
+        NodeGroup.__init__(self, None)
+
+        self.node_width = None
+        self.node_height = None
+        self.span_width = None
+        self.span_height = None
+        self.fontsize = None
+
+    def fixiate(self, fixiate_only_groups=False):
+        for node in self.nodes:
+            if isinstance(node, NodeGroup) and not node.group:
+                node.fixiate()
+
+    def setAttributes(self, attrs):
+        for attr in attrs:
+            value = unquote(attr.value)
+
+            if attr.name == 'rankdir':
+                if value.upper() == 'LR':
+                    self.rankdir = value.upper()
+                else:
+                    msg = "WARNING: unknown rankdir: %s\n" % value
+                    sys.stderr.write(msg)
+            elif attr.name == 'node_width':
+                self.node_width = int(value)
+            elif attr.name == 'node_height':
+                self.node_height = int(value)
+            elif attr.name == 'span_width':
+                self.span_width = int(value)
+            elif attr.name == 'span_height':
+                self.span_height = int(value)
+            elif attr.name == 'fontsize':
+                self.fontsize = int(value)
+            else:
+                msg = "Unknown node attribute: diagram.%s" % attr.name
                 raise AttributeError(msg)
 
 
@@ -230,65 +279,3 @@ class DiagramEdge:
                     self.noweight = True
             else:
                 raise AttributeError("Unknown edge attribute: %s" % attr.name)
-
-
-class NodeGroup(Element):
-    basecolor = (255, 255, 255)
-
-    def __init__(self, id):
-        Element.__init__(self, id)
-
-        self.href = None
-        self.separated = False
-        self.rankdir = None
-        self.nodes = []
-        self.edges = []
-
-    def traverse_nodes(self):
-        for node in self.nodes:
-            if isinstance(node, NodeGroup):
-                for subnode in node.traverse_nodes():
-                    yield subnode
-                yield node
-            else:
-                yield node
-
-    def fixiate(self, fixiate_only_groups=False):
-        if self.separated:
-            self.width = 1
-            self.height = 1
-
-            return
-        elif len(self.nodes) > 0:
-            self.width = max(x.xy.x + x.width for x in self.nodes)
-            self.height = max(x.xy.y + x.height for x in self.nodes)
-
-        for node in self.nodes:
-            if node.group and node.group == self and \
-               fixiate_only_groups == False:
-                node.xy = XY(self.xy.x + node.xy.x,
-                             self.xy.y + node.xy.y)
-
-            if isinstance(node, NodeGroup):
-                node.fixiate(fixiate_only_groups)
-
-    def copyAttributes(self, other):
-        if other.xy:
-            self.xy = other.xy
-        if other.width:
-            self.width = other.width
-        if other.height:
-            self.height = other.height
-        if other.label:
-            self.label = other.label
-        if other.color and other.color != (243, 152, 0):
-            self.color = other.color
-        if other.separated:
-            self.separated = other.separated
-
-    def isOwned(self, node):
-        for n in self.traverse_nodes():
-            if node == n:
-                return True
-
-        return False
