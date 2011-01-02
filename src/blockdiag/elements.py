@@ -225,7 +225,7 @@ class DiagramEdge:
         self.dir = 'forward'
         self.color = None
         self.style = None
-        self.noweight = None
+        self.folded = None
 
     def copyAttributes(self, other):
         if other.label:
@@ -236,8 +236,8 @@ class DiagramEdge:
             self.color = other.color
         if other.style:
             self.style = other.style
-        if other.noweight:
-            self.noweight = other.noweight
+        if other.folded:
+            self.folded = other.folded
 
     def setAttributes(self, attrs):
         for attr in attrs:
@@ -270,17 +270,17 @@ class DiagramEdge:
                     msg = "WARNING: unknown edge style: %s\n" % style
                     sys.stderr.write(msg)
             elif attr.name == 'folded':
-                self.noweight = True
+                self.folded = True
             elif attr.name == 'nofolded':
-                self.noweight = False
+                self.folded = False
             elif attr.name == 'noweight':
                 msg = "WARNING: edge.noweight is obsoleted, " + \
                       "use edge.folded or edge.nofolded\n"
                 sys.stderr.write(msg)
 
                 if value.lower() == 'none':
-                    self.noweight = False
+                    self.folded = False
                 else:
-                    self.noweight = True
+                    self.folded = True
             else:
                 raise AttributeError("Unknown edge attribute: %s" % attr.name)

@@ -100,7 +100,7 @@ class ScreenNodeBuilder:
     def getRelatedNodes(self, node, parent=False, child=False):
         uniq = {}
         for edge in self.uniqLinks.values():
-            if edge.noweight:
+            if edge.folded:
                 continue
 
             if parent:
