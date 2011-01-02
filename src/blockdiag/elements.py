@@ -115,7 +115,6 @@ class NodeGroup(Element):
 
         self.href = None
         self.separated = False
-        self.rankdir = None
         self.nodes = []
         self.edges = []
 
@@ -200,13 +199,7 @@ class Diagram(NodeGroup):
         for attr in attrs:
             value = unquote(attr.value)
 
-            if attr.name == 'rankdir':
-                if value.upper() == 'LR':
-                    self.rankdir = value.upper()
-                else:
-                    msg = "WARNING: unknown rankdir: %s\n" % value
-                    sys.stderr.write(msg)
-            elif attr.name == 'node_width':
+            if attr.name == 'node_width':
                 self.node_width = int(value)
             elif attr.name == 'node_height':
                 self.node_height = int(value)
