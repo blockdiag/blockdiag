@@ -135,17 +135,10 @@ class DiagramMetrix:
     def edge(self, edge):
         return EdgeMetrix(edge, self)
 
-    def pageSize(self, nodelist):
-        x = 0
-        y = 0
-        for node in nodelist:
-            if x <= node.xy.x:
-                x = node.xy.x
-            if y <= node.xy.y:
-                y = node.xy.y
-
+    def pageSize(self, width, height):
         DummyNode = namedtuple('DummyNode', 'width height xy')
-        node = DummyNode(x + 1, y + 1, XY(0, 0))
+
+        node = DummyNode(width, height, XY(0, 0))
         xy = NodeMetrix(node, self).bottomRight()
         return XY(xy.x + self.pageMargin.x, xy.y + self.pageMargin.y)
 
