@@ -6,6 +6,13 @@ import re
 from utils.XY import XY
 
 
+def unquote(string):
+    if string:
+        return re.sub('(\A"|"\Z)', '', string, re.M)
+    else:
+        return string
+
+
 class Diagram:
     def __init__(self):
         self.separated = False
@@ -39,7 +46,7 @@ class Diagram:
 
     def setAttributes(self, attrs):
         for attr in attrs:
-            value = re.sub('(\A"|"\Z)', '', attr.value, re.M)
+            value = unquote(attr.value)
 
             if attr.name == 'rankdir':
                 if value.upper() == 'LR':
@@ -71,7 +78,7 @@ class DiagramNode:
         self.order = 0
 
         if id:
-            self.label = re.sub('(\A"|"\Z)', '', id, re.M)
+            self.label = unquote(id)
         else:
             self.label = ''
         self.color = (255, 255, 255)
@@ -113,7 +120,8 @@ class DiagramNode:
 
     def setAttributes(self, attrs):
         for attr in attrs:
-            value = re.sub('(\A"|"\Z)', '', attr.value, re.M)
+            value = unquote(attr.value)
+
             if attr.name == 'label':
                 self.label = value
             elif attr.name == 'color':
@@ -171,7 +179,8 @@ class DiagramEdge:
 
     def setAttributes(self, attrs):
         for attr in attrs:
-            value = re.sub('(\A"|"\Z)', '', attr.value, re.M)
+            value = unquote(attr.value)
+
             if attr.name == 'label':
                 self.label = value
             elif attr.name == 'dir':
