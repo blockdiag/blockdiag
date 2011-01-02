@@ -108,7 +108,7 @@ class DiagramNode(Element):
 
 
 class NodeGroup(Element):
-    basecolor = (255, 255, 255)
+    basecolor = (243, 152, 0)
 
     def __init__(self, id):
         Element.__init__(self, id)
