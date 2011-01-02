@@ -58,7 +58,7 @@ class DiagramNode(Element):
             self.xy = other.xy
         if other.label and other.id != other.label:
             self.label = other.label
-        if other.color and other.color != (255, 255, 255):
+        if other.color and other.color != self.__class__.basecolor:
             self.color = other.color
         if other.style:
             self.style = other.style
@@ -156,7 +156,7 @@ class NodeGroup(Element):
             self.height = other.height
         if other.label:
             self.label = other.label
-        if other.color and other.color != (243, 152, 0):
+        if other.color and other.color != self.__class__.basecolor:
             self.color = other.color
         if other.separated:
             self.separated = other.separated
