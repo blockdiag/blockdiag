@@ -39,6 +39,15 @@ class Element:
     def __hash__(self):
         return hash(self.id)
 
+    def __repr__(self):
+        class_name = self.__class__.__name__
+        nodeid = self.id
+        xy = str(self.xy)
+        addr = id(self)
+
+        format = "<%(class_name)s '%(nodeid)s' %(xy)s, at 0x%(addr)08x>"
+        return format % locals()
+
 
 class DiagramNode(Element):
     basecolor = (255, 255, 255)
@@ -238,6 +247,18 @@ class DiagramEdge:
         self.color = None
         self.style = None
         self.folded = None
+
+    def __repr__(self):
+        class_name = self.__class__.__name__
+        node1_id = self.node1.id
+        node1_xy = self.node1.xy
+        node2_id = self.node2.id
+        node2_xy = self.node2.xy
+        addr = id(self)
+
+        format = "<%(class_name)s '%(node1_id)s' %(node1_xy)s - " + \
+                 "'%(node2_id)s' %(node2_xy)s, at 0x%(addr)08x>"
+        return format % locals()
 
     def copyAttributes(self, other):
         if other.label:
