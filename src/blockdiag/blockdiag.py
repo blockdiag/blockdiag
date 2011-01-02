@@ -239,25 +239,26 @@ class ScreenNodeBuilder:
 
     def adjustNodeOrder(self):
         for node in self.nodeOrder:
-            parents = self.getParents(node)
-            if len(set(parents)) > 1:
-                for i in range(1, len(parents)):
-                    idx1 = self.nodeOrder.index(parents[i - 1])
-                    idx2 = self.nodeOrder.index(parents[i])
-                    if idx1 < idx2:
-                        self.nodeOrder.remove(parents[i])
-                        self.nodeOrder.insert(idx1 + 1, parents[i])
-                    else:
-                        self.nodeOrder.remove(parents[i - 1])
-                        self.nodeOrder.insert(idx2 + 1, parents[i - 1])
+            if not node.group:
+                parents = self.getParents(node)
+                if len(set(parents)) > 1:
+                    for i in range(1, len(parents)):
+                        idx1 = self.nodeOrder.index(parents[i - 1])
+                        idx2 = self.nodeOrder.index(parents[i])
+                        if idx1 < idx2:
+                            self.nodeOrder.remove(parents[i])
+                            self.nodeOrder.insert(idx1 + 1, parents[i])
+                        else:
+                            self.nodeOrder.remove(parents[i - 1])
+                            self.nodeOrder.insert(idx2 + 1, parents[i - 1])
 
-            if isinstance(node, NodeGroup):
-                nodes = [n for n in node.nodes if n in self.nodeOrder]
-                if nodes:
-                    idx = min(self.nodeOrder.index(n) for n in nodes)
-                    if idx < self.nodeOrder.index(node):
-                        self.nodeOrder.remove(node)
-                        self.nodeOrder.insert(idx + 1, node)
+                if isinstance(node, NodeGroup):
+                    nodes = [n for n in node.nodes if n in self.nodeOrder]
+                    if nodes:
+                        idx = min(self.nodeOrder.index(n) for n in nodes)
+                        if idx < self.nodeOrder.index(node):
+                            self.nodeOrder.remove(node)
+                            self.nodeOrder.insert(idx + 1, node)
 
         for i in range(len(self.nodeOrder)):
             self.nodeOrder[i].order = i

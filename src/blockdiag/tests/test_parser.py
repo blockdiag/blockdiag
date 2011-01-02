@@ -398,6 +398,15 @@ def test_group_order2_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_group_order3_diagram():
+    screen = __build_diagram('group_order3.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'D': (2, 1), 'E': (1, 2), 'Z': (0, 3)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
 def test_node_in_group_follows_outer_node_diagram():
     screen = __build_diagram('node_in_group_follows_outer_node.diag')
 
