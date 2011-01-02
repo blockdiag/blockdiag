@@ -37,6 +37,37 @@ class DiagramDraw(object):
             self.drawer = ImageDrawEx.ImageDrawEx(self.pageSize(),
                                                   self.scale_ratio)
 
+    @property
+    def nodes(self):
+        if self.diagram.separated:
+            seq = self.diagram.nodes
+        else:
+            seq = self.diagram.traverse_nodes()
+
+        for node in seq:
+            if node.drawable:
+                yield node
+
+    @property
+    def groups(self):
+        if self.diagram.separated:
+            seq = self.diagram.nodes
+        else:
+            seq = self.diagram.traverse_nodes(preorder=True)
+
+        for group in seq:
+            if not group.drawable:
+                yield group
+
+    @property
+    def edges(self):
+        for edge in self.diagram.edges:
+            yield edge
+
+        for group in self.groups:
+            for edge in group.edges:
+                yield edge
+
     def pageSize(self, scaled=False):
         if scaled:
             metrix = self.metrix
@@ -60,20 +91,20 @@ class DiagramDraw(object):
             pageSize = self.pageSize(scaled=True)
             self.drawer = self.drawer.resizeCanvas(pageSize)
 
-        for node in (x for x in self.diagram.nodes if x.drawable):
+        for node in self.nodes:
             self.node(node, **kwargs)
 
-        for node in (x for x in self.diagram.nodes if x.drawable == 0):
+        for node in self.groups:
             self.group_label(node, **kwargs)
 
-        for edge in self.diagram.edges:
+        for edge in self.edges:
             self.edge(edge)
 
-        for edge in (x for x in self.diagram.edges if x.label):
+        for edge in (x for x in self.edges if x.label):
             self.edge_label(edge)
 
     def _prepareEdges(self):
-        for edge in self.diagram.edges:
+        for edge in self.edges:
             m = self.metrix.edge(edge)
             dir = m.direction()
             if dir == 'right':
@@ -108,7 +139,7 @@ class DiagramDraw(object):
         # Search crosspoints
         from bisect import insort, bisect_left, bisect_right
 
-        lines = [(ed, ln) for ed in self.diagram.edges
+        lines = [(ed, ln) for ed in self.edges
                           for ln in self.metrix.edge(ed).shaft().lines()]
         ytree = []
         for i, (_, (st, ed)) in enumerate(lines):
@@ -140,7 +171,7 @@ class DiagramDraw(object):
         metrix = self.metrix.originalMetrix()
 
         # Draw node groups.
-        for node in (x for x in self.diagram.nodes if x.drawable == 0):
+        for node in self.groups:
             box = metrix.node(node).marginBox()
             if self.format == 'SVG' and node.href:
                 drawer = self.drawer.link(node.href)
@@ -149,7 +180,7 @@ class DiagramDraw(object):
                 self.drawer.rectangle(box, fill=node.color, filter='blur')
 
         # Drop node shadows.
-        for node in (x for x in self.diagram.nodes if x.drawable):
+        for node in self.nodes:
             box = metrix.node(node).shadowBox()
             self.drawer.rectangle(box, fill=self.shadow, filter='transp-blur')
 
