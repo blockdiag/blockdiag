@@ -4,6 +4,7 @@
 import os
 import re
 import sys
+import uuid
 from utils.XY import XY
 
 
@@ -20,6 +21,9 @@ class Element:
 
     @classmethod
     def get(self, id):
+        if not id:
+            id = uuid.uuid1()
+
         if id not in self.namespace:
             obj = self(id)
             self.namespace[id] = obj
