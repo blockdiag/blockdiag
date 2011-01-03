@@ -296,6 +296,13 @@ class ScreenNodeBuilder:
             if node in group.nodes:
                 node.group = group
 
+        for i, edge in enumerate(group.edges):
+            link = (edge.node1, edge.node2)
+            if link in self.uniqLinks:
+                self.uniqLinks[link].copyAttributes(edge)
+                group.edges[i] = self.uniqLinks[link]
+                del self.uniqLinks[link]
+
         if self.separate:
             diagram.separated = True
 
