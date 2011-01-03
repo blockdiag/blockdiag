@@ -55,23 +55,12 @@ class ScreenNodeBuilder:
 
             map[node.id] = 1
 
-    def setDiagramNode(self, id, node):
-        if node in self.nodeOrder:
-            index = self.nodeOrder.index(node)
-            self.nodeOrder[index] = node
-        else:
-            self.nodeOrder.append(node)
-
     def getDiagramNode(self, id):
         node = DiagramNode.get(id)
-        self.setDiagramNode(id, node)
+        if node not in self.nodeOrder:
+            self.nodeOrder.append(node)
 
         return node
-
-    def removeDiagramNode(self, id):
-        group = self.getDiagramNode(id)
-
-        self.nodeOrder.remove(group)
 
     def setDiagramGroup(self, id, group):
         if group in self.nodeOrder:
@@ -306,14 +295,14 @@ class ScreenNodeBuilder:
                                           group_id=group.id,
                                           separate=self.separate)
         if len(diagram.nodes) == 0:
-            self.removeDiagramGroup(group.id)
+            self.nodeOrder.remove(group)
             return
 
         self.setDiagramGroup(group.id, diagram)
         for node in diagram.traverse_nodes():
             if node in self.nodeOrder:
                 self.adjustGroupOrder(node, diagram)
-                self.removeDiagramNode(node.id)
+                self.nodeOrder.remove(node)
 
             if node in diagram.nodes:
                 index = diagram.nodes.index(node)
