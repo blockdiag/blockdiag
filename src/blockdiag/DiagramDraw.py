@@ -111,28 +111,28 @@ class DiagramDraw(object):
                 r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
                 for x in r:
                     xy = (x, edge.node1.xy.y)
-                    nodes = [x for x in self.diagram.nodes if x.xy == xy]
+                    nodes = [x for x in self.nodes if x.xy == xy]
                     if len(nodes) > 0:
                         edge.skipped = 1
             elif dir in ('right-up', 'right-down'):
                 r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
                 for x in r:
                     xy = (x, edge.node2.xy.y)
-                    nodes = [x for x in self.diagram.nodes if x.xy == xy]
+                    nodes = [x for x in self.nodes if x.xy == xy]
                     if len(nodes) > 0:
                         edge.skipped = 1
             elif dir in ('left-down', 'down'):
                 r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
                 for y in r:
                     xy = (edge.node1.xy.x, y)
-                    nodes = [x for x in self.diagram.nodes if x.xy == xy]
+                    nodes = [x for x in self.nodes if x.xy == xy]
                     if len(nodes) > 0:
                         edge.skipped = 1
             elif dir == 'up':
                 r = range(edge.node2.xy.y + 1, edge.node1.xy.y)
                 for y in r:
                     xy = (edge.node1.xy.x, y)
-                    nodes = [x for x in self.diagram.nodes if x.xy == xy]
+                    nodes = [x for x in self.nodes if x.xy == xy]
                     if len(nodes) > 0:
                         edge.skipped = 1
 
