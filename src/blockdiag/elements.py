@@ -186,6 +186,10 @@ class NodeGroup(Element):
             self.color = other.color
         if other.separated:
             self.separated = other.separated
+        if other.nodes:
+            self.nodes = other.nodes
+        if other.edges:
+            self.edges = other.edges
 
     def setAttributes(self, attrs):
         for attr in attrs:

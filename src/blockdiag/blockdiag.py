@@ -62,13 +62,6 @@ class ScreenNodeBuilder:
 
         return node
 
-    def setDiagramGroup(self, id, group):
-        if group in self.nodeOrder:
-            index = self.nodeOrder.index(group)
-            self.nodeOrder[index] = group
-        else:
-            self.nodeOrder.append(group)
-
     def getDiagramGroup(self, id):
         if id is None:
             # generate new id
@@ -77,14 +70,10 @@ class ScreenNodeBuilder:
             id = 'DiagramGroup %s' % id
 
         group = NodeGroup.get(id)
-        self.setDiagramGroup(id, group)
+        if group not in self.nodeOrder:
+            self.nodeOrder.append(group)
 
         return group
-
-    def removeDiagramGroup(self, id):
-        group = self.getDiagramGroup(id)
-
-        self.nodeOrder.remove(group)
 
     def getDiagramEdge(self, id1, id2, type=None):
         link = (self.getDiagramNode(id1), self.getDiagramNode(id2))
@@ -298,17 +287,14 @@ class ScreenNodeBuilder:
             self.nodeOrder.remove(group)
             return
 
-        self.setDiagramGroup(group.id, diagram)
-        for node in diagram.traverse_nodes():
+        group.copyAttributes(diagram)
+        for node in group.traverse_nodes():
             if node in self.nodeOrder:
-                self.adjustGroupOrder(node, diagram)
+                self.adjustGroupOrder(node, group)
                 self.nodeOrder.remove(node)
 
-            if node in diagram.nodes:
-                index = diagram.nodes.index(node)
-                diagram.nodes[index] = node
-
-                node.group = diagram
+            if node in group.nodes:
+                node.group = group
 
         if self.separate:
             diagram.separated = True
