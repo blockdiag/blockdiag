@@ -9,6 +9,7 @@ from nose.tools import assert_raises
 
 def __build_diagram(filename):
     DiagramNode.clear()
+    DiagramEdge.clear()
 
     import os
     testdir = os.path.dirname(__file__)

@@ -97,7 +97,10 @@ class DiagramDraw(object):
         for node in self.groups:
             self.group_label(node, **kwargs)
 
+        print '---'
         for edge in self.edges:
+            print edge
+            print edge.node1, edge.node2
             self.edge(edge)
 
         for edge in (x for x in self.edges if x.label):

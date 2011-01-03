@@ -253,6 +253,23 @@ class Diagram(NodeGroup):
 
 
 class DiagramEdge:
+    namespace = {}
+
+    @classmethod
+    def get(self, node1, node2):
+        if node1 not in self.namespace:
+            self.namespace[node1] = {}
+
+        if node2 not in self.namespace[node1]:
+            obj = self(node1, node2)
+            self.namespace[node1][node2] = obj
+
+        return self.namespace[node1][node2]
+
+    @classmethod
+    def clear(self):
+        self.namespace = {}
+
     def __init__(self, node1, node2):
         self.node1 = node1
         self.node2 = node2

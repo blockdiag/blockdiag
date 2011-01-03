@@ -81,7 +81,7 @@ class ScreenNodeBuilder:
         if link in self.uniqLinks:
             edge = self.uniqLinks[link]
         else:
-            edge = DiagramEdge(link[0], link[1])
+            edge = DiagramEdge.get(link[0], link[1])
             self.uniqLinks[link] = edge
 
         if type:
@@ -299,8 +299,6 @@ class ScreenNodeBuilder:
         for i, edge in enumerate(group.edges):
             link = (edge.node1, edge.node2)
             if link in self.uniqLinks:
-                self.uniqLinks[link].copyAttributes(edge)
-                group.edges[i] = self.uniqLinks[link]
                 del self.uniqLinks[link]
 
         if self.separate:
