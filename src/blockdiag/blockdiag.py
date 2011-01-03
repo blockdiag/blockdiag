@@ -22,7 +22,7 @@ class ScreenNodeBuilder:
     def __init__(self, subdiagram=False, group_id=None):
         self.subdiagram = subdiagram
         if self.subdiagram:
-            self.diagram = NodeGroup(group_id or uuid.uuid1())
+            self.diagram = NodeGroup.get(group_id)
         else:
             self.diagram = Diagram()
 
