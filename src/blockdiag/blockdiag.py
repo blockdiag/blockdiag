@@ -27,7 +27,12 @@ class DiagramTreeBuilder:
         else:
             return False
 
-    def belong_to(self, node, group, override=True):
+    def belong_to(self, node, group):
+        if node.group and node.group.level > group.level:
+            override = False
+        else:
+            override = True
+
         if node.group and node.group != group and override:
             if not self.is_related_group(node.group, group):
                 msg = "DiagramNode could not belong to two groups"
@@ -65,12 +70,12 @@ class DiagramTreeBuilder:
 
             elif isinstance(stmt, diagparser.Edge):
                 edge_from = DiagramNode.get(stmt.nodes.pop(0))
-                self.belong_to(edge_from, group, override=False)
+                self.belong_to(edge_from, group)
 
                 while len(stmt.nodes):
                     type, edge_to = stmt.nodes.pop(0)
                     edge_to = DiagramNode.get(edge_to)
-                    self.belong_to(edge_to, group, override=False)
+                    self.belong_to(edge_to, group)
 
                     edge = DiagramEdge.get(edge_from, edge_to)
                     if type:
