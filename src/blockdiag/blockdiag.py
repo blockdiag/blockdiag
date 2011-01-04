@@ -397,16 +397,6 @@ def main():
     tree = diagparser.parse_file(infile)
     diagram = ScreenNodeBuilder.build(tree, separate=options.separate)
 
-    print '----------------------------------'
-    print diagram
-    print '  ', diagram.nodes
-    print '  ', diagram.edges
-    for node in diagram.traverse_nodes(preorder=True):
-        if isinstance(node, NodeGroup):
-            print node
-            print '  ', node.nodes
-            print '  ', node.edges
-
     if options.separate:
         for i, node in enumerate(diagram.traverse_nodes()):
             if isinstance(node, NodeGroup):
