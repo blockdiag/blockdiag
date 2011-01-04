@@ -4,6 +4,7 @@
 import os
 import re
 import sys
+import copy
 import uuid
 from utils.XY import XY
 
@@ -81,26 +82,6 @@ class DiagramNode(Element):
         self.background = None
         self.description = None
         self.drawable = True
-
-    def copyAttributes(self, other):
-        if other.xy:
-            self.xy = other.xy
-        if other.label and other.id != other.label:
-            self.label = other.label
-        if other.color and other.color != self.__class__.basecolor:
-            self.color = other.color
-        if other.style:
-            self.style = other.style
-        if other.numbered:
-            self.numbered = other.numbered
-        if other.background:
-            self.background = other.background
-        if other.description:
-            self.description = other.description
-        if other.width:
-            self.width = other.width
-        if other.height:
-            self.height = other.height
 
     def setAttributes(self, attrs):
         for attr in attrs:
@@ -198,24 +179,6 @@ class NodeGroup(Element):
             if isinstance(node, NodeGroup):
                 node.fixiate(fixiate_only_groups)
 
-    def copyAttributes(self, other):
-        if other.xy:
-            self.xy = other.xy
-        if other.width:
-            self.width = other.width
-        if other.height:
-            self.height = other.height
-        if other.label:
-            self.label = other.label
-        if other.color and other.color != self.__class__.basecolor:
-            self.color = other.color
-        if other.separated:
-            self.separated = other.separated
-        if other.nodes:
-            self.nodes = other.nodes
-        if other.edges:
-            self.edges = other.edges
-
     def setAttributes(self, attrs):
         for attr in attrs:
             value = unquote(attr.value)
@@ -227,13 +190,6 @@ class NodeGroup(Element):
             else:
                 msg = "Unknown group attribute: group.%s" % attr.name
                 raise AttributeError(msg)
-
-    def isOwned(self, node):
-        for n in self.traverse_nodes():
-            if node == n:
-                return True
-
-        return False
 
 
 class Diagram(NodeGroup):
@@ -314,8 +270,7 @@ class DiagramEdge:
     def find_by_level(self, level):
         edges = []
         for e in self.find_all():
-            edge = self(e.node1, e.node2)
-            edge.copyAttributes(e)
+            edge = e.duplicate()
 
             if edge.node1.group.level < level:
                 continue
@@ -361,17 +316,8 @@ class DiagramEdge:
                  "'%(node2_id)s' %(node2_xy)s, at 0x%(addr)08x>"
         return format % locals()
 
-    def copyAttributes(self, other):
-        if other.label:
-            self.label = other.label
-        if other.dir and other.dir != 'forward':
-            self.dir = other.dir
-        if other.color:
-            self.color = other.color
-        if other.style:
-            self.style = other.style
-        if other.folded:
-            self.folded = other.folded
+    def duplicate(self):
+        return copy.copy(self)
 
     def setAttributes(self, attrs):
         for attr in attrs:
