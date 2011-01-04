@@ -53,7 +53,7 @@ class DiagramDraw(object):
         if self.diagram.separated:
             seq = self.diagram.nodes
         else:
-            seq = self.diagram.traverse_nodes(preorder=True)
+            seq = self.diagram.traverse_groups(preorder=True)
 
         for group in seq:
             if not group.drawable:
