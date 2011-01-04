@@ -17,15 +17,33 @@ import utils
 class DiagramTreeBuilder:
     def build(self, tree):
         diagram = self.instantiate(Diagram(), tree)
-        print '---'
-        for node in diagram.nodes:
-            print node.xy, node.id
 
         self.bind_edges(diagram)
         return diagram
 
+    def is_related_group(self, group1, group2):
+        gr = group1
+        while gr is not None:
+            if gr == group2:
+                return True
+
+            gr = gr.group
+
+        gr = group2
+        while gr is not None:
+            if gr == group1:
+                return True
+
+            gr = gr.group
+
+        return False
+
     def belong_to(self, node, group, override=True):
         if node.group and node.group != group and override:
+            if not self.is_related_group(node.group, group):
+                msg = "DiagramNode could not belong to two groups"
+                raise RuntimeError(msg)
+
             old_group = node.group
             old_group.nodes.remove(node)
             node.group = None
@@ -35,6 +53,10 @@ class DiagramTreeBuilder:
 
             if node not in group.nodes:
                 group.nodes.append(node)
+
+    def unbelong_to(self, node, group):
+        if node in group.nodes:
+            group.nodes.remove(node)
 
     def instantiate(self, group, tree):
         for stmt in tree.stmts:
@@ -61,9 +83,11 @@ class DiagramTreeBuilder:
 
             elif isinstance(stmt, diagparser.SubGraph):
                 subgroup = NodeGroup.get(stmt.id)
+                subgroup.level = group.level + 1
+                self.belong_to(subgroup, group)
                 self.instantiate(subgroup, stmt)
-                if subgroup.nodes:
-                    self.belong_to(subgroup, group)
+                if len(subgroup.nodes) == 0:
+                    self.unbelong_to(subgroup, group)
 
             elif isinstance(stmt, diagparser.DefAttrs):
                 group.setAttributes(stmt.attrs)
@@ -96,6 +120,7 @@ class DiagramLayoutManager:
         for group in self.diagram.traverse_groups():
             self.__class__(group).run()
 
+        self.edges = DiagramEdge.find_by_level(self.diagram.level)
         self.do_layout()
         self.diagram.fixiate(fixiate_only_groups=True)
 
@@ -114,7 +139,7 @@ class DiagramLayoutManager:
 
     def getRelatedNodes(self, node, parent=False, child=False):
         uniq = {}
-        for edge in self.diagram.edges:
+        for edge in self.edges:
             if edge.folded:
                 continue
 
@@ -128,6 +153,18 @@ class DiagramLayoutManager:
                     uniq[edge.node2] = 1
                 elif edge.node1.group and edge.node1.group.id == node.id:
                     uniq[edge.node2] = 1
+
+        if isinstance(node, NodeGroup):
+            for group in node.traverse_groups():
+                for edge in group.edges:
+                    if edge.folded:
+                        continue
+
+                    if parent:
+                        pass
+                    elif child:
+                        if edge.node2.group == self.diagram:
+                            uniq[edge.node2] = 1
 
         related = []
         for uniq_node in uniq.keys():
@@ -719,9 +756,7 @@ def main():
     fontpath = detectfont(options)
 
     tree = diagparser.parse_file(infile)
-    diagram = DiagramTreeBuilder().build(tree)
-    DiagramLayoutManager(diagram).run()
-    diagram.fixiate()
+    diagram = ScreenNodeBuilder.build(tree, separate=options.separate)
 
     print '----------------------------------'
     print diagram
@@ -732,9 +767,6 @@ def main():
             print node
             print '  ', node.nodes
             print '  ', node.edges
-    #exit(0)
-
-    #diagram = ScreenNodeBuilder.build(tree, separate=options.separate)
 
     if options.separate:
         for i, node in enumerate(diagram.traverse_nodes()):

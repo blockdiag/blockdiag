@@ -64,7 +64,8 @@ class Element:
         height = self.height
         addr = id(self)
 
-        format = "<%(class_name)s '%(nodeid)s' %(xy)s %(width)dx%(height)d at 0x%(addr)08x>"
+        format = "<%(class_name)s '%(nodeid)s' %(xy)s " + \
+                 "%(width)dx%(height)d at 0x%(addr)08x>"
         return format % locals()
 
 
@@ -142,6 +143,7 @@ class NodeGroup(Element):
         Element.__init__(self, id)
 
         self.href = None
+        self.level = 0
         self.separated = False
         self.nodes = []
         self.edges = []
@@ -288,6 +290,35 @@ class DiagramEdge:
             return []
 
         return self.namespace[node1][node2]
+
+    @classmethod
+    def find_all(self):
+        for v1 in self.namespace.values():
+            for v2 in v1.values():
+                yield v2
+
+    @classmethod
+    def find_by_level(self, level):
+        edges = []
+        for e in self.find_all():
+            edge = self(e.node1, e.node2)
+            edge.copyAttributes(e)
+
+            if edge.node1.group.level < level:
+                continue
+            else:
+                while edge.node1.group.level != level:
+                    edge.node1 = edge.node1.group
+
+            if edge.node2.group.level < level:
+                continue
+            else:
+                while edge.node2.group.level != level:
+                    edge.node2 = edge.node2.group
+
+            edges.append(edge)
+
+        return edges
 
     @classmethod
     def clear(self):
