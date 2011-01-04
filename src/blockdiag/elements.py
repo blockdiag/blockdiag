@@ -142,6 +142,10 @@ class NodeGroup(Element):
 
             return group
 
+    def is_parent(self, other):
+        parent = self.parent(other.level)
+        return parent == other
+
     def traverse_nodes(self, preorder=False):
         for node in self.nodes:
             if isinstance(node, NodeGroup):
