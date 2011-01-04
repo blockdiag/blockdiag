@@ -22,21 +22,10 @@ class DiagramTreeBuilder:
         return diagram
 
     def is_related_group(self, group1, group2):
-        gr = group1
-        while gr is not None:
-            if gr == group2:
-                return True
-
-            gr = gr.group
-
-        gr = group2
-        while gr is not None:
-            if gr == group1:
-                return True
-
-            gr = gr.group
-
-        return False
+        if group1.is_parent(group2) or group2.is_parent(group1):
+            return True
+        else:
+            return False
 
     def belong_to(self, node, group, override=True):
         if node.group and node.group != group and override:
