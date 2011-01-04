@@ -148,6 +148,19 @@ class NodeGroup(Element):
         self.nodes = []
         self.edges = []
 
+    def parent(self, level=None):
+        if level is None:
+            return self.group
+        else:
+            if self.level < level:
+                return None
+
+            group = self
+            while group.level != level:
+                group = group.group
+
+            return group
+
     def traverse_nodes(self, preorder=False):
         for node in self.nodes:
             if isinstance(node, NodeGroup):

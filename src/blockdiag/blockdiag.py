@@ -45,6 +45,15 @@ class DiagramTreeBuilder:
                 raise RuntimeError(msg)
 
             old_group = node.group
+
+            parent = group.parent(old_group.level + 1)
+            if parent:
+                if parent in old_group.nodes:
+                    old_group.nodes.remove(parent)
+
+                index = old_group.nodes.index(node)
+                old_group.nodes.insert(index + 1, parent)
+
             old_group.nodes.remove(node)
             node.group = None
 
@@ -143,34 +152,15 @@ class DiagramLayoutManager:
             if edge.folded:
                 continue
 
-            if parent:
-                if edge.node2.id == node.id:
-                    uniq[edge.node1] = 1
-                elif edge.node2.group and edge.node2.group.id == node.id:
-                    uniq[edge.node1] = 1
-            elif child:
-                if edge.node1.id == node.id:
-                    uniq[edge.node2] = 1
-                elif edge.node1.group and edge.node1.group.id == node.id:
-                    uniq[edge.node2] = 1
-
-        if isinstance(node, NodeGroup):
-            for group in node.traverse_groups():
-                for edge in group.edges:
-                    if edge.folded:
-                        continue
-
-                    if parent:
-                        pass
-                    elif child:
-                        if edge.node2.group == self.diagram:
-                            uniq[edge.node2] = 1
+            if parent and edge.node2 == node:
+                uniq[edge.node1] = 1
+            elif child and edge.node1 == node:
+                uniq[edge.node2] = 1
 
         related = []
         for uniq_node in uniq.keys():
-            if uniq_node.group and node.group != uniq_node.group:
-                if node != uniq_node.group:
-                    related.append(uniq_node.group)
+            if uniq_node == node:
+                pass
             else:
                 related.append(uniq_node)
 
@@ -270,8 +260,8 @@ class DiagramLayoutManager:
                         self.diagram.nodes.remove(node)
                         self.diagram.nodes.insert(idx + 1, node)
 
-        for i in range(len(self.diagram.nodes)):
-            self.diagram.nodes[i].order = i
+        for i, node in enumerate(self.diagram.nodes):
+            node.order = i
 
     def markXY(self, xy, width, height):
         for w in range(width):
