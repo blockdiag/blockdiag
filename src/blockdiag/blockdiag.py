@@ -93,9 +93,7 @@ class DiagramTreeBuilder:
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))
 
-        for i, node in enumerate(group.nodes):
-            node.order = i
-
+        group.update_order()
         return group
 
     def bind_edges(self, group):
@@ -249,8 +247,7 @@ class DiagramLayoutManager:
                         self.diagram.nodes.remove(node)
                         self.diagram.nodes.insert(idx + 1, node)
 
-        for i, node in enumerate(self.diagram.nodes):
-            node.order = i
+        self.diagram.update_order()
 
     def markXY(self, xy, width, height):
         for w in range(width):

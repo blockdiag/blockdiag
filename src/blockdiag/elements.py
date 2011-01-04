@@ -183,6 +183,10 @@ class NodeGroup(Element):
             if isinstance(node, NodeGroup):
                 node.fixiate(fixiate_only_groups)
 
+    def update_order(self):
+        for i, node in enumerate(self.nodes):
+            node.order = i
+
     def setAttributes(self, attrs):
         for attr in attrs:
             value = unquote(attr.value)
