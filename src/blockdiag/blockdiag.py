@@ -14,7 +14,278 @@ from utils.XY import XY
 import utils
 
 
+class DiagramTreeBuilder:
+    def build(self, tree):
+        diagram = self.instantiate(Diagram(), tree)
+        print '---'
+        for node in diagram.nodes:
+            print node.xy, node.id
+
+        self.bind_edges(diagram)
+        return diagram
+
+    def belong_to(self, node, group, override=True):
+        if node.group and node.group != group and override:
+            old_group = node.group
+            old_group.nodes.remove(node)
+            node.group = None
+
+        if node.group is None:
+            node.group = group
+
+            if node not in group.nodes:
+                group.nodes.append(node)
+
+    def instantiate(self, group, tree):
+        for stmt in tree.stmts:
+            if isinstance(stmt, diagparser.Node):
+                node = DiagramNode.get(stmt.id)
+                node.setAttributes(stmt.attrs)
+                self.belong_to(node, group)
+
+            elif isinstance(stmt, diagparser.Edge):
+                edge_from = DiagramNode.get(stmt.nodes.pop(0))
+                self.belong_to(edge_from, group, override=False)
+
+                while len(stmt.nodes):
+                    type, edge_to = stmt.nodes.pop(0)
+                    edge_to = DiagramNode.get(edge_to)
+                    self.belong_to(edge_to, group, override=False)
+
+                    edge = DiagramEdge.get(edge_from, edge_to)
+                    if type:
+                        edge.setAttributes([diagparser.Attr('dir', type)])
+                    edge.setAttributes(stmt.attrs)
+
+                    edge_from = edge_to
+
+            elif isinstance(stmt, diagparser.SubGraph):
+                subgroup = NodeGroup.get(stmt.id)
+                self.instantiate(subgroup, stmt)
+                if subgroup.nodes:
+                    self.belong_to(subgroup, group)
+
+            elif isinstance(stmt, diagparser.DefAttrs):
+                group.setAttributes(stmt.attrs)
+
+            else:
+                raise AttributeError("Unknown sentense: " + str(type(stmt)))
+
+        for i, node in enumerate(group.nodes):
+            node.order = i
+
+        return group
+
+    def bind_edges(self, group):
+        for node in group.nodes:
+            if isinstance(node, DiagramNode):
+                group.edges += DiagramEdge.find(node)
+            else:
+                self.bind_edges(node)
+
+
+class DiagramLayoutManager:
+    def __init__(self, diagram):
+        self.diagram = diagram
+
+        self.circulars = []
+        self.heightRefs = []
+        self.coordinates = []
+
+    def run(self):
+        for group in self.diagram.traverse_groups():
+            self.__class__(group).run()
+
+        self.do_layout()
+        self.diagram.fixiate(fixiate_only_groups=True)
+
+    def do_layout(self):
+        self.detectCirculars()
+
+        self.setNodeWidth()
+        self.adjustNodeOrder()
+
+        height = 0
+        toplevel_nodes = [x for x in self.diagram.nodes if x.xy.x == 0]
+        for node in self.diagram.nodes:
+            if node.xy.x == 0:
+                self.setNodeHeight(node, height)
+                height = max(xy.y for xy in self.coordinates) + 1
+
+    def getRelatedNodes(self, node, parent=False, child=False):
+        uniq = {}
+        for edge in self.diagram.edges:
+            if edge.folded:
+                continue
+
+            if parent:
+                if edge.node2.id == node.id:
+                    uniq[edge.node1] = 1
+                elif edge.node2.group and edge.node2.group.id == node.id:
+                    uniq[edge.node1] = 1
+            elif child:
+                if edge.node1.id == node.id:
+                    uniq[edge.node2] = 1
+                elif edge.node1.group and edge.node1.group.id == node.id:
+                    uniq[edge.node2] = 1
+
+        related = []
+        for uniq_node in uniq.keys():
+            if uniq_node.group and node.group != uniq_node.group:
+                if node != uniq_node.group:
+                    related.append(uniq_node.group)
+            else:
+                related.append(uniq_node)
+
+        related.sort(lambda x, y: cmp(x.order, y.order))
+        return related
+
+    def getParents(self, node):
+        return self.getRelatedNodes(node, parent=True)
+
+    def getChildren(self, node):
+        return self.getRelatedNodes(node, child=True)
+
+    def detectCirculars(self):
+        for node in self.diagram.nodes:
+            if not [x for x in self.circulars if node in x]:
+                self.detectCircularsSub(node, [node])
+
+        # remove part of other circular
+        for c1 in self.circulars:
+            for c2 in self.circulars:
+                intersect = set(c1) & set(c2)
+
+                if c1 != c2 and set(c1) == intersect:
+                    self.circulars.remove(c1)
+                    break
+
+    def detectCircularsSub(self, node, parents):
+        for child in self.getChildren(node):
+            if child in parents:
+                i = parents.index(child)
+                self.circulars.append(parents[i:])
+            else:
+                self.detectCircularsSub(child, parents + [child])
+
+    def isCircularRef(self, node1, node2):
+        for circular in self.circulars:
+            if node1 in circular and node2 in circular:
+                parents = []
+                for node in circular:
+                    for parent in self.getParents(node):
+                        if not parent in circular:
+                            parents.append(parent)
+
+                parents.sort(lambda x, y: cmp(x.order, y.order))
+
+                for parent in parents:
+                    children = self.getChildren(parent)
+                    if node1 in children and node2 in children:
+                        if circular.index(node1) > circular.index(node2):
+                            return True
+                    elif node2 in children:
+                        return True
+                    elif node1 in children:
+                        return False
+                else:
+                    if circular.index(node1) > circular.index(node2):
+                        return True
+
+        return False
+
+    def setNodeWidth(self, depth=0):
+        for node in self.diagram.nodes:
+            if node.xy.x != depth:
+                continue
+
+            for child in self.getChildren(node):
+                if self.isCircularRef(node, child):
+                    pass
+                elif node == child:
+                    pass
+                else:
+                    child.xy = XY(node.xy.x + node.width, 0)
+
+        depther_node = [x for x in self.diagram.nodes if x.xy.x > depth]
+        if len(depther_node) > 0:
+            self.setNodeWidth(depth + 1)
+
+    def adjustNodeOrder(self):
+        for node in self.diagram.nodes:
+            parents = self.getParents(node)
+            if len(set(parents)) > 1:
+                for i in range(1, len(parents)):
+                    idx1 = self.diagram.nodes.index(parents[i - 1])
+                    idx2 = self.diagram.nodes.index(parents[i])
+                    if idx1 < idx2:
+                        self.diagram.nodes.remove(parents[i])
+                        self.diagram.nodes.insert(idx1 + 1, parents[i])
+                    else:
+                        self.diagram.nodes.remove(parents[i - 1])
+                        self.diagram.nodes.insert(idx2 + 1, parents[i - 1])
+
+            if isinstance(node, NodeGroup):
+                nodes = [n for n in node.nodes if n in self.diagram.nodes]
+                if nodes:
+                    idx = min(self.diagram.nodes.index(n) for n in nodes)
+                    if idx < self.diagram.nodes.index(node):
+                        self.diagram.nodes.remove(node)
+                        self.diagram.nodes.insert(idx + 1, node)
+
+        for i in range(len(self.diagram.nodes)):
+            self.diagram.nodes[i].order = i
+
+    def markXY(self, xy, width, height):
+        for w in range(width):
+            for h in range(height):
+                self.coordinates.append(XY(xy.x + w, xy.y + h))
+
+    def setNodeHeight(self, node, height=0):
+        xy = XY(node.xy.x, height)
+        if xy in self.coordinates:
+            return False
+        node.xy = xy
+        self.markXY(node.xy, node.width, node.height)
+
+        count = 0
+        children = self.getChildren(node)
+        children.sort(lambda x, y: cmp(x.xy.x, y.xy.y))
+        for child in children:
+            if child.id in self.heightRefs:
+                pass
+            elif node is not None and node.xy.x >= child.xy.x:
+                pass
+            else:
+                while True:
+                    if self.setNodeHeight(child, height):
+                        child.xy = XY(child.xy.x, height)
+                        self.markXY(child.xy, child.width, child.height)
+                        self.heightRefs.append(child.id)
+
+                        count += 1
+                        break
+                    else:
+                        if count == 0:
+                            return False
+
+                        height += 1
+
+                height += 1
+
+        return True
+
+
 class ScreenNodeBuilder:
+    @classmethod
+    def build(klass, tree, subdiagram=False, group_id=None, separate=False):
+        diagram = DiagramTreeBuilder().build(tree)
+        DiagramLayoutManager(diagram).run()
+        diagram.fixiate()
+        return diagram
+
+
+class ScreenNodeBuilder2:
     @classmethod
     def build(klass, tree, subdiagram=False, group_id=None, separate=False):
         return klass(subdiagram, group_id)._build(tree, separate)
@@ -448,7 +719,22 @@ def main():
     fontpath = detectfont(options)
 
     tree = diagparser.parse_file(infile)
-    diagram = ScreenNodeBuilder.build(tree, separate=options.separate)
+    diagram = DiagramTreeBuilder().build(tree)
+    DiagramLayoutManager(diagram).run()
+    diagram.fixiate()
+
+    print '----------------------------------'
+    print diagram
+    print '  ', diagram.nodes
+    print '  ', diagram.edges
+    for node in diagram.traverse_nodes(preorder=True):
+        if isinstance(node, NodeGroup):
+            print node
+            print '  ', node.nodes
+            print '  ', node.edges
+    #exit(0)
+
+    #diagram = ScreenNodeBuilder.build(tree, separate=options.separate)
 
     if options.separate:
         for i, node in enumerate(diagram.traverse_nodes()):
