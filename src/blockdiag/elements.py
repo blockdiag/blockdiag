@@ -165,7 +165,7 @@ class NodeGroup(Element):
             if isinstance(node, NodeGroup):
                 yield node
 
-    def fixiate(self, fixiate_only_groups=False):
+    def fixiate(self):
         if self.separated:
             self.width = 1
             self.height = 1
@@ -176,12 +176,11 @@ class NodeGroup(Element):
             self.height = max(x.xy.y + x.height for x in self.nodes)
 
         for node in self.nodes:
-            if node.group and fixiate_only_groups == False:
-                node.xy = XY(self.xy.x + node.xy.x,
-                             self.xy.y + node.xy.y)
+            node.xy = XY(self.xy.x + node.xy.x,
+                         self.xy.y + node.xy.y)
 
             if isinstance(node, NodeGroup):
-                node.fixiate(fixiate_only_groups)
+                node.fixiate()
 
     def update_order(self):
         for i, node in enumerate(self.nodes):
@@ -209,18 +208,6 @@ class Diagram(NodeGroup):
         self.span_width = None
         self.span_height = None
         self.fontsize = None
-
-    def fixiate(self, fixiate_only_groups=False):
-        if len(self.nodes) > 0:
-            self.width = max(x.xy.x + x.width for x in self.nodes)
-            self.height = max(x.xy.y + x.height for x in self.nodes)
-        else:
-            self.width = 1
-            self.height = 1
-
-        for node in self.nodes:
-            if isinstance(node, NodeGroup):
-                node.fixiate(fixiate_only_groups)
 
     def setAttributes(self, attrs):
         for attr in attrs:
