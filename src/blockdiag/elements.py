@@ -60,9 +60,11 @@ class Element:
         class_name = self.__class__.__name__
         nodeid = self.id
         xy = str(self.xy)
+        width = self.width
+        height = self.height
         addr = id(self)
 
-        format = "<%(class_name)s '%(nodeid)s' %(xy)s, at 0x%(addr)08x>"
+        format = "<%(class_name)s '%(nodeid)s' %(xy)s %(width)dx%(height)d at 0x%(addr)08x>"
         return format % locals()
 
 
@@ -158,6 +160,11 @@ class NodeGroup(Element):
             else:
                 yield node
 
+    def traverse_groups(self, preorder=False):
+        for node in self.traverse_nodes(preorder=preorder):
+            if isinstance(node, NodeGroup):
+                yield node
+
     def fixiate(self, fixiate_only_groups=False):
         if self.separated:
             self.width = 1
@@ -169,8 +176,7 @@ class NodeGroup(Element):
             self.height = max(x.xy.y + x.height for x in self.nodes)
 
         for node in self.nodes:
-            if node.group and node.group == self and \
-               fixiate_only_groups == False:
+            if node.group and fixiate_only_groups == False:
                 node.xy = XY(self.xy.x + node.xy.x,
                              self.xy.y + node.xy.y)
 
@@ -234,8 +240,8 @@ class Diagram(NodeGroup):
             self.height = 1
 
         for node in self.nodes:
-            if isinstance(node, NodeGroup) and not node.group:
-                node.fixiate()
+            if isinstance(node, NodeGroup):
+                node.fixiate(fixiate_only_groups)
 
     def setAttributes(self, attrs):
         for attr in attrs:
@@ -267,6 +273,19 @@ class DiagramEdge:
         if node2 not in self.namespace[node1]:
             obj = self(node1, node2)
             self.namespace[node1][node2] = obj
+
+        return self.namespace[node1][node2]
+
+    @classmethod
+    def find(self, node1, node2=None):
+        if node1 not in self.namespace:
+            return []
+
+        if node2 is None:
+            return self.namespace[node1].values()
+
+        if node2 not in self.namespace[node1]:
+            return []
 
         return self.namespace[node1][node2]
 
