@@ -398,16 +398,15 @@ def main():
     diagram = ScreenNodeBuilder.build(tree, separate=options.separate)
 
     if options.separate:
-        for i, node in enumerate(diagram.traverse_nodes()):
-            if isinstance(node, NodeGroup):
-                draw = DiagramDraw.DiagramDraw(options.type, node,
-                                               font=fontpath,
-                                               basediagram=diagram,
-                                               antialias=options.antialias)
-                draw.draw()
-                outfile2 = re.sub('.svg$', '_%d.svg' % i, outfile)
-                draw.save(outfile2)
-                node.href = './%s' % os.path.basename(outfile2)
+        for i, node in enumerate(diagram.traverse_groups()):
+            draw = DiagramDraw.DiagramDraw(options.type, node,
+                                           font=fontpath,
+                                           basediagram=diagram,
+                                           antialias=options.antialias)
+            draw.draw()
+            outfile2 = re.sub('.svg$', '_%d.svg' % i, outfile)
+            draw.save(outfile2)
+            node.href = './%s' % os.path.basename(outfile2)
 
     draw = DiagramDraw.DiagramDraw(options.type, diagram, font=fontpath,
                                    antialias=options.antialias)
