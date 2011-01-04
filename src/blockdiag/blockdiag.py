@@ -118,7 +118,7 @@ class DiagramLayoutManager:
 
         self.edges = DiagramEdge.find_by_level(self.diagram.level)
         self.do_layout()
-        self.diagram.fixiate(fixiate_only_groups=True)
+        self.diagram.fixiate()
 
     def do_layout(self):
         self.detectCirculars()
@@ -294,7 +294,6 @@ class ScreenNodeBuilder:
     def build(klass, tree, subdiagram=False, group_id=None, separate=False):
         diagram = DiagramTreeBuilder().build(tree)
         DiagramLayoutManager(diagram).run()
-        diagram.fixiate()
         return diagram
 
 
