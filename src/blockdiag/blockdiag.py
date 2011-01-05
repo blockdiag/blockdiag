@@ -126,19 +126,19 @@ class DiagramLayoutManager:
         self.diagram.fixiate()
 
     def do_layout(self):
-        self.detectCirculars()
+        self.detect_circulars()
 
-        self.setNodeWidth()
-        self.adjustNodeOrder()
+        self.set_node_width()
+        self.adjust_node_order()
 
         height = 0
         toplevel_nodes = [x for x in self.diagram.nodes if x.xy.x == 0]
         for node in self.diagram.nodes:
             if node.xy.x == 0:
-                self.setNodeHeight(node, height)
+                self.set_node_height(node, height)
                 height = max(xy.y for xy in self.coordinates) + 1
 
-    def getRelatedNodes(self, node, parent=False, child=False):
+    def get_related_nodes(self, node, parent=False, child=False):
         uniq = {}
         for edge in self.edges:
             if edge.folded:
@@ -161,16 +161,16 @@ class DiagramLayoutManager:
         related.sort(lambda x, y: cmp(x.order, y.order))
         return related
 
-    def getParents(self, node):
-        return self.getRelatedNodes(node, parent=True)
+    def get_parent_nodes(self, node):
+        return self.get_related_nodes(node, parent=True)
 
-    def getChildren(self, node):
-        return self.getRelatedNodes(node, child=True)
+    def get_child_nodes(self, node):
+        return self.get_related_nodes(node, child=True)
 
-    def detectCirculars(self):
+    def detect_circulars(self):
         for node in self.diagram.nodes:
             if not [x for x in self.circulars if node in x]:
-                self.detectCircularsSub(node, [node])
+                self.detect_circulars_sub(node, [node])
 
         # remove part of other circular
         for c1 in self.circulars:
@@ -181,27 +181,27 @@ class DiagramLayoutManager:
                     self.circulars.remove(c1)
                     break
 
-    def detectCircularsSub(self, node, parents):
-        for child in self.getChildren(node):
+    def detect_circulars_sub(self, node, parents):
+        for child in self.get_child_nodes(node):
             if child in parents:
                 i = parents.index(child)
                 self.circulars.append(parents[i:])
             else:
-                self.detectCircularsSub(child, parents + [child])
+                self.detect_circulars_sub(child, parents + [child])
 
-    def isCircularRef(self, node1, node2):
+    def is_circular_ref(self, node1, node2):
         for circular in self.circulars:
             if node1 in circular and node2 in circular:
                 parents = []
                 for node in circular:
-                    for parent in self.getParents(node):
+                    for parent in self.get_parent_nodes(node):
                         if not parent in circular:
                             parents.append(parent)
 
                 parents.sort(lambda x, y: cmp(x.order, y.order))
 
                 for parent in parents:
-                    children = self.getChildren(parent)
+                    children = self.get_child_nodes(parent)
                     if node1 in children and node2 in children:
                         if circular.index(node1) > circular.index(node2):
                             return True
@@ -215,13 +215,13 @@ class DiagramLayoutManager:
 
         return False
 
-    def setNodeWidth(self, depth=0):
+    def set_node_width(self, depth=0):
         for node in self.diagram.nodes:
             if node.xy.x != depth:
                 continue
 
-            for child in self.getChildren(node):
-                if self.isCircularRef(node, child):
+            for child in self.get_child_nodes(node):
+                if self.is_circular_ref(node, child):
                     pass
                 elif node == child:
                     pass
@@ -230,11 +230,11 @@ class DiagramLayoutManager:
 
         depther_node = [x for x in self.diagram.nodes if x.xy.x > depth]
         if len(depther_node) > 0:
-            self.setNodeWidth(depth + 1)
+            self.set_node_width(depth + 1)
 
-    def adjustNodeOrder(self):
+    def adjust_node_order(self):
         for node in self.diagram.nodes:
-            parents = self.getParents(node)
+            parents = self.get_parent_nodes(node)
             if len(set(parents)) > 1:
                 for i in range(1, len(parents)):
                     idx1 = self.diagram.nodes.index(parents[i - 1])
@@ -256,20 +256,20 @@ class DiagramLayoutManager:
 
         self.diagram.update_order()
 
-    def markXY(self, xy, width, height):
+    def mark_xy(self, xy, width, height):
         for w in range(width):
             for h in range(height):
                 self.coordinates.append(XY(xy.x + w, xy.y + h))
 
-    def setNodeHeight(self, node, height=0):
+    def set_node_height(self, node, height=0):
         xy = XY(node.xy.x, height)
         if xy in self.coordinates:
             return False
         node.xy = xy
-        self.markXY(node.xy, node.width, node.height)
+        self.mark_xy(node.xy, node.width, node.height)
 
         count = 0
-        children = self.getChildren(node)
+        children = self.get_child_nodes(node)
         children.sort(lambda x, y: cmp(x.xy.x, y.xy.y))
         for child in children:
             if child.id in self.heightRefs:
@@ -278,9 +278,9 @@ class DiagramLayoutManager:
                 pass
             else:
                 while True:
-                    if self.setNodeHeight(child, height):
+                    if self.set_node_height(child, height):
                         child.xy = XY(child.xy.x, height)
-                        self.markXY(child.xy, child.width, child.height)
+                        self.mark_xy(child.xy, child.width, child.height)
                         self.heightRefs.append(child.id)
 
                         count += 1
