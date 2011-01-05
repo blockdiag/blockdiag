@@ -165,7 +165,7 @@ class NodeGroup(Element):
             if isinstance(node, NodeGroup):
                 yield node
 
-    def fixiate(self):
+    def fixiate(self, fixiate_nodes=False):
         if self.separated:
             self.width = 1
             self.height = 1
@@ -176,11 +176,12 @@ class NodeGroup(Element):
             self.height = max(x.xy.y + x.height for x in self.nodes)
 
         for node in self.nodes:
-            node.xy = XY(self.xy.x + node.xy.x,
-                         self.xy.y + node.xy.y)
+            if fixiate_nodes:
+                node.xy = XY(self.xy.x + node.xy.x,
+                             self.xy.y + node.xy.y)
 
             if isinstance(node, NodeGroup):
-                node.fixiate()
+                node.fixiate(fixiate_nodes)
 
     def update_order(self):
         for i, node in enumerate(self.nodes):
