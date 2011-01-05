@@ -153,6 +153,8 @@ class DiagramLayoutManager:
         for uniq_node in uniq.keys():
             if uniq_node == node:
                 pass
+            elif uniq_node.group != node.group:
+                pass
             else:
                 related.append(uniq_node)
 
@@ -299,6 +301,7 @@ class ScreenNodeBuilder:
     def build(klass, tree, subdiagram=False, group_id=None, separate=False):
         diagram = DiagramTreeBuilder().build(tree)
         DiagramLayoutManager(diagram).run()
+        diagram.fixiate(True)
         return diagram
 
 
