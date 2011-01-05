@@ -21,19 +21,19 @@ class Element:
     namespace = {}
 
     @classmethod
-    def get(self, id):
+    def get(cls, id):
         if not id:
             id = uuid.uuid1()
 
-        if id not in self.namespace:
-            obj = self(id)
-            self.namespace[id] = obj
+        if id not in cls.namespace:
+            obj = cls(id)
+            cls.namespace[id] = obj
 
-        return self.namespace[id]
+        return cls.namespace[id]
 
     @classmethod
-    def clear(self):
-        self.namespace = {}
+    def clear(cls):
+        cls.namespace = {}
 
     def __init__(self, id):
         self.id = id
@@ -233,39 +233,39 @@ class DiagramEdge:
     namespace = {}
 
     @classmethod
-    def get(self, node1, node2):
-        if node1 not in self.namespace:
-            self.namespace[node1] = {}
+    def get(cls, node1, node2):
+        if node1 not in cls.namespace:
+            cls.namespace[node1] = {}
 
-        if node2 not in self.namespace[node1]:
-            obj = self(node1, node2)
-            self.namespace[node1][node2] = obj
+        if node2 not in cls.namespace[node1]:
+            obj = cls(node1, node2)
+            cls.namespace[node1][node2] = obj
 
-        return self.namespace[node1][node2]
+        return cls.namespace[node1][node2]
 
     @classmethod
-    def find(self, node1, node2=None):
-        if node1 not in self.namespace:
+    def find(cls, node1, node2=None):
+        if node1 not in cls.namespace:
             return []
 
         if node2 is None:
-            return self.namespace[node1].values()
+            return cls.namespace[node1].values()
 
-        if node2 not in self.namespace[node1]:
+        if node2 not in cls.namespace[node1]:
             return []
 
-        return self.namespace[node1][node2]
+        return cls.namespace[node1][node2]
 
     @classmethod
-    def find_all(self):
-        for v1 in self.namespace.values():
+    def find_all(cls):
+        for v1 in cls.namespace.values():
             for v2 in v1.values():
                 yield v2
 
     @classmethod
-    def find_by_level(self, level):
+    def find_by_level(cls, level):
         edges = []
-        for e in self.find_all():
+        for e in cls.find_all():
             edge = e.duplicate()
 
             if edge.node1.group.level < level:
@@ -285,8 +285,8 @@ class DiagramEdge:
         return edges
 
     @classmethod
-    def clear(self):
-        self.namespace = {}
+    def clear(cls):
+        cls.namespace = {}
 
     def __init__(self, node1, node2):
         self.node1 = node1
