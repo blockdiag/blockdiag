@@ -46,17 +46,6 @@ class Element:
         self.width = 1
         self.height = 1
 
-    def __eq__(self, other):
-        if self.__class__ != other.__class__:
-            return False
-        elif isinstance(other, str):
-            return self.id == other
-        else:
-            return self.id == other.id
-
-    def __hash__(self):
-        return hash(self.id)
-
     def __repr__(self):
         class_name = self.__class__.__name__
         nodeid = self.id
