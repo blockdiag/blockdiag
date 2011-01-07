@@ -298,7 +298,7 @@ class DiagramLayoutManager:
 
 class ScreenNodeBuilder:
     @classmethod
-    def build(klass, tree, subdiagram=False, group_id=None, separate=False):
+    def build(klass, tree, separate=False):
         diagram = DiagramTreeBuilder().build(tree)
         DiagramLayoutManager(diagram).run()
         diagram.fixiate(True)
