@@ -58,6 +58,9 @@ class Element:
                  "%(width)dx%(height)d at 0x%(addr)08x>"
         return format % locals()
 
+    def duplicate(self):
+        return copy.copy(self)
+
 
 class DiagramNode(Element):
     basecolor = (255, 255, 255)
@@ -117,6 +120,13 @@ class NodeGroup(Element):
         self.separated = False
         self.nodes = []
         self.edges = []
+
+    def duplicate(self):
+        copied = Element.duplicate(self)
+        copied.nodes = []
+        copied.edges = []
+
+        return copied
 
     def parent(self, level=None):
         if level is None:
