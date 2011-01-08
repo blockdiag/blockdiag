@@ -115,6 +115,11 @@ Python Software Foundation License.
 History
 =======
 
+0.6.1 (2011-01-07)
+------------------
+* Implement 'folded' attribute for edge
+* Refactor layout engine
+
 0.6 (2011-01-02)
 ------------------
 * Support nested groups.
