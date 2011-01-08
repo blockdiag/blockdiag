@@ -4,7 +4,6 @@
 import os
 import re
 import sys
-import uuid
 from ConfigParser import SafeConfigParser
 from optparse import OptionParser
 from elements import *
