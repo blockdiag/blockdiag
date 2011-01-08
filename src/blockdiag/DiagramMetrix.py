@@ -467,7 +467,7 @@ class EdgeMetrix:
                    node1.right().x + span.x,
                    node2.left().y - span.y / 8)
 
-        elif dir in ('up', 'down', 'left-up', 'left', 'left-down'):
+        elif dir in ('up', 'down', 'left-up', 'left', 'left-down', 'same'):
             if self.edge.node2.xy.y < self.edge.node1.xy.y:
                 box = (node1.topRight().x - span.x / 2 + span.x / 8,
                        node1.topRight().y - span.y / 2,
