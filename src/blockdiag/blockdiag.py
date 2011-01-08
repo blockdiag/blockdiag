@@ -72,13 +72,13 @@ class DiagramTreeBuilder:
                 self.belong_to(edge_from, group)
 
                 while len(stmt.nodes):
-                    type, edge_to = stmt.nodes.pop(0)
+                    edge_type, edge_to = stmt.nodes.pop(0)
                     edge_to = DiagramNode.get(edge_to)
                     self.belong_to(edge_to, group)
 
                     edge = DiagramEdge.get(edge_from, edge_to)
                     if type:
-                        edge.setAttributes([diagparser.Attr('dir', type)])
+                        edge.setAttributes([diagparser.Attr('dir', edge_type)])
                     edge.setAttributes(stmt.attrs)
 
                     edge_from = edge_to
