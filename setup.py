@@ -28,6 +28,7 @@ setup(
      author_email='i.tkomiya at gmail.com',
      url='http://tk0miya.bitbucket.org/blockdiag/build/html/index.html',
      license='PSL',
+     py_modules=['blockdiag_sphinxhelper'],
      packages=find_packages('src'),
      package_dir={'': 'src'},
      package_data = {'': ['buildout.cfg']},
