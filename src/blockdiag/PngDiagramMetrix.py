@@ -50,6 +50,8 @@ class PngDiagramMetrix(Scaler):
         # variables
         self.define_scale_attribute('cellSize')
         self.define_scale_attribute('lineSpacing')
+        self.define_scale_attribute('nodeWidth')
+        self.define_scale_attribute('nodeHeight')
         self.define_scale_attribute('spanWidth')
         self.define_scale_attribute('spanHeight')
         self.define_scale_attribute('fontSize')
