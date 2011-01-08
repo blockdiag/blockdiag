@@ -115,6 +115,10 @@ Python Software Foundation License.
 History
 =======
 
+0.6.2 (2011-01-08)
+------------------
+* Fix bugs
+
 0.6.1 (2011-01-07)
 ------------------
 * Implement 'folded' attribute for edge
