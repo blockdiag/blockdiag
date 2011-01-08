@@ -5,7 +5,7 @@ import os
 import re
 import sys
 import copy
-import uuid
+from utils import uuid
 from utils.XY import XY
 
 
@@ -23,7 +23,7 @@ class Element:
     @classmethod
     def get(cls, id):
         if not id:
-            id = uuid.uuid1()
+            id = uuid.generate()
 
         if id not in cls.namespace:
             obj = cls(id)
