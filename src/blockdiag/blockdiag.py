@@ -64,7 +64,7 @@ class DiagramTreeBuilder:
         for stmt in tree.stmts:
             if isinstance(stmt, diagparser.Node):
                 node = DiagramNode.get(stmt.id)
-                node.setAttributes(stmt.attrs)
+                node.set_attributes(stmt.attrs)
                 self.belong_to(node, group)
 
             elif isinstance(stmt, diagparser.Edge):
@@ -78,8 +78,9 @@ class DiagramTreeBuilder:
 
                     edge = DiagramEdge.get(edge_from, edge_to)
                     if edge_type:
-                        edge.setAttributes([diagparser.Attr('dir', edge_type)])
-                    edge.setAttributes(stmt.attrs)
+                        attrs = [diagparser.Attr('dir', edge_type)]
+                        edge.set_attributes(attrs)
+                    edge.set_attributes(stmt.attrs)
 
                     edge_from = edge_to
 
@@ -92,7 +93,7 @@ class DiagramTreeBuilder:
                     self.unbelong_to(subgroup, group)
 
             elif isinstance(stmt, diagparser.DefAttrs):
-                group.setAttributes(stmt.attrs)
+                group.set_attributes(stmt.attrs)
 
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))
