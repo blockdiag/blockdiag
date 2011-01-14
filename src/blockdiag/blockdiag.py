@@ -77,7 +77,7 @@ class DiagramTreeBuilder:
                     self.belong_to(edge_to, group)
 
                     edge = DiagramEdge.get(edge_from, edge_to)
-                    if type:
+                    if edge_type:
                         edge.setAttributes([diagparser.Attr('dir', edge_type)])
                     edge.setAttributes(stmt.attrs)
 
