@@ -91,7 +91,7 @@ class DiagramNode(Element):
         self.description = None
         self.drawable = True
 
-    def setAttributes(self, attrs):
+    def set_attributes(self, attrs):
         for attr in attrs:
             value = unquote(attr.value)
 
@@ -188,9 +188,6 @@ class NodeGroup(Element):
     def update_order(self):
         for i, node in enumerate(self.nodes):
             node.order = i
-
-    def setAttributes(self, attrs):
-        self.set_attributes(attrs)
 
 
 class Diagram(NodeGroup):
@@ -297,7 +294,7 @@ class DiagramEdge(object):
     def duplicate(self):
         return copy.copy(self)
 
-    def setAttributes(self, attrs):
+    def set_attributes(self, attrs):
         for attr in attrs:
             value = unquote(attr.value)
 
