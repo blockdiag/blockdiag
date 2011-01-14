@@ -18,6 +18,7 @@ def unquote(string):
 
 class Element(object):
     basecolor = (255, 255, 255)
+    int_attrs = ['width', 'height']
     namespace = {}
 
     @classmethod
@@ -61,6 +62,21 @@ class Element(object):
     def duplicate(self):
         return copy.copy(self)
 
+    def set_attribute(self, attr):
+        name = attr.name
+        if name in self.int_attrs:
+            setattr(self, name, int(attr.value))
+        if hasattr(self, name) and not callable(getattr(self, name)):
+            setattr(self, name, unquote(attr.value))
+        else:
+            class_name = self.__class__.__name__
+            msg = "Unknown attribute: %s.%s" % (class_name, attr.name)
+            raise AttributeError(msg)
+
+    def set_attributes(self, attrs):
+        for attr in attrs:
+            self.set_attribute(attr)
+
 
 class DiagramNode(Element):
     basecolor = (255, 255, 255)
@@ -79,34 +95,21 @@ class DiagramNode(Element):
         for attr in attrs:
             value = unquote(attr.value)
 
-            if attr.name == 'label':
-                self.label = value
-            elif attr.name == 'color':
-                self.color = value
-            elif attr.name == 'style':
+            if attr.name == 'style':
                 style = value.lower()
                 if style in ('solid', 'dotted', 'dashed'):
                     self.style = style
                 else:
                     msg = "WARNING: unknown edge style: %s\n" % style
                     sys.stderr.write(msg)
-            elif attr.name == 'numbered':
-                self.numbered = value
             elif attr.name == 'background':
                 if os.path.isfile(value):
                     self.background = value
                 else:
                     msg = "WARNING: background image not found: %s\n" % value
                     sys.stderr.write(msg)
-            elif attr.name == 'description':
-                self.description = value
-            elif attr.name == 'width':
-                self.width = int(value)
-            elif attr.name == 'height':
-                self.height = int(value)
             else:
-                msg = "Unknown node attribute: %s.%s" % (self.id, attr.name)
-                raise AttributeError(msg)
+                self.set_attribute(attr)
 
 
 class NodeGroup(Element):
@@ -187,19 +190,13 @@ class NodeGroup(Element):
             node.order = i
 
     def setAttributes(self, attrs):
-        for attr in attrs:
-            value = unquote(attr.value)
-
-            if attr.name == 'label':
-                self.label = value
-            elif attr.name == 'color':
-                self.color = value
-            else:
-                msg = "Unknown group attribute: group.%s" % attr.name
-                raise AttributeError(msg)
+        self.set_attributes(attrs)
 
 
 class Diagram(NodeGroup):
+    int_attrs = ['width', 'height', 'fontsize',
+                 'node_width', 'node_height', 'span_width', 'span_height']
+
     def __init__(self):
         super(Diagram, self).__init__(None)
 
@@ -208,24 +205,6 @@ class Diagram(NodeGroup):
         self.span_width = None
         self.span_height = None
         self.fontsize = None
-
-    def setAttributes(self, attrs):
-        for attr in attrs:
-            value = unquote(attr.value)
-
-            if attr.name == 'node_width':
-                self.node_width = int(value)
-            elif attr.name == 'node_height':
-                self.node_height = int(value)
-            elif attr.name == 'span_width':
-                self.span_width = int(value)
-            elif attr.name == 'span_height':
-                self.span_height = int(value)
-            elif attr.name == 'fontsize':
-                self.fontsize = int(value)
-            else:
-                msg = "Unknown node attribute: diagram.%s" % attr.name
-                raise AttributeError(msg)
 
 
 class DiagramEdge(object):
