@@ -35,7 +35,10 @@ class TextFolder:
         self.box = box
         self.string = string
         self.scale = 1
+        self.halign = kwargs.get('align', 'center')
+        self.valign = kwargs.get('align', 'center')
         self.fontsize = kwargs.get('fontsize', 11)
+        self.padding = kwargs.get('padding', 12)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
 
         if kwargs.get('adjustBaseline'):
@@ -63,17 +66,27 @@ class TextFolder:
     def each_line(self):
         size = XY(self.box[2] - self.box[0], self.box[3] - self.box[1])
 
-        height = int(math.ceil((size.y - self.height()) / 2.0))
+        if self.valign == 'top':
+            height = 0
+        elif self.valign == 'bottom':
+            height = size.y - self.height()
+        else:
+            height = int(math.ceil((size.y - self.height()) / 2.0))
         base_xy = XY(self.box[0], self.box[1])
 
         for string in self._result:
             textsize = self.textsize(string)
+
             halign = size.x - textsize[0] * self.scale
+            if self.halign == 'left':
+                x = self.padding
+            elif self.halign == 'right':
+                x = halign - self.padding
+            else:
+                x = int(math.ceil(halign / 2.0))
 
             if self.adjustBaseline:
                 height += textsize[1]
-
-            x = int(math.ceil(halign / 2.0))
             draw_xy = XY(base_xy.x + x, base_xy.y + height)
 
             yield string, draw_xy
