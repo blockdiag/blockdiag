@@ -21,7 +21,7 @@ class DiagramDraw(object):
             self.shadow = kwargs.get('shadow', (0, 0, 0))
             self.scale_ratio = 1
             self.metrix = DiagramMetrix(base_diagram, **kwargs)
-            self.drawer = SVGImageDraw.SVGImageDraw(self.pageSize())
+            self.drawer = SVGImageDraw.SVGImageDraw(self.pagesize())
         else:
             import ImageDrawEx
             from PngDiagramMetrix import PngDiagramMetrix
@@ -34,7 +34,7 @@ class DiagramDraw(object):
 
             self.metrix = PngDiagramMetrix(base_diagram,
                                            scale=self.scale_ratio, **kwargs)
-            self.drawer = ImageDrawEx.ImageDrawEx(self.pageSize(),
+            self.drawer = ImageDrawEx.ImageDrawEx(self.pagesize(),
                                                   self.scale_ratio)
 
     @property
@@ -68,7 +68,7 @@ class DiagramDraw(object):
             for edge in group.edges:
                 yield edge
 
-    def pageSize(self, scaled=False):
+    def pagesize(self, scaled=False):
         if scaled:
             metrix = self.metrix
         else:
@@ -84,12 +84,12 @@ class DiagramDraw(object):
         return metrix.pageSize(width, height)
 
     def draw(self, **kwargs):
-        self._prepareEdges()
-        self._drawBackground()
+        self._prepare_edges()
+        self._draw_background()
 
         if self.scale_ratio > 1:
-            pageSize = self.pageSize(scaled=True)
-            self.drawer = self.drawer.resizeCanvas(pageSize)
+            pagesize = self.pagesize(scaled=True)
+            self.drawer = self.drawer.resizeCanvas(pagesize)
 
         for node in self.nodes:
             self.node(node, **kwargs)
@@ -103,7 +103,7 @@ class DiagramDraw(object):
         for edge in (x for x in self.edges if x.label):
             self.edge_label(edge)
 
-    def _prepareEdges(self):
+    def _prepare_edges(self):
         for edge in self.edges:
             m = self.metrix.edge(edge)
             dir = m.direction()
@@ -167,7 +167,7 @@ class DiagramDraw(object):
                     if XY(x, y) not in edge.crosspoints:
                         edge.crosspoints.append(XY(x, y))
 
-    def _drawBackground(self):
+    def _draw_background(self):
         metrix = self.metrix.originalMetrix()
 
         # Draw node groups.
