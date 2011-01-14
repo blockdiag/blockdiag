@@ -331,14 +331,5 @@ class DiagramEdge(object):
                 self.folded = True
             elif attr.name == 'nofolded':
                 self.folded = False
-            elif attr.name == 'noweight':
-                msg = "WARNING: edge.noweight is obsoleted, " + \
-                      "use edge.folded or edge.nofolded\n"
-                sys.stderr.write(msg)
-
-                if value.lower() == 'none':
-                    self.folded = False
-                else:
-                    self.folded = True
             else:
                 raise AttributeError("Unknown edge attribute: %s" % attr.name)
