@@ -35,8 +35,8 @@ class TextFolder:
         self.box = box
         self.string = string
         self.scale = 1
-        self.halign = kwargs.get('align', 'center')
-        self.valign = kwargs.get('align', 'center')
+        self.halign = kwargs.get('halign', 'center')
+        self.valign = kwargs.get('valign', 'center')
         self.fontsize = kwargs.get('fontsize', 11)
         self.padding = kwargs.get('padding', 12)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
