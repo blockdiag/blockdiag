@@ -20,9 +20,30 @@ def unquote(string):
         return string
 
 
-class Element(object):
-    basecolor = (255, 255, 255)
+class Base(object):
     int_attrs = ['width', 'height']
+
+    def duplicate(self):
+        return copy.copy(self)
+
+    def set_attribute(self, attr):
+        name = attr.name
+        if name in self.int_attrs:
+            setattr(self, name, int(attr.value))
+        if hasattr(self, name) and not callable(getattr(self, name)):
+            setattr(self, name, unquote(attr.value))
+        else:
+            class_name = self.__class__.__name__
+            msg = "Unknown attribute: %s.%s" % (class_name, attr.name)
+            raise AttributeError(msg)
+
+    def set_attributes(self, attrs):
+        for attr in attrs:
+            self.set_attribute(attr)
+
+
+class Element(Base):
+    basecolor = (255, 255, 255)
     namespace = {}
 
     @classmethod
@@ -62,24 +83,6 @@ class Element(object):
         format = "<%(class_name)s '%(nodeid)s' %(xy)s " + \
                  "%(width)dx%(height)d at 0x%(addr)08x>"
         return format % locals()
-
-    def duplicate(self):
-        return copy.copy(self)
-
-    def set_attribute(self, attr):
-        name = attr.name
-        if name in self.int_attrs:
-            setattr(self, name, int(attr.value))
-        if hasattr(self, name) and not callable(getattr(self, name)):
-            setattr(self, name, unquote(attr.value))
-        else:
-            class_name = self.__class__.__name__
-            msg = "Unknown attribute: %s.%s" % (class_name, attr.name)
-            raise AttributeError(msg)
-
-    def set_attributes(self, attrs):
-        for attr in attrs:
-            self.set_attribute(attr)
 
 
 class DiagramNode(Element):
@@ -208,7 +211,7 @@ class Diagram(NodeGroup):
         self.fontsize = None
 
 
-class DiagramEdge(object):
+class DiagramEdge(Base):
     namespace = {}
 
     @classmethod
@@ -295,16 +298,11 @@ class DiagramEdge(object):
                  "'%(node2_id)s' %(node2_xy)s, at 0x%(addr)08x>"
         return format % locals()
 
-    def duplicate(self):
-        return copy.copy(self)
-
     def set_attributes(self, attrs):
         for attr in attrs:
             value = unquote(attr.value)
 
-            if attr.name == 'label':
-                self.label = value
-            elif attr.name == 'dir':
+            if attr.name == 'dir':
                 dir = value.lower()
                 if dir in ('back', 'both', 'none', 'forward'):
                     self.dir = dir
@@ -319,8 +317,6 @@ class DiagramEdge(object):
                 else:
                     msg = "WARNING: unknown edge dir: %s\n" % dir
                     sys.stderr.write(msg)
-            elif attr.name == 'color':
-                self.color = value
             elif attr.name == 'style':
                 style = value.lower()
                 if style in ('solid', 'dotted', 'dashed'):
@@ -333,4 +329,4 @@ class DiagramEdge(object):
             elif attr.name == 'nofolded':
                 self.folded = False
             else:
-                raise AttributeError("Unknown edge attribute: %s" % attr.name)
+                self.set_attribute(attr)
