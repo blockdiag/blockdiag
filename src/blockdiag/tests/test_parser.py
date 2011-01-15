@@ -111,9 +111,18 @@ def test_node_attribute():
     assert screen.nodes[0].xy == (0, 0)
 
     assert screen.nodes[1].id == 'B'
-    assert screen.nodes[1].label == 'B'
+    assert screen.nodes[1].label == 'double quoted'
     assert screen.nodes[1].color == (255, 255, 255)
     assert screen.nodes[1].xy == (0, 1)
+
+    assert screen.nodes[2].id == 'C'
+    assert screen.nodes[2].label == 'single quoted'
+
+    assert screen.nodes[3].id == 'D'
+    assert screen.nodes[3].label == '\'"double" quoted\''
+
+    assert screen.nodes[4].id == 'E'
+    assert screen.nodes[4].label == '"\'single\' quoted"'
 
 
 def test_edge_shape():

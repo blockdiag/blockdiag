@@ -11,7 +11,11 @@ from utils.XY import XY
 
 def unquote(string):
     if string:
-        return re.sub('(\A"|"\Z)', '', string, re.M)
+        m = re.match('\A(?P<quote>"|\')((.|\s)*)(?P=quote)\Z', string, re.M)
+        if m:
+            return re.sub("\\\\" + m.group(1), m.group(1), m.group(2))
+        else:
+            return string
     else:
         return string
 
