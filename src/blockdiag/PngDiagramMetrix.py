@@ -89,7 +89,6 @@ class PngNodeMetrix(Scaler):
         self.define_scale_method('box')
         self.define_scale_method('marginBox')
         self.define_scale_method('coreBox')
-        self.define_scale_method('shadowBox')
         self.define_scale_method('groupLabelBox')
 
         self.define_scale_method('topLeft')

@@ -182,16 +182,6 @@ class NodeMetrix:
                 bottomRight.x - m.nodePadding * 2,
                 bottomRight.y - m.nodePadding * 2)
 
-    def shadowBox(self):
-        m = self.metrix
-        topLeft = self.topLeft()
-        bottomRight = self.bottomRight()
-
-        return (topLeft.x + m.shadowOffsetX,
-                topLeft.y + m.shadowOffsetY,
-                bottomRight.x + m.shadowOffsetX,
-                bottomRight.y + m.shadowOffsetY)
-
     def groupLabelBox(self):
         m = self.metrix
         topLeft = self.topLeft()
