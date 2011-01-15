@@ -112,6 +112,14 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         else:
             ImageDraw.ImageDraw.arc(self, box, start, end, **kwargs)
 
+    def ellipse(self, box, **kwargs):
+        if 'filter' in kwargs:
+            del kwargs['filter']
+        if 'style' in kwargs:
+            del kwargs['style']
+
+        ImageDraw.ImageDraw.ellipse(self, box, **kwargs)
+
     def line(self, xy, **kwargs):
         style = kwargs.get('style')
 

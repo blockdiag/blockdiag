@@ -36,6 +36,16 @@ class SVGImageDrawElement:
 
         return color
 
+    def filter(self, name):
+        if name == 'blur':
+            filter = "filter:url(#filter_blur)"
+        elif name == 'transp-blur':
+            filter = "filter:url(#filter_blur);opacity:0.7;fill-opacity:1"
+        else:
+            filter = None
+
+        return filter
+
     def rectangle(self, box, **kwargs):
         thick = kwargs.get('width', 1)
         fill = kwargs.get('fill', 'none')
@@ -50,13 +60,6 @@ class SVGImageDrawElement:
         else:
             length = None
 
-        if filter == 'blur':
-            filter = "filter:url(#filter_blur)"
-        elif filter == 'transp-blur':
-            filter = "filter:url(#filter_blur);opacity:0.7;fill-opacity:1"
-        else:
-            filter = None
-
         x = box[0]
         y = box[1]
         width = box[2] - box[0]
@@ -64,7 +67,7 @@ class SVGImageDrawElement:
 
         r = rect(x, y, width, height, fill=self.rgb(fill),
                  stroke=self.rgb(outline), stroke_width=thick,
-                 stroke_dasharray=length, style=filter)
+                 stroke_dasharray=length, style=self.filter(filter))
         self.svg.addElement(r)
 
     def label(self, box, string, **kwargs):
@@ -130,13 +133,14 @@ class SVGImageDrawElement:
     def ellipse(self, xy, **kwargs):
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
+        filter = kwargs.get('filter')
 
         w = (xy[2] - xy[0]) / 2
         h = (xy[3] - xy[1]) / 2
         pt = XY(xy[0] + w, xy[1] + h)
 
         e = ellipse(pt.x, pt.y, w, h, fill=self.rgb(fill),
-                    stroke=self.rgb(outline))
+                    stroke=self.rgb(outline), style=self.filter(filter))
         self.svg.addElement(e)
 
     def polygon(self, xy, **kwargs):
