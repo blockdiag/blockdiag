@@ -94,6 +94,7 @@ class EdgeLines:
 
 class DiagramMetrix:
     def __init__(self, diagram, **kwargs):
+        self.scale_ratio = 1
         self.cellSize = kwargs.get('cellSize', 8)
         self.nodePadding = kwargs.get('nodePadding', 4)
         self.lineSpacing = kwargs.get('lineSpacing', 2)
