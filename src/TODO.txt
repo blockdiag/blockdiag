@@ -1,0 +1,11 @@
+Todos
+======
+
+Functionals
+------------
+* Specify shape of node (rounded rectangle, diamond, end-point, etc.)
+* Support other block diagram structure.
+
+Known Issues
+-------------
+* Fix some experimental features.
