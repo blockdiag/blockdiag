@@ -3,6 +3,7 @@
 
 import math
 from utils.XY import XY
+import noderenderer
 from DiagramMetrix import DiagramMetrix
 
 
@@ -181,37 +182,18 @@ class DiagramDraw(object):
 
         # Drop node shadows.
         for node in self.nodes:
-            box = metrix.node(node).shadowBox()
-            self.drawer.rectangle(box, fill=self.shadow, filter='transp-blur')
+            r = noderenderer.get(node.shape)
+            r.render_shadow(self.drawer, node, metrix, fill=self.shadow)
 
         # Smoothing back-ground images.
         if self.format == 'PNG':
             self.drawer = self.drawer.smoothCanvas()
 
     def node(self, node, **kwargs):
-        m = self.metrix.node(node)
-
-        if node.background:
-            self.drawer.rectangle(m.box(), fill=node.color)
-            self.drawer.loadImage(node.background, m.box())
-            self.drawer.rectangle(m.box(), outline=self.fill, style=node.style)
-        else:
-            self.drawer.rectangle(m.box(), outline=self.fill,
-                                  fill=node.color, style=node.style)
-
-        self.drawer.textarea(m.coreBox(), node.label, fill=self.fill,
-                             font=self.font, fontsize=self.metrix.fontSize,
-                             lineSpacing=self.metrix.lineSpacing)
-
-        if node.numbered != None:
-            xy = m.topLeft()
-            r = self.metrix.cellSize
-
-            box = [xy.x - r, xy.y - r, xy.x + r, xy.y + r]
-            self.drawer.ellipse(box, outline=self.fill, fill=self.badgeFill)
-            self.drawer.textarea(box, node.numbered,
-                                 fill=self.fill, font=self.font,
-                                 fontsize=self.metrix.fontSize)
+        r = noderenderer.get(node.shape)
+        r.render_node(self.drawer, node, self.metrix,
+                      fill=self.fill, outline=self.fill,
+                      font=self.font, badgeFill=self.badgeFill)
 
     def group_label(self, group):
         m = self.metrix.node(group)

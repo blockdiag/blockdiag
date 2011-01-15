@@ -92,6 +92,7 @@ class DiagramNode(Element):
         super(DiagramNode, self).__init__(id)
 
         self.label = unquote(id) or ''
+        self.shape = 'box'
         self.style = None
         self.numbered = None
         self.background = None
