@@ -26,7 +26,6 @@ r'''A DOT language parser using funcparserlib.
 The parser is based on [the DOT grammar][1]. It is pretty complete with a few
 not supported things:
 
-* String ecapes `\"`
 * Ports and compass points
 * XML identifiers
 
