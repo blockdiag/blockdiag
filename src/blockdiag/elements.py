@@ -7,6 +7,7 @@ import sys
 import copy
 from utils import uuid
 from utils.XY import XY
+import noderenderer
 
 
 def unquote(string):
@@ -115,6 +116,13 @@ class DiagramNode(Element):
                     self.background = value
                 else:
                     msg = "WARNING: background image not found: %s\n" % value
+                    sys.stderr.write(msg)
+            elif attr.name == 'shape':
+                try:
+                    noderenderer.get(value)
+                    self.shape = value
+                except:
+                    msg = "WARNING: unknown node shape: %s\n" % value
                     sys.stderr.write(msg)
             else:
                 self.set_attribute(attr)
