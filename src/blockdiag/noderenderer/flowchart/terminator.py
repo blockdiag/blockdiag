@@ -28,7 +28,7 @@ def render_node(drawer, node, metrix, **kwargs):
 
     box = (m.topLeft().x + r, m.topLeft().y,
            m.bottomRight().x - r, m.bottomRight().y)
-    drawer.rectangle(box, fill=node.color, style=node.style)
+    drawer.rectangle(box, fill=node.color, outline=node.color)
 
     if node.background:
         drawer.loadImage(node.background, m.box())
