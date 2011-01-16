@@ -45,10 +45,8 @@ def render_shadow(drawer, format, node, metrix, fill):
     m = metrix.node(node)
     r = metrix.cellSize * 2
 
-    box = (m.topCenter().x + r, m.rightCenter().y,
-	   m.bottomCenter().x -r , m.leftCenter().y)
-    # A polygon() first argument requires tuples.
-    shadow = ((box[0] + metrix.shadowOffsetX, box[1] + metrix.shadowOffsetY),
-	      (box[2] + metrix.shadowOffsetX, box[3] + metrix.shadowOffsetY))
-#    drawer.polygon(shadow, fill=fill, filter='transp-blur')
+    box = (m.topCenter(), m.rightCenter(),
+	   m.bottomCenter(), m.leftCenter())
+    shadow = renderer.shift_polygon(box, metrix.shadowOffsetX,
+				    metrix.shadowOffsetY)
     drawer.polygon(shadow, fill=fill)

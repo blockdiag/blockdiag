@@ -53,8 +53,16 @@ def render_shadow(drawer, format, node, metrix, fill):
     m = metrix.node(node)
     r = metrix.cellSize * 2
 
-    box = (m.topLeft().x + r, m.topLeft().y,
-           m.bottomRight().x - r, m.bottomRight().y)
-    shadow = renderer.shift_box(box, metrix.shadowOffsetX,
-                                metrix.shadowOffsetY)
-#    drawer.rectangle(shadow, fill=fill, filter='transp-blur')
+    xdiff = (m.topRight().x - m.topLeft().x)/4
+    ydiff = (m.topRight().y - m.bottomLeft().y)/4
+    
+    box = ((m.topLeft().x, m.topLeft().y),
+	   (m.topRight().x , m.topRight().y),
+	   (m.bottomRight().x , m.bottomRight().y + ydiff),
+	   (m.bottomRight().x - xdiff, m.bottomRight().y),
+	   (m.bottomLeft().x + xdiff, m.bottomLeft().y),
+	   (m.bottomLeft().x , m.bottomLeft().y + ydiff))
+    shadow = renderer.shift_polygon(box, metrix.shadowOffsetX,
+				    metrix.shadowOffsetY)
+    drawer.polygon(shadow, fill=fill)
+
