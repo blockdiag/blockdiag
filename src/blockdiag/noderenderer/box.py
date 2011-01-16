@@ -2,7 +2,7 @@
 from blockdiag.utils import renderer
 
 
-def render_node(drawer, node, metrix, **kwargs):
+def render_node(drawer, format, node, metrix, **kwargs):
     outline = kwargs.get('outline')
     font = kwargs.get('font')
     fill = kwargs.get('fill')
@@ -32,7 +32,7 @@ def render_node(drawer, node, metrix, **kwargs):
                         font=font, fontsize=metrix.fontSize)
 
 
-def render_shadow(drawer, node, metrix, fill):
+def render_shadow(drawer, format, node, metrix, fill):
     box = metrix.node(node).box()
     shadow = renderer.shift_box(box, metrix.shadowOffsetX,
                                 metrix.shadowOffsetY)

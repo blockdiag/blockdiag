@@ -183,7 +183,8 @@ class DiagramDraw(object):
         # Drop node shadows.
         for node in self.nodes:
             r = noderenderer.get(node.shape)
-            r.render_shadow(self.drawer, node, metrix, fill=self.shadow)
+            r.render_shadow(self.drawer, self.format, node,
+                            metrix, fill=self.shadow)
 
         # Smoothing back-ground images.
         if self.format == 'PNG':
@@ -191,7 +192,7 @@ class DiagramDraw(object):
 
     def node(self, node, **kwargs):
         r = noderenderer.get(node.shape)
-        r.render_node(self.drawer, node, self.metrix,
+        r.render_node(self.drawer, self.format, node, self.metrix,
                       fill=self.fill, outline=self.fill,
                       font=self.font, badgeFill=self.badgeFill)
 
