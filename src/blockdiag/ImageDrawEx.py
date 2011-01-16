@@ -196,19 +196,6 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         for line in lines:
             self.line(line, fill=outline, width=thick, style=style)
 
-    def polygon(self, box, **kwargs):
-        thick = kwargs.get('width', self.scale_ratio)
-        fill = kwargs.get('fill')
-        outline = kwargs.get('outline')
-        style = kwargs.get('style')
-
-        if thick == 1:
-            d = 0
-        else:
-            d = int(math.ceil(thick / 2.0))
-
-        ImageDraw.ImageDraw.polygon(self, box, fill=fill)
-
     def label(self, box, string, **kwargs):
         lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
 
