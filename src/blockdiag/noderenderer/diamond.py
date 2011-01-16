@@ -10,7 +10,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
     badgeFill = kwargs.get('badgeFill')
 
     m = metrix.node(node)
-    diamond = (m.top(), m.left(), m.bottom(), m.right())
+    diamond = (m.top(), m.left(), m.bottom(), m.right(), m.top())
     box = (m.topLeft().x + metrix.nodeWidth / 4,
            m.topLeft().y + metrix.nodeHeight / 4,
            m.bottomRight().x - metrix.nodeWidth / 4,
