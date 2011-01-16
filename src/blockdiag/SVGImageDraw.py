@@ -63,13 +63,6 @@ class SVGImageDrawElement:
         style = kwargs.get('style')
         filter = kwargs.get('filter')
 
-        if style == 'dotted':
-            length = 2
-        elif style == 'dashed':
-            length = 4
-        else:
-            length = None
-
         x = box[0]
         y = box[1]
         width = box[2] - box[0]
@@ -77,7 +70,8 @@ class SVGImageDrawElement:
 
         r = rect(x, y, width, height, fill=self.rgb(fill),
                  stroke=self.rgb(outline), stroke_width=thick,
-                 stroke_dasharray=length, style=self.filter(filter))
+                 stroke_dasharray=self.style(style),
+                 style=self.filter(filter))
         self.svg.addElement(r)
 
     def label(self, box, string, **kwargs):
@@ -103,31 +97,17 @@ class SVGImageDrawElement:
         fill = kwargs.get('fill')
         style = kwargs.get('style')
 
-        if style == 'dotted':
-            length = 2
-        elif style == 'dashed':
-            length = 4
-        else:
-            length = None
-
         pd = pathdata(xy[0].x, xy[0].y)
         for pt in xy[1:]:
             pd.line(pt.x, pt.y)
 
         p = path(pd, fill="none", stroke=self.rgb(fill),
-                 stroke_dasharray=length)
+                 stroke_dasharray=self.style(style))
         self.svg.addElement(p)
 
     def arc(self, xy, start, end, **kwargs):
         fill = kwargs.get('fill')
         style = kwargs.get('style')
-
-        if style == 'dotted':
-            length = 2
-        elif style == 'dashed':
-            length = 4
-        else:
-            length = None
 
         w = (xy[2] - xy[0]) / 2
         h = (xy[3] - xy[1]) / 2
@@ -137,7 +117,7 @@ class SVGImageDrawElement:
         pd = pathdata(pt1.x, pt1.y)
         pd.ellarc(w, h, 0, 0, 1, pt2.x, pt2.y)
         p = path(pd, fill="none", stroke=self.rgb(fill),
-                 stroke_dasharray=length)
+                 stroke_dasharray=self.style(style))
         self.svg.addElement(p)
 
     def ellipse(self, xy, **kwargs):
