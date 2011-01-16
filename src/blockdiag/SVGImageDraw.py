@@ -46,6 +46,16 @@ class SVGImageDrawElement:
 
         return filter
 
+    def style(self, name):
+        if name == 'dotted':
+            length = 2
+        elif name == 'dashed':
+            length = 4
+        else:
+            length = None
+
+        return length
+
     def rectangle(self, box, **kwargs):
         thick = kwargs.get('width', 1)
         fill = kwargs.get('fill', 'none')
@@ -146,11 +156,13 @@ class SVGImageDrawElement:
     def polygon(self, xy, **kwargs):
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
+        style = kwargs.get('style')
         filter = kwargs.get('filter')
 
         points = [[p[0], p[1]] for p in xy]
-        pg = polygon(points, fill=self.rgb(fill),
-                     stroke=self.rgb(outline), style=self.filter(filter))
+        pg = polygon(points, fill=self.rgb(fill), stroke=self.rgb(outline),
+                     stroke_dasharray=self.style(style),
+                     style=self.filter(filter))
         self.svg.addElement(pg)
 
     def loadImage(self, filename, box):
