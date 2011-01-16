@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from blockdiag.utils import renderer
 
 
 def render_node(drawer, node, metrix, **kwargs):
@@ -33,9 +34,7 @@ def render_node(drawer, node, metrix, **kwargs):
 
 def render_shadow(drawer, node, metrix, fill):
     box = metrix.node(node).box()
-    shadow = (box[0] + metrix.shadowOffsetX,
-              box[1] + metrix.shadowOffsetY,
-              box[2] + metrix.shadowOffsetX,
-              box[3] + metrix.shadowOffsetY)
+    shadow = renderer.shift_box(box, metrix.shadowOffsetX,
+                                metrix.shadowOffsetY)
 
     drawer.rectangle(shadow, fill=fill, filter='transp-blur')

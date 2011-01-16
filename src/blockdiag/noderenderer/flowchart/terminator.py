@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import math
 from blockdiag.utils.XY import XY
+from blockdiag.utils import renderer
 
 
 def render_node(drawer, node, metrix, **kwargs):
@@ -59,12 +60,18 @@ def render_shadow(drawer, node, metrix, fill):
 
     box = (m.topLeft().x, m.topLeft().y,
            m.bottomLeft().x + r * 2, m.bottomLeft().y)
-    drawer.ellipse(box, fill=fill, filter='transp-blur')
+    shadow = renderer.shift_box(box, metrix.shadowOffsetX,
+                                metrix.shadowOffsetY)
+    drawer.ellipse(shadow, fill=fill, filter='transp-blur')
 
     box = (m.topRight().x - r * 2, m.topRight().y,
            m.bottomRight().x, m.bottomRight().y)
-    drawer.ellipse(box, fill=fill, filter='transp-blur')
+    shadow = renderer.shift_box(box, metrix.shadowOffsetX,
+                                metrix.shadowOffsetY)
+    drawer.ellipse(shadow, fill=fill, filter='transp-blur')
 
     box = (m.topLeft().x + r, m.topLeft().y,
            m.bottomRight().x - r, m.bottomRight().y)
-    drawer.rectangle(box, fill=fill, filter='transp-blur')
+    shadow = renderer.shift_box(box, metrix.shadowOffsetX,
+                                metrix.shadowOffsetY)
+    drawer.rectangle(shadow, fill=fill, filter='transp-blur')
