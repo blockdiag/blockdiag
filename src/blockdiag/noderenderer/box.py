@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from blockdiag.utils import renderer
+from utils import renderer
 
 
 def render_node(drawer, format, node, metrix, **kwargs):
