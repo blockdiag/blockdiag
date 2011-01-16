@@ -196,6 +196,16 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         for line in lines:
             self.line(line, fill=outline, width=thick, style=style)
 
+    def polygon(self, xy, **kwargs):
+        if 'style' in kwargs:
+            del kwargs['style']
+        if 'filter' in kwargs:
+            del kwargs['filter']
+        if 'fill' in kwargs and kwargs['fill'] == 'none':
+            del kwargs['fill']
+
+        ImageDraw.ImageDraw.polygon(self, xy, **kwargs)
+
     def label(self, box, string, **kwargs):
         lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
 

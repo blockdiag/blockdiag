@@ -146,9 +146,11 @@ class SVGImageDrawElement:
     def polygon(self, xy, **kwargs):
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
+        filter = kwargs.get('filter')
 
         points = [[p[0], p[1]] for p in xy]
-        pg = polygon(points, fill=self.rgb(fill), stroke=self.rgb(outline))
+        pg = polygon(points, fill=self.rgb(fill),
+                     stroke=self.rgb(outline), style=self.filter(filter))
         self.svg.addElement(pg)
 
     def loadImage(self, filename, box):
