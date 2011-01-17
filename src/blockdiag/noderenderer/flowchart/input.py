@@ -61,6 +61,6 @@ def render_shadow(drawer, format, node, metrix, fill):
 		(m.bottomLeft().x - w,  m.bottomLeft().y),
 		(m.topLeft().x + w,  m.topLeft().y)
 		]
-    shadow = renderer.shift_points(parallel, metrix.shadowOffsetX,
-				   metrix.shadowOffsetY)
+    shadow = renderer.shift_polygon(parallel, metrix.shadowOffsetX,
+				    metrix.shadowOffsetY)
     drawer.polygon(shadow, fill=fill)
