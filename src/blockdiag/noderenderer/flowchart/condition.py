@@ -20,22 +20,22 @@ def render_node(drawer, format, node, metrix, **kwargs):
         d = int(math.ceil(thick / 2.0))
 
     box = (m.topCenter(), m.rightCenter(),
-	   m.bottomCenter(), m.leftCenter(),
-	   m.topCenter() # return to start postion
-	   )
+           m.bottomCenter(), m.leftCenter(),
+           m.topCenter() # return to start postion
+           )
     drawer.polygon(box, fill=node.color, outline=outline)
 
     if node.background:
-	drawer.polygon(box, fill=node.color)
+        drawer.polygon(box, fill=node.color)
         drawer.loadImage(node.background, m.box())
-	drawer.polygon(box, fill="none", outline=outline,
-		       style=node.style)
+        drawer.polygon(box, fill="none", outline=outline,
+                       style=node.style)
     else:
         drawer.polygon(box, fill=node.color, outline=outline)
 
 
     box = (m.topLeft().x + r, m.topLeft().y,
-	   m.bottomRight().x - r, m.bottomRight().y)
+           m.bottomRight().x - r, m.bottomRight().y)
     drawer.textarea(box, node.label, fill=fill,
                     font=font, fontsize=metrix.fontSize,
                     lineSpacing=metrix.lineSpacing)
@@ -54,7 +54,7 @@ def render_shadow(drawer, format, node, metrix, fill):
     r = metrix.cellSize * 2
 
     box = (m.topCenter(), m.rightCenter(),
-	   m.bottomCenter(), m.leftCenter())
+           m.bottomCenter(), m.leftCenter())
     shadow = renderer.shift_polygon(box, metrix.shadowOffsetX,
-				    metrix.shadowOffsetY)
+                                    metrix.shadowOffsetY)
     drawer.polygon(shadow, fill=fill)

@@ -22,21 +22,21 @@ def render_node(drawer, format, node, metrix, **kwargs):
     ydiff = metrix.nodeHeight / 4
     
     poly = ((m.topLeft().x, m.topLeft().y),
-	    (m.topRight().x , m.topRight().y),
-	    (m.bottomRight().x , m.bottomRight().y - ydiff),
-	    (m.bottomRight().x - xdiff, m.bottomRight().y),
-	    (m.bottomLeft().x + xdiff, m.bottomLeft().y),
-	    (m.bottomLeft().x , m.bottomLeft().y - ydiff),
-	    (m.topLeft().x, m.topLeft().y) # return to start position
-	    )
+            (m.topRight().x , m.topRight().y),
+            (m.bottomRight().x , m.bottomRight().y - ydiff),
+            (m.bottomRight().x - xdiff, m.bottomRight().y),
+            (m.bottomLeft().x + xdiff, m.bottomLeft().y),
+            (m.bottomLeft().x , m.bottomLeft().y - ydiff),
+            (m.topLeft().x, m.topLeft().y) # return to start position
+            )
 
     box = (m.topLeft().x, m.topLeft().y,
-	   m.bottomRight().x, m.bottomRight().y - ydiff)
+           m.bottomRight().x, m.bottomRight().y - ydiff)
     if node.background:
         drawer.polygon(poly, fill=node.color)
         drawer.loadImage(node.background, box)
-	drawer.polygon(poly, fill="none", outline=outline,
-		       style=node.style)
+        drawer.polygon(poly, fill="none", outline=outline,
+                       style=node.style)
     else:
         drawer.polygon(poly, fill=node.color, outline=outline)
 
@@ -62,12 +62,12 @@ def render_shadow(drawer, format, node, metrix, fill):
     ydiff = (m.topRight().y - m.bottomLeft().y)/4
     
     poly = ((m.topLeft().x, m.topLeft().y),
-	    (m.topRight().x , m.topRight().y),
-	    (m.bottomRight().x , m.bottomRight().y + ydiff),
-	    (m.bottomRight().x - xdiff, m.bottomRight().y),
-	    (m.bottomLeft().x + xdiff, m.bottomLeft().y),
-	    (m.bottomLeft().x , m.bottomLeft().y + ydiff))
+            (m.topRight().x , m.topRight().y),
+            (m.bottomRight().x , m.bottomRight().y + ydiff),
+            (m.bottomRight().x - xdiff, m.bottomRight().y),
+            (m.bottomLeft().x + xdiff, m.bottomLeft().y),
+            (m.bottomLeft().x , m.bottomLeft().y + ydiff))
     shadow = renderer.shift_polygon(poly, metrix.shadowOffsetX,
-				    metrix.shadowOffsetY)
+                                    metrix.shadowOffsetY)
     drawer.polygon(shadow, fill=fill)
 
