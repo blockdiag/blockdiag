@@ -57,6 +57,17 @@ def test_empty_diagram():
     assert len(screen.edges) == 0
 
 
+def test_diagram_attributes():
+    screen = __build_diagram('diagram_attributes.diag')
+
+    print screen.node_width
+    assert screen.node_width == 160
+    assert screen.node_height == 160
+    assert screen.span_width == 32
+    assert screen.span_height == 32
+    assert screen.fontsize == 16
+
+
 def test_single_node_diagram():
     screen = __build_diagram('single_node.diag')
 
