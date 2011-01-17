@@ -11,7 +11,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
     badgeFill = kwargs.get('badgeFill')
 
     m = metrix.node(node)
-    r = metrix.cellSize * 2
+    w = metrix.cellSize * 2
     thick = metrix.scale_ratio
 
     if thick == 1:
@@ -19,13 +19,11 @@ def render_node(drawer, format, node, metrix, **kwargs):
     else:
         d = int(math.ceil(thick / 2.0))
 
-    w = (m.topRight().x - m.topLeft().x) / 10
-    parallel = ((m.topLeft().x + w,  m.topLeft().y),
-                (m.topRight().x + w, m.topRight().y),
-                (m.bottomRight().x - w, m.bottomRight().y),
-                (m.bottomLeft().x - w,  m.bottomLeft().y),
-                (m.topLeft().x + w,  m.topLeft().y)
-                )
+    parallel = [XY(m.topLeft().x + w,  m.topLeft().y),
+                XY(m.topRight().x + w, m.topRight().y),
+                XY(m.bottomRight().x - w, m.bottomRight().y),
+                XY(m.bottomLeft().x - w,  m.bottomLeft().y),
+                XY(m.topLeft().x + w,  m.topLeft().y)]
 
     box = (m.topLeft().x + w, m.topLeft().y,
            m.bottomRight().x - w, m.bottomRight().y)
@@ -53,15 +51,13 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
 def render_shadow(drawer, format, node, metrix, fill):
     m = metrix.node(node)
-    r = metrix.cellSize * 2
+    w = metrix.cellSize * 2
 
-    w = (m.topRight().x - m.topLeft().x) / 10
     parallel = [(m.topLeft().x + w,  m.topLeft().y),
                 (m.topRight().x + w, m.topRight().y),
                 (m.bottomRight().x - w, m.bottomRight().y),
                 (m.bottomLeft().x - w,  m.bottomLeft().y),
-                (m.topLeft().x + w,  m.topLeft().y)
-                ]
+                (m.topLeft().x + w,  m.topLeft().y)]
     shadow = renderer.shift_polygon(parallel, metrix.shadowOffsetX,
                                     metrix.shadowOffsetY)
     drawer.polygon(shadow, fill=fill, filter='transp-blur')
