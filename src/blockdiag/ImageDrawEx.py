@@ -121,7 +121,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             del kwargs['style']
 
         if style:
-            if 'fill' in kwargs:
+            if kwargs.get('fill') != 'none':
                 kwargs2 = dict(kwargs)
                 if 'outline' in kwargs2:
                     del kwargs2['outline']
