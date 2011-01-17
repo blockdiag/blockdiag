@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import box
 import diamond
+import ellipse
 import flowchart.terminator
 import flowchart.database
 import flowchart.loopin
@@ -9,6 +10,7 @@ import flowchart.input
 
 shapes = {'box': box,
           'diamond': diamond,
+          'ellipse': ellipse,
           'flowchart.terminator': flowchart.terminator,
           'flowchart.condition': diamond,
           'flowchart.loopin': flowchart.loopin,
