@@ -21,7 +21,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
     box = (m.topCenter(), m.rightCenter(),
            m.bottomCenter(), m.leftCenter(),
-           m.topCenter() # return to start postion
+           m.topCenter()  # return to start postion
            )
     drawer.polygon(box, fill=node.color, outline=outline)
 
@@ -32,7 +32,6 @@ def render_node(drawer, format, node, metrix, **kwargs):
                        style=node.style)
     else:
         drawer.polygon(box, fill=node.color, outline=outline)
-
 
     box = (m.topLeft().x + r, m.topLeft().y,
            m.bottomRight().x - r, m.bottomRight().y)
@@ -48,6 +47,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
         drawer.ellipse(box, outline=fill, fill=badgeFill)
         drawer.textarea(box, node.numbered, fill=fill,
                         font=font, fontsize=metrix.fontSize)
+
 
 def render_shadow(drawer, format, node, metrix, fill):
     m = metrix.node(node)
