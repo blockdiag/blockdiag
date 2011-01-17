@@ -3,6 +3,7 @@ import math
 from blockdiag.utils.XY import XY
 from blockdiag.utils import renderer
 
+
 def render_node(drawer, format, node, metrix, **kwargs):
     outline = kwargs.get('outline')
     font = kwargs.get('font')
@@ -20,14 +21,14 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
     xdiff = metrix.nodeWidth / 4
     ydiff = metrix.nodeHeight / 4
-    
+
     poly = ((m.topLeft().x, m.topLeft().y),
-            (m.topRight().x , m.topRight().y),
-            (m.bottomRight().x , m.bottomRight().y - ydiff),
+            (m.topRight().x, m.topRight().y),
+            (m.bottomRight().x, m.bottomRight().y - ydiff),
             (m.bottomRight().x - xdiff, m.bottomRight().y),
             (m.bottomLeft().x + xdiff, m.bottomLeft().y),
-            (m.bottomLeft().x , m.bottomLeft().y - ydiff),
-            (m.topLeft().x, m.topLeft().y) # return to start position
+            (m.bottomLeft().x, m.bottomLeft().y - ydiff),
+            (m.topLeft().x, m.topLeft().y)  # return to start position
             )
 
     box = (m.topLeft().x, m.topLeft().y,
@@ -58,16 +59,15 @@ def render_shadow(drawer, format, node, metrix, fill):
     m = metrix.node(node)
     r = metrix.cellSize * 2
 
-    xdiff = (m.topRight().x - m.topLeft().x)/4
-    ydiff = (m.topRight().y - m.bottomLeft().y)/4
-    
+    xdiff = (m.topRight().x - m.topLeft().x) / 4
+    ydiff = (m.topRight().y - m.bottomLeft().y) / 4
+
     poly = ((m.topLeft().x, m.topLeft().y),
-            (m.topRight().x , m.topRight().y),
-            (m.bottomRight().x , m.bottomRight().y + ydiff),
+            (m.topRight().x, m.topRight().y),
+            (m.bottomRight().x, m.bottomRight().y + ydiff),
             (m.bottomRight().x - xdiff, m.bottomRight().y),
             (m.bottomLeft().x + xdiff, m.bottomLeft().y),
-            (m.bottomLeft().x , m.bottomLeft().y + ydiff))
+            (m.bottomLeft().x, m.bottomLeft().y + ydiff))
     shadow = renderer.shift_polygon(poly, metrix.shadowOffsetX,
                                     metrix.shadowOffsetY)
     drawer.polygon(shadow, fill=fill)
-
