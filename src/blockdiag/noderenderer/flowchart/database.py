@@ -64,7 +64,7 @@ def render_image_node(drawer, node, metrix, **kwargs):
     badgeFill = kwargs.get('badgeFill')
 
     m = metrix.node(node)
-    r = metrix.cellSize * 2
+    r = metrix.cellSize
     thick = metrix.scale_ratio
 
     if thick == 1:
@@ -73,33 +73,33 @@ def render_image_node(drawer, node, metrix, **kwargs):
         d = int(math.ceil(thick / 2.0))
 
     # bottom ellipse
-    box = (m.bottomLeft().x, m.bottomLeft().y - r,
+    box = (m.bottomLeft().x, m.bottomLeft().y - r * 2,
            m.bottomRight().x, m.bottomRight().y)
     drawer.ellipse(box, fill=node.color, outline=outline, style=node.style)
 
     # center rectangle but not outlined
-    box = (m.topLeft().x, m.topLeft().y + (r / 2),
-           m.bottomRight().x, m.bottomRight().y - (r / 2))
+    box = (m.topLeft().x, m.topLeft().y + r,
+           m.bottomRight().x, m.bottomRight().y - r)
     drawer.rectangle(box, fill=node.color, outline=node.color)
 
     # top ellipse
     box = (m.topLeft().x, m.topLeft().y,
-           m.bottomRight().x, m.topRight().y + r)
+           m.bottomRight().x, m.topRight().y + r * 2)
     drawer.ellipse(box, fill=node.color, outline=outline, style=node.style)
 
     # line both side
-    line = (XY(m.topLeft().x, m.topLeft().y + (r / 2)),
-            XY(m.bottomLeft().x, m.bottomLeft().y - (r / 2)))
+    line = (XY(m.topLeft().x, m.topLeft().y + r),
+            XY(m.bottomLeft().x, m.bottomLeft().y - r))
     drawer.line(line, fill=outline, width=thick, style=node.style)
-    line = (XY(m.topRight().x, m.topRight().y + (r / 2)),
-            XY(m.bottomRight().x, m.bottomRight().y - (r / 2)))
+    line = (XY(m.topRight().x, m.topRight().y + r),
+            XY(m.bottomRight().x, m.bottomRight().y - r))
     drawer.line(line, fill=outline, width=thick, style=node.style)
 
     if node.background:
         drawer.loadImage(node.background, m.box())
 
-    box = (m.topLeft().x + r, m.topLeft().y + (r / 2),
-           m.bottomRight().x - r, m.bottomRight().y)
+    box = (m.topLeft().x, m.topLeft().y + int(r * 1.5),
+           m.bottomRight().x, m.bottomRight().y - int(r * 0.5))
     drawer.textarea(box, node.label, fill=fill,
                     font=font, fontsize=metrix.fontSize,
                     lineSpacing=metrix.lineSpacing)
@@ -141,23 +141,22 @@ def render_svg_shadow(drawer, node, metrix, fill):
 
 def render_image_shadow(drawer, node, metrix, fill):
     m = metrix.node(node)
-    r = metrix.cellSize * 2
+    r = metrix.cellSize
 
-    #
-    box = (m.bottomLeft().x, m.bottomLeft().y - r,
+    box = (m.bottomLeft().x, m.bottomLeft().y - r * 2,
            m.bottomRight().x, m.bottomRight().y)
     shadow = renderer.shift_box(box, metrix.shadowOffsetX,
                                 metrix.shadowOffsetY)
     drawer.ellipse(shadow, fill=fill, filter='transp-blur')
 
     box = (m.topLeft().x, m.topLeft().y,
-           m.bottomRight().x, m.topRight().y + r)
+           m.bottomRight().x, m.topRight().y + r * 2)
     shadow = renderer.shift_box(box, metrix.shadowOffsetX,
                                 metrix.shadowOffsetY)
     drawer.ellipse(shadow, fill=fill, filter='transp-blur')
 
-    box = (m.topLeft().x, m.topLeft().y + (r / 2),
-           m.bottomRight().x, m.bottomRight().y - (r / 2))
+    box = (m.topLeft().x, m.topLeft().y + r,
+           m.bottomRight().x, m.bottomRight().y - r)
     shadow = renderer.shift_box(box, metrix.shadowOffsetX,
                                 metrix.shadowOffsetY)
     drawer.rectangle(shadow, fill=fill, filter='transp-blur')
