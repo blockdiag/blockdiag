@@ -2,6 +2,7 @@
 import box
 import roundedbox
 import note
+import mail
 import diamond
 import ellipse
 import flowchart.terminator
@@ -13,6 +14,7 @@ import flowchart.input
 shapes = {'box': box,
           'roundedbox': roundedbox,
           'note': note,
+          'mail': mail,
           'diamond': diamond,
           'ellipse': ellipse,
           'flowchart.terminator': flowchart.terminator,
