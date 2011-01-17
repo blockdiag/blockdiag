@@ -3,7 +3,7 @@ Todos
 
 Functionals
 ------------
-* Specify shape of node (rounded rectangle, diamond, end-point, etc.)
+* Add new node shape (end-point (mini circle), mini diamond, mini double circle, etc.)
 * Support other block diagram structure.
 
 Known Issues

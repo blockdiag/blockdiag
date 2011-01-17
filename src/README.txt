@@ -115,6 +115,10 @@ Python Software Foundation License.
 History
 =======
 
+0.6.5 (2011-01-18)
+------------------
+* Support node shape (experimental)
+
 0.6.4 (2011-01-17)
 ------------------
 * Fix bugs
