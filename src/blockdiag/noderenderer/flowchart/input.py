@@ -21,19 +21,19 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
     w = (m.topRight().x - m.topLeft().x) / 10;
     parallel = ((m.topLeft().x + w,  m.topLeft().y),
-		(m.topRight().x  + w, m.topRight().y),
-		(m.bottomRight().x - w, m.bottomRight().y),
-		(m.bottomLeft().x - w,  m.bottomLeft().y),
-		(m.topLeft().x + w,  m.topLeft().y)
-		)
+                (m.topRight().x  + w, m.topRight().y),
+                (m.bottomRight().x - w, m.bottomRight().y),
+                (m.bottomLeft().x - w,  m.bottomLeft().y),
+                (m.topLeft().x + w,  m.topLeft().y)
+                )
 
     box = (m.topLeft().x + w , m.topLeft().y,
-	   m.bottomRight().x - w, m.bottomRight().y)
+           m.bottomRight().x - w, m.bottomRight().y)
     if node.background:
         drawer.polygon(parallel, fill=node.color)
         drawer.loadImage(node.background, box)
-	drawer.polygon(parallel, fill="none", outline=outline,
-		       style=node.style)
+        drawer.polygon(parallel, fill="none", outline=outline,
+                       style=node.style)
     else:
         drawer.polygon(parallel, fill=node.color, outline=outline)
 
@@ -56,11 +56,11 @@ def render_shadow(drawer, format, node, metrix, fill):
 
     w = (m.topRight().x - m.topLeft().x) / 10;
     parallel = [(m.topLeft().x + w,  m.topLeft().y),
-		(m.topRight().x  + w, m.topRight().y),
-		(m.bottomRight().x - w, m.bottomRight().y),
-		(m.bottomLeft().x - w,  m.bottomLeft().y),
-		(m.topLeft().x + w,  m.topLeft().y)
-		]
+                (m.topRight().x  + w, m.topRight().y),
+                (m.bottomRight().x - w, m.bottomRight().y),
+                (m.bottomLeft().x - w,  m.bottomLeft().y),
+                (m.topLeft().x + w,  m.topLeft().y)
+                ]
     shadow = renderer.shift_polygon(parallel, metrix.shadowOffsetX,
-				    metrix.shadowOffsetY)
+                                    metrix.shadowOffsetY)
     drawer.polygon(shadow, fill=fill)

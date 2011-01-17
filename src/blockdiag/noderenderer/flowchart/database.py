@@ -33,17 +33,17 @@ def render_node(drawer, format, node, metrix, **kwargs):
     drawer.ellipse(box, fill=node.color, outline=outline, style=node.style)
     # line both side
     line = (XY(m.topLeft().x,m.topLeft().y+(r/2)),
-	    XY(m.bottomLeft().x,m.bottomLeft().y-(r/2)))
+            XY(m.bottomLeft().x,m.bottomLeft().y-(r/2)))
     drawer.line(line, fill=outline, width=thick, style=node.style)
     line = (XY(m.topRight().x,m.topRight().y+(r/2)),
-	    XY(m.bottomRight().x,m.bottomRight().y-(r/2)))
+            XY(m.bottomRight().x,m.bottomRight().y-(r/2)))
     drawer.line(line, fill=outline, width=thick, style=node.style)
 
     if node.background:
         drawer.loadImage(node.background, m.box())
 
     box = (m.topLeft().x + r, m.topLeft().y + (r/2),
-	   m.bottomRight().x - r, m.bottomRight().y)
+           m.bottomRight().x - r, m.bottomRight().y)
     drawer.textarea(box, node.label, fill=fill,
                     font=font, fontsize=metrix.fontSize,
                     lineSpacing=metrix.lineSpacing)
