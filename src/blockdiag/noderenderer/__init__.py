@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import box
+import roundedbox
 import note
 import diamond
 import ellipse
@@ -10,6 +11,7 @@ import flowchart.loopout
 import flowchart.input
 
 shapes = {'box': box,
+          'roundedbox': roundedbox,
           'note': note,
           'diamond': diamond,
           'ellipse': ellipse,
