@@ -3,6 +3,7 @@ import math
 from blockdiag.utils.XY import XY
 from blockdiag.utils import renderer
 
+
 def render_node(drawer, format, node, metrix, **kwargs):
     outline = kwargs.get('outline')
     font = kwargs.get('font')
@@ -21,15 +22,15 @@ def render_node(drawer, format, node, metrix, **kwargs):
     xdiff = metrix.nodeWidth / 4
     ydiff = metrix.nodeHeight / 4
 
-    poly = ((m.topLeft().x  + xdiff, m.topLeft().y),
+    poly = ((m.topLeft().x + xdiff, m.topLeft().y),
             (m.topRight().x - xdiff, m.topLeft().y),
-            (m.topRight().x , m.topRight().y + ydiff),
-            (m.topRight().x , m.bottomRight().y),
-            (m.topLeft().x , m.bottomLeft().y),
-            (m.topLeft().x , m.topLeft().y + ydiff),
-            (m.topLeft().x  + xdiff, m.topLeft().y) # return to start
+            (m.topRight().x, m.topRight().y + ydiff),
+            (m.topRight().x, m.bottomRight().y),
+            (m.topLeft().x, m.bottomLeft().y),
+            (m.topLeft().x, m.topLeft().y + ydiff),
+            (m.topLeft().x + xdiff, m.topLeft().y)  # return to start
             )
-    
+
     box = (m.topLeft().x, m.topLeft().y + ydiff,
            m.bottomRight().x, m.bottomRight().y)
     if node.background:
@@ -58,14 +59,14 @@ def render_shadow(drawer, format, node, metrix, fill):
     m = metrix.node(node)
     r = metrix.cellSize * 2
 
-    xdiff = (m.topRight().x - m.topLeft().x)/4
-    ydiff = (m.topRight().y - m.bottomLeft().y)/4
-    poly = ((m.topLeft().x  + xdiff, m.topLeft().y),
+    xdiff = (m.topRight().x - m.topLeft().x) / 4
+    ydiff = (m.topRight().y - m.bottomLeft().y) / 4
+    poly = ((m.topLeft().x + xdiff, m.topLeft().y),
             (m.topRight().x - xdiff, m.topLeft().y),
-            (m.topRight().x , m.topRight().y - ydiff),
-            (m.topRight().x , m.bottomRight().y),
-            (m.topLeft().x , m.bottomLeft().y),
-            (m.topLeft().x , m.topLeft().y - ydiff))
+            (m.topRight().x, m.topRight().y - ydiff),
+            (m.topRight().x, m.bottomRight().y),
+            (m.topLeft().x, m.bottomLeft().y),
+            (m.topLeft().x, m.topLeft().y - ydiff))
     shadow = renderer.shift_polygon(poly, metrix.shadowOffsetX,
                                     metrix.shadowOffsetY)
     drawer.polygon(shadow, fill=fill)
