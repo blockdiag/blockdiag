@@ -64,4 +64,4 @@ def render_shadow(drawer, format, node, metrix, fill):
                 ]
     shadow = renderer.shift_polygon(parallel, metrix.shadowOffsetX,
                                     metrix.shadowOffsetY)
-    drawer.polygon(shadow, fill=fill)
+    drawer.polygon(shadow, fill=fill, filter='transp-blur')
