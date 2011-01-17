@@ -399,7 +399,7 @@ class ellipse(SVGelement):
 
     an ellipse is defined as a center and a x and y radius.
     """
-    def __init__(self,cx=None,cy=None,rx=None,ry=None,fill=None,stroke=None,stroke_width=None,**args):
+    def __init__(self,cx=None,cy=None,rx=None,ry=None,fill=None,stroke=None,stroke_width=None,stroke_dasharray=None,**args):
         if rx==None or ry== None:
             if rx<>None:
                 raise ValueError, 'rx is required'
@@ -418,6 +418,8 @@ class ellipse(SVGelement):
             self.attributes['stroke']=stroke
         if stroke_width<>None:
             self.attributes['stroke-width']=stroke_width
+        if stroke_dasharray<>None:
+            self.attributes['stroke-dasharray']=stroke_dasharray
         
    
 class circle(SVGelement):
