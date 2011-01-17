@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import box
 import diamond
-import roundedbox
 import flowchart.terminator
 import flowchart.condition
 import flowchart.database
@@ -11,7 +10,6 @@ import flowchart.input
 
 shapes = {'box': box,
 	  'diamond': diamond,
-	  'roundedbox': roundedbox,
           'flowchart.terminator': flowchart.terminator,
 	  'flowchart.condition': flowchart.condition,
 	  'flowchart.loopin': flowchart.loopin,
