@@ -11,7 +11,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
     m = metrix.node(node)
 
     if node.background:
-        drawer.rectangle(m.box(), fill=node.color)
+        drawer.rectangle(m.box(), fill=node.color, outline=node.color)
         drawer.loadImage(node.background, m.box())
         drawer.rectangle(m.box(), outline=outline, style=node.style)
     else:

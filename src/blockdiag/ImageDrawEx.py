@@ -186,7 +186,8 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         else:
             d = int(math.ceil(thick / 2.0))
 
-        ImageDraw.ImageDraw.rectangle(self, box, fill=fill)
+        if fill:
+            ImageDraw.ImageDraw.rectangle(self, box, fill=fill)
 
         x1, y1, x2, y2 = box
         lines = (((x1, y1), (x2, y1)), ((x1, y2), (x2, y2)),  # horizonal
