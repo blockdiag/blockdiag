@@ -196,6 +196,24 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         for line in lines:
             self.line(line, fill=outline, width=thick, style=style)
 
+    def polygon(self, xy, **kwargs):
+        if 'filter' in kwargs:
+            del kwargs['filter']
+
+        if kwargs.get('fill') != 'none':
+            kwargs2 = dict(kwargs)
+
+            if 'style' in kwargs2:
+                del kwargs2['style']
+            if 'outline' in kwargs2:
+                del kwargs2['outline']
+            ImageDraw.ImageDraw.polygon(self, xy, **kwargs2)
+
+        if kwargs.get('outline'):
+            kwargs['fill'] = kwargs['outline']
+            del kwargs['outline']
+            self.line(xy, **kwargs)
+
     def label(self, box, string, **kwargs):
         lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
 

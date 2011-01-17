@@ -490,7 +490,7 @@ class polygon(SVGelement):
     
     a polygon is defined by a list of xy pairs
     """
-    def __init__(self,points,fill=None,stroke=None,stroke_width=None,**args):
+    def __init__(self,points,fill=None,stroke=None,stroke_width=None,stroke_dasharray=None,**args):
         SVGelement.__init__(self,'polygon',{'points':_xypointlist(points)},**args)
         if fill<>None:
             self.attributes['fill']=fill
@@ -498,6 +498,8 @@ class polygon(SVGelement):
             self.attributes['stroke-width']=stroke_width
         if stroke<>None:
             self.attributes['stroke']=stroke
+        if stroke_dasharray<>None:
+            self.attributes['stroke-dasharray']=stroke_dasharray
 
 class path(SVGelement):
     """p=path(path,fill,stroke,stroke_width,**args)

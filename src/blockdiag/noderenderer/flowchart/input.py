@@ -19,23 +19,24 @@ def render_node(drawer, format, node, metrix, **kwargs):
     else:
         d = int(math.ceil(thick / 2.0))
 
-    box = (m.topCenter(), m.rightCenter(),
-	   m.bottomCenter(), m.leftCenter(),
-	   m.topCenter() # return to start postion
-	   )
-    drawer.polygon(box, fill=node.color, outline=outline)
+    w = (m.topRight().x - m.topLeft().x) / 10;
+    parallel = ((m.topLeft().x + w,  m.topLeft().y),
+		(m.topRight().x  + w, m.topRight().y),
+		(m.bottomRight().x - w, m.bottomRight().y),
+		(m.bottomLeft().x - w,  m.bottomLeft().y),
+		(m.topLeft().x + w,  m.topLeft().y)
+		)
 
+    box = (m.topLeft().x + w , m.topLeft().y,
+	   m.bottomRight().x - w, m.bottomRight().y)
     if node.background:
-	drawer.polygon(box, fill=node.color)
-        drawer.loadImage(node.background, m.box())
-	drawer.polygon(box, fill="none", outline=outline,
+        drawer.polygon(parallel, fill=node.color)
+        drawer.loadImage(node.background, box)
+	drawer.polygon(parallel, fill="none", outline=outline,
 		       style=node.style)
     else:
-        drawer.polygon(box, fill=node.color, outline=outline)
+        drawer.polygon(parallel, fill=node.color, outline=outline)
 
-
-    box = (m.topLeft().x + r, m.topLeft().y,
-	   m.bottomRight().x - r, m.bottomRight().y)
     drawer.textarea(box, node.label, fill=fill,
                     font=font, fontsize=metrix.fontSize,
                     lineSpacing=metrix.lineSpacing)
@@ -53,8 +54,13 @@ def render_shadow(drawer, format, node, metrix, fill):
     m = metrix.node(node)
     r = metrix.cellSize * 2
 
-    box = (m.topCenter(), m.rightCenter(),
-	   m.bottomCenter(), m.leftCenter())
-    shadow = renderer.shift_polygon(box, metrix.shadowOffsetX,
-				    metrix.shadowOffsetY)
+    w = (m.topRight().x - m.topLeft().x) / 10;
+    parallel = [(m.topLeft().x + w,  m.topLeft().y),
+		(m.topRight().x  + w, m.topRight().y),
+		(m.bottomRight().x - w, m.bottomRight().y),
+		(m.bottomLeft().x - w,  m.bottomLeft().y),
+		(m.topLeft().x + w,  m.topLeft().y)
+		]
+    shadow = renderer.shift_points(parallel, metrix.shadowOffsetX,
+				   metrix.shadowOffsetY)
     drawer.polygon(shadow, fill=fill)

@@ -29,10 +29,13 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
     box = (m.topLeft().x + r, m.topLeft().y,
            m.bottomRight().x - r, m.bottomRight().y)
-    drawer.rectangle(box, fill=node.color, outline=node.color)
-
     if node.background:
-        drawer.loadImage(node.background, m.box())
+        drawer.rectangle(box, fill=node.color)
+        drawer.loadImage(node.background, box)
+	drawer.polygon(box, fill="none", outline=outline,
+		       style=node.style)
+    else:
+        drawer.rectangle(box, fill=node.color, outline=node.color)
 
     line = (XY(box[0], box[1]), XY(box[2], box[1]))
     drawer.line(line, fill=outline, width=thick, style=node.style)
