@@ -11,7 +11,6 @@ def render_node(drawer, format, node, metrix, **kwargs):
     badgeFill = kwargs.get('badgeFill')
 
     m = metrix.node(node)
-    r = metrix.cellSize * 2
     thick = metrix.scale_ratio
 
     if thick == 1:
@@ -22,14 +21,13 @@ def render_node(drawer, format, node, metrix, **kwargs):
     xdiff = metrix.nodeWidth / 4
     ydiff = metrix.nodeHeight / 4
 
-    poly = ((m.topLeft().x, m.topLeft().y),
-            (m.topRight().x, m.topRight().y),
-            (m.bottomRight().x, m.bottomRight().y - ydiff),
-            (m.bottomRight().x - xdiff, m.bottomRight().y),
-            (m.bottomLeft().x + xdiff, m.bottomLeft().y),
-            (m.bottomLeft().x, m.bottomLeft().y - ydiff),
-            (m.topLeft().x, m.topLeft().y)  # return to start position
-            )
+    poly = [XY(m.topLeft().x, m.topLeft().y),
+            XY(m.topRight().x, m.topRight().y),
+            XY(m.bottomRight().x, m.bottomRight().y - ydiff),
+            XY(m.bottomRight().x - xdiff, m.bottomRight().y),
+            XY(m.bottomLeft().x + xdiff, m.bottomLeft().y),
+            XY(m.bottomLeft().x, m.bottomLeft().y - ydiff),
+            XY(m.topLeft().x, m.topLeft().y)]
 
     box = (m.topLeft().x, m.topLeft().y,
            m.bottomRight().x, m.bottomRight().y - ydiff)
@@ -57,17 +55,16 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
 def render_shadow(drawer, format, node, metrix, fill):
     m = metrix.node(node)
-    r = metrix.cellSize * 2
 
     xdiff = (m.topRight().x - m.topLeft().x) / 4
     ydiff = (m.topRight().y - m.bottomLeft().y) / 4
 
-    poly = ((m.topLeft().x, m.topLeft().y),
-            (m.topRight().x, m.topRight().y),
-            (m.bottomRight().x, m.bottomRight().y + ydiff),
-            (m.bottomRight().x - xdiff, m.bottomRight().y),
-            (m.bottomLeft().x + xdiff, m.bottomLeft().y),
-            (m.bottomLeft().x, m.bottomLeft().y + ydiff))
+    poly = [XY(m.topLeft().x, m.topLeft().y),
+            XY(m.topRight().x, m.topRight().y),
+            XY(m.bottomRight().x, m.bottomRight().y + ydiff),
+            XY(m.bottomRight().x - xdiff, m.bottomRight().y),
+            XY(m.bottomLeft().x + xdiff, m.bottomLeft().y),
+            XY(m.bottomLeft().x, m.bottomLeft().y + ydiff)]
     shadow = renderer.shift_polygon(poly, metrix.shadowOffsetX,
                                     metrix.shadowOffsetY)
     drawer.polygon(shadow, fill=fill, filter='transp-blur')
