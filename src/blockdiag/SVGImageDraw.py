@@ -56,6 +56,17 @@ class SVGImageDrawElement:
 
         return length
 
+    def path(self, pd, **kwargs):
+        fill = kwargs.get('fill')
+        outline = kwargs.get('outline')
+        style = kwargs.get('style')
+        filter = kwargs.get('filter')
+
+        p = path(pd, fill=self.rgb(fill), stroke=self.rgb(outline),
+                 stroke_dasharray=self.style(style),
+                 style=self.filter(filter))
+        self.svg.addElement(p)
+
     def rectangle(self, box, **kwargs):
         thick = kwargs.get('width', 1)
         fill = kwargs.get('fill', 'none')
