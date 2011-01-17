@@ -32,8 +32,8 @@ def render_node(drawer, format, node, metrix, **kwargs):
     if node.background:
         drawer.rectangle(box, fill=node.color)
         drawer.loadImage(node.background, box)
-	drawer.polygon(box, fill="none", outline=outline,
-		       style=node.style)
+	drawer.rectangle(box, fill="none", outline=node.color,
+			 style=node.style)
     else:
         drawer.rectangle(box, fill=node.color, outline=node.color)
 
