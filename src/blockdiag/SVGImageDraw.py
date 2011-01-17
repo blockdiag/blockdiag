@@ -134,6 +134,7 @@ class SVGImageDrawElement:
     def ellipse(self, xy, **kwargs):
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
+        style = kwargs.get('style')
         filter = kwargs.get('filter')
 
         w = (xy[2] - xy[0]) / 2
@@ -141,7 +142,9 @@ class SVGImageDrawElement:
         pt = XY(xy[0] + w, xy[1] + h)
 
         e = ellipse(pt.x, pt.y, w, h, fill=self.rgb(fill),
-                    stroke=self.rgb(outline), style=self.filter(filter))
+                    stroke=self.rgb(outline),
+                    stroke_dasharray=self.style(style),
+                    style=self.filter(filter))
         self.svg.addElement(e)
 
     def polygon(self, xy, **kwargs):
