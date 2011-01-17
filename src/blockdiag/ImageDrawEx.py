@@ -207,7 +207,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                 del kwargs2['style']
             if 'outline' in kwargs2:
                 del kwargs2['outline']
-            ImageDraw.ImageDraw.polygon(self, xy, **kwargs)
+            ImageDraw.ImageDraw.polygon(self, xy, **kwargs2)
 
         if kwargs.get('outline'):
             kwargs['fill'] = kwargs['outline']

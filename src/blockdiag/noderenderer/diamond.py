@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from blockdiag.utils import renderer
-from blockdiag.utils.XY import XY
+from utils import renderer
+from utils.XY import XY
 
 
 def render_node(drawer, format, node, metrix, **kwargs):
