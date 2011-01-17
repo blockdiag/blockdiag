@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import math
-from utils.XY import XY
-from utils import renderer
+from blockdiag.utils.XY import XY
+from blockdiag.utils import renderer
 
 
 def render_node(drawer, format, node, metrix, **kwargs):
