@@ -11,4 +11,4 @@ def shift_box(box, x, y):
 
 
 def shift_polygon(polygon, x, y):
-    return (XY(p[0] + x, p[1] + y) for p in polygon)
+    return [XY(p[0] + x, p[1] + y) for p in polygon]
