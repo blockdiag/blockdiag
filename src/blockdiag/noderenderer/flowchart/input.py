@@ -19,15 +19,15 @@ def render_node(drawer, format, node, metrix, **kwargs):
     else:
         d = int(math.ceil(thick / 2.0))
 
-    w = (m.topRight().x - m.topLeft().x) / 10;
+    w = (m.topRight().x - m.topLeft().x) / 10
     parallel = ((m.topLeft().x + w,  m.topLeft().y),
-                (m.topRight().x  + w, m.topRight().y),
+                (m.topRight().x + w, m.topRight().y),
                 (m.bottomRight().x - w, m.bottomRight().y),
                 (m.bottomLeft().x - w,  m.bottomLeft().y),
                 (m.topLeft().x + w,  m.topLeft().y)
                 )
 
-    box = (m.topLeft().x + w , m.topLeft().y,
+    box = (m.topLeft().x + w, m.topLeft().y,
            m.bottomRight().x - w, m.bottomRight().y)
     if node.background:
         drawer.polygon(parallel, fill=node.color)
@@ -50,13 +50,14 @@ def render_node(drawer, format, node, metrix, **kwargs):
         drawer.textarea(box, node.numbered, fill=fill,
                         font=font, fontsize=metrix.fontSize)
 
+
 def render_shadow(drawer, format, node, metrix, fill):
     m = metrix.node(node)
     r = metrix.cellSize * 2
 
-    w = (m.topRight().x - m.topLeft().x) / 10;
+    w = (m.topRight().x - m.topLeft().x) / 10
     parallel = [(m.topLeft().x + w,  m.topLeft().y),
-                (m.topRight().x  + w, m.topRight().y),
+                (m.topRight().x + w, m.topRight().y),
                 (m.bottomRight().x - w, m.bottomRight().y),
                 (m.bottomLeft().x - w,  m.bottomLeft().y),
                 (m.topLeft().x + w,  m.topLeft().y)
