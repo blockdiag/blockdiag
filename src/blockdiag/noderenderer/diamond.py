@@ -41,7 +41,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
 def render_shadow(drawer, format, node, metrix, fill):
     m = metrix.node(node)
     points = (m.top(), m.left(), m.bottom(), m.right())
-    shadow = renderer.shift_points(points, metrix.shadowOffsetX,
-                                   metrix.shadowOffsetY)
+    shadow = renderer.shift_polygon(points, metrix.shadowOffsetX,
+                                    metrix.shadowOffsetY)
 
     drawer.polygon(shadow, fill=fill, filter='transp-blur')
