@@ -30,7 +30,7 @@ class Base(object):
         name = attr.name
         if name in self.int_attrs:
             setattr(self, name, int(attr.value))
-        if hasattr(self, name) and not callable(getattr(self, name)):
+        elif hasattr(self, name) and not callable(getattr(self, name)):
             setattr(self, name, unquote(attr.value))
         else:
             class_name = self.__class__.__name__
