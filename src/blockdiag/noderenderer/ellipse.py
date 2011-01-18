@@ -19,8 +19,8 @@ def render_node(drawer, format, node, metrix, **kwargs):
         drawer.loadImage(node.background, box)
         drawer.ellipse(m.box(), fill="none", outline=outline, style=node.style)
     else:
-        drawer.rectangle(m.box(), outline=outline,
-                         fill=node.color, style=node.style)
+        drawer.ellipse(m.box(), outline=outline,
+                       fill=node.color, style=node.style)
 
     drawer.textarea(box, node.label, fill=fill,
                     font=font, fontsize=metrix.fontSize,
