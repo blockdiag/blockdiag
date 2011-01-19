@@ -10,7 +10,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
     fill = kwargs.get('fill')
     badgeFill = kwargs.get('badgeFill')
 
-    m = metrix.node(node)
+    m = metrix.cell(node)
     diamond = (m.top(), m.left(), m.bottom(), m.right(), m.top())
     box = (m.topLeft().x + metrix.nodeWidth / 4,
            m.topLeft().y + metrix.nodeHeight / 4,
@@ -40,7 +40,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
 
 def render_shadow(drawer, format, node, metrix, fill):
-    m = metrix.node(node)
+    m = metrix.cell(node)
     points = (m.top(), m.left(), m.bottom(), m.right())
     shadow = renderer.shift_polygon(points, metrix.shadowOffsetX,
                                     metrix.shadowOffsetY)

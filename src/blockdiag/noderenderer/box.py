@@ -9,7 +9,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
     fill = kwargs.get('fill')
     badgeFill = kwargs.get('badgeFill')
 
-    m = metrix.node(node)
+    m = metrix.cell(node)
 
     if node.background:
         drawer.rectangle(m.box(), fill=node.color, outline=node.color)
@@ -34,7 +34,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
 
 def render_shadow(drawer, format, node, metrix, fill):
-    box = metrix.node(node).box()
+    box = metrix.cell(node).box()
     shadow = renderer.shift_box(box, metrix.shadowOffsetX,
                                 metrix.shadowOffsetY)
 
