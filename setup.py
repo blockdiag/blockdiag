@@ -58,6 +58,7 @@ setup(
         diamond = blockdiag.noderenderer.diamond
         mail = blockdiag.noderenderer.mail
         note = blockdiag.noderenderer.note
+        cloud = blockdiag.noderenderer.cloud
         ellipse = blockdiag.noderenderer.ellipse
         flowchart.database = blockdiag.noderenderer.flowchart.database
         flowchart.input = blockdiag.noderenderer.flowchart.input
