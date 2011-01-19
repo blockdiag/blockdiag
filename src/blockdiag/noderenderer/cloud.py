@@ -60,8 +60,50 @@ def render_svg_node(drawer, node, metrix, **kwargs):
 
 
 def render_image_node(drawer, node, metrix, **kwargs):
-    from blockdiag.noderenderer import box
-    box.render_node(drawer, 'PNG', node, metrix, **kwargs)
+    outline = kwargs.get('outline')
+    font = kwargs.get('font')
+    fill = kwargs.get('fill')
+    badgeFill = kwargs.get('badgeFill')
+
+    m = metrix.node(node)
+
+    pt = m.topLeft()
+    rx = metrix.nodeWidth / 12
+    ry = metrix.nodeHeight / 5
+
+    ellipses = [(pt.x + rx * 2, pt.y + ry, pt.x + rx * 5, pt.y + ry * 3),
+                (pt.x + rx * 4, pt.y, pt.x + rx * 9, pt.y + ry * 2),
+                (pt.x + rx * 8, pt.y + ry, pt.x + rx * 11, pt.y + ry * 3),
+                (pt.x + rx * 9, pt.y + ry * 2, pt.x + rx * 13, pt.y + ry * 4),
+                (pt.x + rx * 8, pt.y + ry * 2, pt.x + rx * 11, pt.y + ry * 5),
+                (pt.x + rx * 5, pt.y + ry * 2, pt.x + rx * 8, pt.y + ry * 5),
+                (pt.x + rx * 2, pt.y + ry * 2, pt.x + rx * 5, pt.y + ry * 5),
+                (pt.x + rx * 0, pt.y + ry * 2, pt.x + rx * 4, pt.y + ry * 4)]
+    fillers = [(pt.x + rx * 2, pt.y + ry * 2, pt.x + rx * 11, pt.y + ry * 4),
+               (pt.x + rx * 4, pt.y + ry, pt.x + rx * 9, pt.y + ry * 2)]
+
+    for box in ellipses:
+        drawer.ellipse(box, fill=node.color, outline=fill, style=node.style)
+
+    for box in fillers:
+        drawer.rectangle(box, fill=node.color, outline=node.color)
+
+    box = (pt.x + rx * 3, pt.y + ry, pt.x + rx * 10, pt.y + ry * 4)
+    if node.background:
+        drawer.loadImage(node.background, box)
+
+    drawer.textarea(box, node.label, fill=fill,
+                    font=font, fontsize=metrix.fontSize,
+                    lineSpacing=metrix.lineSpacing)
+
+    if node.numbered != None:
+        xy = m.topLeft()
+        r = metrix.cellSize
+
+        box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
+        drawer.ellipse(box, outline=fill, fill=badgeFill)
+        drawer.textarea(box, node.numbered, fill=fill,
+                        font=font, fontsize=metrix.fontSize)
 
 
 def render_shadow(drawer, format, node, metrix, fill):
@@ -98,8 +140,30 @@ def render_svg_shadow(drawer, node, metrix, fill):
 
 
 def render_image_shadow(drawer, node, metrix, fill):
-    from blockdiag.noderenderer import box
-    box.render_shadow(drawer, 'PNG', node, metrix, fill)
+    m = metrix.node(node)
+
+    points = renderer.shift_polygon([m.topLeft()], metrix.shadowOffsetX,
+                                    metrix.shadowOffsetY)
+    pt = points[0]
+    rx = metrix.nodeWidth / 12
+    ry = metrix.nodeHeight / 5
+
+    ellipses = [(pt.x + rx * 2, pt.y + ry, pt.x + rx * 5, pt.y + ry * 3),
+                (pt.x + rx * 4, pt.y, pt.x + rx * 9, pt.y + ry * 2),
+                (pt.x + rx * 8, pt.y + ry, pt.x + rx * 11, pt.y + ry * 3),
+                (pt.x + rx * 9, pt.y + ry * 2, pt.x + rx * 13, pt.y + ry * 4),
+                (pt.x + rx * 8, pt.y + ry * 2, pt.x + rx * 11, pt.y + ry * 5),
+                (pt.x + rx * 5, pt.y + ry * 2, pt.x + rx * 8, pt.y + ry * 5),
+                (pt.x + rx * 2, pt.y + ry * 2, pt.x + rx * 5, pt.y + ry * 5),
+                (pt.x + rx * 0, pt.y + ry * 2, pt.x + rx * 4, pt.y + ry * 4)]
+    fillers = [(pt.x + rx * 2, pt.y + ry * 2, pt.x + rx * 11, pt.y + ry * 4),
+               (pt.x + rx * 4, pt.y + ry, pt.x + rx * 9, pt.y + ry * 2)]
+
+    for box in ellipses:
+        drawer.ellipse(box, fill=fill, outline=fill)
+
+    for box in fillers:
+        drawer.rectangle(box, fill=fill, outline=fill)
 
 
 def setup(self):
