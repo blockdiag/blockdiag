@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import math
+from blockdiag.noderenderer import install_renderer
 from blockdiag.utils.XY import XY
 from blockdiag.utils import renderer
 
@@ -59,3 +60,7 @@ def render_shadow(drawer, format, node, metrix, fill):
     shadow = renderer.shift_polygon(note, metrix.shadowOffsetX,
                                     metrix.shadowOffsetY)
     drawer.polygon(shadow, fill=fill, filter='transp-blur')
+
+
+def setup(self):
+    install_renderer('note', self)

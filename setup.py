@@ -51,6 +51,19 @@ setup(
      entry_points="""
         [console_scripts]
         blockdiag = blockdiag:main
+
+        [blockdiag_noderenderer]
+        box = blockdiag.noderenderer.box
+        roundedbox = blockdiag.noderenderer.roundedbox
+        diamond = blockdiag.noderenderer.diamond
+        mail = blockdiag.noderenderer.mail
+        note = blockdiag.noderenderer.note
+        ellipse = blockdiag.noderenderer.ellipse
+        flowchart.database = blockdiag.noderenderer.flowchart.database
+        flowchart.input = blockdiag.noderenderer.flowchart.input
+        flowchart.loopin = blockdiag.noderenderer.flowchart.loopin
+        flowchart.loopout = blockdiag.noderenderer.flowchart.loopout
+        flowchart.terminator = blockdiag.noderenderer.flowchart.terminator
      """,
 )
 

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from blockdiag.noderenderer import install_renderer
 from blockdiag.utils import renderer
 from blockdiag.utils.XY import XY
 
@@ -45,3 +46,7 @@ def render_shadow(drawer, format, node, metrix, fill):
                                 metrix.shadowOffsetY)
 
     drawer.rectangle(shadow, fill=fill, filter='transp-blur')
+
+
+def setup(self):
+    install_renderer('mail', self)

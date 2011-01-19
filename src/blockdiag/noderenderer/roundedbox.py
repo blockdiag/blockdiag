@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import math
+from blockdiag.noderenderer import install_renderer
 from blockdiag.utils.XY import XY
 from blockdiag.utils import renderer
 from blockdiag.SVGdraw import pathdata
@@ -199,3 +200,7 @@ def render_image_background(drawer, node, metrix, **kwargs):
         box = renderer.shift_box(box, metrix.shadowOffsetX,
                                  metrix.shadowOffsetY)
     drawer.rectangle(box, fill=fill, outline=outline, filter='transp-blur')
+
+
+def setup(self):
+    install_renderer('roundedbox', self)
