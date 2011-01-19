@@ -8,7 +8,7 @@ except ImportError:
     from utils.namedtuple import namedtuple
 
 
-class EdgeLines:
+class EdgeLines(object):
     def __init__(self, metrix, points=None):
         self.xy = None
         self.cellSize = metrix.cellSize
@@ -92,7 +92,7 @@ class EdgeLines:
         return lines
 
 
-class DiagramMetrix:
+class DiagramMetrix(object):
     def __init__(self, diagram, **kwargs):
         self.scale_ratio = 1
         self.cellSize = kwargs.get('cellSize', 8)
@@ -147,7 +147,7 @@ class DiagramMetrix:
         return XY(xy.x + self.pageMargin.x, xy.y + self.pageMargin.y)
 
 
-class NodeMetrix:
+class NodeMetrix(object):
     def __init__(self, node, metrix):
         self.metrix = metrix
         self.width = node.width
@@ -234,7 +234,7 @@ class NodeMetrix:
     left = leftCenter
 
 
-class EdgeMetrix:
+class EdgeMetrix(object):
     def __init__(self, edge, metrix):
         self.metrix = metrix
         self.edge = edge
