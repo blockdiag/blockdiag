@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from utils.XY import XY
+import noderenderer
 try:
     from collections import namedtuple
 except ImportError:
@@ -128,7 +129,12 @@ class DiagramMetrix(object):
         return self
 
     def node(self, node):
-        return NodeMetrix(node, self)
+        renderer = noderenderer.get(node.shape)
+
+        if hasattr(renderer, 'NodeMetrix'):
+            return getattr(renderer, 'NodeMetrix')(node, self)
+        else:
+            return NodeMetrix(node, self)
 
     def cell(self, node):
         return NodeMetrix(node, self)
@@ -240,8 +246,8 @@ class EdgeMetrix(object):
         self.edge = edge
 
     def direction(self):
-        node1 = self.metrix.node(self.edge.node1)
-        node2 = self.metrix.node(self.edge.node2)
+        node1 = self.metrix.cell(self.edge.node1)
+        node2 = self.metrix.cell(self.edge.node2)
 
         if node1.x > node2.x:
             if node1.y > node2.y:

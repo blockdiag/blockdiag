@@ -4,6 +4,7 @@
 from types import MethodType
 from utils.XY import XY
 from DiagramMetrix import *
+import noderenderer
 
 
 class Scaler:
@@ -67,10 +68,19 @@ class PngDiagramMetrix(Scaler):
         return self.metrix
 
     def cell(self, node):
-        return PngNodeMetrix(node, self)
+        base = NodeMetrix(node, self.originalMetrix())
+        return PngNodeMetrix(node, self, base)
 
     def node(self, node):
-        return PngNodeMetrix(node, self)
+        metrix = self.originalMetrix()
+        renderer = noderenderer.get(node.shape)
+
+        if hasattr(renderer, 'NodeMetrix'):
+            base = getattr(renderer, 'NodeMetrix')(node, metrix)
+        else:
+            base = NodeMetrix(node, metrix)
+
+        return PngNodeMetrix(node, self, base)
 
     def group(self, group):
         return PngNodeMetrix(group, self)
@@ -80,9 +90,9 @@ class PngDiagramMetrix(Scaler):
 
 
 class PngNodeMetrix(Scaler):
-    def __init__(self, node, metrix):
+    def __init__(self, node, metrix, base_metrix):
         self.scale_ratio = metrix.scale_ratio
-        self.metrix = NodeMetrix(node, metrix.originalMetrix())
+        self.metrix = base_metrix
 
         # variables
         self.define_scale_attribute('x')
