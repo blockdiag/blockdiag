@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from blockdiag.noderenderer import install_renderer
 from blockdiag.utils import renderer
 
 
@@ -42,3 +43,7 @@ def render_shadow(drawer, format, node, metrix, fill):
                                 metrix.shadowOffsetY)
 
     drawer.ellipse(shadow, fill=fill, filter='transp-blur')
+
+
+def setup(self):
+    install_renderer('ellipse', self)

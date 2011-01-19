@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import math
+from blockdiag.noderenderer import install_renderer
 from blockdiag.SVGdraw import pathdata
 from blockdiag.utils.XY import XY
 from blockdiag.utils import renderer
@@ -160,3 +161,7 @@ def render_image_shadow(drawer, node, metrix, fill):
     shadow = renderer.shift_box(box, metrix.shadowOffsetX,
                                 metrix.shadowOffsetY)
     drawer.rectangle(shadow, fill=fill, filter='transp-blur')
+
+
+def setup(self):
+    install_renderer('flowchart.database', self)

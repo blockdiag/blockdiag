@@ -1,30 +1,18 @@
 # -*- coding: utf-8 -*-
-import box
-import roundedbox
-import note
-import mail
-import diamond
-import ellipse
-import flowchart.terminator
-import flowchart.database
-import flowchart.loopin
-import flowchart.loopout
-import flowchart.input
+import pkg_resources
 
-shapes = {'box': box,
-          'roundedbox': roundedbox,
-          'note': note,
-          'mail': mail,
-          'diamond': diamond,
-          'ellipse': ellipse,
-          'flowchart.terminator': flowchart.terminator,
-          'flowchart.condition': diamond,
-          'flowchart.loopin': flowchart.loopin,
-          'flowchart.loopout': flowchart.loopout,
-          'flowchart.database': flowchart.database,
-          'flowchart.input': flowchart.input,
-          'flowchart.terminator': flowchart.terminator
-          }
+shapes = {}
+
+
+def init():
+    for plugin in pkg_resources.iter_entry_points('blockdiag_noderenderer'):
+        module = plugin.load()
+        if hasattr(module, 'setup'):
+            module.setup(module)
+
+
+def install_renderer(name, renderer):
+    shapes[name] = renderer
 
 
 def get(shape):

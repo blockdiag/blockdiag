@@ -9,6 +9,7 @@ from optparse import OptionParser
 from elements import *
 import DiagramDraw
 import diagparser
+import noderenderer
 from utils.XY import XY
 import utils
 
@@ -374,6 +375,7 @@ def detectfont(options):
 
 
 def main():
+    noderenderer.init()
     options, args = parse_option()
 
     infile = args[0]
