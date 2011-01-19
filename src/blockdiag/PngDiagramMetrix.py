@@ -66,6 +66,9 @@ class PngDiagramMetrix(Scaler):
     def originalMetrix(self):
         return self.metrix
 
+    def cell(self, node):
+        return PngNodeMetrix(node, self)
+
     def node(self, node):
         return PngNodeMetrix(node, self)
 
