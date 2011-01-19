@@ -173,7 +173,7 @@ class DiagramDraw(object):
 
         # Draw node groups.
         for node in self.groups:
-            box = metrix.node(node).marginBox()
+            box = metrix.cell(node).marginBox()
             if self.format == 'SVG' and node.href:
                 drawer = self.drawer.link(node.href)
                 drawer.rectangle(box, fill=node.color, filter='blur')
@@ -197,7 +197,7 @@ class DiagramDraw(object):
                       font=self.font, badgeFill=self.badgeFill)
 
     def group_label(self, group):
-        m = self.metrix.node(group)
+        m = self.metrix.cell(group)
 
         if self.format == 'SVG' and group.href:
             drawer = self.drawer.link(group.href)

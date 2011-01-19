@@ -11,7 +11,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
     fill = kwargs.get('fill')
     badgeFill = kwargs.get('badgeFill')
 
-    m = metrix.node(node)
+    m = metrix.cell(node)
     w = metrix.cellSize * 2
     thick = metrix.scale_ratio
 
@@ -51,7 +51,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
 
 def render_shadow(drawer, format, node, metrix, fill):
-    m = metrix.node(node)
+    m = metrix.cell(node)
     w = metrix.cellSize
 
     tr = m.topRight()

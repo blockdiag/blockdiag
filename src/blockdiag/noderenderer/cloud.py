@@ -19,7 +19,7 @@ def render_svg_node(drawer, node, metrix, **kwargs):
     fill = kwargs.get('fill')
     badgeFill = kwargs.get('badgeFill')
 
-    m = metrix.node(node)
+    m = metrix.cell(node)
 
     pt = m.topLeft()
     rx = metrix.nodeWidth / 12
@@ -65,7 +65,7 @@ def render_image_node(drawer, node, metrix, **kwargs):
     fill = kwargs.get('fill')
     badgeFill = kwargs.get('badgeFill')
 
-    m = metrix.node(node)
+    m = metrix.cell(node)
 
     pt = m.topLeft()
     rx = metrix.nodeWidth / 12

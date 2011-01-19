@@ -26,7 +26,7 @@ def render_svg_node(drawer, node, metrix, **kwargs):
     fill = kwargs.get('fill')
     badgeFill = kwargs.get('badgeFill')
 
-    m = metrix.node(node)
+    m = metrix.cell(node)
     r = metrix.cellSize * 2
     thick = metrix.scale_ratio
 
@@ -66,7 +66,7 @@ def render_image_node(drawer, node, metrix, **kwargs):
     fill = kwargs.get('fill')
     badgeFill = kwargs.get('badgeFill')
 
-    m = metrix.node(node)
+    m = metrix.cell(node)
     r = metrix.cellSize * 2
     thick = metrix.scale_ratio
 
@@ -111,7 +111,7 @@ def render_image_node(drawer, node, metrix, **kwargs):
 
 
 def render_svg_shadow(drawer, node, metrix, fill):
-    m = metrix.node(node)
+    m = metrix.cell(node)
     r = metrix.cellSize * 2
 
     box = (m.topLeft().x + r, m.topLeft().y,
@@ -129,7 +129,7 @@ def render_svg_shadow(drawer, node, metrix, fill):
 
 
 def render_image_shadow(drawer, node, metrix, fill):
-    m = metrix.node(node)
+    m = metrix.cell(node)
     r = metrix.cellSize * 2
 
     box = (m.topLeft().x, m.topLeft().y,
