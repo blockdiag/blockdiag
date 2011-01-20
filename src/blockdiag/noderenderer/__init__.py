@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import pkg_resources
 
-shapes = {}
+renderers = {}
 
 
-def init():
+def init_renderers():
     for plugin in pkg_resources.iter_entry_points('blockdiag_noderenderer'):
         module = plugin.load()
         if hasattr(module, 'setup'):
@@ -12,8 +12,11 @@ def init():
 
 
 def install_renderer(name, renderer):
-    shapes[name] = renderer
+    renderers[name] = renderer
 
 
 def get(shape):
-    return shapes[shape]
+    if not renderers:
+        init_renderers()
+
+    return renderers[shape]
