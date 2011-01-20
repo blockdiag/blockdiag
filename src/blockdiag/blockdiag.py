@@ -375,7 +375,6 @@ def detectfont(options):
 
 
 def main():
-    noderenderer.init()
     options, args = parse_option()
 
     infile = args[0]
