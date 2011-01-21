@@ -29,8 +29,9 @@ class Scaler:
         setattr(self, name, value)
 
     def define_scale_attribute(self, name):
-        value = getattr(self.metrix, name)
-        setattr(self, name, self.scale(value))
+        if hasattr(self.metrix, name):
+            value = getattr(self.metrix, name)
+            setattr(self, name, self.scale(value))
 
     def define_scale_method(self, name):
         def scale_method(self, *args, **kwargs):
