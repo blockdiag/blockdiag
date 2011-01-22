@@ -1,0 +1,9 @@
+{
+  group {
+    color = "red";
+    label = "group label";
+
+    A;
+  }
+  Z;
+}
