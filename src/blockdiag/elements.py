@@ -230,6 +230,8 @@ class Diagram(NodeGroup):
                     self.portrait = True
                 else:
                     self.portrait = False
+            elif attr.name == 'shape_namespace':
+                noderenderer.set_default_namespace(value)
             else:
                 self.set_attribute(attr)
 
