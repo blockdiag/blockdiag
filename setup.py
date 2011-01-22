@@ -56,6 +56,7 @@ setup(
         box = blockdiag.noderenderer.box
         roundedbox = blockdiag.noderenderer.roundedbox
         diamond = blockdiag.noderenderer.diamond
+        minidiamond = blockdiag.noderenderer.minidiamond
         mail = blockdiag.noderenderer.mail
         note = blockdiag.noderenderer.note
         cloud = blockdiag.noderenderer.cloud
