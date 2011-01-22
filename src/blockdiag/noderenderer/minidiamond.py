@@ -23,7 +23,7 @@ def render_node(drawer, format, node, metrix, **kwargs):
                    fill=node.color, style=node.style)
 
     textbox = (m.top().x, m.top().y, m.right().x, m.right().y)
-    drawer.textarea(textbox, node.label, fill=fill,
+    drawer.textarea(textbox, node.label, fill=fill, halign="left",
                     font=font, fontsize=metrix.fontSize,
                     lineSpacing=metrix.lineSpacing)
 
