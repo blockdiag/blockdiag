@@ -61,6 +61,7 @@ setup(
         note = blockdiag.noderenderer.note
         cloud = blockdiag.noderenderer.cloud
         ellipse = blockdiag.noderenderer.ellipse
+        beginpoint = blockdiag.noderenderer.beginpoint
         endpoint = blockdiag.noderenderer.endpoint
         flowchart.database = blockdiag.noderenderer.flowchart.database
         flowchart.input = blockdiag.noderenderer.flowchart.input
