@@ -218,6 +218,20 @@ class Diagram(NodeGroup):
         self.span_width = None
         self.span_height = None
         self.fontsize = None
+        self.portrait = False
+
+    def set_attributes(self, attrs):
+        for attr in attrs:
+            value = unquote(attr.value)
+
+            if attr.name == 'portrait':
+                style = value.lower()
+                if style == 'true':
+                    self.portrait = True
+                else:
+                    self.portrait = False
+            else:
+                self.set_attribute(attr)
 
 
 class DiagramEdge(Base):

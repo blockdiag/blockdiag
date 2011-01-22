@@ -303,7 +303,19 @@ class ScreenNodeBuilder:
         diagram = DiagramTreeBuilder().build(tree)
         DiagramLayoutManager(diagram).run()
         diagram.fixiate(True)
+
+        if diagram.portrait:
+            klass.rotate_diagram(diagram)
+
         return diagram
+
+    @classmethod
+    def rotate_diagram(klass, diagram):
+        for node in diagram.traverse_nodes():
+            node.xy = XY(node.xy.y, node.xy.x)
+            node.width, node.height = (node.height, node.width)
+
+        diagram.width, diagram.height = (diagram.height, diagram.width)
 
 
 def parse_option():
