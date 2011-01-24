@@ -91,6 +91,22 @@ def test_node_shape_diagram():
         assert node.shape == assert_shape[node.id]
 
 
+def test_unknown_node_shape_diagram():
+    screen = __build_diagram('unknown_node_shape.diag')
+
+    assert_shape = {'A': 'box', 'Z': 'box'}
+    for node in screen.nodes:
+        assert node.shape == assert_shape[node.id]
+
+
+def test_node_shape_namespace_diagram():
+    screen = __build_diagram('node_shape_namespace.diag')
+
+    assert_shape = {'A': 'flowchart.condition', 'B': 'condition', 'Z': 'box'}
+    for node in screen.nodes:
+        assert node.shape == assert_shape[node.id]
+
+
 def test_node_has_multilined_label_diagram():
     screen = __build_diagram('node_has_multilined_label.diag')
 
