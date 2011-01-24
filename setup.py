@@ -61,6 +61,7 @@ setup(
         cloud = blockdiag.noderenderer.cloud
         ellipse = blockdiag.noderenderer.ellipse
         endpoint = blockdiag.noderenderer.endpoint
+        actor = blockdiag.noderenderer.actor
         flowchart.database = blockdiag.noderenderer.flowchart.database
         flowchart.input = blockdiag.noderenderer.flowchart.input
         flowchart.loopin = blockdiag.noderenderer.flowchart.loopin
