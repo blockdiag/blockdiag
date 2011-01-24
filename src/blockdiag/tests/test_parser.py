@@ -77,6 +77,20 @@ def test_single_node_diagram():
     assert screen.nodes[0].xy == (0, 0)
 
 
+def test_node_shape_diagram():
+    screen = __build_diagram('node_shape.diag')
+
+    assert_shape = {'A': 'box', 'B': 'roundedbox', 'C': 'diamond',
+                    'D': 'ellipse', 'E': 'note', 'F': 'cloud',
+                    'G': 'mail', 'H': 'beginpoint', 'I': 'endpoint',
+                    'J': 'minidiamond', 'K': 'flowchart.condition',
+                    'L': 'flowchart.database', 'M': 'flowchart.input',
+                    'N': 'flowchart.loopin', 'O': 'flowchart.loopout',
+                    'Z': 'box'}
+    for node in screen.nodes:
+        assert node.shape == assert_shape[node.id]
+
+
 def test_node_has_multilined_label_diagram():
     screen = __build_diagram('node_has_multilined_label.diag')
 
