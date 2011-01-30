@@ -115,7 +115,14 @@ class DiagramDraw(object):
                     nodes = [x for x in self.nodes if x.xy == xy]
                     if len(nodes) > 0:
                         edge.skipped = 1
-            elif dir in ('right-up', 'right-down'):
+            elif dir == 'right-up':
+                r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
+                for x in r:
+                    xy = (x, edge.node1.xy.y)
+                    nodes = [x for x in self.nodes if x.xy == xy]
+                    if len(nodes) > 0:
+                        edge.skipped = 1
+            elif dir == 'right-down':
                 r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
                 for x in r:
                     xy = (x, edge.node2.xy.y)
