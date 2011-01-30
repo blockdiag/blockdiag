@@ -583,3 +583,12 @@ def test_reversed_multiple_groups_diagram():
                   'J': (0, 0), 'Z': (0, 4)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
+
+
+def test_group_and_skipped_edge_diagram():
+    screen = __build_diagram('group_and_skipped_edge.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'D': (3, 0), 'E': (1, 1), 'Z': (0, 2)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
