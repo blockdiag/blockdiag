@@ -355,16 +355,17 @@ class EdgeMetrix(object):
 
         elif dir == 'right-up':
             shaft.moveTo(node1.right())
-            shaft.lineTo(cell1.right().x + span.x / 2, cell1.right().y)
 
             if self.edge.skipped:
+                shaft.lineTo(cell1.right().x + span.x / 2, cell1.right().y)
                 shaft.lineTo(cell1.right().x + span.x / 2,
                              cell2.bottomLeft().y + span.y / 2)
                 shaft.lineTo(cell2.left().x - span.x / 4,
                              cell2.bottomLeft().y + span.y / 2)
                 shaft.lineTo(cell2.left().x - span.x / 4, cell2.left().y)
             else:
-                shaft.lineTo(cell1.right().x + span.x / 2, cell2.left().y)
+                shaft.lineTo(cell2.left().x - span.x / 4, cell1.right().y)
+                shaft.lineTo(cell2.left().x - span.x / 4, cell2.left().y)
 
             shaft.lineTo(node2.left())
 
