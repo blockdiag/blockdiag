@@ -226,6 +226,8 @@ class DiagramLayoutManager:
                     pass
                 elif node == child:
                     pass
+                elif child.xy.x > node.xy.x + node.width:
+                    pass
                 else:
                     child.xy = XY(node.xy.x + node.width, 0)
 
