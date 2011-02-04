@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import ImageColor
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.cidfonts import UnicodeCIDFont
@@ -47,20 +46,20 @@ class PDFImageDraw:
             self.canvas.setDash()
 
     def set_stroke_color(self, color="black"):
-        if isinstance(color, str) or isinstance(color, unicode):
-            rgb = ImageColor.getrgb(color)
-            self.canvas.setStrokeColorRGB(*rgb)
+        if isinstance(color, basestring):
+            self.canvas.setStrokeColor(color)
         elif color:
-            self.canvas.setStrokeColorRGB(*color)
+            rgb = (color[0] / 256.0, color[1] / 256.0, color[2] / 256.0)
+            self.canvas.setStrokeColorRGB(*rgb)
         else:
             self.set_stroke_color()
 
     def set_fill_color(self, color="white"):
-        if isinstance(color, str) or isinstance(color, unicode):
-            rgb = ImageColor.getrgb(color)
-            self.canvas.setFillColorRGB(*rgb)
+        if isinstance(color, basestring):
+            self.canvas.setFillColor(color)
         elif color:
-            self.canvas.setFillColorRGB(*color)
+            rgb = (color[0] / 256.0, color[1] / 256.0, color[2] / 256.0)
+            self.canvas.setFillColorRGB(*rgb)
         else:
             self.set_fill_color()
 
