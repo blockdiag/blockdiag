@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 import os, sys
 
-version = '0.6.5'
+version = '0.6.6'
 long_description = \
         open(os.path.join("src","README.txt")).read() + \
         open(os.path.join("src","TODO.txt")).read()

@@ -115,6 +115,13 @@ Python Software Foundation License.
 History
 =======
 
+0.6.6 (2011-01-31)
+------------------
+* Support diagram.shape_namespace
+* Add new node shapes; mail, cloud, beginpoint, endpoint, minidiamond, actor
+* Support plug-in structure to install node shapes
+* Fix bugs
+
 0.6.5 (2011-01-18)
 ------------------
 * Support node shape (experimental)
