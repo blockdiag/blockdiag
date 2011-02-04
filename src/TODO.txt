@@ -1,0 +1,11 @@
+Todos
+======
+
+Functionals
+------------
+* Add new node shape (end-point (mini circle), mini diamond, mini double circle, etc.)
+* Support other block diagram structure.
+
+Known Issues
+-------------
+* Fix some experimental features.
