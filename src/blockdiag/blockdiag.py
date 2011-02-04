@@ -344,7 +344,7 @@ def parse_option():
         sys.exit(0)
 
     options.type = options.type.upper()
-    if not options.type in ('SVG', 'PNG'):
+    if not options.type in ('SVG', 'PNG', 'PDF'):
         msg = "ERROR: unknown format: %s\n" % options.type
         sys.stderr.write(msg)
         sys.exit(0)
@@ -416,10 +416,10 @@ def main():
             draw.save(outfile2)
             node.href = './%s' % os.path.basename(outfile2)
 
-    draw = DiagramDraw.DiagramDraw(options.type, diagram, font=fontpath,
-                                   antialias=options.antialias)
+    draw = DiagramDraw.DiagramDraw(options.type, diagram, outfile,
+                                   font=fontpath, antialias=options.antialias)
     draw.draw()
-    draw.save(outfile)
+    draw.save()
 
 
 if __name__ == '__main__':

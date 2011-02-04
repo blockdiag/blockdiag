@@ -8,12 +8,13 @@ from DiagramMetrix import DiagramMetrix
 
 
 class DiagramDraw(object):
-    def __init__(self, format, diagram, **kwargs):
+    def __init__(self, format, diagram, filename=None, **kwargs):
         self.format = format.upper()
         self.diagram = diagram
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.badgeFill = kwargs.get('badgeFill', 'pink')
         self.font = kwargs.get('font')
+        self.filename = filename
         base_diagram = kwargs.get('basediagram', diagram)
 
         if self.format == 'SVG':
@@ -23,6 +24,14 @@ class DiagramDraw(object):
             self.scale_ratio = 1
             self.metrix = DiagramMetrix(base_diagram, **kwargs)
             self.drawer = SVGImageDraw.SVGImageDraw(self.pagesize())
+        elif self.format == 'PDF':
+            import PDFImageDraw
+
+            self.shadow = kwargs.get('shadow', (0, 0, 0))
+            self.scale_ratio = 1
+            self.metrix = DiagramMetrix(base_diagram, **kwargs)
+            self.drawer = PDFImageDraw.PDFImageDraw(self.filename,
+                                                    self.pagesize())
         else:
             import ImageDrawEx
             from PngDiagramMetrix import PngDiagramMetrix
@@ -244,10 +253,13 @@ class DiagramDraw(object):
             self.drawer.label(metrix.labelbox(), edge.label, fill=self.fill,
                               font=self.font, fontsize=self.metrix.fontSize)
 
-    def save(self, filename, size=None):
+    def save(self, filename=None, size=None):
         if size is None and self.format == 'PNG':
             x = int(self.drawer.image.size[0] / self.scale_ratio)
             y = int(self.drawer.image.size[1] / self.scale_ratio)
             size = (x, y)
 
-        return self.drawer.save(filename, size, self.format)
+        if filename:
+            self.filename = filename
+
+        return self.drawer.save(self.filename, size, self.format)
