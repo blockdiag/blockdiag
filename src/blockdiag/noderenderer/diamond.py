@@ -13,7 +13,6 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
     m = metrix.cell(node)
     r = metrix.cellSize
-    diamond = (m.top(), m.left(), m.bottom(), m.right(), m.top())
     diamond = (shift_point(m.top(), 0, -r),
                shift_point(m.left(), -r, 0),
                shift_point(m.bottom(), 0, r),
@@ -48,8 +47,13 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
 def render_shadow(drawer, format, node, metrix, fill):
     m = metrix.cell(node)
-    points = (m.top(), m.left(), m.bottom(), m.right())
-    shadow = renderer.shift_polygon(points, metrix.shadowOffsetX,
+    r = metrix.cellSize
+    diamond = (shift_point(m.top(), 0, -r),
+               shift_point(m.left(), -r, 0),
+               shift_point(m.bottom(), 0, r),
+               shift_point(m.right(), r, 0),
+               shift_point(m.top(), 0, -r))
+    shadow = renderer.shift_polygon(diamond, metrix.shadowOffsetX,
                                     metrix.shadowOffsetY)
 
     drawer.polygon(shadow, fill=fill, filter='transp-blur')
