@@ -20,6 +20,24 @@ class PDFImageDraw:
         self.canvas = canvas.Canvas(filename, bottomup=0, pagesize=size)
         #self.canvas.translate(inch, inch)
 
+    def set_render_params(self, **kwargs):
+        self.set_stroke_color(kwargs.get('outline'))
+        self.set_fill_color(kwargs.get('fill', 'none'))
+        self.set_style(kwargs.get('style'))
+
+        params = {}
+        if kwargs.get('fill', 'none') == 'none':
+            params['fill'] = 0
+        else:
+            params['fill'] = 1
+
+        if kwargs.get('outline') is None:
+            params['stroke'] = 0
+        else:
+            params['stroke'] = 1
+
+        return params
+
     def set_style(self, style):
         if style == 'dotted':
             self.canvas.setDash([2, 2])
@@ -47,29 +65,17 @@ class PDFImageDraw:
             self.set_fill_color()
 
     def path(self, pd, **kwargs):
-        self.set_stroke_color(kwargs.get('outline'))
-        self.set_fill_color(kwargs.get('fill', 'none'))
-        self.set_style(kwargs.get('style'))
-
-        if kwargs.get('fill') == 'none':
-            self.canvas.drawPath(pd, stroke=1, fill=0)
-        else:
-            self.canvas.drawPath(pd, stroke=1, fill=1)
+        params = self.set_render_params(**kwargs)
+        self.canvas.drawPath(pd, **params)
 
     def rectangle(self, box, **kwargs):
-        self.set_stroke_color(kwargs.get('outline'))
-        self.set_fill_color(kwargs.get('fill', 'none'))
-        self.set_style(kwargs.get('style'))
-
         x = box[0]
         y = box[1]
         width = box[2] - box[0]
         height = box[3] - box[1]
 
-        if kwargs.get('fill') == 'none':
-            self.canvas.rect(x, y, width, height, fill=0)
-        else:
-            self.canvas.rect(x, y, width, height, fill=1)
+        params = self.set_render_params(**kwargs)
+        self.canvas.rect(x, y, width, height, **params)
 
     def label(self, box, string, **kwargs):
         lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
@@ -102,46 +108,23 @@ class PDFImageDraw:
             p1 = p2
 
     def arc(self, xy, start, end, **kwargs):
-        self.set_stroke_color(kwargs.get('outline'))
-        self.set_fill_color(kwargs.get('fill', 'none'))
-        self.set_style(kwargs.get('style'))
-
-        w = (xy[2] - xy[0]) / 2
-        h = (xy[3] - xy[1]) / 2
-        pt1 = XY(xy[0], xy[1] + w)
-        pt2 = XY(xy[2], xy[3] - w)
-
         r = (360 + end - start) % 360
+
+        params = self.set_render_params(**kwargs)
         self.canvas.arc(xy[0], xy[1], xy[2], xy[3], start, r)
 
     def ellipse(self, xy, **kwargs):
-        self.set_stroke_color(kwargs.get('outline'))
-        self.set_fill_color(kwargs.get('fill'))
-        self.set_style(kwargs.get('style'))
-
-        w = (xy[2] - xy[0]) / 2
-        h = (xy[3] - xy[1]) / 2
-        pt = XY(xy[0] + w, xy[1] + h)
-
-        if kwargs.get('fill') == 'none':
-            self.canvas.ellipse(xy[0], xy[1], xy[2], xy[3], stroke=1, fill=0)
-        else:
-            self.canvas.ellipse(xy[0], xy[1], xy[2], xy[3], stroke=1, fill=1)
+        params = self.set_render_params(**kwargs)
+        self.canvas.ellipse(xy[0], xy[1], xy[2], xy[3], **params)
 
     def polygon(self, xy, **kwargs):
-        self.set_stroke_color(kwargs.get('outline'))
-        self.set_fill_color(kwargs.get('fill'))
-        self.set_style(kwargs.get('style'))
-
         pd = self.canvas.beginPath()
         pd.moveTo(xy[0][0], xy[0][1])
         for p in xy[1:]:
             pd.lineTo(p[0], p[1])
 
-        if kwargs.get('fill') == 'none':
-            self.canvas.drawPath(pd, stroke=1, fill=0)
-        else:
-            self.canvas.drawPath(pd, stroke=1, fill=1)
+        params = self.set_render_params(**kwargs)
+        self.canvas.drawPath(pd, **params)
 
     def loadImage(self, filename, box):
         x = box[0]
