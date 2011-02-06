@@ -7,17 +7,12 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 from reportlab.lib.units import inch
 from utils.XY import XY
-
-try:
-    from utils.PILTextFolder import PILTextFolder as TextFolder
-except ImportError:
-    from utils.TextFolder import TextFolder
+from utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 
 class PDFImageDraw:
     def __init__(self, filename, size):
         self.canvas = canvas.Canvas(filename, bottomup=0, pagesize=size)
-        #self.canvas.translate(inch, inch)
 
     def set_render_params(self, **kwargs):
         self.set_stroke_color(kwargs.get('outline'))
@@ -77,7 +72,9 @@ class PDFImageDraw:
         self.canvas.rect(x, y, width, height, **params)
 
     def label(self, box, string, **kwargs):
-        lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
+        kwargs['font'] = "HeiseiKakuGo-W5"  # or "HeiseiMin-W3"
+        lines = TextFolder(box, string, adjustBaseline=True,
+                           canvas=self.canvas, **kwargs)
 
         self.rectangle(lines.outlineBox(), fill='white', outline='black')
         self.textarea(box, string, **kwargs)
@@ -93,7 +90,13 @@ class PDFImageDraw:
         self.canvas.drawString(xy[0], xy[1], string)
 
     def textarea(self, box, string, **kwargs):
-        lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
+        fontname = "HeiseiKakuGo-W5"  # or "HeiseiMin-W3"
+        pdfmetrics.registerFont(UnicodeCIDFont(fontname))
+
+        kwargs['font'] = fontname
+        lines = TextFolder(box, string, adjustBaseline=True,
+                           canvas=self.canvas, **kwargs)
+
         for string, xy in lines.each_line():
             self.text(xy, string, **kwargs)
 
