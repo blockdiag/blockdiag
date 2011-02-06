@@ -45,6 +45,9 @@ setup(
              'minimock',
              'pep8',
          ],
+         pdf=[
+             'reportlab',
+         ],
      ),
      test_suite='nose.collector',
      tests_require=['Nose','minimock','pep8'],
