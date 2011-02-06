@@ -5,6 +5,7 @@ import sys
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.cidfonts import UnicodeCIDFont
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.units import inch
 from utils.XY import XY
 from utils.PDFTextFolder import PDFTextFolder as TextFolder
@@ -13,6 +14,16 @@ from utils.PDFTextFolder import PDFTextFolder as TextFolder
 class PDFImageDraw:
     def __init__(self, filename, size):
         self.canvas = canvas.Canvas(filename, bottomup=0, pagesize=size)
+        self.fonts = {}
+
+    def set_font(self, fontpath, fontsize):
+        if fontpath not in self.fonts:
+            ttfont = TTFont(fontpath, fontpath)
+            pdfmetrics.registerFont(ttfont)
+
+            self.fonts[fontpath] = ttfont
+
+        self.canvas.setFont(fontpath, fontsize)
 
     def set_render_params(self, **kwargs):
         self.set_stroke_color(kwargs.get('outline'))
@@ -72,7 +83,7 @@ class PDFImageDraw:
         self.canvas.rect(x, y, width, height, **params)
 
     def label(self, box, string, **kwargs):
-        kwargs['font'] = "HeiseiKakuGo-W5"  # or "HeiseiMin-W3"
+        self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
         lines = TextFolder(box, string, adjustBaseline=True,
                            canvas=self.canvas, **kwargs)
 
@@ -81,19 +92,11 @@ class PDFImageDraw:
 
     def text(self, xy, string, **kwargs):
         self.set_fill_color(kwargs.get('fill'))
-        fontname = kwargs.get('font')
-        fontsize = kwargs.get('fontsize')
-
-        fontname = "HeiseiKakuGo-W5"  # or "HeiseiMin-W3"
-        pdfmetrics.registerFont(UnicodeCIDFont(fontname))
-        self.canvas.setFont(fontname, fontsize)
+        self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
         self.canvas.drawString(xy[0], xy[1], string)
 
     def textarea(self, box, string, **kwargs):
-        fontname = "HeiseiKakuGo-W5"  # or "HeiseiMin-W3"
-        pdfmetrics.registerFont(UnicodeCIDFont(fontname))
-
-        kwargs['font'] = fontname
+        self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
         lines = TextFolder(box, string, adjustBaseline=True,
                            canvas=self.canvas, **kwargs)
 
