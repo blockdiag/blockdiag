@@ -78,6 +78,11 @@ def render_node(drawer, format, node, metrix, **kwargs):
 
 
 def render_shadow(drawer, format, node, metrix, fill):
+    head = head_circle(node, metrix)
+    shadow = renderer.shift_box(head, metrix.shadowOffsetX,
+                                metrix.shadowOffsetY)
+    drawer.ellipse(shadow, fill=fill, outline=fill, filter='transp-blur')
+
     box = body_polygon(node, metrix)
     shadow = renderer.shift_polygon(box, metrix.shadowOffsetX,
                                 metrix.shadowOffsetY)
