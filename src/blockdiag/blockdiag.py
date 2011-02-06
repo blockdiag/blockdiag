@@ -349,6 +349,14 @@ def parse_option():
         sys.stderr.write(msg)
         sys.exit(0)
 
+    if options.type == 'PDF':
+        try:
+            import reportlab.pdfgen.canvas
+        except ImportError:
+            msg = "ERROR: colud not output PDF format; Install reportlab\n"
+            sys.stderr.write(msg)
+            sys.exit(0)
+
     if options.separate and options.type != 'SVG':
         msg = "ERROR: --separate option work in SVG images.\n"
         sys.stderr.write(msg)
