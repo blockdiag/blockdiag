@@ -113,6 +113,7 @@ class PngNodeMetrix(Scaler):
         self.define_scale_method('bottomRight')
         self.define_scale_method('leftCenter')
         self.define_scale_method('rightCenter')
+        self.define_scale_method('center')
 
         self.define_scale_method('top')
         self.define_scale_method('bottom')
