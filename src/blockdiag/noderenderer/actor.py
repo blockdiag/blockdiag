@@ -6,19 +6,18 @@ from blockdiag.utils import renderer
 
 def head_circle(node, metrix):
     m = metrix.cell(node)
-    r = (m.bottomLeft().y - m.topLeft().y) / 7  # head circle radius
-    bodyC = XY(m.topCenter().x, m.leftCenter().y)  # Center of body
-    return (bodyC.x - r, m.topLeft().y,
-            bodyC.x + r, m.topLeft().y + r * 2)
+    r = metrix.nodeHeight / 8  # radius of actor's head
+    top = m.top()
+    return (top.x - r, top.y, top.x + r, top.y + r * 2)
 
 
 def body_polygon(node, metrix):
     m = metrix.cell(node)
 
-    r = (m.bottomLeft().y - m.topLeft().y) / 7  # head circle radius
-    bodyC = XY(m.topCenter().x, m.leftCenter().y)  # Center of body
+    r = metrix.nodeHeight / 8  # radius of actor's head
+    bodyC = m.center()
     neckWidth = r * 2 / 3  # neck size
-    arm = (m.topRight().x - m.topLeft().x) / 6  # arm length
+    arm = r * 4  # arm length
     armWidth = r
     bodyWidth = r * 2 / 3  # half of body width
     bodyHeight = r
