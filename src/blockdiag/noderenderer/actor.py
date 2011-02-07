@@ -17,15 +17,15 @@ def body_polygon(node, metrix):
 
     r = (m.bottomLeft().y - m.topLeft().y) / 7  # head circle radius
     bodyC = XY(m.topCenter().x, m.leftCenter().y)  # Center of body
-    neckWidth = 3  # neck size
+    neckWidth = r * 2 / 3  # neck size
     arm = (m.topRight().x - m.topLeft().x) / 6  # arm length
-    armWidth = 5
-    bodyWidth = 4  # half of body width
+    armWidth = r
+    bodyWidth = r * 2 / 3  # half of body width
     bodyHeight = r
-    legXout = 18  # toe outer position
-    legYout = 20
-    legXin = 10  # toe inner position
-    legYin = 20
+    legXout = r * 7 / 2  # toe outer position
+    legYout = bodyHeight + r * 3
+    legXin = r * 2  # toe inner position
+    legYin = bodyHeight + r * 3
 
     return [XY(bodyC.x + neckWidth, m.topCenter().y + r),
             XY(bodyC.x + neckWidth, bodyC.y - armWidth),  # neck end
@@ -45,7 +45,7 @@ def body_polygon(node, metrix):
             XY(bodyC.x - arm, bodyC.y),
             XY(bodyC.x - arm, bodyC.y - armWidth),
             XY(bodyC.x - neckWidth, bodyC.y - armWidth),  # left arm end
-            XY(bodyC.x - neckWidth, m.topCenter().y + (r * 2))
+            XY(bodyC.x - neckWidth, m.topCenter().y + r)
             ]
 
 
