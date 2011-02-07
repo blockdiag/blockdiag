@@ -89,5 +89,28 @@ def render_shadow(drawer, format, node, metrix, fill):
     drawer.polygon(shadow, fill=fill, filter='transp-blur')
 
 
+class NodeMetrix(object):
+    def __init__(self, node, metrix):
+        self.metrix = metrix
+        top = metrix.cell(node).top()
+
+        self._top = metrix.cell(node).top()
+        self._bottom = metrix.cell(node).bottom()
+        self.radius = metrix.nodeHeight / 8
+        self.center = metrix.cell(node).center()
+
+    def top(self):
+        return self._top
+
+    def left(self):
+        return XY(self.center.x - self.radius * 5, self.center.y)
+
+    def right(self):
+        return XY(self.center.x + self.radius * 5, self.center.y)
+
+    def bottom(self):
+        return self._bottom
+
+
 def setup(self):
     install_renderer('actor', self)
