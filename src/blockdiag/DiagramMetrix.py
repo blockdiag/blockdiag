@@ -233,6 +233,10 @@ class NodeMetrix(object):
     def rightCenter(self):
         return XY(self.x + self._nodeWidth(), self.y + self._nodeHeight() / 2)
 
+    def center(self):
+        return XY(self.x + self._nodeWidth() / 2,
+                  self.y + self._nodeHeight() / 2)
+
     # method aliases
     top = topCenter
     bottom = bottomCenter
