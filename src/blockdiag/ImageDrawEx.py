@@ -10,6 +10,7 @@ import ImageDraw
 import ImageFont
 import ImageFilter
 from utils.XY import XY
+from utils import ellipse
 
 
 def point_pairs(xylist):
@@ -132,22 +133,12 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                 del kwargs['outline']
 
             if style == 'dotted':
-                length = 48
+                length = 10
             elif style == 'dashed':
-                length = 24
+                length = 20
 
-            start = 0
-            end = 360
-            diff = (end - start) / length
-
-            for i in range(length):
-                s = start + diff * (i * 2)
-                e = start + diff * (i * 2 + 1)
-
-                if e > end:
-                    continue
-
-                ImageDraw.ImageDraw.arc(self, box, s, e, **kwargs)
+            for pt in ellipse.dots(box, length):
+                ImageDraw.ImageDraw.line(self, [pt, pt], fill=kwargs['fill'])
         else:
             ImageDraw.ImageDraw.ellipse(self, box, **kwargs)
 
