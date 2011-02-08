@@ -16,5 +16,7 @@
   N [shape = "flowchart.loopin"];
   O [shape = "flowchart.loopout"];
 
+  P [shape = "actor"];
+
   Z;
 }
