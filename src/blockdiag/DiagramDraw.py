@@ -199,8 +199,14 @@ class DiagramDraw(object):
         # Drop node shadows.
         for node in self.nodes:
             r = noderenderer.get(node.shape)
-            r.render_shadow(self.drawer, self.format, node,
-                            metrix, fill=self.shadow)
+
+            if hasattr(r, 'render_shadow'):
+                r.render_shadow(self.drawer, self.format, node,
+                                metrix, fill=self.shadow)
+            else:
+                shape = r(node, metrix)
+                shape.render(self.drawer, self.format,
+                             fill=self.shadow, shadow=True)
 
         # Smoothing back-ground images.
         if self.format == 'PNG':
@@ -208,9 +214,15 @@ class DiagramDraw(object):
 
     def node(self, node, **kwargs):
         r = noderenderer.get(node.shape)
-        r.render_node(self.drawer, self.format, node, self.metrix,
-                      fill=self.fill, outline=self.fill,
-                      font=self.font, badgeFill=self.badgeFill)
+        if hasattr(r, 'render_node'):
+            r.render_node(self.drawer, self.format, node, self.metrix,
+                          fill=self.fill, outline=self.fill,
+                          font=self.font, badgeFill=self.badgeFill)
+        else:
+            shape = r(node, self.metrix)
+            shape.render(self.drawer, self.format,
+                         fill=self.fill, outline=self.fill,
+                         font=self.font, badgeFill=self.badgeFill)
 
     def group_label(self, group):
         m = self.metrix.cell(group)

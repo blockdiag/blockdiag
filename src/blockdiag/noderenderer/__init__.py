@@ -36,7 +36,7 @@ def get(shape):
 
 
 class NodeShape(object):
-    def __init__(self, metrix=None):
+    def __init__(self, node, metrix=None):
         self.node = node
         self.metrix = metrix
 
@@ -84,6 +84,6 @@ class NodeShape(object):
                     if i % 2 == 0:
                         ret.append(x + xdiff)
                     else:
-                        ret.append(y + xdiff)
+                        ret.append(x + ydiff)
 
         return ret
