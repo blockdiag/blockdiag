@@ -45,17 +45,18 @@ class NodeShape(object):
             self.render_numbered_badge(drawer, **kwargs)
 
     def render_number_badge(self, drawer, **kwargs):
-        font = kwargs.get('font')
-        fill = kwargs.get('fill')
-        badgeFill = kwargs.get('badgeFill')
+        if self.node.numbered != None and kwargs.get('shadow') != True:
+            font = kwargs.get('font')
+            fill = kwargs.get('fill')
+            badgeFill = kwargs.get('badgeFill')
 
-        xy = self.metrix.cell(self.node).topLeft()
-        r = self.metrix.cellSize
+            xy = self.metrix.cell(self.node).topLeft()
+            r = self.metrix.cellSize
 
-        box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
-        drawer.ellipse(box, outline=fill, fill=badgeFill)
-        drawer.textarea(box, self.node.numbered, fill=fill,
-                        font=font, fontsize=self.metrix.fontSize)
+            box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
+            drawer.ellipse(box, outline=fill, fill=badgeFill)
+            drawer.textarea(box, self.node.numbered, fill=fill,
+                            font=font, fontsize=self.metrix.fontSize)
 
     def top(self):
         return self.metrix.cell(self.node).top()
