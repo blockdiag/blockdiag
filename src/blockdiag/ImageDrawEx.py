@@ -93,23 +93,15 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
         if style:
             if style == 'dotted':
-                length = 6
+                length = 2
             elif style == 'dashed':
-                length = 3
+                length = 4
 
-            if end == 0:
-                end = 360
+            while start > end:
+                end += 360
 
-            diff = (end - start) / length
-
-            for i in range(length):
-                s = start + diff * (i * 2)
-                e = start + diff * (i * 2 + 1)
-
-                if e > end:
-                    continue
-
-                ImageDraw.ImageDraw.arc(self, box, s, e, **kwargs)
+            for pt in ellipse.dots(box, length, start, end):
+                ImageDraw.ImageDraw.line(self, [pt, pt], fill=kwargs['fill'])
         else:
             ImageDraw.ImageDraw.arc(self, box, start, end, **kwargs)
 
