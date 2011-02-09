@@ -41,8 +41,11 @@ class NodeShape(object):
         self.metrix = metrix
 
     def render(self, drawer, format, **kwargs):
-        if self.node.numbered != None:
-            self.render_numbered_badge(drawer, **kwargs)
+        self.render_shape(drawer, format, **kwargs)
+        self.render_number_badge(drawer, **kwargs)
+
+    def render_shape(self, drawer, format, **kwargs):
+        pass
 
     def render_number_badge(self, drawer, **kwargs):
         if self.node.numbered != None and kwargs.get('shadow') != True:
