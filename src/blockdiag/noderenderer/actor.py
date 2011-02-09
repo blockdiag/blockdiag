@@ -52,7 +52,7 @@ class Actor(NodeShape):
                 XY(bodyC.x - neckWidth, bodyC.y - armWidth),  # left arm end
                 XY(bodyC.x - neckWidth, m.topCenter().y + r)]
 
-    def render(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
         font = kwargs.get('font')
         fill = kwargs.get('fill')
@@ -77,8 +77,6 @@ class Actor(NodeShape):
         else:
             drawer.ellipse(head, fill=self.node.color, outline=outline,
                            style=self.node.style)
-
-        super(Actor, self).render(drawer, format, **kwargs)
 
     def left(self):
         return XY(self.center.x - self.radius * 5, self.center.y)
