@@ -133,9 +133,9 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                 del kwargs['outline']
 
             if style == 'dotted':
-                length = 10
+                length = 2
             elif style == 'dashed':
-                length = 20
+                length = 4
 
             for pt in ellipse.dots(box, length):
                 ImageDraw.ImageDraw.line(self, [pt, pt], fill=kwargs['fill'])
