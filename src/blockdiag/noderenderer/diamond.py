@@ -1,82 +1,67 @@
 # -*- coding: utf-8 -*-
+from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import renderer
-from blockdiag.utils.renderer import shift_point
 from blockdiag.utils.XY import XY
 
 
-def render_node(drawer, format, node, metrix, **kwargs):
-    outline = kwargs.get('outline')
-    font = kwargs.get('font')
-    fill = kwargs.get('fill')
-    badgeFill = kwargs.get('badgeFill')
+class Diamond(NodeShape):
+    def __init__(self, node, metrix=None):
+        super(Diamond, self).__init__(node, metrix)
 
-    m = metrix.cell(node)
-    r = metrix.cellSize
-    diamond = (shift_point(m.top(), 0, -r),
-               shift_point(m.left(), -r, 0),
-               shift_point(m.bottom(), 0, r),
-               shift_point(m.right(), r, 0),
-               shift_point(m.top(), 0, -r))
-    box = (m.topLeft().x + metrix.nodeWidth / 4 - r / 2,
-           m.topLeft().y + metrix.nodeHeight / 4 - r / 2,
-           m.bottomRight().x - metrix.nodeWidth / 4 + r / 2,
-           m.bottomRight().y - metrix.nodeHeight / 4 + r / 2)
-
-    if node.background:
-        drawer.polygon(diamond, fill=node.color)
-        drawer.loadImage(node.background, box)
-        drawer.polygon(diamond, fill="none", outline=outline, style=node.style)
-    else:
-        drawer.polygon(diamond, outline=outline,
-                       fill=node.color, style=node.style)
-
-    drawer.textarea(box, node.label, fill=fill,
-                    font=font, fontsize=metrix.fontSize,
-                    lineSpacing=metrix.lineSpacing)
-
-    if node.numbered != None:
-        xy = m.topLeft()
         r = metrix.cellSize
+        m = metrix.cell(node)
+        self.diamond = (XY(m.top().x, m.top().y - r),
+                        XY(m.right().x + r, m.right().y),
+                        XY(m.bottom().x, m.bottom().y + r),
+                        XY(m.left().x - r, m.left().y),
+                        XY(m.top().x, m.top().y - r))
+        self.box = (m.topLeft().x + metrix.nodeWidth / 4 - r / 2,
+                    m.topLeft().y + metrix.nodeHeight / 4 - r / 2,
+                    m.bottomRight().x - metrix.nodeWidth / 4 + r / 2,
+                    m.bottomRight().y - metrix.nodeHeight / 4 + r / 2)
+        self.box = ((self.diamond[0].x + self.diamond[3].x) / 2,
+                    (self.diamond[0].y + self.diamond[3].y) / 2,
+                    (self.diamond[1].x + self.diamond[2].x) / 2,
+                    (self.diamond[1].y + self.diamond[2].y) / 2)
 
-        box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
-        drawer.ellipse(box, outline=fill, fill=badgeFill)
-        drawer.textarea(box, node.numbered, fill=fill,
-                        font=font, fontsize=metrix.fontSize)
+    def render_shape(self, drawer, format, **kwargs):
+        outline = kwargs.get('outline')
+        font = kwargs.get('font')
+        fill = kwargs.get('fill')
 
+        # draw outline
+        if kwargs.get('shadow'):
+            diamond = self.shift_shadow(self.diamond)
+            drawer.polygon(diamond, fill=fill, outline=fill,
+                             filter='transp-blur')
+        elif self.node.background:
+            drawer.polygon(self.diamond, fill=self.node.color,
+                           outline=self.node.color)
+            drawer.loadImage(self.node.background, self.box)
+            drawer.polygon(self.diamond, fill="none", outline=outline,
+                           style=self.node.style)
+        else:
+            drawer.polygon(self.diamond, fill=self.node.color, outline=outline,
+                           style=self.node.style)
 
-def render_shadow(drawer, format, node, metrix, fill):
-    m = metrix.cell(node)
-    r = metrix.cellSize
-    diamond = (shift_point(m.top(), 0, -r),
-               shift_point(m.left(), -r, 0),
-               shift_point(m.bottom(), 0, r),
-               shift_point(m.right(), r, 0),
-               shift_point(m.top(), 0, -r))
-    shadow = renderer.shift_polygon(diamond, metrix.shadowOffsetX,
-                                    metrix.shadowOffsetY)
-
-    drawer.polygon(shadow, fill=fill, filter='transp-blur')
-
-
-class NodeMetrix(object):
-    def __init__(self, node, metrix):
-        self.metrix = metrix
-        self.node_metrix = metrix.cell(node)
+        # draw label
+        drawer.textarea(self.box, self.node.label, fill=fill,
+                        font=font, fontsize=self.metrix.fontSize,
+                        lineSpacing=self.metrix.lineSpacing)
 
     def top(self):
-        return shift_point(self.node_metrix.top(), 0, - self.metrix.cellSize)
+        return self.diamond[0]
 
     def left(self):
-        return shift_point(self.node_metrix.left(), - self.metrix.cellSize, 0)
+        return self.diamond[3]
 
     def right(self):
-        return shift_point(self.node_metrix.right(), self.metrix.cellSize, 0)
+        return self.diamond[1]
 
     def bottom(self):
-        return shift_point(self.node_metrix.bottom(), 0, self.metrix.cellSize)
+        return self.diamond[2]
 
 
 def setup(self):
-    install_renderer('diamond', self)
-    install_renderer('flowchart.condition', self)
+    install_renderer('diamond', Diamond)
+    install_renderer('flowchart.condition', Diamond)
