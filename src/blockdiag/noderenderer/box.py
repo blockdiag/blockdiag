@@ -26,10 +26,11 @@ class Box(NodeShape):
                              style=self.node.style)
 
         # draw label
-        textbox = self.metrix.cell(self.node).box()
-        drawer.textarea(textbox, self.node.label, fill=fill,
-                        font=font, fontsize=self.metrix.fontSize,
-                        lineSpacing=self.metrix.lineSpacing)
+        if not kwargs.get('shadow'):
+            textbox = self.metrix.cell(self.node).box()
+            drawer.textarea(textbox, self.node.label, fill=fill,
+                            font=font, fontsize=self.metrix.fontSize,
+                            lineSpacing=self.metrix.lineSpacing)
 
 
 def setup(self):

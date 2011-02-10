@@ -45,9 +45,10 @@ class Diamond(NodeShape):
                            style=self.node.style)
 
         # draw label
-        drawer.textarea(self.box, self.node.label, fill=fill,
-                        font=font, fontsize=self.metrix.fontSize,
-                        lineSpacing=self.metrix.lineSpacing)
+        if not kwargs.get('shadow'):
+            drawer.textarea(self.box, self.node.label, fill=fill,
+                            font=font, fontsize=self.metrix.fontSize,
+                            lineSpacing=self.metrix.lineSpacing)
 
     def top(self):
         return self.diamond[0]
