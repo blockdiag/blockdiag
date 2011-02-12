@@ -3,9 +3,12 @@ Todos
 
 Functionals
 ------------
-* Add new node shape (end-point (mini circle), mini diamond, mini double circle, etc.)
-* Support other block diagram structure.
+* Reimplement --separate option
+* Support diagram legends
+* Support other block diagram structure
 
 Known Issues
 -------------
 * Fix some experimental features.
+* PDF renderer does not support blur shadow
+* PDF renderer does not support path rendering
