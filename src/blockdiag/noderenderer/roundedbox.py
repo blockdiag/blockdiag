@@ -1,206 +1,128 @@
 # -*- coding: utf-8 -*-
-import math
+from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
 from blockdiag.utils.XY import XY
-from blockdiag.utils import renderer
 from blockdiag.SVGdraw import pathdata
 
 
-def render_node(drawer, format, node, metrix, **kwargs):
-    if format == 'SVG':
-        render_svg_node(drawer, node, metrix, **kwargs)
-    else:
-        render_image_node(drawer, node, metrix, **kwargs)
+class RoundedBox(NodeShape):
+    def render_shape(self, drawer, format, **kwargs):
+        font = kwargs.get('font')
+        fill = kwargs.get('fill')
 
+        # draw background
+        self.render_shape_background(drawer, format, **kwargs)
 
-def render_shadow(drawer, format, node, metrix, fill):
-    if format == 'SVG':
-        render_svg_shadow(drawer, node, metrix, fill)
-    else:
-        render_image_shadow(drawer, node, metrix, fill)
+        # draw outline
+        box = self.metrix.cell(self.node).box()
+        if not kwargs.get('shadow'):
+            if self.node.background:
+                drawer.loadImage(self.node.background, box)
 
+            self.render_shape_outline(drawer, format, **kwargs)
 
-def render_svg_node(drawer, node, metrix, **kwargs):
-    outline = kwargs.get('outline')
-    font = kwargs.get('font')
-    fill = kwargs.get('fill')
-    badgeFill = kwargs.get('badgeFill')
+        # draw label
+        if not kwargs.get('shadow'):
+            drawer.textarea(box, self.node.label, fill=fill,
+                            font=font, fontsize=self.metrix.fontSize,
+                            lineSpacing=self.metrix.lineSpacing)
 
-    m = metrix.cell(node)
-    r = metrix.cellSize
-    thick = metrix.scale_ratio
+    def render_shape_outline(self, drawer, format, **kwargs):
+        outline = kwargs.get('outline')
+        fill = kwargs.get('fill')
 
-    box = (m.topLeft().x, m.topLeft().y,
-           m.bottomRight().x, m.bottomRight().y)
+        m = self.metrix.cell(self.node)
+        r = self.metrix.cellSize
+        box = m.box()
 
-    path = pathdata(box[0] + r, box[1])
-    path.line(box[2] - r, box[1])
-    path.ellarc(r, r, 0, 0, 1, box[2], box[1] + r)
-    path.line(box[2], box[3] - r)
-    path.ellarc(r, r, 0, 0, 1, box[2] - r, box[3])
-    path.line(box[0] + r, box[3])
-    path.ellarc(r, r, 0, 0, 1, box[0], box[3] - r)
-    path.line(box[0], box[1] + r)
-    path.ellarc(r, r, 0, 0, 1, box[0] + r, box[1])
+        lines = [(XY(box[0] + r, box[1]), XY(box[2] - r, box[1])),
+                 (XY(box[2], box[1] + r), XY(box[2], box[3] - r)),
+                 (XY(box[0] + r, box[3]), XY(box[2] - r, box[3])),
+                 (XY(box[0], box[1] + r), XY(box[0], box[3] - r))]
+        for line in lines:
+            drawer.line(line, fill=outline, style=self.node.style)
 
-    if node.background:
-        drawer.path(path, fill=node.color, style=node.style)
-        drawer.loadImage(node.background, m.box())
-        drawer.path(path, fill="none", outline=fill, style=node.style)
-    else:
-        drawer.path(path, fill=node.color, outline=fill, style=node.style)
+        arcs = [((box[0], box[1], box[0] + r * 2, box[1] + r * 2), 180, 270),
+                ((box[2] - r * 2, box[1], box[2], box[1] + r * 2), 270, 360),
+                ((box[2] - r * 2, box[3] - r * 2, box[2], box[3]), 0, 90),
+                ((box[0], box[3] - r * 2, box[0] + r * 2, box[3]), 90, 180)]
+        for arc in arcs:
+            drawer.arc(arc[0], arc[1], arc[2],
+                       fill=fill, style=self.node.style)
 
-    drawer.textarea(box, node.label, fill=fill,
-                    font=font, fontsize=metrix.fontSize,
-                    lineSpacing=metrix.lineSpacing)
+    def render_shape_background(self, drawer, format, **kwargs):
+        fill = kwargs.get('fill')
 
-    if node.numbered != None:
-        xy = m.topLeft()
-        r = metrix.cellSize
+        m = self.metrix.cell(self.node)
+        r = self.metrix.cellSize
 
-        box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
-        drawer.ellipse(box, outline=fill, fill=badgeFill)
-        drawer.textarea(box, node.numbered, fill=fill,
-                        font=font, fontsize=metrix.fontSize)
+        box = m.box()
+        ellipses = [(box[0], box[1], box[0] + r * 2, box[1] + r * 2),
+                    (box[2] - r * 2, box[1], box[2], box[1] + r * 2),
+                    (box[0], box[3] - r * 2, box[0] + r * 2, box[3]),
+                    (box[2] - r * 2, box[3] - r * 2, box[2], box[3])]
 
+        for e in ellipses:
+            if kwargs.get('shadow'):
+                e = self.shift_shadow(e)
+                drawer.ellipse(e, fill=fill, outline=fill,
+                               filter='transp-blur')
+            else:
+                drawer.ellipse(e, fill=self.node.color,
+                               outline=self.node.color)
 
-def render_image_node(drawer, node, metrix, **kwargs):
-    outline = kwargs.get('outline')
-    font = kwargs.get('font')
-    fill = kwargs.get('fill')
-    badgeFill = kwargs.get('badgeFill')
+        rects = [(box[0] + r, box[1], box[2] - r, box[3]),
+                 (box[0], box[1] + r, box[2], box[3] - r)]
+        for rect in rects:
+            if kwargs.get('shadow'):
+                rect = self.shift_shadow(rect)
+                drawer.rectangle(rect, fill=fill, outline=fill,
+                                 filter='transp-blur')
+            else:
+                drawer.rectangle(rect, fill=self.node.color,
+                                 outline=self.node.color)
 
-    m = metrix.cell(node)
-    r = metrix.cellSize
-    thick = metrix.scale_ratio
+    def render_vector_shape(self, drawer, format, **kwargs):
+        outline = kwargs.get('outline')
+        font = kwargs.get('font')
+        fill = kwargs.get('fill')
 
-    if thick == 1:
-        d = 0
-    else:
-        d = int(math.ceil(thick / 2.0))
+        # create pathdata
+        box = self.metrix.cell(self.node).box()
+        r = self.metrix.cellSize
 
-    render_image_background(drawer, node, metrix,
-                            fill=node.color, outline=node.color)
+        if kwargs.get('shadow'):
+            box = self.shift_shadow(box)
 
-    box = m.box()
-    if node.background:
-        drawer.loadImage(node.background, box)
+        path = pathdata(box[0] + r, box[1])
+        path.line(box[2] - r, box[1])
+        path.ellarc(r, r, 0, 0, 1, box[2], box[1] + r)
+        path.line(box[2], box[3] - r)
+        path.ellarc(r, r, 0, 0, 1, box[2] - r, box[3])
+        path.line(box[0] + r, box[3])
+        path.ellarc(r, r, 0, 0, 1, box[0], box[3] - r)
+        path.line(box[0], box[1] + r)
+        path.ellarc(r, r, 0, 0, 1, box[0] + r, box[1])
 
-    line = (XY(box[0] + r, box[1]), XY(box[2] - r, box[1]))
-    drawer.line(line, fill=outline, width=thick, style=node.style)
+        # draw outline
+        if kwargs.get('shadow'):
+            drawer.path(path, fill=fill, outline=fill,
+                        filter='transp-blur')
+        elif self.node.background:
+            drawer.path(path, fill=self.node.color, outline=self.node.color)
+            drawer.loadImage(self.node.background, box)
+            drawer.path(path, fill="none", outline=fill,
+                        style=self.node.style)
+        else:
+            drawer.path(path, fill=self.node.color, outline=fill,
+                        style=self.node.style)
 
-    line = (XY(box[2], box[1] + r), XY(box[2], box[3] - r))
-    drawer.line(line, fill=outline, width=thick, style=node.style)
-
-    line = (XY(box[0] + r, box[3]), XY(box[2] - r, box[3]))
-    drawer.line(line, fill=outline, width=thick, style=node.style)
-
-    line = (XY(box[0], box[1] + r), XY(box[0], box[3] - r))
-    drawer.line(line, fill=outline, width=thick, style=node.style)
-
-    arc = (box[0], box[1], box[0] + r * 2, box[1] + r * 2)
-    drawer.arc(arc, 180, 270, fill=fill, style=node.style)
-
-    arc = (box[2] - r * 2, box[1], box[2], box[1] + r * 2)
-    drawer.arc(arc, 270, 360, fill=fill, style=node.style)
-
-    arc = (box[2] - r * 2, box[3] - r * 2, box[2], box[3])
-    drawer.arc(arc, 0, 90, fill=fill, style=node.style)
-
-    arc = (box[0], box[3] - r * 2, box[0] + r * 2, box[3])
-    drawer.arc(arc, 90, 180, fill=fill, style=node.style)
-
-    drawer.textarea(box, node.label, fill=fill,
-                    font=font, fontsize=metrix.fontSize,
-                    lineSpacing=metrix.lineSpacing)
-
-    if node.numbered != None:
-        xy = m.topLeft()
-        r = metrix.cellSize
-
-        box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
-        drawer.ellipse(box, outline=fill, fill=badgeFill)
-        drawer.textarea(box, node.numbered, fill=fill,
-                        font=font, fontsize=metrix.fontSize)
-
-
-def render_svg_shadow(drawer, node, metrix, fill):
-    m = metrix.cell(node)
-    r = metrix.cellSize
-
-    box = (m.topLeft().x, m.topLeft().y,
-           m.bottomRight().x, m.bottomRight().y)
-    shadow = renderer.shift_box(box, metrix.shadowOffsetX,
-                                metrix.shadowOffsetY)
-
-    path = pathdata(shadow[0] + r, shadow[1])
-    path.line(shadow[2] - r, shadow[1])
-    path.ellarc(r, r, 0, 0, 1, shadow[2], shadow[1] + r)
-    path.line(shadow[2], shadow[3] - r)
-    path.ellarc(r, r, 0, 0, 1, shadow[2] - r, shadow[3])
-    path.line(shadow[0] + r, shadow[3])
-    path.ellarc(r, r, 0, 0, 1, shadow[0], shadow[3] - r)
-    path.line(shadow[0], shadow[1] + r)
-    path.ellarc(r, r, 0, 0, 1, shadow[0] + r, shadow[1])
-
-    drawer.path(path, fill=fill, filter='transp-blur')
-
-
-def render_image_shadow(drawer, node, metrix, fill):
-    render_image_background(drawer, node, metrix, fill=fill,
-                            outline=fill, shadow=True)
-
-
-def render_image_background(drawer, node, metrix, **kwargs):
-    outline = kwargs.get('outline')
-    fill = kwargs.get('fill')
-    shadow = kwargs.get('shadow')
-
-    m = metrix.cell(node)
-    r = metrix.cellSize
-
-    box = (m.topLeft().x, m.topLeft().y,
-           m.topLeft().x + r * 2, m.topLeft().y + r * 2)
-    if shadow:
-        box = renderer.shift_box(box, metrix.shadowOffsetX,
-                                 metrix.shadowOffsetY)
-    drawer.ellipse(box, fill=fill, filter='transp-blur')
-
-    box = (m.topRight().x - r * 2, m.topRight().y,
-           m.topRight().x, m.topRight().y + r * 2)
-    if shadow:
-        box = renderer.shift_box(box, metrix.shadowOffsetX,
-                                 metrix.shadowOffsetY)
-    drawer.ellipse(box, fill=fill, filter='transp-blur')
-
-    box = (m.bottomLeft().x, m.bottomLeft().y - r * 2,
-           m.bottomLeft().x + r * 2, m.bottomLeft().y)
-    if shadow:
-        box = renderer.shift_box(box, metrix.shadowOffsetX,
-                                 metrix.shadowOffsetY)
-    drawer.ellipse(box, fill=fill, filter='transp-blur')
-
-    box = (m.bottomRight().x - r * 2, m.bottomRight().y - r * 2,
-           m.bottomRight().x, m.bottomRight().y)
-    if shadow:
-        box = renderer.shift_box(box, metrix.shadowOffsetX,
-                                 metrix.shadowOffsetY)
-    drawer.ellipse(box, fill=fill, filter='transp-blur')
-
-    box = (m.topLeft().x + r, m.topLeft().y,
-           m.bottomRight().x - r, m.bottomRight().y)
-    if shadow:
-        box = renderer.shift_box(box, metrix.shadowOffsetX,
-                                 metrix.shadowOffsetY)
-    drawer.rectangle(box, fill=fill, outline=outline, filter='transp-blur')
-
-    box = (m.topLeft().x, m.topLeft().y + r,
-           m.bottomRight().x, m.bottomRight().y - r)
-    if shadow:
-        box = renderer.shift_box(box, metrix.shadowOffsetX,
-                                 metrix.shadowOffsetY)
-    drawer.rectangle(box, fill=fill, outline=outline, filter='transp-blur')
+        # draw label
+        if not kwargs.get('shadow'):
+            drawer.textarea(box, self.node.label, fill=fill,
+                            font=font, fontsize=self.metrix.fontSize,
+                            lineSpacing=self.metrix.lineSpacing)
 
 
 def setup(self):
-    install_renderer('roundedbox', self)
+    install_renderer('roundedbox', RoundedBox)

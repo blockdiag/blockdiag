@@ -41,7 +41,10 @@ class NodeShape(object):
         self.metrix = metrix
 
     def render(self, drawer, format, **kwargs):
-        self.render_shape(drawer, format, **kwargs)
+        if hasattr(self, 'render_vector_shape') and format == 'SVG':
+            self.render_vector_shape(drawer, format, **kwargs)
+        else:
+            self.render_shape(drawer, format, **kwargs)
         self.render_number_badge(drawer, **kwargs)
 
     def render_shape(self, drawer, format, **kwargs):
