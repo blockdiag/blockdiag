@@ -15,10 +15,6 @@ class Diamond(NodeShape):
                         XY(m.bottom().x, m.bottom().y + r),
                         XY(m.left().x - r, m.left().y),
                         XY(m.top().x, m.top().y - r))
-        self.box = (m.topLeft().x + metrix.nodeWidth / 4 - r / 2,
-                    m.topLeft().y + metrix.nodeHeight / 4 - r / 2,
-                    m.bottomRight().x - metrix.nodeWidth / 4 + r / 2,
-                    m.bottomRight().y - metrix.nodeHeight / 4 + r / 2)
         self.box = ((self.diamond[0].x + self.diamond[3].x) / 2,
                     (self.diamond[0].y + self.diamond[3].y) / 2,
                     (self.diamond[1].x + self.diamond[2].x) / 2,
