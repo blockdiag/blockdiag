@@ -306,7 +306,7 @@ class ScreenNodeBuilder:
         DiagramLayoutManager(diagram).run()
         diagram.fixiate(True)
 
-        if diagram.portrait:
+        if diagram.orientation == 'portrait':
             klass.rotate_diagram(diagram)
 
         return diagram
