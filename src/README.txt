@@ -18,6 +18,10 @@ Make environment::
 
    $ easy_install blockdiag
 
+If you want to export as PDF format, give pdf arguments::
+
+   $ easy_install "blockdiag[pdf]"
+
 by buildout
 ------------
 Make environment::
@@ -114,6 +118,12 @@ Python Software Foundation License.
 
 History
 =======
+
+0.6.7 (2011-02-12)
+------------------
+* Change noderenderer interface to new style
+* Render dashed ellipse more clearly (contributed by @cocoatomo)
+* Support PDF exporting
 
 0.6.6 (2011-01-31)
 ------------------
