@@ -67,7 +67,8 @@ class Actor(NodeShape):
             body = self.shift_shadow(body)
             drawer.polygon(body, fill=fill, filter='transp-blur')
         else:
-            drawer.polygon(body, fill=self.node.color, outline=outline)
+            drawer.polygon(body, fill=self.node.color, outline=outline,
+                           style=self.node.style)
 
         # draw head part
         head = self.head_part()
