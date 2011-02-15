@@ -78,6 +78,8 @@ class PngDiagramMetrix(Scaler):
 
         if hasattr(renderer, 'NodeMetrix'):
             base = getattr(renderer, 'NodeMetrix')(node, metrix)
+        elif hasattr(renderer, 'render'):
+            return renderer(node, metrix)
         else:
             base = NodeMetrix(node, metrix)
 
