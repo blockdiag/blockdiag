@@ -8,12 +8,19 @@ class BeginPoint(NodeShape):
     def __init__(self, node, metrix=None):
         super(BeginPoint, self).__init__(node, metrix)
 
+        m = metrix.cell(node)
+
         self.radius = metrix.cellSize
-        self.center = metrix.cell(node).center()
+        self.center = m.center()
+        self.textbox = [m.top().x, m.top().y, m.right().x, m.right().y]
+        self.textalign = 'left'
+        self.connectors = [XY(self.center.x, self.center.y - self.radius),
+                           XY(self.center.x + self.radius, self.center.y),
+                           XY(self.center.x, self.center.y + self.radius),
+                           XY(self.center.x - self.radius, self.center.y)]
 
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
-        font = kwargs.get('font')
         fill = kwargs.get('fill')
 
         # draw outer circle
@@ -33,26 +40,6 @@ class BeginPoint(NodeShape):
         if not kwargs.get('shadow'):
             drawer.ellipse(box, fill=self.node.color, outline=outline,
                            style=self.node.style)
-
-        # draw label
-        if not kwargs.get('shadow'):
-            m = self.metrix.cell(self.node)
-            textbox = (m.top().x, m.top().y, m.right().x, m.right().y)
-            drawer.textarea(textbox, self.node.label, fill=fill, halign="left",
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
-
-    def top(self):
-        return XY(self.center.x, self.center.y - self.radius)
-
-    def left(self):
-        return XY(self.center.x - self.radius, self.center.y)
-
-    def right(self):
-        return XY(self.center.x + self.radius, self.center.y)
-
-    def bottom(self):
-        return XY(self.center.x, self.center.y + self.radius)
 
 
 def setup(self):

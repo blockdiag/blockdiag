@@ -5,9 +5,15 @@ from blockdiag.utils.XY import XY
 
 
 class Ellipse(NodeShape):
+    def __init__(self, node, metrix=None):
+        super(Ellipse, self).__init__(node, metrix)
+
+        r = metrix.cellSize
+        box = metrix.cell(node).box()
+        self.textbox = (box[0] + r, box[1] + r, box[2] - r, box[3] - r)
+
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
-        font = kwargs.get('font')
         fill = kwargs.get('fill')
 
         # draw outline
@@ -19,20 +25,12 @@ class Ellipse(NodeShape):
         elif self.node.background:
             drawer.ellipse(box, fill=self.node.color,
                              outline=self.node.color)
-            drawer.loadImage(self.node.background, box)
+            drawer.loadImage(self.node.background, self.textbox)
             drawer.ellipse(box, fill="none", outline=outline,
                            style=self.node.style)
         else:
             drawer.ellipse(box, fill=self.node.color, outline=outline,
                            style=self.node.style)
-
-        # draw label
-        if not kwargs.get('shadow'):
-            r = self.metrix.cellSize
-            textbox = (box[0] + r, box[1] + r, box[2] - r, box[3] - r)
-            drawer.textarea(textbox, self.node.label, fill=fill,
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
 
 
 def setup(self):

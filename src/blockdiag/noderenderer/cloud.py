@@ -6,8 +6,17 @@ from blockdiag.SVGdraw import pathdata
 
 
 class Cloud(NodeShape):
+    def __init__(self, node, metrix=None):
+        super(Cloud, self).__init__(node, metrix)
+
+        r = metrix.cellSize
+        pt = metrix.cell(node).topLeft()
+        rx = self.metrix.nodeWidth / 12
+        ry = self.metrix.nodeHeight / 5
+        self.textbox = (pt.x + rx * 2, pt.y + ry,
+                        pt.x + rx * 11, pt.y + ry * 4)
+
     def render_shape(self, drawer, format, **kwargs):
-        font = kwargs.get('font')
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
@@ -20,15 +29,8 @@ class Cloud(NodeShape):
         self.render_shape_background(drawer, format, **kwargs)
 
         # draw outline
-        textbox = self.metrix.cell(self.node).box()
         if not kwargs.get('shadow') and self.node.background:
-            drawer.loadImage(self.node.background, textbox)
-
-        # draw label
-        if not kwargs.get('shadow'):
-            drawer.textarea(textbox, self.node.label, fill=fill,
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
+            drawer.loadImage(self.node.background, self.textbox)
 
     def render_shape_background(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')
@@ -77,7 +79,6 @@ class Cloud(NodeShape):
 
     def render_vector_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
-        font = kwargs.get('font')
         fill = kwargs.get('fill')
 
         # create pathdata
@@ -99,27 +100,18 @@ class Cloud(NodeShape):
         path.ellarc(rx * 2, ry * 5 / 2, 0, 0, 1, pt.x + rx * 2, pt.y + ry * 4)
         path.ellarc(rx * 2, ry, 0, 0, 1, pt.x + rx * 2, pt.y + ry * 2)
 
-        textbox = (pt.x + rx * 2, pt.y + ry,
-                   pt.x + rx * 11, pt.y + ry * 4)
-
         # draw outline
         if kwargs.get('shadow'):
             drawer.path(path, fill=fill, outline=fill,
                         filter='transp-blur')
         elif self.node.background:
             drawer.path(path, fill=self.node.color, outline=self.node.color)
-            drawer.loadImage(self.node.background, textbox)
+            drawer.loadImage(self.node.background, self.textbox)
             drawer.path(path, fill="none", outline=fill,
                         style=self.node.style)
         else:
             drawer.path(path, fill=self.node.color, outline=fill,
                         style=self.node.style)
-
-        # draw label
-        if not kwargs.get('shadow'):
-            drawer.textarea(textbox, self.node.label, fill=fill,
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
 
 
 def setup(self):

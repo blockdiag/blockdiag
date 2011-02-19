@@ -6,28 +6,24 @@ from blockdiag.SVGdraw import pathdata
 
 
 class Database(NodeShape):
-    def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
-        font = kwargs.get('font')
-        fill = kwargs.get('fill')
+    def __init__(self, node, metrix=None):
+        super(Database, self).__init__(node, metrix)
 
         m = self.metrix.cell(self.node)
         r = self.metrix.cellSize
-        textbox = (m.topLeft().x, m.topLeft().y + r * 2,
-                   m.bottomRight().x, m.bottomRight().y)
+        self.textbox = (m.topLeft().x, m.topLeft().y + r * 3 / 2,
+                        m.bottomRight().x, m.bottomRight().y - r / 2)
+
+    def render_shape(self, drawer, format, **kwargs):
+        outline = kwargs.get('outline')
+        fill = kwargs.get('fill')
 
         # draw background
         self.render_shape_background(drawer, format, **kwargs)
 
         # draw background image
         if self.node.background:
-            drawer.loadImage(self.node.background, textbox)
-
-        # draw label
-        if not kwargs.get('shadow'):
-            drawer.textarea(textbox, self.node.label, fill=fill,
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
+            drawer.loadImage(self.node.background, self.textbox)
 
     def render_shape_background(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
@@ -73,14 +69,11 @@ class Database(NodeShape):
 
     def render_vector_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
-        font = kwargs.get('font')
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
         r = self.metrix.cellSize
         width = self.metrix.nodeWidth
-        textbox = (m.topLeft().x, m.topLeft().y + r * 2,
-                   m.bottomRight().x, m.bottomRight().y)
 
         box = m.box()
         if kwargs.get('shadow'):
@@ -92,9 +85,6 @@ class Database(NodeShape):
         path.ellarc(width / 2, r, 0, 0, 1, box[0], box[3] - r)
         path.line(box[0], box[1] + r)
 
-        textbox = (m.topLeft().x, m.topLeft().y + r * 3 / 2,
-                   m.bottomRight().x, m.bottomRight().y - r / 2)
-
         # draw outline
         if kwargs.get('shadow'):
             drawer.path(path, fill=fill, outline=fill,
@@ -102,7 +92,7 @@ class Database(NodeShape):
         elif self.node.background:
             drawer.path(path, fill=self.node.color,
                         outline=self.node.color)
-            drawer.loadImage(self.node.background, textbox)
+            drawer.loadImage(self.node.background, self.textbox)
             drawer.path(path, fill="none", outline=outline,
                         style=self.node.style)
         else:
@@ -115,12 +105,6 @@ class Database(NodeShape):
             path.ellarc(width / 2, r, 0, 0, 1, box[0], box[1] + r)
             drawer.path(path, fill=self.node.color, outline=fill,
                         style=self.node.style)
-
-        # draw label
-        if not kwargs.get('shadow'):
-            drawer.textarea(textbox, self.node.label, fill=fill,
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
 
 
 def setup(self):
