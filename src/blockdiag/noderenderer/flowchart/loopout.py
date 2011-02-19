@@ -5,9 +5,18 @@ from blockdiag.utils.XY import XY
 
 
 class LoopOut(NodeShape):
+    def __init__(self, node, metrix=None):
+        super(LoopOut, self).__init__(node, metrix)
+
+        m = self.metrix.cell(self.node)
+        xdiff = self.metrix.nodeWidth / 4
+        ydiff = self.metrix.nodeHeight / 4
+
+        self.textbox = (m.topLeft().x, m.topLeft().y,
+                        m.bottomRight().x, m.bottomRight().y - ydiff)
+
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
-        font = kwargs.get('font')
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
@@ -21,8 +30,6 @@ class LoopOut(NodeShape):
                 XY(m.bottomLeft().x + xdiff, m.bottomLeft().y),
                 XY(m.bottomLeft().x, m.bottomLeft().y - ydiff),
                 XY(m.topLeft().x, m.topLeft().y)]
-        textbox = (m.topLeft().x, m.topLeft().y,
-                   m.bottomRight().x, m.bottomRight().y - ydiff)
 
         # draw outline
         if kwargs.get('shadow'):
@@ -32,18 +39,12 @@ class LoopOut(NodeShape):
         elif self.node.background:
             drawer.polygon(shape, fill=self.node.color,
                              outline=self.node.color)
-            drawer.loadImage(self.node.background, textbox)
+            drawer.loadImage(self.node.background, self.textbox)
             drawer.polygon(shape, fill="none", outline=outline,
                            style=self.node.style)
         else:
             drawer.polygon(shape, fill=self.node.color, outline=outline,
                            style=self.node.style)
-
-        # draw label
-        if not kwargs.get('shadow'):
-            drawer.textarea(textbox, self.node.label, fill=fill,
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
 
 
 def setup(self):

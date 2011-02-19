@@ -40,15 +40,32 @@ class NodeShape(object):
         self.node = node
         self.metrix = metrix
 
+        m = self.metrix.cell(self.node)
+        self.textbox = m.box()
+        self.textalign = 'center'
+        self.connectors = [m.top(), m.right(), m.bottom(), m.left()]
+
     def render(self, drawer, format, **kwargs):
         if hasattr(self, 'render_vector_shape') and format == 'SVG':
             self.render_vector_shape(drawer, format, **kwargs)
         else:
             self.render_shape(drawer, format, **kwargs)
+
+        self.render_label(drawer, **kwargs)
         self.render_number_badge(drawer, **kwargs)
 
     def render_shape(self, drawer, format, **kwargs):
         pass
+
+    def render_label(self, drawer, **kwargs):
+        font = kwargs.get('font')
+        fill = kwargs.get('fill')
+
+        if not kwargs.get('shadow'):
+            drawer.textarea(self.textbox, self.node.label,
+                            fill=fill, halign=self.textalign,
+                            font=font, fontsize=self.metrix.fontSize,
+                            lineSpacing=self.metrix.lineSpacing)
 
     def render_number_badge(self, drawer, **kwargs):
         if self.node.numbered != None and kwargs.get('shadow') != True:
@@ -65,16 +82,16 @@ class NodeShape(object):
                             font=font, fontsize=self.metrix.fontSize)
 
     def top(self):
-        return self.metrix.cell(self.node).top()
+        return self.connectors[0]
 
     def left(self):
-        return self.metrix.cell(self.node).left()
+        return self.connectors[3]
 
     def right(self):
-        return self.metrix.cell(self.node).right()
+        return self.connectors[1]
 
     def bottom(self):
-        return self.metrix.cell(self.node).bottom()
+        return self.connectors[2]
 
     def shift_shadow(self, value):
         xdiff = self.metrix.shadowOffsetX

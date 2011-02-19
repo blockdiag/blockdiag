@@ -11,6 +11,9 @@ class Actor(NodeShape):
         self.radius = metrix.nodeHeight / 8  # radius of actor's head
         self.center = metrix.cell(node).center()
 
+        self.connectors[1] = XY(self.center.x + self.radius * 5, self.center.y)
+        self.connectors[3] = XY(self.center.x - self.radius * 5, self.center.y)
+
     def head_part(self):
         r = self.radius
         top = self.metrix.cell(self.node).top()
@@ -54,7 +57,6 @@ class Actor(NodeShape):
 
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
-        font = kwargs.get('font')
         fill = kwargs.get('fill')
 
         # FIXME: Actor does not support
@@ -79,11 +81,8 @@ class Actor(NodeShape):
             drawer.ellipse(head, fill=self.node.color, outline=outline,
                            style=self.node.style)
 
-    def left(self):
-        return XY(self.center.x - self.radius * 5, self.center.y)
-
-    def right(self):
-        return XY(self.center.x + self.radius * 5, self.center.y)
+    def render_label(self, drawer, **kwargs):
+        pass
 
 
 def setup(self):

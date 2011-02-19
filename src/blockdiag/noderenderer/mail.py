@@ -5,15 +5,20 @@ from blockdiag.utils.XY import XY
 
 
 class Mail(NodeShape):
+    def __init__(self, node, metrix=None):
+        super(Mail, self).__init__(node, metrix)
+
+        m = self.metrix.cell(self.node)
+        r = self.metrix.cellSize * 2
+        self.textbox = (m.topLeft().x, m.topLeft().y + r,
+                        m.bottomRight().x, m.bottomRight().y)
+
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
-        font = kwargs.get('font')
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
         r = self.metrix.cellSize * 2
-        textbox = (m.topLeft().x, m.topLeft().y + r,
-                   m.bottomRight().x, m.bottomRight().y)
 
         # draw outline
         box = self.metrix.cell(self.node).box()
@@ -24,7 +29,7 @@ class Mail(NodeShape):
         elif self.node.background:
             drawer.rectangle(box, fill=self.node.color,
                              outline=self.node.color)
-            drawer.loadImage(self.node.background, textbox)
+            drawer.loadImage(self.node.background, self.textbox)
             drawer.rectangle(box, outline=outline, style=self.node.style)
         else:
             drawer.rectangle(box, fill=self.node.color, outline=outline,
@@ -34,12 +39,6 @@ class Mail(NodeShape):
         if not kwargs.get('shadow'):
             flap = [m.topLeft(), XY(m.top().x, m.top().y + r), m.topRight()]
             drawer.line(flap, fill=fill, style=self.node.style)
-
-        # draw label
-        if not kwargs.get('shadow'):
-            drawer.textarea(textbox, self.node.label, fill=fill,
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
 
 
 def setup(self):

@@ -7,9 +7,6 @@ from blockdiag.SVGdraw import pathdata
 
 class RoundedBox(NodeShape):
     def render_shape(self, drawer, format, **kwargs):
-        font = kwargs.get('font')
-        fill = kwargs.get('fill')
-
         # draw background
         self.render_shape_background(drawer, format, **kwargs)
 
@@ -20,12 +17,6 @@ class RoundedBox(NodeShape):
                 drawer.loadImage(self.node.background, box)
 
             self.render_shape_outline(drawer, format, **kwargs)
-
-        # draw label
-        if not kwargs.get('shadow'):
-            drawer.textarea(box, self.node.label, fill=fill,
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
 
     def render_shape_outline(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
@@ -84,7 +75,6 @@ class RoundedBox(NodeShape):
 
     def render_vector_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
-        font = kwargs.get('font')
         fill = kwargs.get('fill')
 
         # create pathdata
@@ -110,18 +100,12 @@ class RoundedBox(NodeShape):
                         filter='transp-blur')
         elif self.node.background:
             drawer.path(path, fill=self.node.color, outline=self.node.color)
-            drawer.loadImage(self.node.background, box)
+            drawer.loadImage(self.node.background, self.textbox)
             drawer.path(path, fill="none", outline=fill,
                         style=self.node.style)
         else:
             drawer.path(path, fill=self.node.color, outline=fill,
                         style=self.node.style)
-
-        # draw label
-        if not kwargs.get('shadow'):
-            drawer.textarea(box, self.node.label, fill=fill,
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
 
 
 def setup(self):

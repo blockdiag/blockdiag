@@ -7,7 +7,6 @@ from blockdiag.utils.XY import XY
 class Note(NodeShape):
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
-        font = kwargs.get('font')
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
@@ -39,12 +38,6 @@ class Note(NodeShape):
                       XY(tr.x - r, tr.y + r),
                       XY(tr.x, tr.y + r)]
             drawer.line(folded, fill=fill, style=self.node.style)
-
-        # draw label
-        if not kwargs.get('shadow'):
-            drawer.textarea(box, self.node.label, fill=fill,
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
 
 
 def setup(self):
