@@ -17,6 +17,7 @@
   O [shape = "flowchart.loopout"];
 
   P [shape = "actor"];
+  Q [shape = "flowchart.terminator"];
 
   Z;
 }
