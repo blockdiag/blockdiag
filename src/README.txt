@@ -119,6 +119,10 @@ Python Software Foundation License.
 History
 =======
 
+0.7.0 (2011-02-25)
+------------------
+* Support node shape
+
 0.6.7 (2011-02-12)
 ------------------
 * Change noderenderer interface to new style
