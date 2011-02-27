@@ -119,7 +119,11 @@ Python Software Foundation License.
 History
 =======
 
-0.7.0 (2011-02-27)
+0.7.2 (2011-02-28)
+------------------
+* Add default_shape attribute to diagram
+
+0.7.1 (2011-02-27)
 ------------------
 * Fix edge has broken with antialias option
 
