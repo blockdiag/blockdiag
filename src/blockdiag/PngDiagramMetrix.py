@@ -76,9 +76,7 @@ class PngDiagramMetrix(Scaler):
         metrix = self.originalMetrix()
         renderer = noderenderer.get(node.shape)
 
-        if hasattr(renderer, 'NodeMetrix'):
-            base = getattr(renderer, 'NodeMetrix')(node, metrix)
-        elif hasattr(renderer, 'render'):
+        if hasattr(renderer, 'render'):
             return renderer(node, metrix)
         else:
             base = NodeMetrix(node, metrix)

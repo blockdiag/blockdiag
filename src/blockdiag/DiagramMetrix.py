@@ -131,9 +131,7 @@ class DiagramMetrix(object):
     def node(self, node):
         renderer = noderenderer.get(node.shape)
 
-        if hasattr(renderer, 'NodeMetrix'):
-            return getattr(renderer, 'NodeMetrix')(node, self)
-        elif hasattr(renderer, 'render'):
+        if hasattr(renderer, 'render'):
             return renderer(node, self)
         else:
             return NodeMetrix(node, self)
