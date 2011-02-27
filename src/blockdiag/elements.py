@@ -88,12 +88,17 @@ class Element(Base):
 
 class DiagramNode(Element):
     basecolor = (255, 255, 255)
+    default_shape = 'box'
+
+    @classmethod
+    def set_default_shape(klass, shape):
+        klass.default_shape = shape
 
     def __init__(self, id):
         super(DiagramNode, self).__init__(id)
 
         self.label = unquote(id) or ''
-        self.shape = 'box'
+        self.shape = self.default_shape
         self.style = None
         self.numbered = None
         self.background = None
@@ -240,6 +245,13 @@ class Diagram(NodeGroup):
                     self.orientation = orientation
                 else:
                     msg = "WARNING: unknown diagram orientation: %s\n" % value
+                    sys.stderr.write(msg)
+            elif attr.name == 'default_shape':
+                try:
+                    noderenderer.get(value)
+                    DiagramNode.set_default_shape(value)
+                except:
+                    msg = "WARNING: unknown node shape: %s\n" % value
                     sys.stderr.write(msg)
             elif attr.name == 'shape_namespace':
                 noderenderer.set_default_namespace(value)
