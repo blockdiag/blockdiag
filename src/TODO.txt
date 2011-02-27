@@ -1,0 +1,14 @@
+Todos
+======
+
+Functionals
+------------
+* Reimplement --separate option
+* Support diagram legends
+* Support other block diagram structure
+
+Known Issues
+-------------
+* Fix some experimental features.
+* PDF renderer does not support blur shadow
+* PDF renderer does not support path rendering
