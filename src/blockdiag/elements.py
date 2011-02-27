@@ -91,8 +91,13 @@ class DiagramNode(Element):
     default_shape = 'box'
 
     @classmethod
-    def set_default_shape(klass, shape):
-        klass.default_shape = shape
+    def set_default_shape(cls, shape):
+        cls.default_shape = shape
+
+    @classmethod
+    def clear(cls):
+        cls.namespace = {}
+        cls.default_shape = 'box'
 
     def __init__(self, id):
         super(DiagramNode, self).__init__(id)
