@@ -119,6 +119,10 @@ Python Software Foundation License.
 History
 =======
 
+0.7.0 (2011-02-27)
+------------------
+* Fix edge has broken with antialias option
+
 0.7.0 (2011-02-25)
 ------------------
 * Support node shape
