@@ -242,7 +242,10 @@ class DiagramDraw(object):
             self.drawer.line(line, fill=color, style=edge.style)
 
         for head in metrix.heads():
-            self.drawer.polygon(head, outline=color, fill=color)
+            if (edge.hstyle in ('generalization', 'aggregation')):
+                self.drawer.polygon(head, outline=color, fill='white')
+            else:
+                self.drawer.polygon(head, outline=color, fill=color)
 
         r = self.metrix.cellSize / 2
         for jump in metrix.jumps():

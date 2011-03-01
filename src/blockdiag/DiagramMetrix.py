@@ -311,26 +311,48 @@ class EdgeMetrix(object):
         cell = self.metrix.cellSize
         node = self.metrix.node(node)
 
-        if direct == 'up':
-            xy = node.bottom()
-            head.append(xy)
-            head.append((xy.x - cell / 2, xy.y + cell))
-            head.append((xy.x + cell / 2, xy.y + cell))
-        elif direct == 'down':
-            xy = node.top()
-            head.append(xy)
-            head.append((xy.x - cell / 2, xy.y - cell))
-            head.append((xy.x + cell / 2, xy.y - cell))
-        elif direct == 'right':
-            xy = node.left()
-            head.append(xy)
-            head.append((xy.x - cell, xy.y - cell / 2))
-            head.append((xy.x - cell, xy.y + cell / 2))
-        elif direct == 'left':
-            xy = node.right()
-            head.append(xy)
-            head.append((xy.x + cell, xy.y - cell / 2))
-            head.append((xy.x + cell, xy.y + cell / 2))
+        if (self.edge.hstyle in ('composition', 'aggregation')):
+            if direct == 'up':
+                xy = node.bottom()
+                self._make_diamond(head, direct,
+                                   XY(xy.x, xy.y))
+            elif direct == 'down':
+                xy = node.top()
+                self._make_diamond(head, direct,
+                                   XY(xy.x, xy.y - cell * 2))
+            elif direct == 'right':
+                xy = node.left()
+                self._make_diamond(head, direct,
+                                   XY(xy.x - cell, xy.y - cell / 2))
+            elif direct == 'left':
+                xy = node.right()
+                self._make_diamond(head, direct,
+                                   XY(xy.x + cell, xy.y - cell / 2))
+        else:
+            if direct == 'up':
+                xy = node.bottom()
+                head.append(xy)
+                head.append((xy.x - cell / 2, xy.y + cell))
+                head.append((xy.x + cell / 2, xy.y + cell))
+                head.append(xy)
+            elif direct == 'down':
+                xy = node.top()
+                head.append(xy)
+                head.append((xy.x - cell / 2, xy.y - cell))
+                head.append((xy.x + cell / 2, xy.y - cell))
+                head.append(xy)
+            elif direct == 'right':
+                xy = node.left()
+                head.append(xy)
+                head.append((xy.x - cell, xy.y - cell / 2))
+                head.append((xy.x - cell, xy.y + cell / 2))
+                head.append(xy)
+            elif direct == 'left':
+                xy = node.right()
+                head.append(xy)
+                head.append((xy.x + cell, xy.y - cell / 2))
+                head.append((xy.x + cell, xy.y + cell / 2))
+                head.append(xy)
 
         return head
 
@@ -500,3 +522,17 @@ class EdgeMetrix(object):
 
     def jumps(self):
         return self.edge.crosspoints
+
+    def _make_diamond(self, head, direction, top):
+        """Create and append edge diamond location."""
+        cell = self.metrix.cellSize
+        head.append(top)
+        if (direction in ('right', 'left')):
+            head.append((top.x + cell, top.y + cell / 2))
+            head.append((top.x, top.y + cell))
+            head.append((top.x - cell, top.y + cell / 2))
+        else:
+            head.append((top.x + cell / 2, top.y + cell))
+            head.append((top.x, top.y + cell * 2))
+            head.append((top.x - cell / 2, top.y + cell))
+        head.append(top)
