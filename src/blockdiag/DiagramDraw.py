@@ -242,7 +242,7 @@ class DiagramDraw(object):
             self.drawer.line(line, fill=color, style=edge.style)
 
         for head in metrix.heads():
-            if (edge.hstyle in ('generalization', 'aggregation')):
+            if edge.hstyle in ('generalization', 'aggregation'):
                 self.drawer.polygon(head, outline=color, fill='white')
             else:
                 self.drawer.polygon(head, outline=color, fill=color)
