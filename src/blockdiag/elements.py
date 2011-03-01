@@ -380,7 +380,7 @@ class DiagramEdge(Base):
                     sys.stderr.write(msg)
             elif attr.name == 'hstyle':
                 hstyle = value.lower()
-                if (hs in ('generalization', 'composition', 'aggregation')):
+                if hstyle in ('generalization', 'composition', 'aggregation'):
                     self.hstyle = hstyle
                 else:
                     msg = "WARNING: unknown edge hstyle: %s\n" % hstyle
