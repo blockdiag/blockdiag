@@ -338,6 +338,7 @@ class DiagramEdge(Base):
         self.color = None
         self.style = None
         self.folded = None
+        self.hstyle = None
 
     def __repr__(self):
         class_name = self.__class__.__name__
@@ -376,6 +377,13 @@ class DiagramEdge(Base):
                     self.style = style
                 else:
                     msg = "WARNING: unknown edge style: %s\n" % style
+                    sys.stderr.write(msg)
+            elif attr.name == 'hstyle':
+                hs = value.lower()
+                if (hs in ('generalization', 'composition', 'aggregation')):
+                    self.hstyle = hs
+                else:
+                    msg = "WARNING: unknown edge hstyle: %s\n" % style
                     sys.stderr.write(msg)
             elif attr.name == 'folded':
                 self.folded = True
