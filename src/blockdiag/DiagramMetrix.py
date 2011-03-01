@@ -332,26 +332,26 @@ class EdgeMetrix(object):
             if direct == 'up':
                 xy = node.bottom()
                 head.append(xy)
-                head.append((xy.x - cell / 2, xy.y + cell))
-                head.append((xy.x + cell / 2, xy.y + cell))
+                head.append(XY(xy.x - cell / 2, xy.y + cell))
+                head.append(XY(xy.x + cell / 2, xy.y + cell))
                 head.append(xy)
             elif direct == 'down':
                 xy = node.top()
                 head.append(xy)
-                head.append((xy.x - cell / 2, xy.y - cell))
-                head.append((xy.x + cell / 2, xy.y - cell))
+                head.append(XY(xy.x - cell / 2, xy.y - cell))
+                head.append(XY(xy.x + cell / 2, xy.y - cell))
                 head.append(xy)
             elif direct == 'right':
                 xy = node.left()
                 head.append(xy)
-                head.append((xy.x - cell, xy.y - cell / 2))
-                head.append((xy.x - cell, xy.y + cell / 2))
+                head.append(XY(xy.x - cell, xy.y - cell / 2))
+                head.append(XY(xy.x - cell, xy.y + cell / 2))
                 head.append(xy)
             elif direct == 'left':
                 xy = node.right()
                 head.append(xy)
-                head.append((xy.x + cell, xy.y - cell / 2))
-                head.append((xy.x + cell, xy.y + cell / 2))
+                head.append(XY(xy.x + cell, xy.y - cell / 2))
+                head.append(XY(xy.x + cell, xy.y + cell / 2))
                 head.append(xy)
 
         return head
