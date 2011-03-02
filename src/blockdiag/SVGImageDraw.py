@@ -6,6 +6,7 @@ import base64
 from utils.XY import XY
 import utils.ellipse
 from SVGdraw import *
+import xml.sax.saxutils
 
 try:
     from utils.PILTextFolder import PILTextFolder as TextFolder
@@ -97,6 +98,7 @@ class SVGImageDrawElement:
         fontname = kwargs.get('font')
         fontsize = kwargs.get('fontsize')
 
+        string = xml.sax.saxutils.escape(string)
         t = text(xy[0], xy[1], string, fontsize, fontname, fill=self.rgb(fill))
         self.svg.addElement(t)
 
