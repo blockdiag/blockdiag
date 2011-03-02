@@ -149,6 +149,7 @@ class NodeGroup(Element):
         self.separated = False
         self.nodes = []
         self.edges = []
+        self.orientation = 'landscape'
 
     def duplicate(self):
         copied = Element.duplicate(self)
@@ -215,6 +216,20 @@ class NodeGroup(Element):
         for i, node in enumerate(self.nodes):
             node.order = i
 
+    def set_attributes(self, attrs):
+        for attr in attrs:
+            value = unquote(attr.value)
+
+            if attr.name == 'orientation':
+                orientation = value.lower()
+                if orientation in ('landscape', 'portrait'):
+                    self.orientation = orientation
+                else:
+                    msg = "WARNING: unknown diagram orientation: %s\n" % value
+                    sys.stderr.write(msg)
+            else:
+                self.set_attribute(attr)
+
 
 class Diagram(NodeGroup):
     int_attrs = ['width', 'height', 'fontsize',
@@ -228,30 +243,12 @@ class Diagram(NodeGroup):
         self.span_width = None
         self.span_height = None
         self.fontsize = None
-        self.orientation = 'landscape'
 
     def set_attributes(self, attrs):
         for attr in attrs:
             value = unquote(attr.value)
 
-            if attr.name == 'portrait':
-                style = value.lower()
-                if style == 'true':
-                    self.orientation = 'portrait'
-                else:
-                    self.orientation = 'landscape'
-
-                msg = "WARNING: portrait parameter was deprecated, " + \
-                      "use orientation = 'portrait'\n"
-                sys.stderr.write(msg)
-            elif attr.name == 'orientation':
-                orientation = value.lower()
-                if orientation in ('landscape', 'portrait'):
-                    self.orientation = orientation
-                else:
-                    msg = "WARNING: unknown diagram orientation: %s\n" % value
-                    sys.stderr.write(msg)
-            elif attr.name == 'default_shape':
+            if attr.name == 'default_shape':
                 try:
                     noderenderer.get(value)
                     DiagramNode.set_default_shape(value)

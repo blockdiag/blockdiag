@@ -126,6 +126,17 @@ class DiagramLayoutManager:
         self.do_layout()
         self.diagram.fixiate()
 
+        if self.diagram.orientation == 'portrait':
+            self.rotate_diagram()
+
+    def rotate_diagram(self):
+        for node in self.diagram.traverse_nodes():
+            node.xy = XY(node.xy.y, node.xy.x)
+            node.width, node.height = (node.height, node.width)
+
+        xy = (self.diagram.height, self.diagram.width)
+        self.diagram.width, self.diagram.height = xy
+
     def do_layout(self):
         self.detect_circulars()
 
@@ -306,18 +317,7 @@ class ScreenNodeBuilder:
         DiagramLayoutManager(diagram).run()
         diagram.fixiate(True)
 
-        if diagram.orientation == 'portrait':
-            klass.rotate_diagram(diagram)
-
         return diagram
-
-    @classmethod
-    def rotate_diagram(klass, diagram):
-        for node in diagram.traverse_nodes():
-            node.xy = XY(node.xy.y, node.xy.x)
-            node.width, node.height = (node.height, node.width)
-
-        diagram.width, diagram.height = (diagram.height, diagram.width)
 
 
 def parse_option():
