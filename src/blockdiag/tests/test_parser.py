@@ -601,3 +601,12 @@ def test_diagram_orientation_diagram():
                   'D': (1, 2), 'Z': (2, 0)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
+
+
+def test_group_orientation_diagram():
+    screen = __build_diagram('group_orientation.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
+                  'D': (2, 1), 'Z': (0, 2)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
