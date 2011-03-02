@@ -592,3 +592,12 @@ def test_group_and_skipped_edge_diagram():
                   'D': (3, 0), 'E': (1, 1), 'Z': (0, 2)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
+
+
+def test_diagram_orientation_diagram():
+    screen = __build_diagram('diagram_orientation.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (0, 1), 'C': (0, 2),
+                  'D': (1, 2), 'Z': (2, 0)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
