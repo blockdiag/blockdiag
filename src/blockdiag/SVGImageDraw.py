@@ -4,6 +4,7 @@
 import sys
 import base64
 from utils.XY import XY
+import utils.ellipse
 from SVGdraw import *
 
 try:
@@ -122,11 +123,27 @@ class SVGImageDrawElement:
 
         w = (xy[2] - xy[0]) / 2
         h = (xy[3] - xy[1]) / 2
-        pt1 = XY(xy[0], xy[1] + h)
-        pt2 = XY(xy[2], xy[3] - h)
 
-        pd = pathdata(pt1.x, pt1.y)
-        pd.ellarc(w, h, 0, 0, 1, pt2.x, pt2.y)
+        if start > end:
+            end += 360
+
+        coord = utils.ellipse.coordinate(1, w, h, start, start + 1)
+        point = iter(coord).next()
+        pt1 = XY(xy[0] + w + round(point[0], 0),
+                 xy[1] + h + round(point[1], 0))
+
+        coord = utils.ellipse.coordinate(1, w, h, end, end + 1)
+        point = iter(coord).next()
+        pt2 = XY(xy[0] + w + round(point[0], 0),
+                 xy[1] + h + round(point[1], 0))
+
+        if end - start > 180:
+            largearc = 1
+        else:
+            largearc = 0
+
+        pd = pathdata(pt1[0], pt1[1])
+        pd.ellarc(w, h, 0, largearc, 1, pt2[0], pt2[1])
         p = path(pd, fill="none", stroke=self.rgb(fill),
                  stroke_dasharray=self.style(style))
         self.svg.addElement(p)
