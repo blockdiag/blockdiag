@@ -122,8 +122,8 @@ class SVGImageDrawElement:
 
         w = (xy[2] - xy[0]) / 2
         h = (xy[3] - xy[1]) / 2
-        pt1 = XY(xy[0], xy[1] + w)
-        pt2 = XY(xy[2], xy[3] - w)
+        pt1 = XY(xy[0], xy[1] + h)
+        pt2 = XY(xy[2], xy[3] - h)
 
         pd = pathdata(pt1.x, pt1.y)
         pd.ellarc(w, h, 0, 0, 1, pt2.x, pt2.y)
