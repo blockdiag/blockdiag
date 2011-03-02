@@ -119,6 +119,12 @@ Python Software Foundation License.
 History
 =======
 
+0.7.3 (2011-03-02)
+------------------
+* Use UTF-8 characters as Name token (by @swtw7466)
+* Fix htmlentities included in labels was not escaped on SVG images
+* Fix bugs
+
 0.7.2 (2011-02-28)
 ------------------
 * Add default_shape attribute to diagram
