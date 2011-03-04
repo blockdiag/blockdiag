@@ -260,14 +260,6 @@ class DiagramLayoutManager:
                         self.diagram.nodes.remove(parents[i - 1])
                         self.diagram.nodes.insert(idx2 + 1, parents[i - 1])
 
-            if isinstance(node, NodeGroup):
-                nodes = [n for n in node.nodes if n in self.diagram.nodes]
-                if nodes:
-                    idx = min(self.diagram.nodes.index(n) for n in nodes)
-                    if idx < self.diagram.nodes.index(node):
-                        self.diagram.nodes.remove(node)
-                        self.diagram.nodes.insert(idx + 1, node)
-
         self.diagram.update_order()
 
     def mark_xy(self, xy, width, height):
