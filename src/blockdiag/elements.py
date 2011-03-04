@@ -277,14 +277,17 @@ class DiagramEdge(Base):
 
     @classmethod
     def find(cls, node1, node2=None):
-        if node1 not in cls.namespace:
-            return []
+        if node1 is None:
+            return [e for e in cls.find_all() if e.node2 == node2]
+        else:
+            if node1 not in cls.namespace:
+                return []
 
-        if node2 is None:
-            return cls.namespace[node1].values()
+            if node2 is None:
+                return cls.namespace[node1].values()
 
-        if node2 not in cls.namespace[node1]:
-            return []
+            if node2 not in cls.namespace[node1]:
+                return []
 
         return cls.namespace[node1][node2]
 
