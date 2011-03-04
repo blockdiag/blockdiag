@@ -260,7 +260,37 @@ class DiagramLayoutManager:
                         self.diagram.nodes.remove(parents[i - 1])
                         self.diagram.nodes.insert(idx2 + 1, parents[i - 1])
 
+            if isinstance(node, NodeGroup):
+                children = self.get_child_nodes(node)
+                if len(set(children)) > 1:
+                    for i in range(1, len(children)):
+                        node1 = children[i - 1]
+                        node2 = children[i]
+
+                        idx1 = self.diagram.nodes.index(node1)
+                        idx2 = self.diagram.nodes.index(node2)
+                        ret = self.compare_child_node_order(node1, node2)
+
+                        if ret < 0 and idx1 < idx2:
+                            self.diagram.nodes.remove(node1)
+                            self.diagram.nodes.insert(idx2 + 1, node1)
+
         self.diagram.update_order()
+
+    def compare_child_node_order(self, node1, node2):
+        def compare(x, y):
+            while x.node1 == y.node1:
+                x.node1 = x.node1.group
+                y.node1 = y.node1.group
+
+            return cmp(x.node1.order, y.node1.order)
+
+        edges = DiagramEdge.find(None, node1) + DiagramEdge.find(None, node2)
+        edges.sort(compare)
+        if edges[0].node2 == node1:
+            return 1
+        else:
+            return -1
 
     def mark_xy(self, xy, width, height):
         for w in range(width):
