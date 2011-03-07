@@ -119,6 +119,10 @@ Python Software Foundation License.
 History
 =======
 
+0.7.4 (2011-03-08)
+------------------
+* Fix bugs
+
 0.7.3 (2011-03-02)
 ------------------
 * Use UTF-8 characters as Name token (by @swtw7466)
