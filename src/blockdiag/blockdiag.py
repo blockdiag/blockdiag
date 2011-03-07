@@ -293,8 +293,8 @@ class DiagramLayoutManager:
 
             return cmp(x.node1.order, y.node1.order)
 
-        edges = DiagramEdge.find(None, node1) + DiagramEdge.find(None, node2)
-        edges = [e for e in edges if e.node1.group.is_parent(parent)]
+        edges = DiagramEdge.find(parent, node1) + \
+                DiagramEdge.find(parent, node2)
         edges.sort(compare)
         if edges[0].node2 == node1:
             return 1

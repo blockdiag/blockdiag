@@ -279,6 +279,9 @@ class DiagramEdge(Base):
     def find(cls, node1, node2=None):
         if node1 is None:
             return [e for e in cls.find_all() if e.node2 == node2]
+        elif isinstance(node1, NodeGroup):
+            edges = cls.find(None, node2)
+            return [e for e in edges if e.node1.group.is_parent(node1)]
         else:
             if node1 not in cls.namespace:
                 return []
