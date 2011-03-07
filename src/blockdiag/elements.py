@@ -181,7 +181,7 @@ class NodeGroup(Element):
                 if preorder:
                     yield node
 
-                for subnode in node.traverse_nodes():
+                for subnode in node.traverse_nodes(preorder=preorder):
                     yield subnode
 
                 if not preorder:
