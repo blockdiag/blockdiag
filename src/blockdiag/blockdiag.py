@@ -322,6 +322,11 @@ class DiagramLayoutManager:
             elif node is not None and node.xy.x >= child.xy.x:
                 pass
             else:
+                if isinstance(node, NodeGroup):
+                    parent_height = self.get_parent_node_height(node, child)
+                    if parent_height and parent_height > height:
+                        height = parent_height
+
                 while True:
                     if self.set_node_height(child, height):
                         child.xy = XY(child.xy.x, height)
@@ -339,6 +344,23 @@ class DiagramLayoutManager:
                 height += 1
 
         return True
+
+    def get_parent_node_height(self, parent, child):
+        heights = []
+        for e in DiagramEdge.find(parent, child):
+            y = parent.xy.y
+
+            node = e.node1
+            while node != parent:
+                y += node.xy.y
+                node = node.group
+
+            heights.append(y)
+
+        if heights:
+            return min(heights)
+        else:
+            return None
 
 
 class ScreenNodeBuilder:
