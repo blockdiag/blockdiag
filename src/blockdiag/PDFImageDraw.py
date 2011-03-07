@@ -62,7 +62,8 @@ class PDFImageDraw:
 
     def set_fill_color(self, color="white"):
         if isinstance(color, basestring):
-            self.canvas.setFillColor(color)
+            if color != 'none':
+                self.canvas.setFillColor(color)
         elif color:
             rgb = (color[0] / 256.0, color[1] / 256.0, color[2] / 256.0)
             self.canvas.setFillColorRGB(*rgb)
