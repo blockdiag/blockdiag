@@ -1,0 +1,9 @@
+diagram {
+  A [numbered = 1];
+  B [numbered = 2];
+  C [numbered = 3];
+  D [numbered = 4];
+
+  A -> B -> C;
+  A -> D;
+}
