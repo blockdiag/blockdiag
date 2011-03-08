@@ -296,7 +296,9 @@ class DiagramLayoutManager:
         edges = DiagramEdge.find(parent, node1) + \
                 DiagramEdge.find(parent, node2)
         edges.sort(compare)
-        if edges[0].node2 == node1:
+        if len(edges) == 0:
+            return 0
+        elif edges[0].node2 == node1:
             return 1
         else:
             return -1
