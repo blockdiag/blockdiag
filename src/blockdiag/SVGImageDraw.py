@@ -87,6 +87,18 @@ class SVGImageDrawElement:
                  style=self.filter(filter))
         self.svg.addElement(r)
 
+    def point(self, xy, **kwargs):
+        fill = kwargs.get('fill')
+
+        if isinstance(xy, (list, tuple)) and isinstance(xy[0], (list, tuple)):
+            pass
+        else:
+            xy = [xy]
+
+        for pt in xy:
+            p = point(pt[0], pt[1], fill)
+            self.svg.addElement(p)
+
     def label(self, box, string, **kwargs):
         lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
 
