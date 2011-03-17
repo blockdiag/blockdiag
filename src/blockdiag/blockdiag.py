@@ -63,6 +63,17 @@ class DiagramTreeBuilder:
 
     def instantiate(self, group, tree):
         for stmt in tree.stmts:
+            # Translate Node having group attribute to SubGraph
+            if isinstance(stmt, diagparser.Node):
+                group_attr = [a for a in stmt.attrs if a.name == 'group']
+                if group_attr:
+                    group_id = group_attr[-1]
+                    stmt.attrs.remove(group_id)
+
+                    if group_id.value != group.id:
+                        stmt = diagparser.SubGraph(group_id.value, [stmt])
+
+            # Instantiate statements
             if isinstance(stmt, diagparser.Node):
                 node = DiagramNode.get(stmt.id)
                 node.set_attributes(stmt.attrs)
