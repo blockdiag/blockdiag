@@ -10,6 +10,7 @@ from nose.tools import assert_raises
 def __build_diagram(filename):
     DiagramNode.clear()
     DiagramEdge.clear()
+    NodeGroup.clear()
 
     import os
     testdir = os.path.dirname(__file__)
@@ -415,6 +416,15 @@ def test_simple_group_diagram():
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
                   'Z': (0, 2)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
+def test_group_declare_as_node_attribute_diagram():
+    screen = __build_diagram('group_declare_as_node_attribute.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
+                  'D': (2, 1), 'E': (2, 2), 'Z': (0, 3)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
 
