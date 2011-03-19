@@ -17,6 +17,9 @@ import utils
 class DiagramTreeBuilder:
     def build(self, tree):
         diagram = self.instantiate(Diagram(), tree)
+        for subgroup in diagram.traverse_groups():
+            if len(subgroup.nodes) == 0:
+                subgroup.group.nodes.remove(subgroup)
 
         self.bind_edges(diagram)
         return diagram
@@ -90,8 +93,6 @@ class DiagramTreeBuilder:
                 subgroup.level = group.level + 1
                 self.belong_to(subgroup, group)
                 self.instantiate(subgroup, stmt)
-                if len(subgroup.nodes) == 0:
-                    self.unbelong_to(subgroup, group)
 
             elif isinstance(stmt, diagparser.DefAttrs):
                 group.set_attributes(stmt.attrs)

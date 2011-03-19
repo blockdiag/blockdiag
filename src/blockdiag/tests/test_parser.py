@@ -402,6 +402,14 @@ def test_empty_nested_group_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_empty_group_declaration_diagram():
+    screen = __build_diagram('empty_group_declaration.diag')
+
+    assert_pos = {'A': (0, 0), 'Z': (0, 1)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
 def test_simple_group_diagram():
     screen = __build_diagram('simple_group.diag')
 
