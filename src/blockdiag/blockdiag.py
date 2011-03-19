@@ -367,12 +367,81 @@ class DiagramLayoutManager:
 
 class ScreenNodeBuilder:
     @classmethod
-    def build(klass, tree, separate=False):
+    def build(klass, tree, layout=True):
         diagram = DiagramTreeBuilder().build(tree)
+        if layout:
+            DiagramLayoutManager(diagram).run()
+            diagram.fixiate(True)
+        return diagram
+
+    @classmethod
+    def separate(self, diagram):
+        if diagram.group is None:
+            pass
+
         DiagramLayoutManager(diagram).run()
         diagram.fixiate(True)
 
         return diagram
+
+    @classmethod
+    def _separate(self, diagram):
+        diagrams = []
+        for group in diagram.traverse_groups():
+            base = Diagram()
+            parent = group.group
+            edges = DiagramEdge.find_by_level(parent.level)
+
+            uniq_edges = {}
+            for edge in edges:
+                if edge.node1 == group or edge.node2 == group:
+                    uniq_edges[edge.node1] = 1
+                    uniq_edges[edge.node2] = 1
+
+            uniq_nodes = {}
+            nodes = uniq_edges.keys()
+            nodes.sort(lambda x, y: cmp(x.order, y.order))
+            for node in nodes:
+                if isinstance(node, NodeGroup):
+                    group = node.duplicate()
+                    group.group = base
+                    for subnode in node.nodes:
+                        if isinstance(subnode, NodeGroup):
+                            subgroup = subnode.duplicate()
+                            subgroup.group = group
+                            subgroup.separated = True
+                            group.nodes.append(subgroup)
+                        else:
+                            newnode = subnode.duplicate()
+                            newnode.group = group
+                            uniq_nodes[subnode] = newnode
+                            group.nodes.append(newnode)
+
+                    base.nodes.append(group)
+                else:
+                    newnode = node.duplicate()
+                    newnode.group = base
+                    uniq_nodes[node] = newnode
+                    base.nodes.append(newnode)
+
+            for edge in DiagramEdge.find_all():
+                if edge.node1 in uniq_nodes and edge.node2 in uniq_nodes:
+                    node1 = uniq_nodes[edge.node1]
+                    node2 = uniq_nodes[edge.node2]
+                    DiagramEdge.get(node1, node2)
+
+            self.bind_edges(base)
+            diagrams.append(base)
+
+        return diagrams
+
+    @classmethod
+    def bind_edges(self, group):
+        for node in group.nodes:
+            if isinstance(node, DiagramNode):
+                group.edges += DiagramEdge.find(node)
+            else:
+                self.bind_edges(node)
 
 
 def parse_option():
@@ -466,18 +535,24 @@ def main():
     fontpath = detectfont(options)
 
     tree = diagparser.parse_file(infile)
-    diagram = ScreenNodeBuilder.build(tree, separate=options.separate)
-
     if options.separate:
-        for i, node in enumerate(diagram.traverse_groups()):
-            draw = DiagramDraw.DiagramDraw(options.type, node,
+        diagram = ScreenNodeBuilder.build(tree, layout=False)
+
+        for i, group in enumerate(diagram.traverse_groups()):
+            group = ScreenNodeBuilder.separate(group)
+
+            draw = DiagramDraw.DiagramDraw(options.type, group,
                                            font=fontpath,
                                            basediagram=diagram,
                                            antialias=options.antialias)
             draw.draw()
-            outfile2 = re.sub('.svg$', '_%d.svg' % i, outfile)
+            outfile2 = re.sub('.svg$', '', outfile) + ('_%d.svg' % (i + 1))
             draw.save(outfile2)
-            node.href = './%s' % os.path.basename(outfile2)
+            group.href = './%s' % os.path.basename(outfile2)
+
+        diagram = ScreenNodeBuilder.separate(diagram)
+    else:
+        diagram = ScreenNodeBuilder.build(tree)
 
     draw = DiagramDraw.DiagramDraw(options.type, diagram, outfile,
                                    font=fontpath, antialias=options.antialias)
