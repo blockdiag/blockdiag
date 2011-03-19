@@ -83,6 +83,18 @@ class PDFImageDraw:
         params = self.set_render_params(**kwargs)
         self.canvas.rect(x, y, width, height, **params)
 
+    def point(self, xy, **kwargs):
+        fill = kwargs.get('fill')
+
+        if isinstance(xy, (list, tuple)) and isinstance(xy[0], (list, tuple)):
+            pass
+        else:
+            xy = [xy]
+
+        for pt in xy:
+            box = (pt[0], pt[1], pt[0] + 1, pt[1] + 1)
+            self.rectangle(box, fill=fill, outline=fill)
+
     def label(self, box, string, **kwargs):
         self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
         lines = TextFolder(box, string, adjustBaseline=True,
