@@ -119,6 +119,12 @@ Python Software Foundation License.
 History
 =======
 
+0.7.5 (2011-03-20)
+------------------
+* Support multiple nodes relations (cf. A -> B, C)
+* Support node group declaration at attribute of nodes
+* Fix bugs
+
 0.7.4 (2011-03-08)
 ------------------
 * Fix bugs
