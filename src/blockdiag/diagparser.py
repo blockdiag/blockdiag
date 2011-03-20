@@ -81,6 +81,7 @@ def parse(seq):
     unarg = lambda f: lambda args: f(*args)
     tokval = lambda x: x.value
     flatten = lambda list: sum(list, [])
+    node_flatten = lambda l: sum([[l[0]]] + list(l[1:]), [])
     n = lambda s: a(Token('Name', s)) >> tokval
     op = lambda s: a(Token('Op', s)) >> tokval
     op_ = lambda s: skip(op(s))
@@ -90,6 +91,10 @@ def parse(seq):
     make_edge = lambda x, x2, xs, attrs: Edge([x, x2] + xs, attrs)
 
     node_id = id  # + maybe(port)
+    node_list = (
+        node_id +
+        many(op_(',') + node_id)
+        >> node_flatten)
     a_list = (
         id +
         maybe(op_('=') + id) +
@@ -107,9 +112,9 @@ def parse(seq):
     # We use a forward_decl becaue of circular definitions like (stmt_list ->
     # stmt -> subgraph -> stmt_list)
     subgraph = forward_decl()
-    edge_rhs = (op('->') | op('--') | op('<-') | op('<->')) + node_id
+    edge_rhs = (op('->') | op('--') | op('<-') | op('<->')) + node_list
     edge_stmt = (
-        node_id +
+        node_list +
         edge_rhs +
         many(edge_rhs) +
         attr_list
