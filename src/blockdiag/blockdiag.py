@@ -136,8 +136,9 @@ class DiagramLayoutManager:
         self.coordinates = []
 
     def run(self):
-        for group in self.diagram.traverse_groups():
-            self.__class__(group).run()
+        if isinstance(self.diagram, Diagram):
+            for group in self.diagram.traverse_groups():
+                self.__class__(group).run()
 
         self.edges = DiagramEdge.find_by_level(self.diagram.level)
         self.do_layout()
