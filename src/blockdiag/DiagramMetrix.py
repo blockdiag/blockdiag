@@ -119,11 +119,15 @@ class DiagramMetrix(object):
         if diagram.fontsize:
             self.fontSize = diagram.fontsize
 
-        pageMargin = self.cellSize * kwargs.get('pageMargin', 3)
-        if pageMargin < self.spanHeight:
-            self.pageMargin = XY(pageMargin, self.spanHeight)
-        else:
-            self.pageMargin = XY(pageMargin, pageMargin)
+        pageMarginX = self.cellSize * kwargs.get('pageMarginX', 3)
+        if pageMarginX < self.spanHeight:
+            pageMarginX = self.spanHeight
+
+        pageMarginY = self.cellSize * kwargs.get('pageMarginY', 3)
+        if pageMarginY < self.spanWidth:
+            pageMarginY = self.spanWidth + self.cellSize
+
+        self.pageMargin = XY(pageMarginX, pageMarginY)
 
     def originalMetrix(self):
         return self
