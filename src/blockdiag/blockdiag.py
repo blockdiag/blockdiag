@@ -151,6 +151,12 @@ class DiagramLayoutManager:
             node.xy = XY(node.xy.y, node.xy.x)
             node.width, node.height = (node.height, node.width)
 
+            if isinstance(node, NodeGroup):
+                if node.orientation == 'portrait':
+                    node.orientation = 'landscape'
+                else:
+                    node.orientation = 'portrait'
+
         xy = (self.diagram.height, self.diagram.width)
         self.diagram.width, self.diagram.height = xy
 
