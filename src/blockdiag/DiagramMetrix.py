@@ -93,44 +93,90 @@ class EdgeLines(object):
         return lines
 
 
-class DiagramMetrix(object):
+def scale(value, ratio):
+    if ratio == 1:
+        return value
+
+    if isinstance(value, XY):
+        ret = XY(value.x * ratio, value.y * ratio)
+    elif isinstance(value, tuple):
+        ret = tuple([scale(x, ratio) for x in value])
+    elif isinstance(value, list):
+        ret = [scale(x, ratio) for x in value]
+    elif isinstance(value, EdgeLines):
+        Dummy = namedtuple('DummyMetrix', 'cellSize')
+
+        ret = EdgeLines(Dummy(value.cellSize))
+        ret.polylines = scale(value.polylines, ratio)
+        ret.crossPoints = scale(value.crossPoints, ratio)
+    elif isinstance(value, int):
+        ret = value * ratio
+    else:
+        ret = value
+
+    return ret
+
+
+def scale_method(function):
+    def _method(self, *args, **kwargs):
+        ret = function(self, *args, **kwargs)
+        return scale(ret, self.scale_ratio)
+
+    return _method
+
+
+class DiagramMetrix(dict):
     def __init__(self, diagram, **kwargs):
-        self.scale_ratio = 1
-        self.cellSize = kwargs.get('cellSize', 8)
-        self.nodePadding = kwargs.get('nodePadding', 4)
-        self.lineSpacing = kwargs.get('lineSpacing', 2)
-        self.shadowOffsetY = kwargs.get('shadowOffsetY', 6)
-        self.shadowOffsetX = kwargs.get('shadowOffsetX', 3)
-        self.fontSize = kwargs.get('fontSize', 11)
+        for key in kwargs:
+            self[key] = kwargs[key]
 
-        self.nodeWidth = self.cellSize * kwargs.get('nodeColumns', 16)
-        self.nodeHeight = self.cellSize * kwargs.get('nodeRows', 5)
-        self.spanWidth = self.cellSize * kwargs.get('spanColumns', 8)
-        self.spanHeight = self.cellSize * kwargs.get('spanRows', 5)
+        self.setdefault('scale_ratio', 1)
+        self.setdefault('cellSize', 8)
+        self.setdefault('nodePadding', 4)
+        self.setdefault('lineSpacing', 2)
+        self.setdefault('shadowOffsetX', 3)
+        self.setdefault('shadowOffsetY', 6)
+        self.setdefault('fontSize', 11)
 
+        cellsize = self.cellSize / self.scale_ratio
         if diagram.node_width:
-            self.nodeWidth = diagram.node_width
+            self.setdefault('nodeWidth', diagram.node_width)
+        else:
+            self.setdefault('nodeWidth', cellsize * 16)
+
         if diagram.node_height:
-            self.nodeHeight = diagram.node_height
+            self.setdefault('nodeHeight', diagram.node_height)
+        else:
+            self.setdefault('nodeHeight', cellsize * 5)
+
         if diagram.span_width:
-            self.spanWidth = diagram.span_width
+            self.setdefault('spanWidth', diagram.span_width)
+        else:
+            self.setdefault('spanWidth', cellsize * 8)
+
         if diagram.span_height:
-            self.spanHeight = diagram.span_height
-        if diagram.fontsize:
-            self.fontSize = diagram.fontsize
+            self.setdefault('spanHeight', diagram.span_height)
+        else:
+            self.setdefault('spanHeight', cellsize * 5)
 
-        pageMarginX = self.cellSize * kwargs.get('pageMarginX', 3)
-        if pageMarginX < self.spanHeight:
-            pageMarginX = self.spanHeight
+        pageMarginX = cellsize * 3
+        if pageMarginX < self.spanHeight / self.scale_ratio:
+            pageMarginX = self.spanHeight / self.scale_ratio
 
-        pageMarginY = self.cellSize * kwargs.get('pageMarginY', 3)
-        if pageMarginY < self.spanWidth:
-            pageMarginY = self.spanWidth + self.cellSize
+        pageMarginY = cellsize * 3
+        if pageMarginY < self.spanWidth / self.scale_ratio:
+            pageMarginY = self.spanWidth / self.scale_ratio + cellsize
 
-        self.pageMargin = XY(pageMarginX, pageMarginY)
+        self.setdefault('pageMargin', XY(pageMarginX, pageMarginY))
+
+    def __getattr__(self, name):
+        if name == 'scale_ratio':
+            return self[name]
+        elif name in self:
+            return scale(self[name], self['scale_ratio'])
 
     def originalMetrix(self):
-        return self
+        return DiagramMetrix(self, scale_ratio=1, kwargs=self)
 
     def node(self, node):
         renderer = noderenderer.get(node.shape)

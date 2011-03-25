@@ -34,7 +34,6 @@ class DiagramDraw(object):
                                                     self.pagesize())
         else:
             import ImageDrawEx
-            from PngDiagramMetrix import PngDiagramMetrix
 
             self.shadow = kwargs.get('shadow', (64, 64, 64))
             if kwargs.get('antialias') or kwargs.get('scale') > 1:
@@ -42,8 +41,8 @@ class DiagramDraw(object):
             else:
                 self.scale_ratio = 1
 
-            self.metrix = PngDiagramMetrix(base_diagram,
-                                           scale=self.scale_ratio, **kwargs)
+            self.metrix = DiagramMetrix(base_diagram,
+                                        scale_ratio=self.scale_ratio, **kwargs)
             self.drawer = ImageDrawEx.ImageDrawEx(self.pagesize(),
                                                   self.scale_ratio)
 
