@@ -17,32 +17,28 @@ class DiagramDraw(object):
         self.filename = filename
         base_diagram = kwargs.get('basediagram', diagram)
 
+        if self.format == 'PNG' and kwargs.get('antialias'):
+            self.scale_ratio = 2
+        else:
+            self.scale_ratio = 1
+        self.metrix = DiagramMetrix(base_diagram,
+                                    scale_ratio=self.scale_ratio, **kwargs)
+
         if self.format == 'SVG':
             import SVGImageDraw
 
             self.shadow = kwargs.get('shadow', (0, 0, 0))
-            self.scale_ratio = 1
-            self.metrix = DiagramMetrix(base_diagram, **kwargs)
             self.drawer = SVGImageDraw.SVGImageDraw(self.pagesize())
         elif self.format == 'PDF':
             import PDFImageDraw
 
             self.shadow = kwargs.get('shadow', (0, 0, 0))
-            self.scale_ratio = 1
-            self.metrix = DiagramMetrix(base_diagram, **kwargs)
             self.drawer = PDFImageDraw.PDFImageDraw(self.filename,
                                                     self.pagesize())
         else:
             import ImageDrawEx
 
             self.shadow = kwargs.get('shadow', (64, 64, 64))
-            if kwargs.get('antialias') or kwargs.get('scale') > 1:
-                self.scale_ratio = 2
-            else:
-                self.scale_ratio = 1
-
-            self.metrix = DiagramMetrix(base_diagram,
-                                        scale_ratio=self.scale_ratio, **kwargs)
             self.drawer = ImageDrawEx.ImageDrawEx(self.pagesize(),
                                                   self.scale_ratio)
 
