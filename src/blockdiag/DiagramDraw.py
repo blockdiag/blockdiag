@@ -112,41 +112,58 @@ class DiagramDraw(object):
         for edge in self.edges:
             m = self.metrix.edge(edge)
             dir = m.direction()
-            if dir == 'right':
-                r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
-                for x in r:
-                    xy = (x, edge.node1.xy.y)
-                    nodes = [x for x in self.nodes if x.xy == xy]
-                    if len(nodes) > 0:
-                        edge.skipped = 1
-            elif dir == 'right-up':
-                r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
-                for x in r:
-                    xy = (x, edge.node1.xy.y)
-                    nodes = [x for x in self.nodes if x.xy == xy]
-                    if len(nodes) > 0:
-                        edge.skipped = 1
-            elif dir == 'right-down':
-                r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
-                for x in r:
-                    xy = (x, edge.node2.xy.y)
-                    nodes = [x for x in self.nodes if x.xy == xy]
-                    if len(nodes) > 0:
-                        edge.skipped = 1
-            elif dir in ('left-down', 'down'):
-                r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
-                for y in r:
-                    xy = (edge.node1.xy.x, y)
-                    nodes = [x for x in self.nodes if x.xy == xy]
-                    if len(nodes) > 0:
-                        edge.skipped = 1
-            elif dir == 'up':
-                r = range(edge.node2.xy.y + 1, edge.node1.xy.y)
-                for y in r:
-                    xy = (edge.node1.xy.x, y)
-                    nodes = [x for x in self.nodes if x.xy == xy]
-                    if len(nodes) > 0:
-                        edge.skipped = 1
+
+            if edge.node1.group.orientation == 'landscape':
+                if dir == 'right':
+                    r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
+                    for x in r:
+                        xy = (x, edge.node1.xy.y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+                elif dir == 'right-up':
+                    r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
+                    for x in r:
+                        xy = (x, edge.node1.xy.y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+                elif dir == 'right-down':
+                    r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
+                    for x in r:
+                        xy = (x, edge.node2.xy.y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+                elif dir in ('left-down', 'down'):
+                    r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
+                    for y in r:
+                        xy = (edge.node1.xy.x, y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+                elif dir == 'up':
+                    r = range(edge.node2.xy.y + 1, edge.node1.xy.y)
+                    for y in r:
+                        xy = (edge.node1.xy.x, y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+            else:
+                if dir == 'right':
+                    r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
+                    for x in r:
+                        xy = (x, edge.node1.xy.y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+                elif dir in ('left-down', 'down', 'right-down'):
+                    r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
+                    for y in r:
+                        xy = (edge.node1.xy.x, y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
 
         # Search crosspoints
         from bisect import insort, bisect_left, bisect_right
