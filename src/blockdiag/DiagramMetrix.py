@@ -193,7 +193,10 @@ class DiagramMetrix(dict):
         return NodeMetrix(group, self)
 
     def edge(self, edge):
-        return EdgeMetrix(edge, self)
+        if edge.node1.group.orientation == 'landscape':
+            return LandscapeEdgeMetrix(edge, self)
+        else:
+            return PortraitEdgeMetrix(edge, self)
 
     def pageSize(self, width, height):
         DummyNode = namedtuple('DummyNode', 'width height xy')
@@ -328,33 +331,7 @@ class EdgeMetrix(object):
         return dir
 
     def heads(self):
-        heads = []
-        dir = self.direction()
-
-        if self.edge.dir in ('back', 'both'):
-            if dir in ('left-up', 'left', 'same',
-                       'right-up', 'right', 'right-down'):
-                heads.append(self._head(self.edge.node1, 'left'))
-            elif dir == 'up':
-                if self.edge.skipped:
-                    heads.append(self._head(self.edge.node1, 'left'))
-                else:
-                    heads.append(self._head(self.edge.node1, 'down'))
-            elif dir in ('left-down', 'down'):
-                if self.edge.skipped:
-                    heads.append(self._head(self.edge.node1, 'left'))
-                else:
-                    heads.append(self._head(self.edge.node1, 'up'))
-
-        if self.edge.dir in ('forward', 'both'):
-            if dir in ('right-up', 'right', 'right-down'):
-                heads.append(self._head(self.edge.node2, 'right'))
-            elif dir == 'up':
-                heads.append(self._head(self.edge.node2, 'up'))
-            elif dir in ('left-up', 'left', 'left-down', 'down', 'same'):
-                heads.append(self._head(self.edge.node2, 'down'))
-
-        return heads
+        pass
 
     def _head(self, node, direct):
         head = []
@@ -394,6 +371,46 @@ class EdgeMetrix(object):
             head.pop(2)
 
         return head
+
+    def shaft(self):
+        pass
+
+    def labelbox(self):
+        pass
+
+    def jumps(self):
+        return self.edge.crosspoints
+
+
+class LandscapeEdgeMetrix(EdgeMetrix):
+    def heads(self):
+        heads = []
+        dir = self.direction()
+
+        if self.edge.dir in ('back', 'both'):
+            if dir in ('left-up', 'left', 'same',
+                       'right-up', 'right', 'right-down'):
+                heads.append(self._head(self.edge.node1, 'left'))
+            elif dir == 'up':
+                if self.edge.skipped:
+                    heads.append(self._head(self.edge.node1, 'left'))
+                else:
+                    heads.append(self._head(self.edge.node1, 'down'))
+            elif dir in ('left-down', 'down'):
+                if self.edge.skipped:
+                    heads.append(self._head(self.edge.node1, 'left'))
+                else:
+                    heads.append(self._head(self.edge.node1, 'up'))
+
+        if self.edge.dir in ('forward', 'both'):
+            if dir in ('right-up', 'right', 'right-down'):
+                heads.append(self._head(self.edge.node2, 'right'))
+            elif dir == 'up':
+                heads.append(self._head(self.edge.node2, 'up'))
+            elif dir in ('left-up', 'left', 'left-down', 'down', 'same'):
+                heads.append(self._head(self.edge.node2, 'down'))
+
+        return heads
 
     def shaft(self):
         span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
@@ -559,5 +576,170 @@ class EdgeMetrix(object):
 
         return box
 
-    def jumps(self):
-        return self.edge.crosspoints
+
+class PortraitEdgeMetrix(EdgeMetrix):
+    def heads(self):
+        heads = []
+        dir = self.direction()
+
+        if self.edge.dir in ('back', 'both'):
+            if dir == 'right':
+                if self.edge.skipped:
+                    heads.append(self._head(self.edge.node1, 'up'))
+                else:
+                    heads.append(self._head(self.edge.node1, 'left'))
+            elif dir in ('up', 'right-up', 'same'):
+                heads.append(self._head(self.edge.node1, 'up'))
+            elif dir in ('left-up', 'left'):
+                heads.append(self._head(self.edge.node1, 'left'))
+            elif dir in ('left-down', 'down', 'right-down'):
+                if self.edge.skipped:
+                    heads.append(self._head(self.edge.node1, 'left'))
+                else:
+                    heads.append(self._head(self.edge.node1, 'up'))
+
+        if self.edge.dir in ('forward', 'both'):
+            if dir == 'right':
+                if self.edge.skipped:
+                    heads.append(self._head(self.edge.node2, 'down'))
+                else:
+                    heads.append(self._head(self.edge.node2, 'right'))
+            elif dir in ('up', 'right-up', 'same'):
+                heads.append(self._head(self.edge.node2, 'down'))
+            elif dir in ('left-up', 'left', 'left-down', 'down', 'right-down'):
+                heads.append(self._head(self.edge.node2, 'down'))
+
+        return heads
+
+    def shaft(self):
+        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+        dir = self.direction()
+
+        node1 = self.metrix.node(self.edge.node1)
+        cell1 = self.metrix.cell(self.edge.node1)
+        node2 = self.metrix.node(self.edge.node2)
+        cell2 = self.metrix.cell(self.edge.node2)
+
+        shaft = EdgeLines(self.metrix, self.edge.crosspoints)
+        if dir in ('up', 'right-up', 'same', 'right'):
+            if dir == 'right' and not self.edge.skipped:
+                shaft.moveTo(node1.right())
+                shaft.lineTo(node2.left())
+            else:
+                shaft.moveTo(node1.bottom())
+                shaft.lineTo(cell1.bottom().x, cell1.bottom().y + span.y / 2)
+                shaft.lineTo(cell2.right().x + span.x / 8,
+                             cell1.bottom().y + span.y / 2)
+                shaft.lineTo(cell2.right().x + span.x / 8,
+                             cell2.top().y - span.y / 2 + span.y / 8)
+                shaft.lineTo(cell2.top().x,
+                             cell2.top().y - span.y / 2 + span.y / 8)
+                shaft.lineTo(node2.top())
+
+        elif dir == 'right-down':
+            shaft.moveTo(node1.bottom())
+            shaft.lineTo(cell1.bottom().x, cell1.bottom().y + span.y / 2)
+
+            if self.edge.skipped:
+                shaft.lineTo(cell2.left().x - span.x / 2,
+                             cell1.bottom().y + span.y / 2)
+                shaft.lineTo(cell2.topLeft().x - span.x / 2,
+                             cell2.topLeft().y - span.y / 2)
+                shaft.lineTo(cell2.top().x, cell2.top().y - span.y / 2)
+            else:
+                shaft.lineTo(cell2.top().x, cell1.bottom().y + span.y / 2)
+
+            shaft.lineTo(node2.top())
+
+        elif dir in ('left-up', 'left', 'same'):
+            shaft.moveTo(node1.right())
+            shaft.lineTo(cell1.right().x + span.x / 8,
+                         cell1.right().y)
+            shaft.lineTo(cell1.right().x + span.x / 8,
+                         cell2.top().y - span.y / 2 + span.y / 8)
+            shaft.lineTo(cell2.top().x,
+                         cell2.top().y - span.y / 2 + span.y / 8)
+            shaft.lineTo(node2.top())
+
+        elif dir == 'left-down':
+            shaft.moveTo(node1.bottom())
+            shaft.lineTo(cell1.bottom().x, cell1.bottom().y + span.y / 2)
+
+            if self.edge.skipped:
+                shaft.lineTo(cell2.right().x + span.x / 2,
+                             cell1.bottom().y + span.y / 2)
+                shaft.lineTo(cell2.right().x + span.x / 2,
+                             cell2.top().y - span.y / 2)
+
+            shaft.lineTo(cell2.top().x, cell2.top().y - span.y / 2)
+            shaft.lineTo(node2.top())
+
+        elif dir == 'down':
+            shaft.moveTo(node1.bottom())
+
+            if self.edge.skipped:
+                shaft.lineTo(cell1.bottom().x, cell1.bottom().y + span.y / 2)
+                shaft.lineTo(cell1.left().x - span.x / 2,
+                             cell1.bottom().y + span.y / 2)
+                shaft.lineTo(cell2.left().x - span.x / 2,
+                             cell2.top().y - span.y / 2)
+                shaft.lineTo(cell2.top().x, cell2.top().y - span.y / 2)
+
+            shaft.lineTo(node2.top())
+
+        return shaft
+
+    def labelbox(self):
+        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+
+        dir = self.direction()
+        node1 = self.metrix.cell(self.edge.node1)
+        node2 = self.metrix.cell(self.edge.node2)
+
+        if dir == 'right':
+            if self.edge.skipped:
+                box = (node1.bottomRight().x + span.x,
+                       node1.bottomRight().y,
+                       node2.bottomLeft().x - span.x,
+                       node2.bottomLeft().y + span.y / 2)
+            else:
+                box = (node1.topRight().x,
+                       node1.topRight().y - span.y / 8,
+                       node2.left().x,
+                       node2.left().y - span.y / 8)
+
+        elif dir == 'right-up':
+            box = (node2.left().x - span.x,
+                   node2.left().y,
+                   node2.bottomLeft().x,
+                   node2.bottomLeft().y)
+
+        elif dir == 'right-down':
+            box = (node1.right().x,
+                   node2.topLeft().y - span.y / 8,
+                   node1.right().x + span.x,
+                   node2.left().y - span.y / 8)
+
+        elif dir in ('up', 'left-up', 'left', 'left-down', 'same'):
+            if self.edge.node2.xy.y < self.edge.node1.xy.y:
+                box = (node1.topRight().x - span.x / 2 + span.x / 8,
+                       node1.topRight().y - span.y / 2,
+                       node1.topRight().x + span.x / 2 + span.x / 8,
+                       node1.topRight().y)
+            else:
+                box = (node1.top().x + span.x / 4,
+                       node1.top().y - span.y,
+                       node1.topRight().x + span.x / 4,
+                       node1.topRight().y - span.y / 2)
+
+        elif dir == 'down':
+            box = (node2.top().x + span.x / 4,
+                   node2.top().y - span.y,
+                   node2.topRight().x + span.x / 4,
+                   node2.topRight().y - span.y / 2)
+
+        # shrink box
+        box = (box[0] + span.x / 8, box[1],
+               box[2] - span.x / 8, box[3])
+
+        return box
