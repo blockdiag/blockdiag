@@ -345,7 +345,7 @@ class DiagramLayoutManager:
         for child in children:
             if child.id in self.heightRefs:
                 pass
-            elif node is not None and node.xy.x >= child.xy.x:
+            elif node.xy.x >= child.xy.x:
                 pass
             else:
                 if isinstance(node, NodeGroup):
