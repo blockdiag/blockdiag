@@ -176,7 +176,12 @@ class DiagramMetrix(dict):
             return scale(self[name], self['scale_ratio'])
 
     def originalMetrix(self):
-        return DiagramMetrix(self, scale_ratio=1, kwargs=self)
+        kwargs = {}
+        for key in self:
+            kwargs[key] = self[key]
+        kwargs['scale_ratio'] = 1
+
+        return DiagramMetrix(self, **kwargs)
 
     def node(self, node):
         renderer = noderenderer.get(node.shape)
