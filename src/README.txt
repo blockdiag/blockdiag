@@ -119,6 +119,11 @@ Python Software Foundation License.
 History
 =======
 
+0.7.6 (2011-03-26)
+------------------
+* Add new layout manager for portrait edges
+* Fix bugs
+
 0.7.5 (2011-03-20)
 ------------------
 * Support multiple nodes relations (cf. A -> B, C)
