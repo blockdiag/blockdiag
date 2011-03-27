@@ -668,13 +668,15 @@ class PortraitEdgeMetrix(EdgeMetrix):
 
         elif dir == 'left-down':
             shaft.moveTo(node1.bottom())
-            shaft.lineTo(cell1.bottom().x, cell1.bottom().y + span.y / 2)
 
             if self.edge.skipped:
+                shaft.lineTo(cell1.bottom().x, cell1.bottom().y + span.y / 2)
                 shaft.lineTo(cell2.right().x + span.x / 2,
                              cell1.bottom().y + span.y / 2)
                 shaft.lineTo(cell2.right().x + span.x / 2,
                              cell2.top().y - span.y / 2)
+            else:
+                shaft.lineTo(cell1.bottom().x, cell2.top().y - span.y / 2)
 
             shaft.lineTo(cell2.top().x, cell2.top().y - span.y / 2)
             shaft.lineTo(node2.top())
