@@ -561,7 +561,7 @@ class LandscapeEdgeMetrix(EdgeMetrix):
                    node1.right().x + span.x,
                    node2.left().y - span.y / 8)
 
-        elif dir in ('up', 'left-up', 'left', 'left-down', 'same'):
+        elif dir in ('up', 'left-up', 'left', 'same'):
             if self.edge.node2.xy.y < self.edge.node1.xy.y:
                 box = (node1.topRight().x - span.x / 2 + span.x / 8,
                        node1.topRight().y - span.y / 2,
@@ -573,7 +573,7 @@ class LandscapeEdgeMetrix(EdgeMetrix):
                        node1.topRight().x + span.x / 4,
                        node1.topRight().y - span.y / 2)
 
-        elif dir == 'down':
+        elif dir in ('left-down', 'down'):
             box = (node2.top().x + span.x / 4,
                    node2.top().y - span.y,
                    node2.topRight().x + span.x / 4,
