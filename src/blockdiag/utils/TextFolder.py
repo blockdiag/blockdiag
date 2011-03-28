@@ -148,7 +148,9 @@ class TextFolder:
                 height += metrics[1] + self.lineSpacing
 
         # truncate last line.
-        if truncated:
+        if len(lines) == 0:
+            pass
+        elif truncated:
             string = lines.pop()
             for i in range(0, len(string)):
                 if i == 0:
