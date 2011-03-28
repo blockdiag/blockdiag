@@ -136,7 +136,6 @@ class DiagramMetrix(dict):
         self.setdefault('lineSpacing', 2)
         self.setdefault('shadowOffsetX', 3)
         self.setdefault('shadowOffsetY', 6)
-        self.setdefault('fontSize', 11)
 
         cellsize = self.cellSize / self.scale_ratio
         if diagram.node_width:
@@ -158,6 +157,11 @@ class DiagramMetrix(dict):
             self.setdefault('spanHeight', diagram.span_height)
         else:
             self.setdefault('spanHeight', cellsize * 5)
+
+        if diagram.fontsize:
+            self.setdefault('fontSize', diagram.fontsize)
+        else:
+            self.setdefault('fontSize', 11)
 
         pageMarginX = cellsize * 3
         if pageMarginX < self.spanHeight / self.scale_ratio:
