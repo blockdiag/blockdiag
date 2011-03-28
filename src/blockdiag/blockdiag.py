@@ -311,7 +311,9 @@ class DiagramLayoutManager:
 
     def compare_child_node_order(self, parent, node1, node2):
         def compare(x, y):
-            while x.node1 == y.node1:
+            x = x.duplicate()
+            y = y.duplicate()
+            while x.node1 == y.node1 and x.node1.group is not None:
                 x.node1 = x.node1.group
                 y.node1 = y.node1.group
 
