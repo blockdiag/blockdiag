@@ -74,7 +74,7 @@ class NodeShape(object):
             badgeFill = kwargs.get('badgeFill')
 
             xy = self.metrix.cell(self.node).topLeft()
-            r = self.metrix.cellSize
+            r = self.metrix.cellSize * 3 / 2
 
             box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
             drawer.ellipse(box, outline=fill, fill=badgeFill)
