@@ -65,26 +65,27 @@ def dashize_line(line, length):
 
 
 class ImageDrawEx(ImageDraw.ImageDraw):
-    def __init__(self, size, scale_ratio, im=None, mode=None):
+    def __init__(self, filename, size, scale_ratio, im=None, mode=None):
         if im:
             self.image = im
         else:
             self.image = Image.new('RGB', size, (256, 256, 256))
 
+        self.filename = filename
         self.scale_ratio = scale_ratio
         self.mode = mode
         ImageDraw.ImageDraw.__init__(self, self.image, mode)
 
     def resizeCanvas(self, size):
         image = self.image.resize(size, Image.ANTIALIAS)
-        return ImageDrawEx(None, self.scale_ratio, im=image)
+        return ImageDrawEx(self.filename, None, self.scale_ratio, im=image)
 
     def smoothCanvas(self):
         image = self.image
         for i in range(15):
             image = image.filter(ImageFilter.SMOOTH_MORE)
 
-        return ImageDrawEx(None, self.scale_ratio, im=image)
+        return ImageDrawEx(self.filename, None, self.scale_ratio, im=image)
 
     def arc(self, box, start, end, **kwargs):
         style = kwargs.get('style')
@@ -274,5 +275,8 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
 
     def save(self, filename, size, format):
+        if filename:
+            self.filename = filename
+
         self.image.thumbnail(size, Image.ANTIALIAS)
-        self.image.save(filename, format)
+        self.image.save(self.filename, format)
