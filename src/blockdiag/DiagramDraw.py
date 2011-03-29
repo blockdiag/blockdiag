@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import sys
 import math
 from utils.XY import XY
 import noderenderer
@@ -28,7 +29,8 @@ class DiagramDraw(object):
             import SVGImageDraw
 
             self.shadow = kwargs.get('shadow', (0, 0, 0))
-            self.drawer = SVGImageDraw.SVGImageDraw(self.pagesize())
+            self.drawer = SVGImageDraw.SVGImageDraw(self.filename,
+                                                    self.pagesize())
         elif self.format == 'PDF':
             import PDFImageDraw
 
@@ -39,7 +41,8 @@ class DiagramDraw(object):
             import ImageDrawEx
 
             self.shadow = kwargs.get('shadow', (64, 64, 64))
-            self.drawer = ImageDrawEx.ImageDrawEx(self.pagesize(),
+            self.drawer = ImageDrawEx.ImageDrawEx(self.filename,
+                                                  self.pagesize(),
                                                   self.scale_ratio)
 
     @property
@@ -279,12 +282,15 @@ class DiagramDraw(object):
                               font=self.font, fontsize=self.metrix.fontSize)
 
     def save(self, filename=None, size=None):
+        if filename:
+            self.filename = filename
+
+            msg = "WARNING: DiagramDraw.save(filename) was deprecated.\n"
+            sys.stderr.write(msg)
+
         if size is None and self.format == 'PNG':
             x = int(self.drawer.image.size[0] / self.scale_ratio)
             y = int(self.drawer.image.size[1] / self.scale_ratio)
             size = (x, y)
-
-        if filename:
-            self.filename = filename
 
         return self.drawer.save(self.filename, size, self.format)
