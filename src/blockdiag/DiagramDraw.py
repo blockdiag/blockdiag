@@ -69,7 +69,7 @@ class DiagramDraw(object):
 
     @property
     def edges(self):
-        for edge in self.diagram.edges:
+        for edge in (e for e in self.diagram.edges  if e.style != 'none'):
             yield edge
 
         for group in self.groups:
