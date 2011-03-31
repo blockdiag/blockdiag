@@ -376,7 +376,7 @@ class DiagramEdge(Base):
                     sys.stderr.write(msg)
             elif attr.name == 'style':
                 style = value.lower()
-                if style in ('solid', 'dotted', 'dashed'):
+                if style in ('none', 'solid', 'dotted', 'dashed'):
                     self.style = style
                 else:
                     msg = "WARNING: unknown edge style: %s\n" % style
