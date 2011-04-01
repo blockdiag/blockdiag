@@ -1,4 +1,5 @@
 .installed.cfg
+.coverage
 .pyc
 .swp
 bin
