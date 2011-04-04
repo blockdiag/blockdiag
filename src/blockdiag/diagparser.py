@@ -44,10 +44,8 @@ from funcparserlib.util import pretty_tree
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
     oneplus, forward_decl, NoParseError)
-try:
-    from collections import namedtuple
-except ImportError:
-    from utils.namedtuple import namedtuple
+
+from utils.namedtuple import namedtuple
 
 ENCODING = 'utf-8'
 
