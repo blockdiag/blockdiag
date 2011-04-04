@@ -3,10 +3,7 @@
 
 from utils.XY import XY
 import noderenderer
-try:
-    from collections import namedtuple
-except ImportError:
-    from utils.namedtuple import namedtuple
+from utils.namedtuple import namedtuple
 
 
 class EdgeLines(object):
