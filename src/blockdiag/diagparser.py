@@ -144,65 +144,6 @@ def parse(seq):
     return dotfile.parse(seq)
 
 
-def pretty_parse_tree(x):
-    'object -> str'
-    Pair = namedtuple('Pair', 'first second')
-    p = lambda x, y: Pair(x, y)
-
-    def kids(x):
-        'object -> list(object)'
-        if isinstance(x, (Graph, SubGraph)):
-            return [p('stmts', x.stmts)]
-        elif isinstance(x, (Node, DefAttrs)):
-            return [p('attrs', x.attrs)]
-        elif isinstance(x, Edge):
-            return [p('nodes', x.nodes), p('attrs', x.attrs)]
-        elif isinstance(x, Pair):
-            return x.second
-        else:
-            return []
-
-    def show(x):
-        'object -> str'
-        if isinstance(x, Pair):
-            return x.first
-        elif isinstance(x, Graph):
-            return 'Graph [id=%s, type=%s]' % (
-                x.id, x.type)
-        elif isinstance(x, SubGraph):
-            return 'SubGraph [id=%s]' % x.id
-        elif isinstance(x, Edge):
-            return 'Edge'
-        elif isinstance(x, Attr):
-            return 'Attr [name=%s, value=%s]' % (x.name, x.value)
-        elif isinstance(x, DefAttrs):
-            return 'DefAttrs [object=%s]' % x.object
-        elif isinstance(x, Node):
-            return 'Node [id=%s]' % x.id
-        else:
-            return unicode(x)
-    return pretty_tree(x, kids, show)
-
-
 def parse_file(path):
     input = codecs.open(path, 'r', 'utf-8').read()
     return parse(tokenize(input))
-
-
-def main():
-    #import logging
-    #logging.basicConfig(level=logging.DEBUG)
-    #import funcparserlib
-    #funcparserlib.parser.debug = True
-    try:
-        stdin = os.fdopen(sys.stdin.fileno(), 'rb')
-        input = stdin.read().decode(ENCODING)
-        tree = parse(tokenize(input))
-        print pretty_parse_tree(tree).encode(ENCODING)
-    except (NoParseError, LexerError), e:
-        msg = (u'syntax error: %s' % e).encode(ENCODING)
-        print >> sys.stderr, msg
-        sys.exit(1)
-
-if __name__ == '__main__':
-    main()
