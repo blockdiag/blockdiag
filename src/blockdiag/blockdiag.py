@@ -60,10 +60,6 @@ class DiagramTreeBuilder:
             if node not in group.nodes:
                 group.nodes.append(node)
 
-    def unbelong_to(self, node, group):
-        if node in group.nodes:
-            group.nodes.remove(node)
-
     def instantiate(self, group, tree):
         for stmt in tree.stmts:
             # Translate Node having group attribute to SubGraph
