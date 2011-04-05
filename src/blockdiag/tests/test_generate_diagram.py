@@ -1,0 +1,57 @@
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import tempfile
+import blockdiag.blockdiag
+from blockdiag.elements import *
+
+
+def extra_case(func):
+    filename = "VL-PGothic-Regular.ttf"
+    testdir = os.path.dirname(__file__)
+    pathname = "%s/truetype/%s" % (testdir, filename)
+
+    if os.path.exists(pathname):
+        func.__test__ = True
+    else:
+        func.__test__ = False
+
+    return func
+
+
+def __build_diagram(filename, format):
+    testdir = os.path.dirname(__file__)
+    pathname = "%s/diagrams/%s" % (testdir, filename)
+
+    try:
+        argv = sys.argv
+        tmpfile = tempfile.mkstemp()[1]
+        sys.argv = ['blockdiag.py', '-T', format, '-o', tmpfile, pathname]
+
+        DiagramNode.clear()
+        DiagramEdge.clear()
+        NodeGroup.clear()
+
+        blockdiag.blockdiag.main()
+    finally:
+        sys.argv = argv
+
+
+def diagram_files():
+    testdir = os.path.dirname(__file__)
+    pathname = "%s/diagrams/" % testdir
+
+    skipped = ['belongs_to_two_groups.diag',
+               'group_follows_node.diag',
+               'node_follows_group.diag']
+
+    return [d for d in os.listdir(pathname) if d not in skipped]
+
+
+@extra_case
+def test_generator():
+    formats = ['svg', 'png']
+    for diagram in diagram_files():
+        for format in formats:
+            yield __build_diagram, diagram, format
