@@ -62,6 +62,7 @@ def test_generator():
         import reportlab.pdfgen.canvas
         formats.append('pdf')
     except ImportError:
+        sys.stderr.write("Skip testing about pdf exporting.\n")
         pass
 
     for diagram in diagram_files():
