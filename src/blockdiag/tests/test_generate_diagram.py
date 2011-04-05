@@ -20,14 +20,20 @@ def extra_case(func):
     return func
 
 
-def __build_diagram(filename, format):
+def __build_diagram(filename, format, *args):
     testdir = os.path.dirname(__file__)
-    pathname = "%s/diagrams/%s" % (testdir, filename)
+    diagpath = "%s/diagrams/%s" % (testdir, filename)
+
+    fontfile = "VL-PGothic-Regular.ttf"
+    fontpath = "%s/truetype/%s" % (testdir, fontfile)
 
     try:
         argv = sys.argv
         tmpfile = tempfile.mkstemp()[1]
-        sys.argv = ['blockdiag.py', '-T', format, '-o', tmpfile, pathname]
+        sys.argv = ['blockdiag.py', '-T', format, '-f', fontpath,
+                    '-o', tmpfile, diagpath]
+        if args:
+            sys.argv += args
 
         DiagramNode.clear()
         DiagramEdge.clear()
@@ -55,3 +61,6 @@ def test_generator():
     for diagram in diagram_files():
         for format in formats:
             yield __build_diagram, diagram, format
+
+            if format == 'png':
+                yield __build_diagram, diagram, format, '--antialias'
