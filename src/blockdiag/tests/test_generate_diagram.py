@@ -58,6 +58,12 @@ def diagram_files():
 @extra_case
 def test_generator():
     formats = ['svg', 'png']
+    try:
+        import reportlab.pdfgen.canvas
+        formats.append('pdf')
+    except ImportError:
+        pass
+
     for diagram in diagram_files():
         for format in formats:
             yield __build_diagram, diagram, format
