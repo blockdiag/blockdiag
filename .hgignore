@@ -9,3 +9,4 @@ dist
 eggs
 parts
 src/.*.egg-info
+src/blockdiag/tests/truetype
