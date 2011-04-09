@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import re
 import sys
 import base64
 from utils.XY import XY
@@ -210,10 +211,11 @@ class SVGImageDrawElement:
 
 
 class SVGImageDraw(SVGImageDrawElement):
-    def __init__(self, filename, size):
+    def __init__(self, filename, size, **kwargs):
         self.filename = filename
         self.drawing = drawing()
         self.svg = svg((0, 0, size[0], size[1]))
+        self.nodoctype = kwargs.get('nodoctype')
 
         uri = 'http://www.inkscape.org/namespaces/inkscape'
         self.svg.namespaces['inkspace'] = uri
@@ -239,4 +241,13 @@ class SVGImageDraw(SVGImageDrawElement):
         # Ignore size and format parameter; compatibility for ImageDrawEx.
 
         self.drawing.setSVG(self.svg)
-        return self.drawing.toXml(self.filename)
+        svg = self.drawing.toXml('')
+
+        if self.nodoctype:
+            svg = re.sub('<\?xml.*?>\n', '', svg)
+            svg = re.sub('<!DOCTYPE.*?>\n', '', svg)
+
+        if self.filename:
+            open(self.filename, 'w').write(svg)
+
+        return svg
