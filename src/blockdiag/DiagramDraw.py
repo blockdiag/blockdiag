@@ -28,9 +28,11 @@ class DiagramDraw(object):
         if self.format == 'SVG':
             import SVGImageDraw
 
+            nodoctype = kwargs.get('nodoctype')
             self.shadow = kwargs.get('shadow', (0, 0, 0))
             self.drawer = SVGImageDraw.SVGImageDraw(self.filename,
-                                                    self.pagesize())
+                                                    self.pagesize(),
+                                                    nodoctype=nodoctype)
         elif self.format == 'PDF':
             import PDFImageDraw
 

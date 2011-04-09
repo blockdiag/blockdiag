@@ -483,6 +483,8 @@ def parse_option():
                  help='Separate diagram images for each group (SVG only)')
     p.add_option('-T', dest='type', default='PNG',
                  help='Output diagram as TYPE format')
+    p.add_option('--nodoctype', action='store_true',
+                 help='Do not output doctype definition tags (SVG only)')
     options, args = p.parse_args()
 
     if len(args) == 0:
@@ -505,6 +507,11 @@ def parse_option():
 
     if options.separate and options.type != 'SVG':
         msg = "ERROR: --separate option work in SVG images.\n"
+        sys.stderr.write(msg)
+        sys.exit(0)
+
+    if options.nodoctype and options.type != 'SVG':
+        msg = "ERROR: --nodoctype option work in SVG images.\n"
         sys.stderr.write(msg)
         sys.exit(0)
 
@@ -577,7 +584,8 @@ def main():
         diagram = ScreenNodeBuilder.build(tree)
 
     draw = DiagramDraw.DiagramDraw(options.type, diagram, outfile,
-                                   font=fontpath, antialias=options.antialias)
+                                   font=fontpath, antialias=options.antialias,
+                                   nodoctype=options.nodoctype)
     draw.draw()
     draw.save()
 
