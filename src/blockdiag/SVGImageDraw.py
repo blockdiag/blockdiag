@@ -213,7 +213,6 @@ class SVGImageDrawElement:
 class SVGImageDraw(SVGImageDrawElement):
     def __init__(self, filename, size, **kwargs):
         self.filename = filename
-        self.drawing = drawing()
         self.svg = svg((0, 0, size[0], size[1]))
         self.nodoctype = kwargs.get('nodoctype')
 
@@ -235,11 +234,16 @@ class SVGImageDraw(SVGImageDrawElement):
         self.svg.addElement(title('blockdiag'))
 
     def save(self, filename, size, format):
+        # Ignore format parameter; compatibility for ImageDrawEx.
+
         if filename:
             self.filename = filename
 
-        # Ignore size and format parameter; compatibility for ImageDrawEx.
+        if size:
+            self.svg.attributes['width'] = size[0]
+            self.svg.attributes['height'] = size[1]
 
+        self.drawing = drawing()
         self.drawing.setSVG(self.svg)
         svg = self.drawing.toXml('')
 
