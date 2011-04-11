@@ -27,7 +27,7 @@ setup(
      author='Takeshi Komiya',
      author_email='i.tkomiya at gmail.com',
      url='http://tk0miya.bitbucket.org/blockdiag/build/html/index.html',
-     license='PSL',
+     license='PSF',
      py_modules=['blockdiag_sphinxhelper'],
      packages=find_packages('src'),
      package_dir={'': 'src'},
