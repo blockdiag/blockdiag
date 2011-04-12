@@ -6,19 +6,58 @@ from XY import XY
 
 
 def is_zenkaku(char):
+    u"""
+    Detect given character is Japanese ZENKAKU character
+
+    >>> is_zenkaku(u"A")
+    False
+    >>> is_zenkaku(u"あ")
+    True
+    """
     char_width = unicodedata.east_asian_width(char)
     return char_width in u"WFA"
 
 
 def zenkaku_len(string):
+    u"""
+    Count Japanese ZENKAKU characters from string
+
+    >>> zenkaku_len(u"abc")
+    0
+    >>> zenkaku_len(u"あいう")
+    3
+    >>> zenkaku_len(u"あいc")
+    2
+    """
     return len([x for x in string  if is_zenkaku(x)])
 
 
 def hankaku_len(string):
+    u"""
+    Count non Japanese ZENKAKU characters from string
+
+    >>> hankaku_len(u"abc")
+    3
+    >>> hankaku_len(u"あいう")
+    0
+    >>> hankaku_len(u"あいc")
+    1
+    """
     return len([x for x in string  if not is_zenkaku(x)])
 
 
 def string_width(string):
+    u"""
+    Measure rendering width of string.
+    Count ZENKAKU-character as 2-point and non ZENKAKU-character as 1-point
+
+    >>> string_width(u"abc")
+    3
+    >>> string_width(u"あいう")
+    6
+    >>> string_width(u"あいc")
+    5
+    """
     width = 0
     for c in string:
         char_width = unicodedata.east_asian_width(c)
