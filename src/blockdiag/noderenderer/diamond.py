@@ -32,7 +32,7 @@ class Diamond(NodeShape):
         elif self.node.background:
             drawer.polygon(self.connectors, fill=self.node.color,
                            outline=self.node.color)
-            drawer.loadImage(self.node.background, self.texbox)
+            drawer.loadImage(self.node.background, self.textbox)
             drawer.polygon(self.connectors, fill="none", outline=outline,
                            style=self.node.style)
         else:
