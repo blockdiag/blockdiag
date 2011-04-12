@@ -91,12 +91,9 @@ def test_node_shape_diagram():
         assert node.shape == assert_shape[node.id]
 
 
+@raises(RuntimeError)
 def test_unknown_node_shape_diagram():
     screen = __build_diagram('unknown_node_shape.diag')
-
-    assert_shape = {'A': 'box', 'Z': 'box'}
-    for node in screen.nodes:
-        assert node.shape == assert_shape[node.id]
 
 
 def test_node_shape_namespace_diagram():
