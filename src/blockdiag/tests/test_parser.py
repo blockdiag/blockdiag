@@ -96,6 +96,11 @@ def test_unknown_node_shape_diagram():
     screen = __build_diagram('unknown_node_shape.diag')
 
 
+@raises(RuntimeError)
+def test_unknown_default_shape_diagram():
+    screen = __build_diagram('unknown_default_shape.diag')
+
+
 def test_node_shape_namespace_diagram():
     screen = __build_diagram('node_shape_namespace.diag')
 
