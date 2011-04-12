@@ -106,7 +106,7 @@ Requirements
 ============
 
 * Python 2.4 or later (not support 3.x)
-* Python Imaging Library 1.1.6 or later.
+* Python Imaging Library 1.1.5 or later.
 * funcparserlib 0.3.4 or later.
 * setuptools or distriubte.
 
