@@ -175,6 +175,7 @@ def test_node_attribute():
 
     assert screen.nodes[4].id == 'E'
     assert screen.nodes[4].label == '"\'single\' quoted"'
+    assert screen.nodes[4].numbered == '1'
 
 
 def test_edge_shape():
