@@ -266,7 +266,7 @@ class Diagram(NodeGroup):
                     DiagramNode.set_default_shape(value)
                 except:
                     msg = "WARNING: unknown node shape: %s\n" % value
-                    sys.stderr.write(msg)
+                    raise RuntimeError(msg)
             elif attr.name == 'shape_namespace':
                 noderenderer.set_default_namespace(value)
             else:
