@@ -51,7 +51,8 @@ def diagram_files():
 
     skipped = ['belongs_to_two_groups.diag',
                'group_follows_node.diag',
-               'node_follows_group.diag']
+               'node_follows_group.diag',
+               'white.gif']
 
     return [d for d in os.listdir(pathname) if d not in skipped]
 
