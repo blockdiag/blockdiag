@@ -52,6 +52,7 @@ def diagram_files():
     skipped = ['belongs_to_two_groups.diag',
                'group_follows_node.diag',
                'node_follows_group.diag',
+               'unknown_node_shape.diag',
                'unknown_default_shape.diag',
                'white.gif']
 
