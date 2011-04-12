@@ -145,7 +145,7 @@ class DiagramNode(Element):
                     self.shape = value
                 except:
                     msg = "WARNING: unknown node shape: %s\n" % value
-                    sys.stderr.write(msg)
+                    raise RuntimeError(msg)
             else:
                 self.set_attribute(attr)
 
