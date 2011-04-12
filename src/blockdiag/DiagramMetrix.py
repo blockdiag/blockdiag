@@ -114,14 +114,6 @@ def scale(value, ratio):
     return ret
 
 
-def scale_method(function):
-    def _method(self, *args, **kwargs):
-        ret = function(self, *args, **kwargs)
-        return scale(ret, self.scale_ratio)
-
-    return _method
-
-
 class DiagramMetrix(dict):
     def __init__(self, diagram, **kwargs):
         for key in kwargs:
