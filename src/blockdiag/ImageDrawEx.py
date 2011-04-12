@@ -133,6 +133,9 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             for pt in ellipse.dots(box, length):
                 ImageDraw.ImageDraw.line(self, [pt, pt], fill=kwargs['fill'])
         else:
+            if kwargs.get('fill') == 'none':
+                del kwargs['fill']
+
             ImageDraw.ImageDraw.ellipse(self, box, **kwargs)
 
     def line(self, xy, **kwargs):
