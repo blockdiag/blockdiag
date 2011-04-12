@@ -107,9 +107,10 @@ def invalid_config_option_test():
 @raises(RuntimeError)
 @replace_argv
 def invalid_dir_config_option_test():
-    tmp = tempfile.mkdtemp()
+    try:
+        tmp = tempfile.mkdtemp()
 
-    sys.argv = ['', '-c', tmp, 'input.diag']
-    option = parse_option()
-
-    os.rmdir(tmp)
+        sys.argv = ['', '-c', tmp, 'input.diag']
+        option = parse_option()
+    finally:
+        os.rmdir(tmp)
