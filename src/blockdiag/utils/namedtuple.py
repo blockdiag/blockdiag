@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 def namedtuple(name, fields):
     'Only space-delimited fields are supported.'
     def prop(i, name):
