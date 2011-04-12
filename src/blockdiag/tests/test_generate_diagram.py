@@ -42,6 +42,7 @@ def __build_diagram(filename, format, *args):
         blockdiag.blockdiag.main()
     finally:
         sys.argv = argv
+        os.unlink(tmpfile)
 
 
 def diagram_files():
