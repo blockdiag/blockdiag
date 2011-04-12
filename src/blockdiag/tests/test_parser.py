@@ -4,7 +4,7 @@ import tempfile
 from blockdiag.blockdiag import *
 from blockdiag.elements import *
 from blockdiag.diagparser import *
-from nose.tools import assert_raises
+from nose.tools import raises
 
 
 def __build_diagram(filename):
@@ -44,11 +44,10 @@ def test_diagparser_empty():
     assert isinstance(tree, Graph)
 
 
+@raises(NoParseError)
 def test_diagparser_parenthesis_ness():
-    def dummy():
-        str = ""
-        tree = parse(tokenize(str))
-    assert_raises(NoParseError, dummy)
+    str = ""
+    tree = parse(tokenize(str))
 
 
 def test_empty_diagram():
@@ -368,11 +367,9 @@ def test_flowable_node_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+@raises(RuntimeError)
 def test_belongs_to_two_groups_diagram():
-    def dummy():
-        screen = __build_diagram('belongs_to_two_groups.diag')
-
-    assert_raises(RuntimeError, dummy)
+    screen = __build_diagram('belongs_to_two_groups.diag')
 
 
 def test_nested_groups_diagram():
@@ -391,18 +388,14 @@ def test_nested_groups_and_edges_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+@raises(NoParseError)
 def test_node_follows_group_diagram():
-    def dummy():
-        screen = __build_diagram('node_follows_group.diag')
-
-    assert_raises(NoParseError, dummy)
+    screen = __build_diagram('node_follows_group.diag')
 
 
+@raises(NoParseError)
 def test_group_follows_node_diagram():
-    def dummy():
-        screen = __build_diagram('group_follows_node.diag')
-
-    assert_raises(NoParseError, dummy)
+    screen = __build_diagram('group_follows_node.diag')
 
 
 def test_empty_group_diagram():
