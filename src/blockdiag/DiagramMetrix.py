@@ -679,9 +679,9 @@ class PortraitEdgeMetrix(EdgeMetrix):
 
             if self.edge.skipped:
                 shaft.lineTo(cell1.bottom().x, cell1.bottom().y + span.y / 2)
-                shaft.lineTo(cell1.left().x - span.x / 2,
+                shaft.lineTo(cell1.right().x + span.x / 2,
                              cell1.bottom().y + span.y / 2)
-                shaft.lineTo(cell2.left().x - span.x / 2,
+                shaft.lineTo(cell2.right().x + span.x / 2,
                              cell2.top().y - span.y / 2)
                 shaft.lineTo(cell2.top().x, cell2.top().y - span.y / 2)
 
