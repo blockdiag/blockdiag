@@ -38,7 +38,12 @@ class BeginPoint(NodeShape):
         box = (self.center.x - r / 2, self.center.y - r / 2,
                self.center.x + r / 2, self.center.y + r / 2)
         if not kwargs.get('shadow'):
-            drawer.ellipse(box, fill=self.node.color, outline=outline,
+            if self.node.color == self.node.basecolor:
+                color = outline
+            else:
+                color = self.node.color
+
+            drawer.ellipse(box, fill=color, outline=outline,
                            style=self.node.style)
 
 
