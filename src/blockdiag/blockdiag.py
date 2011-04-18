@@ -271,14 +271,31 @@ class DiagramLayoutManager:
             parents = self.get_parent_nodes(node)
             if len(set(parents)) > 1:
                 for i in range(1, len(parents)):
-                    idx1 = self.diagram.nodes.index(parents[i - 1])
-                    idx2 = self.diagram.nodes.index(parents[i])
-                    if idx1 < idx2:
-                        self.diagram.nodes.remove(parents[i])
-                        self.diagram.nodes.insert(idx1 + 1, parents[i])
+                    node1 = parents[i - 1]
+                    node2 = parents[i]
+
+                    if node1.xy.x == node2.xy.x:
+                        idx1 = self.diagram.nodes.index(node1)
+                        idx2 = self.diagram.nodes.index(node2)
+
+                        if idx1 < idx2:
+                            self.diagram.nodes.remove(node2)
+                            self.diagram.nodes.insert(idx1 + 1, node2)
+                        else:
+                            self.diagram.nodes.remove(node1)
+                            self.diagram.nodes.insert(idx2 + 1, node1)
                     else:
-                        self.diagram.nodes.remove(parents[i - 1])
-                        self.diagram.nodes.insert(idx2 + 1, parents[i - 1])
+                        idx_child = self.diagram.nodes.index(node)
+
+                        idx_parent = self.diagram.nodes.index(node1)
+                        if idx_child < idx_parent:
+                            self.diagram.nodes.remove(node1)
+                            self.diagram.nodes.insert(idx_child - 1, node1)
+
+                        idx_parent = self.diagram.nodes.index(node2)
+                        if idx_child < idx_parent:
+                            self.diagram.nodes.remove(node2)
+                            self.diagram.nodes.insert(idx_child - 1, node2)
 
             if isinstance(node, NodeGroup):
                 children = self.get_child_nodes(node)
