@@ -281,6 +281,15 @@ def test_labeled_circular_ref_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_twin_forked_diagram():
+    screen = __build_diagram('twin_forked.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'D': (2, 0),
+                  'E': (3, 0), 'F': (3, 1), 'G': (4, 1), 'Z': (0, 2)}
+    for node in screen.nodes:
+        assert node.xy == assert_pos[node.id]
+
+
 def test_skipped_edge_diagram():
     screen = __build_diagram('skipped_edge.diag')
 
