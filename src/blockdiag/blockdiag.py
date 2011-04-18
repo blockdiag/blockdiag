@@ -267,7 +267,7 @@ class DiagramLayoutManager:
             self.set_node_width(depth + 1)
 
     def adjust_node_order(self):
-        for node in self.diagram.nodes:
+        for node in list(self.diagram.nodes):
             parents = self.get_parent_nodes(node)
             if len(set(parents)) > 1:
                 for i in range(1, len(parents)):
@@ -284,18 +284,6 @@ class DiagramLayoutManager:
                         else:
                             self.diagram.nodes.remove(node1)
                             self.diagram.nodes.insert(idx2 + 1, node1)
-                    else:
-                        idx_child = self.diagram.nodes.index(node)
-
-                        idx_parent = self.diagram.nodes.index(node1)
-                        if idx_child < idx_parent:
-                            self.diagram.nodes.remove(node1)
-                            self.diagram.nodes.insert(idx_child - 1, node1)
-
-                        idx_parent = self.diagram.nodes.index(node2)
-                        if idx_child < idx_parent:
-                            self.diagram.nodes.remove(node2)
-                            self.diagram.nodes.insert(idx_child - 1, node2)
 
             if isinstance(node, NodeGroup):
                 children = self.get_child_nodes(node)
