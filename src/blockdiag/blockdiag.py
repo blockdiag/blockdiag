@@ -285,6 +285,32 @@ class DiagramLayoutManager:
                             self.diagram.nodes.remove(node1)
                             self.diagram.nodes.insert(idx2 + 1, node1)
 
+            children = self.get_child_nodes(node)
+            if len(set(children)) > 1:
+                for i in range(1, len(children)):
+                    node1 = children[i - 1]
+                    node2 = children[i]
+
+                    idx1 = self.diagram.nodes.index(node1)
+                    idx2 = self.diagram.nodes.index(node2)
+
+                    if node1.xy.x == node2.xy.x:
+                        if idx1 < idx2:
+                            self.diagram.nodes.remove(node2)
+                            self.diagram.nodes.insert(idx1 + 1, node2)
+                        else:
+                            self.diagram.nodes.remove(node1)
+                            self.diagram.nodes.insert(idx2 + 1, node1)
+                    elif self.is_circular_ref(node1, node2):
+                        pass
+                    else:
+                        if node1.xy.x < node2.xy.x:
+                            self.diagram.nodes.remove(node2)
+                            self.diagram.nodes.insert(idx1 + 1, node2)
+                        else:
+                            self.diagram.nodes.remove(node1)
+                            self.diagram.nodes.insert(idx2 + 1, node1)
+
             if isinstance(node, NodeGroup):
                 children = self.get_child_nodes(node)
                 if len(set(children)) > 1:
