@@ -119,6 +119,15 @@ Python Software Foundation License.
 History
 =======
 
+0.7.8 (2011-04-19)
+------------------
+* Update layout engine
+* Update requirements: PIL >= 1.1.5
+* Update parser for tokenize performance
+* Add --nodoctype option
+* Fix bugs
+* Add many testcases
+
 0.7.7 (2011-03-29)
 ------------------
 * Fix bugs
