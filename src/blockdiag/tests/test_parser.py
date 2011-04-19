@@ -707,3 +707,13 @@ def test_nested_group_orientation2_diagram():
     for node in (x for x in screen.nodes if x.drawable):
         print node, assert_pos[node.id]
         assert node.xy == assert_pos[node.id]
+
+
+def test_slided_children_diagram():
+    screen = __build_diagram('slided_children.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'D': (1, 2),
+                  'E': (2, 2), 'F': (3, 2), 'G': (2, 1), 'H': (4, 1)}
+    for node in (x for x in screen.nodes if x.drawable):
+        print node, assert_pos[node.id]
+        assert node.xy == assert_pos[node.id]
