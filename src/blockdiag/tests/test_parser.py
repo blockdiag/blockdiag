@@ -8,10 +8,6 @@ from nose.tools import raises
 
 
 def __build_diagram(filename):
-    DiagramNode.clear()
-    DiagramEdge.clear()
-    NodeGroup.clear()
-
     import os
     testdir = os.path.dirname(__file__)
     pathname = "%s/diagrams/%s" % (testdir, filename)
