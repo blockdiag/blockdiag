@@ -2,7 +2,9 @@
 from setuptools import setup, find_packages
 import os, sys
 
-version = '0.7.8'
+sys.path.insert(0, 'src')
+import blockdiag
+
 long_description = \
         open(os.path.join("src","README.txt")).read() + \
         open(os.path.join("src","TODO.txt")).read()
@@ -19,7 +21,7 @@ classifiers = [
 
 setup(
      name='blockdiag',
-     version=version,
+     version=blockdiag.__version__,
      description='blockdiag generate block-diagram image file from spec-text file.',
      long_description=long_description,
      classifiers=classifiers,
