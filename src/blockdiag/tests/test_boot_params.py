@@ -4,7 +4,7 @@ import os
 import sys
 import tempfile
 from nose.tools import raises
-from blockdiag.blockdiag import parse_option
+from blockdiag.command import parse_option
 
 
 def replace_argv(func):

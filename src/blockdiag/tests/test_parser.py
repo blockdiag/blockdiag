@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import tempfile
-from blockdiag.blockdiag import *
+from blockdiag.builder import *
 from blockdiag.elements import *
 from blockdiag.diagparser import *
 from nose.tools import raises

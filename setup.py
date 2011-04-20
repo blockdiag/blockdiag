@@ -55,7 +55,7 @@ setup(
      tests_require=['Nose','minimock','pep8'],
      entry_points="""
         [console_scripts]
-        blockdiag = blockdiag.blockdiag:main
+        blockdiag = blockdiag.command:main
 
         [blockdiag_noderenderer]
         box = blockdiag.noderenderer.box

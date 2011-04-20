@@ -3,7 +3,7 @@
 import os
 import sys
 import tempfile
-import blockdiag.blockdiag
+import blockdiag.command
 from blockdiag.elements import *
 
 
@@ -39,7 +39,7 @@ def __build_diagram(filename, format, *args):
         DiagramEdge.clear()
         NodeGroup.clear()
 
-        blockdiag.blockdiag.main()
+        blockdiag.command.main()
     finally:
         sys.argv = argv
         os.unlink(tmpfile)
