@@ -153,12 +153,12 @@ class DiagramMetrix(dict):
             self.setdefault('fontSize', 11)
 
         pageMarginX = cellsize * 3
-        if pageMarginX < self.spanHeight / self.scale_ratio:
-            pageMarginX = self.spanHeight / self.scale_ratio
+        if pageMarginX < self.spanWidth / self.scale_ratio:
+            pageMarginX = self.spanWidth / self.scale_ratio
 
         pageMarginY = cellsize * 3
-        if pageMarginY < self.spanWidth / self.scale_ratio:
-            pageMarginY = self.spanWidth / self.scale_ratio + cellsize
+        if pageMarginY < self.spanHeight / self.scale_ratio:
+            pageMarginY = self.spanHeight / self.scale_ratio + cellsize
 
         self.setdefault('pageMargin', XY(pageMarginX, pageMarginY))
 
