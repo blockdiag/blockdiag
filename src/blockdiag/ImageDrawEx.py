@@ -173,7 +173,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         else:
             d = int(math.ceil(thick / 2.0))
 
-        if fill:
+        if fill and fill != 'none':
             ImageDraw.ImageDraw.rectangle(self, box, fill=fill)
 
         x1, y1, x2, y2 = box
