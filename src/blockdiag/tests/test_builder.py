@@ -17,13 +17,6 @@ def __build_diagram(filename):
     return ScreenNodeBuilder.build(tree)
 
 
-def test_empty_diagram():
-    screen = __build_diagram('empty.diag')
-
-    assert len(screen.nodes) == 0
-    assert len(screen.edges) == 0
-
-
 def test_diagram_attributes():
     screen = __build_diagram('diagram_attributes.diag')
 
