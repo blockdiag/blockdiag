@@ -4,7 +4,6 @@ import tempfile
 from blockdiag.builder import *
 from blockdiag.elements import *
 from blockdiag.diagparser import *
-from nose.tools import raises
 
 
 def __build_diagram(filename):
@@ -49,16 +48,6 @@ def test_node_shape_diagram():
                     'P': 'actor', 'Q': 'flowchart.terminator', 'Z': 'box'}
     for node in screen.nodes:
         assert node.shape == assert_shape[node.id]
-
-
-@raises(RuntimeError)
-def test_unknown_node_shape_diagram():
-    screen = __build_diagram('unknown_node_shape.diag')
-
-
-@raises(RuntimeError)
-def test_unknown_default_shape_diagram():
-    screen = __build_diagram('unknown_default_shape.diag')
 
 
 def test_node_shape_namespace_diagram():
@@ -339,11 +328,6 @@ def test_flowable_node_diagram():
         assert node.xy == assert_pos[node.id]
 
 
-@raises(RuntimeError)
-def test_belongs_to_two_groups_diagram():
-    screen = __build_diagram('belongs_to_two_groups.diag')
-
-
 def test_nested_groups_diagram():
     screen = __build_diagram('nested_groups.diag')
 
@@ -358,16 +342,6 @@ def test_nested_groups_and_edges_diagram():
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'Z': (0, 1)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
-
-
-@raises(NoParseError)
-def test_node_follows_group_diagram():
-    screen = __build_diagram('node_follows_group.diag')
-
-
-@raises(NoParseError)
-def test_group_follows_node_diagram():
-    screen = __build_diagram('group_follows_node.diag')
 
 
 def test_empty_group_diagram():
