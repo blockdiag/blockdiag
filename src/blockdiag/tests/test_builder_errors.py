@@ -19,24 +19,24 @@ def __build_diagram(filename):
 
 @raises(RuntimeError)
 def test_unknown_node_shape_diagram():
-    screen = __build_diagram('unknown_node_shape.diag')
+    screen = __build_diagram('errors/unknown_node_shape.diag')
 
 
 @raises(RuntimeError)
 def test_unknown_default_shape_diagram():
-    screen = __build_diagram('unknown_default_shape.diag')
+    screen = __build_diagram('errors/unknown_default_shape.diag')
 
 
 @raises(RuntimeError)
 def test_belongs_to_two_groups_diagram():
-    screen = __build_diagram('belongs_to_two_groups.diag')
+    screen = __build_diagram('errors/belongs_to_two_groups.diag')
 
 
 @raises(NoParseError)
 def test_node_follows_group_diagram():
-    screen = __build_diagram('node_follows_group.diag')
+    screen = __build_diagram('errors/node_follows_group.diag')
 
 
 @raises(NoParseError)
 def test_group_follows_node_diagram():
-    screen = __build_diagram('group_follows_node.diag')
+    screen = __build_diagram('errors/group_follows_node.diag')
