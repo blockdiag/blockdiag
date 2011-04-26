@@ -152,6 +152,11 @@ class DiagramMetrix(dict):
         else:
             self.setdefault('fontSize', 11)
 
+        if diagram.page_padding:
+            self.setdefault('pagePadding', diagram.page_padding)
+        else:
+            self.setdefault('pagePadding', [0, 0, 0, 0])
+
         pageMarginX = cellsize * 3
         if pageMarginX < self.spanWidth / self.scale_ratio:
             pageMarginX = self.spanWidth / self.scale_ratio
@@ -201,7 +206,9 @@ class DiagramMetrix(dict):
 
         node = DummyNode(width, height, XY(0, 0))
         xy = NodeMetrix(node, self).bottomRight()
-        return XY(xy.x + self.pageMargin.x, xy.y + self.pageMargin.y)
+        padding = self.pagePadding
+        return XY(xy.x + self.pageMargin.x + padding[1],
+                  xy.y + self.pageMargin.y + padding[2])
 
 
 class NodeMetrix(object):
@@ -210,9 +217,9 @@ class NodeMetrix(object):
         self.width = node.width
         self.height = node.height
 
-        self.x = metrix.pageMargin.x + \
+        self.x = metrix.pageMargin.x + metrix.pagePadding[3] + \
                  node.xy.x * (metrix.nodeWidth + metrix.spanWidth)
-        self.y = metrix.pageMargin.y + \
+        self.y = metrix.pageMargin.y + metrix.pagePadding[0] + \
                  node.xy.y * (metrix.nodeHeight + metrix.spanHeight)
 
     def box(self):
