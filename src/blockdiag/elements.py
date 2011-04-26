@@ -41,10 +41,14 @@ class Base(object):
 
     def set_attribute(self, attr):
         name = attr.name
-        if name in self.int_attrs:
-            setattr(self, name, int(attr.value))
+        value = unquote(attr.value)
+
+        if hasattr(self, "set_%s" % name):
+            getattr(self, "set_%s" % name)(value)
+        elif name in self.int_attrs:
+            setattr(self, name, int(value))
         elif hasattr(self, name) and not callable(getattr(self, name)):
-            setattr(self, name, unquote(attr.value))
+            setattr(self, name, value)
         else:
             class_name = self.__class__.__name__
             msg = "Unknown attribute: %s.%s" % (class_name, attr.name)
@@ -122,32 +126,27 @@ class DiagramNode(Element):
         self.description = None
         self.drawable = True
 
-    def set_attributes(self, attrs):
-        for attr in attrs:
-            value = unquote(attr.value)
+    def set_style(self, value):
+        if value in ('solid', 'dotted', 'dashed'):
+            self.style = value
+        else:
+            msg = "WARNING: unknown edge style: %s\n" % value
+            sys.stderr.write(msg)
 
-            if attr.name == 'style':
-                style = value.lower()
-                if style in ('solid', 'dotted', 'dashed'):
-                    self.style = style
-                else:
-                    msg = "WARNING: unknown edge style: %s\n" % style
-                    sys.stderr.write(msg)
-            elif attr.name == 'background':
-                if os.path.isfile(value):
-                    self.background = value
-                else:
-                    msg = "WARNING: background image not found: %s\n" % value
-                    sys.stderr.write(msg)
-            elif attr.name == 'shape':
-                try:
-                    noderenderer.get(value)
-                    self.shape = value
-                except:
-                    msg = "WARNING: unknown node shape: %s\n" % value
-                    raise RuntimeError(msg)
-            else:
-                self.set_attribute(attr)
+    def set_shape(self, value):
+        try:
+            noderenderer.get(value)
+            self.shape = value
+        except:
+            msg = "WARNING: unknown node shape: %s\n" % value
+            raise RuntimeError(msg)
+
+    def set_background(self, value):
+        if os.path.isfile(value):
+            self.background = value
+        else:
+            msg = "WARNING: background image not found: %s\n" % value
+            sys.stderr.write(msg)
 
 
 class NodeGroup(Element):
@@ -228,19 +227,13 @@ class NodeGroup(Element):
         for i, node in enumerate(self.nodes):
             node.order = i
 
-    def set_attributes(self, attrs):
-        for attr in attrs:
-            value = unquote(attr.value)
-
-            if attr.name == 'orientation':
-                orientation = value.lower()
-                if orientation in ('landscape', 'portrait'):
-                    self.orientation = orientation
-                else:
-                    msg = "WARNING: unknown diagram orientation: %s\n" % value
-                    sys.stderr.write(msg)
-            else:
-                self.set_attribute(attr)
+    def set_orientation(self, value):
+        value = value.lower()
+        if value in ('landscape', 'portrait'):
+            self.orientation = value
+        else:
+            msg = "WARNING: unknown diagram orientation: %s\n" % value
+            sys.stderr.write(msg)
 
 
 class Diagram(NodeGroup):
@@ -256,21 +249,16 @@ class Diagram(NodeGroup):
         self.span_height = None
         self.fontsize = None
 
-    def set_attributes(self, attrs):
-        for attr in attrs:
-            value = unquote(attr.value)
+    def set_default_shape(self, value):
+        try:
+            noderenderer.get(value)
+            DiagramNode.set_default_shape(value)
+        except:
+            msg = "WARNING: unknown node shape: %s\n" % value
+            raise RuntimeError(msg)
 
-            if attr.name == 'default_shape':
-                try:
-                    noderenderer.get(value)
-                    DiagramNode.set_default_shape(value)
-                except:
-                    msg = "WARNING: unknown node shape: %s\n" % value
-                    raise RuntimeError(msg)
-            elif attr.name == 'shape_namespace':
-                noderenderer.set_default_namespace(value)
-            else:
-                self.set_attribute(attr)
+    def set_shape_namespace(self, value):
+        noderenderer.set_default_namespace(value)
 
 
 class DiagramEdge(Base):
@@ -367,42 +355,40 @@ class DiagramEdge(Base):
                  "'%(node2_id)s' %(node2_xy)s, at 0x%(addr)08x>"
         return format % locals()
 
-    def set_attributes(self, attrs):
-        for attr in attrs:
-            value = unquote(attr.value)
+    def set_dir(self, value):
+        value = value.lower()
+        if value in ('back', 'both', 'none', 'forward'):
+            self.dir = value
+        elif value == '->':
+            self.dir = 'forward'
+        elif value == '<-':
+            self.dir = 'back'
+        elif value == '<->':
+            self.dir = 'both'
+        elif value == '--':
+            self.dir = 'none'
+        else:
+            msg = "WARNING: unknown edge dir: %s\n" % value
+            sys.stderr.write(msg)
 
-            if attr.name == 'dir':
-                dir = value.lower()
-                if dir in ('back', 'both', 'none', 'forward'):
-                    self.dir = dir
-                elif dir == '->':
-                    self.dir = 'forward'
-                elif dir == '<-':
-                    self.dir = 'back'
-                elif dir == '<->':
-                    self.dir = 'both'
-                elif dir == '--':
-                    self.dir = 'none'
-                else:
-                    msg = "WARNING: unknown edge dir: %s\n" % dir
-                    sys.stderr.write(msg)
-            elif attr.name == 'style':
-                style = value.lower()
-                if style in ('none', 'solid', 'dotted', 'dashed'):
-                    self.style = style
-                else:
-                    msg = "WARNING: unknown edge style: %s\n" % style
-                    sys.stderr.write(msg)
-            elif attr.name == 'hstyle':
-                hstyle = value.lower()
-                if hstyle in ('generalization', 'composition', 'aggregation'):
-                    self.hstyle = hstyle
-                else:
-                    msg = "WARNING: unknown edge hstyle: %s\n" % hstyle
-                    sys.stderr.write(msg)
-            elif attr.name == 'folded':
-                self.folded = True
-            elif attr.name == 'nofolded':
-                self.folded = False
-            else:
-                self.set_attribute(attr)
+    def set_style(self, value):
+        value = value.lower()
+        if value in ('none', 'solid', 'dotted', 'dashed'):
+            self.style = value
+        else:
+            msg = "WARNING: unknown edge style: %s\n" % value
+            sys.stderr.write(msg)
+
+    def set_hstyle(self, value):
+        value = value.lower()
+        if value in ('generalization', 'composition', 'aggregation'):
+            self.hstyle = value
+        else:
+            msg = "WARNING: unknown edge hstyle: %s\n" % value
+            sys.stderr.write(msg)
+
+    def set_folded(self, value):
+        self.folded = True
+
+    def set_nofolded(self, value):
+        self.folded = False
