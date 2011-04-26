@@ -135,7 +135,3 @@ def main():
                                    nodoctype=options.nodoctype)
     draw.draw()
     draw.save()
-
-
-if __name__ == '__main__':
-    main()
