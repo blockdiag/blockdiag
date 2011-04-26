@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 import math
 import unicodedata
 from XY import XY
@@ -88,11 +89,52 @@ class TextFolder:
         self._result = self._lines()
 
     def textsize(self, string):
+        u"""
+        Measure rendering size (width and height) of line.
+        Returned size will not be exactly as rendered text size,
+        Because this method does not use fonts to measure size.
+
+        >>> box = [0, 0, 100, 50]
+        >>> TextFolder(box, "").textsize(u"abc")
+        (19, 11)
+        >>> TextFolder(box, "").textsize(u"あいう")
+        (33, 11)
+        >>> TextFolder(box, "").textsize(u"あいc")
+        (29, 11)
+        >>> TextFolder(box, "", fontsize=24).textsize(u"abc")
+        (40, 24)
+        >>> TextFolder(box, "", fontsize=18).textsize(u"あいう")
+        (54, 18)
+        """
         width = zenkaku_len(string) * self.fontsize + \
                 hankaku_len(string) * self.fontsize * 0.55
         return (int(math.ceil(width)), self.fontsize)
 
     def height(self):
+        u"""
+        Measure rendering height of text.
+
+        If texts is heighter than bounding box,
+        jut out lines will be cut off.
+
+        >>> box = [0, 0, 100, 50]
+        >>> TextFolder(box, u"abc").height()
+        11
+        >>> TextFolder(box, u"abc\\ndef").height()
+        24
+        >>> TextFolder(box, u"abc\\n\\ndef").height()
+        37
+        >>> TextFolder(box, u"abc\\ndef\\nghi\\njkl").height()
+        50
+        >>> TextFolder(box, u"abc\\ndef\\nghi\\njkl\\nmno").height()
+        50
+        >>> TextFolder(box, u"abc", fontsize=24).height()
+        24
+        >>> TextFolder(box, u"abc\\ndef", lineSpacing=8).height()
+        30
+        >>> TextFolder(box, u"abc\\ndef", fontsize=15, lineSpacing=8).height()
+        38
+        """
         height = 0
         for string in self._result:
             height += self.textsize(string)[1]
@@ -159,19 +201,39 @@ class TextFolder:
 
         return box
 
+    def _splitlines(self):
+        u"""
+        Split text to lines as generator.
+        Every line will be stripped.
+        If text includes characters "\n", treat as line separator.
+
+        >>> box = [0, 0, 100, 50]
+        >>> [l for l in TextFolder(box, u"abc")._splitlines()]
+        [u'abc']
+        >>> [l for l in TextFolder(box, u"abc\\ndef")._splitlines()]
+        [u'abc', u'def']
+        >>> [l for l in TextFolder(box, u"abc\\\\ndef")._splitlines()]
+        [u'abc', u'def']
+        >>> [l for l in TextFolder(box, u" abc \\n def ")._splitlines()]
+        [u'abc', u'def']
+        >>> [l for l in TextFolder(box, u" \\nabc\\\\ndef")._splitlines()]
+        [u'abc', u'def']
+        >>> [l for l in TextFolder(box, u" \\\\nabc\\\\ndef")._splitlines()]
+        [u'', u'abc', u'def']
+        """
+        string = re.sub('^\s*(.*?)\s*$', '\\1', self.string)
+        for line in string.splitlines():
+            for subline in line.split("\\n"):
+                yield subline.strip()
+
     def _lines(self):
         lines = []
         size = (self.box[2] - self.box[0], self.box[3] - self.box[1])
 
-        def splitlines(string):
-            for line in string.splitlines():
-                for subline in line.split("\\n"):
-                    yield subline
-
         height = 0
         truncated = 0
-        for line in splitlines(self.string):
-            while line:
+        for line in self._splitlines():
+            while True:
                 string = line.strip()
                 for i in range(0, len(string)):
                     length = len(string) - i
@@ -179,15 +241,20 @@ class TextFolder:
 
                     if metrics[0] <= size[0]:
                         break
+                else:
+                    length = 0
+                    metrics = self.textsize(u" ")
 
                 if size[1] < height + metrics[1]:
                     truncated = 1
                     break
 
                 lines.append(string[0:length])
-                line = string[length:]
-
                 height += metrics[1] + self.lineSpacing
+
+                line = string[length:]
+                if line == "":
+                    break
 
         # truncate last line.
         if len(lines) == 0:
