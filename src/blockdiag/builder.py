@@ -423,6 +423,7 @@ class ScreenNodeBuilder:
         if layout:
             DiagramLayoutManager(diagram).run()
             diagram.fixiate(True)
+
         return diagram
 
     @classmethod
