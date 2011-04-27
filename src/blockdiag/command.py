@@ -117,13 +117,13 @@ def main():
         for i, group in enumerate(diagram.traverse_groups()):
             group = ScreenNodeBuilder.separate(group)
 
-            draw = DiagramDraw.DiagramDraw(options.type, group,
+            outfile2 = re.sub('.svg$', '', outfile) + ('_%d.svg' % (i + 1))
+            draw = DiagramDraw.DiagramDraw(options.type, group, outfile2,
                                            font=fontpath,
                                            basediagram=diagram,
                                            antialias=options.antialias)
             draw.draw()
-            outfile2 = re.sub('.svg$', '', outfile) + ('_%d.svg' % (i + 1))
-            draw.save(outfile2)
+            draw.save()
             group.href = './%s' % os.path.basename(outfile2)
 
         diagram = ScreenNodeBuilder.separate(diagram)
