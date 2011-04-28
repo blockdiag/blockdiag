@@ -75,7 +75,7 @@ class DiagramDraw(object):
             yield edge
 
         for group in self.groups:
-            for edge in group.edges:
+            for edge in (e for e in group.edges  if e.style != 'none'):
                 yield edge
 
     def pagesize(self, scaled=False):
