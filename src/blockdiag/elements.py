@@ -163,7 +163,7 @@ class NodeGroup(Element):
         self.orientation = 'landscape'
 
     def duplicate(self):
-        copied = Element.duplicate(self)
+        copied = super(NodeGroup, self).duplicate()
         copied.nodes = []
         copied.edges = []
 
