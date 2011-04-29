@@ -426,71 +426,73 @@ class ScreenNodeBuilder:
 
         return diagram
 
+
+class SeparateDiagramBuilder:
     @classmethod
-    def separate(self, diagram):
-        if diagram.group is None:
-            pass
+    def build(cls, tree):
+        DiagramNode.clear()
+        DiagramEdge.clear()
+        NodeGroup.clear()
 
-        DiagramLayoutManager(diagram).run()
-        diagram.fixiate(True)
+        return cls(tree).run()
 
-        return diagram
+    def __init__(self, tree):
+        self.diagram = DiagramTreeBuilder().build(tree)
 
-    @classmethod
-    def _separate(self, diagram):
-        diagrams = []
-        for group in diagram.traverse_groups():
+    def run(self):
+        for i, group in enumerate(self.diagram.traverse_groups()):
+            if i == 0:
+                continue
+
             base = Diagram()
-            parent = group.group
-            edges = DiagramEdge.find_by_level(parent.level)
+            base.level = group.level - 1
+            base.edges = DiagramEdge.find(None, group) + \
+                         DiagramEdge.find(group, None)
 
-            uniq_edges = {}
-            for edge in edges:
-                if edge.node1 == group or edge.node2 == group:
-                    uniq_edges[edge.node1] = 1
-                    uniq_edges[edge.node2] = 1
+            original_nodes = {}
+            original_edges = {}
+            original_nodes[group] = list(group.nodes)
+            original_edges[group] = list(group.edges)
+            group.edges = []
 
-            uniq_nodes = {}
-            nodes = uniq_edges.keys()
-            nodes.sort(lambda x, y: cmp(x.order, y.order))
-            for node in nodes:
-                if isinstance(node, NodeGroup):
-                    group = node.duplicate()
-                    group.group = base
-                    for subnode in node.nodes:
-                        if isinstance(subnode, NodeGroup):
-                            subgroup = subnode.duplicate()
-                            subgroup.group = group
-                            subgroup.separated = True
-                            group.nodes.append(subgroup)
-                        else:
-                            newnode = subnode.duplicate()
-                            newnode.group = group
-                            uniq_nodes[subnode] = newnode
-                            group.nodes.append(newnode)
+            for g in group.nodes:
+                if isinstance(g, NodeGroup):
+                    original_nodes[g] = g.nodes
+                    g.nodes = []
 
-                    base.nodes.append(group)
-                else:
-                    newnode = node.duplicate()
-                    newnode.group = base
-                    uniq_nodes[node] = newnode
-                    base.nodes.append(newnode)
+                    original_edges[g] = g.edges
+                    g.edges = []
+                    for e in original_edges[g]:
+                        if e.node1.group == g and e.node2.group == g:
+                            pass
+                        elif e.node1.group == g:
+                            e = e.duplicate()
+                            e.node1 = g
+                            g.edges.append(e)
+                        elif e.node2.group == g:
+                            e = e.duplicate()
+                            e.node2 = g
+                            g.edges.append(e)
 
-            for edge in DiagramEdge.find_all():
-                if edge.node1 in uniq_nodes and edge.node2 in uniq_nodes:
-                    node1 = uniq_nodes[edge.node1]
-                    node2 = uniq_nodes[edge.node2]
-                    DiagramEdge.get(node1, node2)
+            nodes = [e.node1 for e in DiagramEdge.find(None, group)] + \
+                    [group] + \
+                    [e.node2 for e in DiagramEdge.find(group, None)]
+            for n in nodes:
+                if n not in base.nodes:
+                    base.nodes.append(n)
 
-            self.bind_edges(base)
-            diagrams.append(base)
+            DiagramLayoutManager(base).run()
+            base.fixiate(True)
 
-        return diagrams
+            yield base
 
-    @classmethod
-    def bind_edges(self, group):
-        for node in group.nodes:
-            if isinstance(node, DiagramNode):
-                group.edges += DiagramEdge.find(node)
-            else:
-                self.bind_edges(node)
+            for g in original_nodes:
+                g.nodes = original_nodes[g]
+            for g in original_edges:
+                g.edges = original_edges[g]
+            sys.exit(0)
+
+            for node in self.diagram.traverse_nodes():
+                node.xy = XY(0, 0)
+                node.width = 1
+                node.height = 1

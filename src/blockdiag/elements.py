@@ -158,6 +158,7 @@ class NodeGroup(Element):
         self.href = None
         self.level = 0
         self.separated = False
+        self.shape = 'box'
         self.nodes = []
         self.edges = []
         self.orientation = 'landscape'
