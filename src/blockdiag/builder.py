@@ -463,12 +463,15 @@ class SeparateDiagramBuilder:
                 node.width = 1
                 node.height = 1
 
+            for edge in DiagramEdge.find_all():
+                edge.skipped = False
+
         yield self.diagram
 
     def run(self):
         for i, group in enumerate(self._groups):
             base = self.diagram.duplicate()
-            base.level = group.level
+            base.level = group.level - 1
             base.edges = DiagramEdge.find(None, group) + \
                          DiagramEdge.find(group, None)
 
