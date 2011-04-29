@@ -119,18 +119,16 @@ def main():
             draw = DiagramDraw.DiagramDraw(options.type, group, outfile2,
                                            font=fontpath,
                                            #basediagram=diagram,
-                                           antialias=options.antialias)
+                                           antialias=options.antialias,
+                                           nodoctype=options.nodoctype)
             draw.draw()
             draw.save()
-            group.href = './%s' % os.path.basename(outfile2)
-
-        return
-        diagram = ScreenNodeBuilder.separate(diagram)
     else:
         diagram = ScreenNodeBuilder.build(tree)
 
-    draw = DiagramDraw.DiagramDraw(options.type, diagram, outfile,
-                                   font=fontpath, antialias=options.antialias,
-                                   nodoctype=options.nodoctype)
-    draw.draw()
-    draw.save()
+        draw = DiagramDraw.DiagramDraw(options.type, diagram, outfile,
+                                       font=fontpath,
+                                       antialias=options.antialias,
+                                       nodoctype=options.nodoctype)
+        draw.draw()
+        draw.save()
