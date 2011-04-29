@@ -112,20 +112,19 @@ def main():
 
     tree = diagparser.parse_file(infile)
     if options.separate:
-        diagram = ScreenNodeBuilder.build(tree, layout=False)
+        from builder import SeparateDiagramBuilder
 
-        for i, group in enumerate(diagram.traverse_groups()):
-            group = ScreenNodeBuilder.separate(group)
-
+        for i, group in enumerate(SeparateDiagramBuilder.build(tree)):
             outfile2 = re.sub('.svg$', '', outfile) + ('_%d.svg' % (i + 1))
             draw = DiagramDraw.DiagramDraw(options.type, group, outfile2,
                                            font=fontpath,
-                                           basediagram=diagram,
+                                           #basediagram=diagram,
                                            antialias=options.antialias)
             draw.draw()
             draw.save()
             group.href = './%s' % os.path.basename(outfile2)
 
+        return
         diagram = ScreenNodeBuilder.separate(diagram)
     else:
         diagram = ScreenNodeBuilder.build(tree)
