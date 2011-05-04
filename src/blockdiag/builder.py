@@ -444,68 +444,97 @@ class SeparateDiagramBuilder:
         # Store nodes and edges of subgroups
         nodes = {self.diagram: self.diagram.nodes}
         edges = {self.diagram: self.diagram.edges}
+        levels = {self.diagram: self.diagram.level}
         for group in self.diagram.traverse_groups():
             nodes[group] = group.nodes
             edges[group] = group.edges
+            levels[group] = group.level
+
+        groups = {}
+        for node in self.diagram.traverse_nodes():
+            groups[node] = node.group
 
         for group in self.diagram.traverse_groups():
             yield group
 
-            # Restore nodes and edges
+            # Restore nodes, groups and edges
             for g in nodes:
                 g.nodes = nodes[g]
-            for g in edges:
                 g.edges = edges[g]
+                g.level = levels[g]
 
-            # Reset width, height and XY of all nodes
-            for node in self.diagram.traverse_nodes():
-                node.xy = XY(0, 0)
-                node.width = 1
-                node.height = 1
+            for n in groups:
+                n.group = groups[n]
+                n.xy = XY(0, 0)
+                n.width = 1
+                n.height = 1
 
             for edge in DiagramEdge.find_all():
                 edge.skipped = False
 
         yield self.diagram
 
+    def _filter_edges(self, edges, parent, level):
+        filtered = {}
+        for e in edges:
+            if e.node1.group.is_parent(parent):
+                if e.node1.group.level > level:
+                    e = e.duplicate()
+                    if isinstance(e.node1, NodeGroup):
+                        e.node1 = e.node1.parent(level + 1)
+                    else:
+                        e.node1 = e.node1.group.parent(level + 1)
+            else:
+                continue
+
+            if e.node2.group.is_parent(parent):
+                if e.node2.group.level > level:
+                    e = e.duplicate()
+                    if isinstance(e.node2, NodeGroup):
+                        e.node2 = e.node2.parent(level + 1)
+                    else:
+                        e.node2 = e.node2.group.parent(level + 1)
+            else:
+                continue
+
+            filtered[(e.node1, e.node2)] = e
+
+        return filtered.values()
+
     def run(self):
         for i, group in enumerate(self._groups):
             base = self.diagram.duplicate()
             base.level = group.level - 1
-            base.edges = DiagramEdge.find(None, group) + \
-                         DiagramEdge.find(group, None)
 
-            edges = group.edges
+            # bind edges on base diagram (outer the group)
+            edges = DiagramEdge.find(None, group) + \
+                    DiagramEdge.find(group, None)
+            base.edges = self._filter_edges(edges, self.diagram, group.level)
+
+            # bind edges on target group (inner the group)
+            subgroups = group.traverse_groups()
+            edges = sum([g.edges for g in subgroups], group.edges)
             group.edges = []
-            for e in edges:
-                if e.node2.group == group:
-                    group.edges.append(e)
-                elif e.node2.group.is_parent(group):
-                    e = e.duplicate()
-                    if isinstance(e.node2, NodeGroup):
-                        e.node2 = e.node2.parent(group.level + 1)
-                    else:
-                        e.node2 = e.node2.group.parent(group.level + 1)
+            for e in self._filter_edges(edges, group, group.level):
+                if isinstance(e.node1, NodeGroup) and e.node1 == e.node2:
+                    pass
+                else:
                     group.edges.append(e)
 
+            # clear subgroups in the group
             for g in group.nodes:
                 if isinstance(g, NodeGroup):
-                    edges = g.edges
                     g.nodes = []
                     g.edges = []
 
-                    for e in edges:
-                        if e.node2.group != g:
-                            e = e.duplicate()
-                            e.node1 = g
-                            g.edges.append(e)
-
+            # pick up nodes to base diagram
             nodes = [e.node1 for e in DiagramEdge.find(None, group)] + \
                     [group] + \
                     [e.node2 for e in DiagramEdge.find(group, None)]
             for n in nodes:
                 if n not in base.nodes:
                     base.nodes.append(n)
+                    n.group = base
 
             if isinstance(group, Diagram):
                 base = group
