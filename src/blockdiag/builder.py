@@ -471,6 +471,7 @@ class SeparateDiagramBuilder:
 
             for edge in DiagramEdge.find_all():
                 edge.skipped = False
+                edge.crosspoints = []
 
         yield self.diagram
 
