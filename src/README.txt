@@ -2,7 +2,6 @@
 
 Features
 ========
-
 * Generate block-diagram from dot like text (basic feature).
 * Multilingualization for node-label (utf-8 only).
 
@@ -41,14 +40,12 @@ Please refer to `spec-text setting sample`_ section for the format of the
 
 spec-text setting sample
 ========================
-
 Few examples are available.
 You can get more examples at
 `tk0miya.bitbucket.org <http://tk0miya.bitbucket.org/blockdiag/build/html/index.html>`_ .
 
 simple.diag
 ------------
-
 simple.diag is simply define nodes and transitions by dot-like text format::
 
     diagram admin {
@@ -57,7 +54,6 @@ simple.diag is simply define nodes and transitions by dot-like text format::
 
 screen.diag
 ------------
-
 screen.diag is more complexly sample. diaglam nodes have a alternative label
 and some transitions::
 
@@ -94,7 +90,6 @@ and some transitions::
 
 Usage
 =====
-
 Execute blockdiag command::
 
    $ blockdiag simple.diag
@@ -104,7 +99,6 @@ Execute blockdiag command::
 
 Requirements
 ============
-
 * Python 2.4 or later (not support 3.x)
 * Python Imaging Library 1.1.5 or later.
 * funcparserlib 0.3.4 or later.
@@ -118,6 +112,11 @@ Python Software Foundation License.
 
 History
 =======
+
+0.8.0 (2011-05-04)
+------------------
+* Add --separate option and --version option
+* Fix bugs
 
 0.7.8 (2011-04-19)
 ------------------
