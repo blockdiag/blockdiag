@@ -5,10 +5,15 @@ import sys
 import math
 from utils.XY import XY
 import noderenderer
-from DiagramMetrix import DiagramMetrix
 
 
 class DiagramDraw(object):
+    MetrixClass = None
+
+    @classmethod
+    def set_metrix_class(cls, MetrixClass):
+        cls.MetrixClass = MetrixClass
+
     def __init__(self, format, diagram, filename=None, **kwargs):
         self.format = format.upper()
         self.diagram = diagram
@@ -22,8 +27,8 @@ class DiagramDraw(object):
             self.scale_ratio = 2
         else:
             self.scale_ratio = 1
-        self.metrix = DiagramMetrix(base_diagram,
-                                    scale_ratio=self.scale_ratio, **kwargs)
+        self.metrix = self.MetrixClass(base_diagram,
+                                       scale_ratio=self.scale_ratio, **kwargs)
 
         if self.format == 'SVG':
             import SVGImageDraw
@@ -296,3 +301,7 @@ class DiagramDraw(object):
             size = (x, y)
 
         return self.drawer.save(self.filename, size, self.format)
+
+
+from DiagramMetrix import DiagramMetrix
+DiagramDraw.set_metrix_class(DiagramMetrix)
