@@ -260,7 +260,7 @@ class Diagram(NodeGroup):
         self.node_height = None
         self.span_width = None
         self.span_height = None
-        self.page_padding = [0, 0, 0, 0]
+        self.page_padding = None
         self.fontsize = None
 
     def set_default_shape(self, value):
