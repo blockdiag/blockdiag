@@ -486,9 +486,9 @@ class LandscapeEdgeMetrix(EdgeMetrix):
         elif dir == 'up':
             if self.edge.skipped:
                 shaft.moveTo(node1.right())
-                shaft.lineTo(cell1.right().x + span.x / 8,
+                shaft.lineTo(cell1.right().x + span.x / 4,
                              cell1.right().y)
-                shaft.lineTo(cell1.right().x + span.x / 8,
+                shaft.lineTo(cell1.right().x + span.x / 4,
                              cell2.bottom().y + span.y / 2)
                 shaft.lineTo(cell2.bottom().x, cell2.bottom().y + span.y / 2)
             else:
@@ -498,9 +498,9 @@ class LandscapeEdgeMetrix(EdgeMetrix):
 
         elif dir in ('left-up', 'left', 'same'):
             shaft.moveTo(node1.right())
-            shaft.lineTo(cell1.right().x + span.x / 8,
+            shaft.lineTo(cell1.right().x + span.x / 4,
                          cell1.right().y)
-            shaft.lineTo(cell1.right().x + span.x / 8,
+            shaft.lineTo(cell1.right().x + span.x / 4,
                          cell2.top().y - span.y / 2 + span.y / 8)
             shaft.lineTo(cell2.top().x,
                          cell2.top().y - span.y / 2 + span.y / 8)
@@ -571,9 +571,9 @@ class LandscapeEdgeMetrix(EdgeMetrix):
 
         elif dir in ('up', 'left-up', 'left', 'same'):
             if self.edge.node2.xy.y < self.edge.node1.xy.y:
-                box = (node1.topRight().x - span.x / 2 + span.x / 8,
+                box = (node1.topRight().x - span.x / 2 + span.x / 4,
                        node1.topRight().y - span.y / 2,
-                       node1.topRight().x + span.x / 2 + span.x / 8,
+                       node1.topRight().x + span.x / 2 + span.x / 4,
                        node1.topRight().y)
             else:
                 box = (node1.top().x + span.x / 4,
@@ -645,9 +645,9 @@ class PortraitEdgeMetrix(EdgeMetrix):
             else:
                 shaft.moveTo(node1.bottom())
                 shaft.lineTo(cell1.bottom().x, cell1.bottom().y + span.y / 2)
-                shaft.lineTo(cell2.right().x + span.x / 8,
+                shaft.lineTo(cell2.right().x + span.x / 4,
                              cell1.bottom().y + span.y / 2)
-                shaft.lineTo(cell2.right().x + span.x / 8,
+                shaft.lineTo(cell2.right().x + span.x / 4,
                              cell2.top().y - span.y / 2 + span.y / 8)
                 shaft.lineTo(cell2.top().x,
                              cell2.top().y - span.y / 2 + span.y / 8)
@@ -670,9 +670,9 @@ class PortraitEdgeMetrix(EdgeMetrix):
 
         elif dir in ('left-up', 'left', 'same'):
             shaft.moveTo(node1.right())
-            shaft.lineTo(cell1.right().x + span.x / 8,
+            shaft.lineTo(cell1.right().x + span.x / 4,
                          cell1.right().y)
-            shaft.lineTo(cell1.right().x + span.x / 8,
+            shaft.lineTo(cell1.right().x + span.x / 4,
                          cell2.top().y - span.y / 2 + span.y / 8)
             shaft.lineTo(cell2.top().x,
                          cell2.top().y - span.y / 2 + span.y / 8)
@@ -741,9 +741,9 @@ class PortraitEdgeMetrix(EdgeMetrix):
 
         elif dir in ('up', 'left-up', 'left', 'same'):
             if self.edge.node2.xy.y < self.edge.node1.xy.y:
-                box = (node1.topRight().x - span.x / 2 + span.x / 8,
+                box = (node1.topRight().x - span.x / 2 + span.x / 4,
                        node1.topRight().y - span.y / 2,
-                       node1.topRight().x + span.x / 2 + span.x / 8,
+                       node1.topRight().x + span.x / 2 + span.x / 4,
                        node1.topRight().y)
             else:
                 box = (node1.top().x + span.x / 4,
