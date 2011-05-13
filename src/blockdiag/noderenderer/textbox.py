@@ -4,7 +4,7 @@ from blockdiag.noderenderer import install_renderer
 from blockdiag.utils.XY import XY
 
 
-class NoneBox(NodeShape):
+class TextBox(NodeShape):
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
         fill = kwargs.get('fill')
@@ -17,4 +17,4 @@ class NoneBox(NodeShape):
 
 
 def setup(self):
-    install_renderer('textbox', NoneBox)
+    install_renderer('textbox', TextBox)
