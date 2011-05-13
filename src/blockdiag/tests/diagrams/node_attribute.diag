@@ -1,0 +1,7 @@
+diagram {
+  A [label="B", color="red"];
+  B [label="double quoted"];
+  C [label='single quoted', color = 'red'];
+  D [label="'\"double\" quoted'", color = 'red'];
+  E [label='"\'single\' quoted"', color = 'red', numbered = "1"];
+}

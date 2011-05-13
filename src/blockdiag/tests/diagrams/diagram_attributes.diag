@@ -1,0 +1,10 @@
+{
+  node_width = 160;
+  node_height = 160;
+  span_width = 32;
+  span_height = 32;
+  fontsize = 16;
+  default_shape = 'diamond'
+
+  A;
+}
