@@ -122,7 +122,12 @@ def main():
 
     fontpath = detectfont(options)
 
-    tree = diagparser.parse_file(infile)
+    try:
+        tree = diagparser.parse_file(infile)
+    except Exception, e:
+        sys.stderr.write("ERROR: %s\n" % e)
+        return
+
     if options.separate:
         from builder import SeparateDiagramBuilder
 
