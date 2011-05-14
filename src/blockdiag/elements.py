@@ -262,6 +262,7 @@ class Diagram(NodeGroup):
         self.span_height = None
         self.page_padding = None
         self.fontsize = None
+        self.edge_layout = None
 
     def set_default_shape(self, value):
         try:
@@ -273,6 +274,17 @@ class Diagram(NodeGroup):
 
     def set_shape_namespace(self, value):
         noderenderer.set_default_namespace(value)
+
+    def set_edge_layout(self, value):
+        value = value.lower()
+        if value in ('normal', 'flowchart'):
+            msg = "WARNING: edge_layout is very experimental feature!\n"
+            sys.stderr.write(msg)
+
+            self.edge_layout = value
+        else:
+            msg = "WARNING: unknown edge dir: %s\n" % value
+            sys.stderr.write(msg)
 
 
 class DiagramEdge(Base):
