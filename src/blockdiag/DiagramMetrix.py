@@ -137,6 +137,7 @@ class DiagramMetrix(dict):
         self.setdefault('lineSpacing', 2)
         self.setdefault('shadowOffsetX', 3)
         self.setdefault('shadowOffsetY', 6)
+        self.setdefault('edge_layout', diagram.edge_layout)
 
         cellsize = self.cellSize / self.scale_ratio
         if diagram.node_width:
@@ -208,10 +209,16 @@ class DiagramMetrix(dict):
         return NodeMetrix(group, self)
 
     def edge(self, edge):
-        if edge.node1.group.orientation == 'landscape':
-            return LandscapeEdgeMetrix(edge, self)
+        if self.edge_layout == 'flowchart':
+            if edge.node1.group.orientation == 'landscape':
+                return FlowchartLandscapeEdgeMetrix(edge, self)
+            else:
+                return FlowchartPortraitEdgeMetrix(edge, self)
         else:
-            return PortraitEdgeMetrix(edge, self)
+            if edge.node1.group.orientation == 'landscape':
+                return LandscapeEdgeMetrix(edge, self)
+            else:
+                return PortraitEdgeMetrix(edge, self)
 
     def pageSize(self, width, height):
         DummyNode = namedtuple('DummyNode', 'width height xy')
@@ -760,5 +767,136 @@ class PortraitEdgeMetrix(EdgeMetrix):
         # shrink box
         box = (box[0] + span.x / 8, box[1],
                box[2] - span.x / 8, box[3])
+
+        return box
+
+
+class FlowchartLandscapeEdgeMetrix(LandscapeEdgeMetrix):
+    def heads(self):
+        heads = []
+
+        if self.direction() == 'right-down':
+            if self.edge.dir in ('back', 'both'):
+                heads.append(self._head(self.edge.node1, 'up'))
+
+            if self.edge.dir in ('forward', 'both'):
+                heads.append(self._head(self.edge.node2, 'right'))
+        else:
+            heads = super(FlowchartLandscapeEdgeMetrix, self).heads()
+
+        return heads
+
+    def shaft(self):
+        if self.direction() == 'right-down':
+            span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+            node1 = self.metrix.node(self.edge.node1)
+            cell1 = self.metrix.cell(self.edge.node1)
+            node2 = self.metrix.node(self.edge.node2)
+            cell2 = self.metrix.cell(self.edge.node2)
+
+            shaft = EdgeLines(self.metrix, self.edge.crosspoints)
+            shaft.moveTo(node1.bottom())
+
+            if self.edge.skipped:
+                shaft.lineTo(cell1.bottom().x,
+                             cell1.bottom().y - span.y / 2)
+                shaft.lineTo(cell2.left().x - span.x / 4,
+                             cell1.bottom().y - span.y / 2)
+                shaft.lineTo(cell2.left().x - span.x / 4, cell2.left().y)
+            else:
+                shaft.lineTo(cell1.bottom().x, cell2.left().y)
+
+            shaft.lineTo(node2.left())
+        else:
+            shaft = super(FlowchartLandscapeEdgeMetrix, self).shaft()
+
+        return shaft
+
+    def labelbox(self):
+        if dir == 'right':
+            span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+            node1 = self.metrix.node(self.edge.node1)
+            cell1 = self.metrix.cell(self.edge.node1)
+            node2 = self.metrix.node(self.edge.node2)
+            cell2 = self.metrix.cell(self.edge.node2)
+
+            if self.edge.skipped:
+                box = (cell1.bottom().x,
+                       cell1.bottom().y,
+                       cell1.bottomRight().x,
+                       cell1.bottomRight().y + span.y / 2)
+            else:
+                box = (cell1.bottom().x,
+                       cell2.left().y - span.y / 2,
+                       cell1.bottom().x,
+                       cell2.left().y)
+        else:
+            box = super(FlowchartLandscapeEdgeMetrix, self).labelbox()
+
+        return box
+
+
+class FlowchartPortraitEdgeMetrix(PortraitEdgeMetrix):
+    def heads(self):
+        heads = []
+
+        if self.direction() == 'right-down':
+            if self.edge.dir in ('back', 'both'):
+                heads.append(self._head(self.edge.node1, 'left'))
+
+            if self.edge.dir in ('forward', 'both'):
+                heads.append(self._head(self.edge.node2, 'down'))
+        else:
+            heads = super(FlowchartPortraitEdgeMetrix, self).heads()
+
+        return heads
+
+    def shaft(self):
+        if self.direction() == 'right-down':
+            span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+            node1 = self.metrix.node(self.edge.node1)
+            cell1 = self.metrix.cell(self.edge.node1)
+            node2 = self.metrix.node(self.edge.node2)
+            cell2 = self.metrix.cell(self.edge.node2)
+
+            shaft = EdgeLines(self.metrix, self.edge.crosspoints)
+            shaft.moveTo(node1.right())
+
+            if self.edge.skipped:
+                shaft.lineTo(cell1.right().x + span.x * 3 / 4,
+                             cell1.right().y)
+                shaft.lineTo(cell1.right().x + span.x * 3 / 4,
+                             cell2.left().y)
+                shaft.lineTo(cell2.top().x,
+                             cell2.top().y - span.x / 2)
+            else:
+                shaft.lineTo(cell2.top().x, cell1.right().y)
+
+            shaft.lineTo(node2.top())
+        else:
+            shaft = super(FlowchartPortraitEdgeMetrix, self).shaft()
+
+        return shaft
+
+    def labelbox(self):
+        if dir == 'right':
+            span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+            node1 = self.metrix.node(self.edge.node1)
+            cell1 = self.metrix.cell(self.edge.node1)
+            node2 = self.metrix.node(self.edge.node2)
+            cell2 = self.metrix.cell(self.edge.node2)
+
+            if self.edge.skipped:
+                box = (cell1.bottom().x,
+                       cell1.bottom().y,
+                       cell1.bottomRight().x,
+                       cell1.bottomRight().y + span.y / 2)
+            else:
+                box = (cell1.bottom().x,
+                       cell2.left().y - span.y / 2,
+                       cell1.bottom().x,
+                       cell2.left().y)
+        else:
+            box = super(FlowchartPortraitEdgeMetrix, self).labelbox()
 
         return box
