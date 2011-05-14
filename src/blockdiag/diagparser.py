@@ -154,6 +154,6 @@ def parse_file(path):
         return parse(tokenize(input))
     except LexerError, e:
         message = "Got unexpected token at line %d column %d" % e.place
-        raise ParseException, message
+        raise ParseException(message)
     except Exception, e:
-        raise ParseException, str(e)
+        raise ParseException(str(e))
