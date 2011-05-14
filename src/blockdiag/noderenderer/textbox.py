@@ -11,8 +11,6 @@ class TextBox(NodeShape):
 
         box = self.metrix.cell(self.node).box()
         if self.node.background:
-            drawer.rectangle(box, fill=self.node.color,
-                             outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
 
 
