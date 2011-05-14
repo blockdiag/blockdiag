@@ -113,6 +113,11 @@ Apache License 2.0
 History
 =======
 
+0.8.1 (2011-05-14)
+------------------
+* Change license to Apache License 2.0
+* Fix bugs
+
 0.8.0 (2011-05-04)
 ------------------
 * Add --separate option and --version option
