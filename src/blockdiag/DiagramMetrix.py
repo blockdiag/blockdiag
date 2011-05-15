@@ -799,9 +799,9 @@ class FlowchartLandscapeEdgeMetrix(LandscapeEdgeMetrix):
 
             if self.edge.skipped:
                 shaft.lineTo(cell1.bottom().x,
-                             cell1.bottom().y - span.y / 2)
+                             cell1.bottom().y + span.y / 2)
                 shaft.lineTo(cell2.left().x - span.x / 4,
-                             cell1.bottom().y - span.y / 2)
+                             cell1.bottom().y + span.y / 2)
                 shaft.lineTo(cell2.left().x - span.x / 4, cell2.left().y)
             else:
                 shaft.lineTo(cell1.bottom().x, cell2.left().y)
@@ -866,9 +866,9 @@ class FlowchartPortraitEdgeMetrix(PortraitEdgeMetrix):
                 shaft.lineTo(cell1.right().x + span.x * 3 / 4,
                              cell1.right().y)
                 shaft.lineTo(cell1.right().x + span.x * 3 / 4,
-                             cell2.left().y)
+                             cell2.topLeft().y - span.y / 2)
                 shaft.lineTo(cell2.top().x,
-                             cell2.top().y - span.x / 2)
+                             cell2.top().y - span.y / 2)
             else:
                 shaft.lineTo(cell2.top().x, cell1.right().y)
 
