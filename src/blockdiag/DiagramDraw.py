@@ -151,12 +151,20 @@ class DiagramDraw(object):
                         if len(nodes) > 0:
                             edge.skipped = 1
                 elif dir == 'right-down':
-                    r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
-                    for x in r:
-                        xy = (x, edge.node2.xy.y)
-                        nodes = [x for x in self.nodes if x.xy == xy]
-                        if len(nodes) > 0:
-                            edge.skipped = 1
+                    if self.diagram.edge_layout == 'flowchart':
+                        r = range(edge.node1.xy.y, edge.node2.xy.y)
+                        for y in r:
+                            xy = (edge.node1.xy.x, y + 1)
+                            nodes = [x for x in self.nodes if x.xy == xy]
+                            if len(nodes) > 0:
+                                edge.skipped = 1
+                    else:
+                        r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
+                        for x in r:
+                            xy = (x, edge.node2.xy.y)
+                            nodes = [x for x in self.nodes if x.xy == xy]
+                            if len(nodes) > 0:
+                                edge.skipped = 1
                 elif dir in ('left-down', 'down'):
                     r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
                     for y in r:
@@ -187,12 +195,21 @@ class DiagramDraw(object):
                         if len(nodes) > 0:
                             edge.skipped = 1
                 elif dir == 'right-down':
-                    r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
-                    for y in r:
-                        xy = (edge.node2.xy.x, y)
-                        nodes = [x for x in self.nodes if x.xy == xy]
-                        if len(nodes) > 0:
-                            edge.skipped = 1
+                    if self.diagram.edge_layout == 'flowchart':
+                        r = range(edge.node1.xy.x, edge.node2.xy.x)
+                        print edge, r
+                        for x in r:
+                            xy = (x + 1, edge.node1.xy.y)
+                            nodes = [x for x in self.nodes if x.xy == xy]
+                            if len(nodes) > 0:
+                                edge.skipped = 1
+                    else:
+                        r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
+                        for y in r:
+                            xy = (edge.node2.xy.x, y)
+                            nodes = [x for x in self.nodes if x.xy == xy]
+                            if len(nodes) > 0:
+                                edge.skipped = 1
 
         # Search crosspoints
         from bisect import insort, bisect_left, bisect_right
