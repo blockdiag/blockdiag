@@ -80,18 +80,19 @@ class Element(Base):
         if not id:
             id = uuid.generate()
 
-        if id not in cls.namespace:
+        unquote_id = unquote(id)
+        if unquote_id not in cls.namespace:
             obj = cls(id)
-            cls.namespace[id] = obj
+            cls.namespace[unquote_id] = obj
 
-        return cls.namespace[id]
+        return cls.namespace[unquote_id]
 
     @classmethod
     def clear(cls):
         cls.namespace = {}
 
     def __init__(self, id):
-        self.id = id
+        self.id = unquote(id)
         self.label = ''
         self.xy = XY(0, 0)
         self.group = None
