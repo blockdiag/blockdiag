@@ -22,53 +22,45 @@ class BoxSet(NodeShape):
     def __init__(self, node, metrix=None):
         super(BoxSet, self).__init__(node, metrix)
 
-        m = self.metrix.cell(self.node)
-        self.span = m.metrix.nodeHeight / 10
-        self.box = (m.topLeft().x,
-                    m.topLeft().y,
-                    m.bottomRight().x - self.span * 2,
-                    m.bottomRight().y - self.span * 2)
+        self.boxes = 3
+        self.r = self.metrix.nodeHeight / 10
+
+        box = self.textbox
+        r = self.boxes * self.r
+        self.textbox = (box[0] + r, box[1] + r, box[2], box[3])
 
     def render_shape(self, drawer, format, **kwargs):
-        self.outline = kwargs.get('outline')
-        self.drawer = drawer
-        self.fill = kwargs.get('fill')
+        outline = kwargs.get('outline')
+        drawer = drawer
+        fill = kwargs.get('fill')
 
-        for i in range(0, 3):
-            if kwargs.get('shadow'):
-                self.draw_shadow(self.box)
-            self.draw_box(self.box)
-            self.box = (self.box[0] + self.span,
-                        self.box[1] + self.span,
-                        self.box[2] + self.span,
-                        self.box[3] + self.span)
-
-        # draw background only once, after draw rect
-        if self.node.background:
-            self.draw_background(self.box)
-
-    def draw_shadow(self, box):
-        box = self.shift_shadow(box)
-        self.drawer.rectangle(box, fill=self.fill,
-                              outline=self.fill,
-                              filter='transp-blur')
-
-    def draw_background(self, box):
-        self.drawer.rectangle(box,
-                              fill=self.node.color,
-                              outline=self.node.color)
-        self.drawer.loadImage(self.node.background,
-                              self.box)
-        self.drawer.rectangle(box,
-                              outline=self.outline,
-                              style=self.node.style)
-
-    def draw_box(self, box):
         # draw outline
-        self.drawer.rectangle(box,
-                              fill=self.node.color,
-                              outline=self.outline,
-                              style=self.node.style)
+        box = self.metrix.cell(self.node).box()
+        if kwargs.get('shadow'):
+            for i in range(self.boxes - 1, -1, -1):
+                r = i * self.r
+                box = (self.textbox[0] - r, self.textbox[1] - r,
+                       self.textbox[2] - r, self.textbox[3] - r)
+                shadow = self.shift_shadow(box)
+                drawer.rectangle(shadow, fill=fill, outline=fill,
+                                 filter='transp-blur')
+        else:
+            for i in range(self.boxes - 1, 0, -1):
+                r = i * self.r
+                box = (self.textbox[0] - r, self.textbox[1] - r,
+                       self.textbox[2] - r, self.textbox[3] - r)
+                drawer.rectangle(box, fill=self.node.color, outline=outline,
+                                 style=self.node.style)
+
+            box = self.textbox
+            if self.node.background:
+                drawer.rectangle(box, fill=self.node.color,
+                                 outline=self.node.color)
+                drawer.loadImage(self.node.background, self.textbox)
+                drawer.rectangle(box, outline=outline, style=self.node.style)
+            else:
+                drawer.rectangle(box, fill=self.node.color, outline=outline,
+                                 style=self.node.style)
 
 
 def setup(self):
