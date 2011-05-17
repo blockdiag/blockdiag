@@ -138,6 +138,7 @@ class DiagramNode(Element):
         self.background = None
         self.description = None
         self.drawable = True
+        self.stacked = False
 
     def set_style(self, value):
         if value in ('solid', 'dotted', 'dashed'):
@@ -160,6 +161,9 @@ class DiagramNode(Element):
         else:
             msg = "WARNING: background image not found: %s\n" % value
             sys.stderr.write(msg)
+
+    def set_stacked(self, value):
+         self.stacked = True
 
 
 class NodeGroup(Element):

@@ -194,6 +194,16 @@ class DiagramMetrix(dict):
 
         return self.__class__(self, **kwargs)
 
+    def shiftedMetrix(self, top, right, bottom, left):
+        kwargs = {}
+        for key in self:
+            kwargs[key] = self[key]
+        padding = self['pagePadding']
+        kwargs['pagePadding'] = [padding[0] + top, padding[1] + right,
+                                 padding[2] + bottom, padding[3] + left]
+
+        return self.__class__(self, **kwargs)
+
     def node(self, node):
         renderer = noderenderer.get(node.shape)
 
