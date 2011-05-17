@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd ">
+<svg viewBox="0 0 640 216 " xmlns="http://www.w3.org/2000/svg"  xmlns:xlink="http://www.w3.org/1999/xlink"  xmlns:inkspace="http://www.inkscape.org/namespaces/inkscape" >
+	<defs id="defs_block">
+		<filter inkspace:collect="always" height="1.504" width="1.1575" y="-0.252" x="-0.07875" id="filter_blur">
+			<feGaussianBlur stdDeviation="4.2" id="feGaussianBlur3780" inkspace:collect="always"/>
+		</filter>
+	</defs>
+	<title>blockdiag</title>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="54" x="67" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="54" x="259" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="134" x="259" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="54" x="451" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="48" x="64" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="74" x="124" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">A</text>
+	<ellipse style="None" rx="12" ry="12" stroke="rgb(0,0,0)" cy="48" cx="64" fill="pink"/>
+	<text y="54" x="61" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">1</text>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="48" x="256" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="74" x="317" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">B</text>
+	<ellipse style="None" rx="12" ry="12" stroke="rgb(0,0,0)" cy="48" cx="256" fill="pink"/>
+	<text y="54" x="253" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">2</text>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="128" x="256" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="154" x="316" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">D</text>
+	<ellipse style="None" rx="12" ry="12" stroke="rgb(0,0,0)" cy="128" cx="256" fill="pink"/>
+	<text y="134" x="253" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">4</text>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="48" x="448" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="74" x="508" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">C</text>
+	<ellipse style="None" rx="12" ry="12" stroke="rgb(0,0,0)" cy="48" cx="448" fill="pink"/>
+	<text y="54" x="445" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">3</text>
+	<path stroke="rgb(0,0,0)" d="M 192 68 L 224 68 L 224 148 L 256 148" fill="none"/>
+	<polygon style="None" points="256, 148  248, 144  248, 152  256, 148  " stroke="rgb(0,0,0)" fill="rgb(0,0,0)"/>
+	<path stroke="rgb(0,0,0)" d="M 192 68 L 256 68" fill="none"/>
+	<polygon style="None" points="256, 68  248, 64  248, 72  256, 68  " stroke="rgb(0,0,0)" fill="rgb(0,0,0)"/>
+	<path stroke="rgb(0,0,0)" d="M 384 68 L 448 68" fill="none"/>
+	<polygon style="None" points="448, 68  440, 64  440, 72  448, 68  " stroke="rgb(0,0,0)" fill="rgb(0,0,0)"/>
+</svg>
