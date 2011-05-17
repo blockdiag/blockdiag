@@ -59,6 +59,8 @@ setup(
 
         [blockdiag_noderenderer]
         box = blockdiag.noderenderer.box
+        boxes = blockdiag.noderenderer.boxes
+        textbox = blockdiag.noderenderer.textbox
         roundedbox = blockdiag.noderenderer.roundedbox
         diamond = blockdiag.noderenderer.diamond
         minidiamond = blockdiag.noderenderer.minidiamond
@@ -74,8 +76,6 @@ setup(
         flowchart.loopin = blockdiag.noderenderer.flowchart.loopin
         flowchart.loopout = blockdiag.noderenderer.flowchart.loopout
         flowchart.terminator = blockdiag.noderenderer.flowchart.terminator
-        textbox = blockdiag.noderenderer.textbox
-        boxset = blockdiag.noderenderer.boxset
      """,
 )
 
