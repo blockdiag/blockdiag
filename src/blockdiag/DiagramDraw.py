@@ -197,7 +197,6 @@ class DiagramDraw(object):
                 elif dir == 'right-down':
                     if self.diagram.edge_layout == 'flowchart':
                         r = range(edge.node1.xy.x, edge.node2.xy.x)
-                        print edge, r
                         for x in r:
                             xy = (x + 1, edge.node1.xy.y)
                             nodes = [x for x in self.nodes if x.xy == xy]
