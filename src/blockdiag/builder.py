@@ -377,6 +377,12 @@ class DiagramLayoutManager:
         count = 0
         children = self.get_child_nodes(node)
         children.sort(lambda x, y: cmp(x.xy.x, y.xy.y))
+
+        grandchild = 0
+        for child in children:
+            if self.get_child_nodes(child):
+                grandchild += 1
+
         for child in children:
             if child.id in self.heightRefs:
                 pass
@@ -387,6 +393,11 @@ class DiagramLayoutManager:
                     parent_height = self.get_parent_node_height(node, child)
                     if parent_height and parent_height > height:
                         height = parent_height
+
+                if grandchild > 1:
+                    height = max(xy.y for xy in self.coordinates)
+                    if children.index(child) > 0:
+                        height += 1
 
                 while True:
                     if self.set_node_height(child, height):
