@@ -18,7 +18,7 @@ from blockdiag.noderenderer import install_renderer
 from blockdiag.utils.XY import XY
 
 
-class BoxSet(NodeShape):
+class Boxes(NodeShape):
     def __init__(self, node, metrix=None):
         super(BoxSet, self).__init__(node, metrix)
 
@@ -64,4 +64,4 @@ class BoxSet(NodeShape):
 
 
 def setup(self):
-    install_renderer('boxset', BoxSet)
+    install_renderer('boxes', Boxes)
