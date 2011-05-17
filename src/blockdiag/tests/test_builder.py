@@ -241,9 +241,10 @@ def test_labeled_circular_ref_diagram():
 def test_twin_forked_diagram():
     screen = __build_diagram('twin_forked.diag')
 
-    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'D': (2, 0),
-                  'E': (3, 0), 'F': (3, 1), 'G': (4, 1), 'Z': (0, 2)}
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 2), 'D': (2, 0),
+                  'E': (3, 0), 'F': (3, 1), 'G': (4, 1), 'Z': (0, 3)}
     for node in screen.nodes:
+        print node, assert_pos[node.id]
         assert node.xy == assert_pos[node.id]
 
 
@@ -654,8 +655,8 @@ def test_nested_group_orientation2_diagram():
 def test_slided_children_diagram():
     screen = __build_diagram('slided_children.diag')
 
-    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'D': (1, 2),
-                  'E': (2, 2), 'F': (3, 2), 'G': (2, 1), 'H': (4, 1)}
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'D': (1, 3),
+                  'E': (2, 3), 'F': (3, 2), 'G': (2, 1), 'H': (4, 1)}
     for node in (x for x in screen.nodes if x.drawable):
         print node, assert_pos[node.id]
         assert node.xy == assert_pos[node.id]
