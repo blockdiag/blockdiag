@@ -20,7 +20,7 @@ from blockdiag.utils.XY import XY
 
 class Boxes(NodeShape):
     def __init__(self, node, metrix=None):
-        super(BoxSet, self).__init__(node, metrix)
+        super(Boxes, self).__init__(node, metrix)
 
         self.boxes = 3
         self.r = self.metrix.nodeHeight / 10
