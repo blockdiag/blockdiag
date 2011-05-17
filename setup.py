@@ -59,7 +59,6 @@ setup(
 
         [blockdiag_noderenderer]
         box = blockdiag.noderenderer.box
-        boxes = blockdiag.noderenderer.boxes
         textbox = blockdiag.noderenderer.textbox
         roundedbox = blockdiag.noderenderer.roundedbox
         diamond = blockdiag.noderenderer.diamond
