@@ -60,6 +60,17 @@ class NodeShape(object):
         self.connectors = [m.top(), m.right(), m.bottom(), m.left()]
 
     def render(self, drawer, format, **kwargs):
+        if self.node.stacked and not kwargs.get('stacked'):
+            node = self.node.duplicate()
+            node.label = ""
+            node.background = ""
+            for i in range(2, 0, -1):
+                r = self.metrix.cellSize / 2 * i
+                metrix = self.metrix.shiftedMetrix(r, 0, 0, r)
+
+                self.__class__(node, metrix).render(drawer, format,
+                                                    stacked=True, **kwargs)
+
         if hasattr(self, 'render_vector_shape') and format == 'SVG':
             self.render_vector_shape(drawer, format, **kwargs)
         else:
@@ -102,10 +113,16 @@ class NodeShape(object):
         return self.connectors[3]
 
     def right(self):
-        return self.connectors[1]
+        point = self.connectors[1]
+        if self.node.stacked:
+            point = XY(point.x + self.metrix.cellSize, point.y)
+        return point
 
     def bottom(self):
-        return self.connectors[2]
+        point = self.connectors[2]
+        if self.node.stacked:
+            point = XY(point.x, point.y + self.metrix.cellSize)
+        return point
 
     def shift_shadow(self, value):
         xdiff = self.metrix.shadowOffsetX

@@ -20,11 +20,8 @@ from blockdiag.utils.XY import XY
 
 class TextBox(NodeShape):
     def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
-        fill = kwargs.get('fill')
-
-        box = self.metrix.cell(self.node).box()
-        if self.node.background:
+        if kwargs.get('shadow') and self.node.background:
+            box = self.metrix.cell(self.node).box()
             drawer.loadImage(self.node.background, self.textbox)
 
 
