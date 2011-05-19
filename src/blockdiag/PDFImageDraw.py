@@ -117,11 +117,21 @@ class PDFImageDraw:
         self.textarea(box, string, **kwargs)
 
     def text(self, xy, string, **kwargs):
+        if not kwargs.get('font'):
+            msg = "WARNING: Font does not set\n"
+            sys.stderr.write(msg)
+            return
+
         self.set_fill_color(kwargs.get('fill'))
         self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
         self.canvas.drawString(xy[0], xy[1], string)
 
     def textarea(self, box, string, **kwargs):
+        if not kwargs.get('font'):
+            msg = "WARNING: Font does not set\n"
+            sys.stderr.write(msg)
+            return
+
         self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
         lines = TextFolder(box, string, adjustBaseline=True,
                            canvas=self.canvas, **kwargs)
