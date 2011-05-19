@@ -19,6 +19,7 @@ import sys
 import copy
 from utils import uuid
 from utils.XY import XY
+from utils import urlutil
 import noderenderer
 
 
@@ -156,7 +157,7 @@ class DiagramNode(Element):
             raise RuntimeError(msg)
 
     def set_background(self, value):
-        if os.path.isfile(value):
+        if urlutil.isurl(value) or os.path.isfile(value):
             self.background = value
         else:
             msg = "WARNING: background image not found: %s\n" % value
@@ -164,8 +165,7 @@ class DiagramNode(Element):
 
     def set_stacked(self, value):
         self.stacked = True
-
-
+           
 class NodeGroup(Element):
     basecolor = (243, 152, 0)
 

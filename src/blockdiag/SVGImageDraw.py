@@ -17,6 +17,7 @@ import re
 import sys
 import base64
 from utils.XY import XY
+from utils import urlutil
 import utils.ellipse
 from SVGdraw import *
 import xml.sax.saxutils
@@ -204,8 +205,11 @@ class SVGImageDrawElement:
         self.svg.addElement(pg)
 
     def loadImage(self, filename, box):
-        string = open(filename).read()
-        url = "data:;base64," + base64.b64encode(string)
+        if urlutil.isurl(filename):
+            url = filename
+        else:
+            string = open(filename).read()
+            url = "data:;base64," + base64.b64encode(string)
 
         x = box[0]
         y = box[1]
