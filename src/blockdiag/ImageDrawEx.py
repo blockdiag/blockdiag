@@ -270,21 +270,16 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         box_height = box[3] - box[1]
 
         if urlutil.isurl(filename):
-            import tempfile
+            import cStringIO
             import urllib
-            tmp = tempfile.NamedTemporaryFile()
             try:
-                urllib.urlretrieve(filename, tmp.name)
-                image = Image.open(tmp.name)
+                filename = cStringIO.StringIO(urllib.urlopen(filename).read())
             except:
                 import sys
                 msg = "WARNING: Could not retrieve: %s\n" % filename
                 sys.stderr.write(msg)
                 return
-            finally:
-                tmp.close()
-        else:
-            image = Image.open(filename)
+        image = Image.open(filename)
 
         # resize image.
         w = min([box_width, image.size[0] * self.scale_ratio])
