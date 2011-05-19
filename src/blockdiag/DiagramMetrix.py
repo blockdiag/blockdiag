@@ -140,32 +140,32 @@ class DiagramMetrix(dict):
         self.setdefault('edge_layout', diagram.edge_layout)
 
         cellsize = self.cellSize / self.scale_ratio
-        if diagram.node_width:
+        if diagram.node_width is not None:
             self.setdefault('nodeWidth', diagram.node_width)
         else:
             self.setdefault('nodeWidth', cellsize * 16)
 
-        if diagram.node_height:
+        if diagram.node_height is not None:
             self.setdefault('nodeHeight', diagram.node_height)
         else:
             self.setdefault('nodeHeight', cellsize * 5)
 
-        if diagram.span_width:
+        if diagram.span_width is not None:
             self.setdefault('spanWidth', diagram.span_width)
         else:
             self.setdefault('spanWidth', cellsize * 8)
 
-        if diagram.span_height:
+        if diagram.span_height is not None:
             self.setdefault('spanHeight', diagram.span_height)
         else:
             self.setdefault('spanHeight', cellsize * 5)
 
-        if diagram.fontsize:
+        if diagram.fontsize is not None:
             self.setdefault('fontSize', diagram.fontsize)
         else:
             self.setdefault('fontSize', 11)
 
-        if diagram.page_padding:
+        if diagram.page_padding is not None:
             self.setdefault('pagePadding', diagram.page_padding)
         else:
             self.setdefault('pagePadding', [0, 0, 0, 0])
