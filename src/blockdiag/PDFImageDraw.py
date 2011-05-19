@@ -20,6 +20,7 @@ from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.units import inch
 from utils.XY import XY
+from utils import urlutil
 from utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 
@@ -162,8 +163,24 @@ class PDFImageDraw:
         w = box[2] - box[0]
         h = box[3] - box[1]
 
-        self.canvas.drawImage(filename, x, y, w, h, mask='auto',
-                              preserveAspectRatio=True)
+        if urlutil.isurl(filename):
+            import tempfile
+            import urllib
+            tmp = tempfile.NamedTemporaryFile()
+            try:
+                urllib.urlretrieve(filename, tmp.name)
+                self.canvas.drawImage(tmp.name, x, y, w, h, mask='auto',
+                                      preserveAspectRatio=True)
+            except:
+                import sys
+                msg = "WARNING: Could not retrieve: %s\n" % filename
+                sys.stderr.write(msg)
+                return
+            finally:
+                tmp.close()
+        else:
+            self.canvas.drawImage(filename, x, y, w, h, mask='auto',
+                                  preserveAspectRatio=True)
 
     def save(self, filename, size, format):
         # Ignore size and format parameter; compatibility for ImageDrawEx.

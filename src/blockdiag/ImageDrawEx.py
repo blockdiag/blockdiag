@@ -23,6 +23,7 @@ import ImageFont
 import ImageFilter
 from utils.XY import XY
 from utils import ellipse
+from utils import urlutil
 
 
 def point_pairs(xylist):
@@ -268,8 +269,24 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         box_width = box[2] - box[0]
         box_height = box[3] - box[1]
 
+        if urlutil.isurl(filename):
+            import tempfile
+            import urllib
+            tmp = tempfile.NamedTemporaryFile()
+            try:
+                urllib.urlretrieve(filename, tmp.name)
+                image = Image.open(tmp.name)
+            except:
+                import sys
+                msg = "WARNING: Could not retrieve: %s\n" % filename
+                sys.stderr.write(msg)
+                return
+            finally:
+                tmp.close()
+        else:
+            image = Image.open(filename)
+
         # resize image.
-        image = Image.open(filename)
         w = min([box_width, image.size[0] * self.scale_ratio])
         h = min([box_height, image.size[1] * self.scale_ratio])
         image.thumbnail((w, h), Image.ANTIALIAS)
