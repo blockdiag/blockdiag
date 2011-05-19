@@ -163,7 +163,7 @@ class DiagramNode(Element):
             sys.stderr.write(msg)
 
     def set_stacked(self, value):
-         self.stacked = True
+        self.stacked = True
 
 
 class NodeGroup(Element):

@@ -46,7 +46,7 @@ def test_node_shape_diagram():
                     'L': 'flowchart.database', 'M': 'flowchart.input',
                     'N': 'flowchart.loopin', 'O': 'flowchart.loopout',
                     'P': 'actor', 'Q': 'flowchart.terminator', 'R': 'textbox',
-                    'S': 'boxes', 'Z': 'box'}
+                    'Z': 'box'}
     for node in screen.nodes:
         assert node.shape == assert_shape[node.id]
 
