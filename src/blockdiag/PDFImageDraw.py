@@ -174,22 +174,14 @@ class PDFImageDraw:
         h = box[3] - box[1]
 
         if urlutil.isurl(filename):
-            import tempfile
-            import urllib
-            tmp = tempfile.NamedTemporaryFile()
+            from reportlab.lib.utils import ImageReader
             try:
-                urllib.urlretrieve(filename, tmp.name)
-                self.canvas.drawImage(tmp.name, x, y, w, h, mask='auto',
-                                      preserveAspectRatio=True)
+                filename = ImageReader(filename)
             except:
-                import sys
                 msg = "WARNING: Could not retrieve: %s\n" % filename
                 sys.stderr.write(msg)
                 return
-            finally:
-                tmp.close()
-        else:
-            self.canvas.drawImage(filename, x, y, w, h, mask='auto',
+        self.canvas.drawImage(filename, x, y, w, h, mask='auto',
                                   preserveAspectRatio=True)
 
     def save(self, filename, size, format):
