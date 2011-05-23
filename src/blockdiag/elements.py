@@ -165,7 +165,8 @@ class DiagramNode(Element):
 
     def set_stacked(self, value):
         self.stacked = True
-           
+
+
 class NodeGroup(Element):
     basecolor = (243, 152, 0)
 
