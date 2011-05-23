@@ -26,7 +26,8 @@ from utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 class PDFImageDraw:
     def __init__(self, filename, size):
-        self.canvas = canvas.Canvas(filename, bottomup=0, pagesize=size)
+        self.canvas = canvas.Canvas(filename, pagesize=size)
+        self.size = size
         self.fonts = {}
 
     def set_font(self, fontpath, fontsize):
@@ -89,7 +90,7 @@ class PDFImageDraw:
 
     def rectangle(self, box, **kwargs):
         x = box[0]
-        y = box[1]
+        y = self.size[1] - box[3]
         width = box[2] - box[0]
         height = box[3] - box[1]
 
@@ -105,7 +106,8 @@ class PDFImageDraw:
             xy = [xy]
 
         for pt in xy:
-            box = (pt[0], pt[1], pt[0] + 1, pt[1] + 1)
+            y = self.size[1] - pt[1]
+            box = (pt[0], y, pt[0] + 1, y + 1)
             self.rectangle(box, fill=fill, outline=fill)
 
     def label(self, box, string, **kwargs):
@@ -117,21 +119,11 @@ class PDFImageDraw:
         self.textarea(box, string, **kwargs)
 
     def text(self, xy, string, **kwargs):
-        if not kwargs.get('font'):
-            msg = "WARNING: Font does not set\n"
-            sys.stderr.write(msg)
-            return
-
         self.set_fill_color(kwargs.get('fill'))
         self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
-        self.canvas.drawString(xy[0], xy[1], string)
+        self.canvas.drawString(xy[0], self.size[1] - xy[1], string)
 
     def textarea(self, box, string, **kwargs):
-        if not kwargs.get('font'):
-            msg = "WARNING: Font does not set\n"
-            sys.stderr.write(msg)
-            return
-
         self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
         lines = TextFolder(box, string, adjustBaseline=True,
                            canvas=self.canvas, **kwargs)
@@ -144,32 +136,37 @@ class PDFImageDraw:
         self.set_style(kwargs.get('style'))
 
         p1 = xy[0]
+        y = self.size[1]
         for p2 in xy[1:]:
-            self.canvas.line(p1.x, p1.y, p2.x, p2.y)
+            self.canvas.line(p1.x, y - p1.y, p2.x, y - p2.y)
             p1 = p2
 
     def arc(self, xy, start, end, **kwargs):
+        start, end = 360 - end, 360 - start
         r = (360 + end - start) % 360
 
         params = self.set_render_params(**kwargs)
-        self.canvas.arc(xy[0], xy[1], xy[2], xy[3], start, r)
+        y = self.size[1]
+        self.canvas.arc(xy[0], y - xy[3], xy[2], y - xy[1], start, r)
 
     def ellipse(self, xy, **kwargs):
         params = self.set_render_params(**kwargs)
-        self.canvas.ellipse(xy[0], xy[1], xy[2], xy[3], **params)
+        y = self.size[1]
+        self.canvas.ellipse(xy[0], y - xy[3], xy[2], y - xy[1], **params)
 
     def polygon(self, xy, **kwargs):
         pd = self.canvas.beginPath()
-        pd.moveTo(xy[0][0], xy[0][1])
+        y = self.size[1]
+        pd.moveTo(xy[0][0], y - xy[0][1])
         for p in xy[1:]:
-            pd.lineTo(p[0], p[1])
+            pd.lineTo(p[0], y - p[1])
 
         params = self.set_render_params(**kwargs)
         self.canvas.drawPath(pd, **params)
 
     def loadImage(self, filename, box):
         x = box[0]
-        y = box[1]
+        y = self.size[1] - box[3]
         w = box[2] - box[0]
         h = box[3] - box[1]
 

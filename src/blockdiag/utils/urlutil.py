@@ -10,4 +10,3 @@ def isurl(url):
         return True
     else:
         return False
-

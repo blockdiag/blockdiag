@@ -53,6 +53,10 @@ class DiagramDraw(object):
         elif self.format == 'PDF':
             import PDFImageDraw
 
+            if self.font is None:
+                msg = "Could not detect fonts, use --font opiton\n"
+                raise RuntimeError(msg)
+
             self.shadow = kwargs.get('shadow', (0, 0, 0))
             self.drawer = PDFImageDraw.PDFImageDraw(self.filename,
                                                     self.pagesize())
