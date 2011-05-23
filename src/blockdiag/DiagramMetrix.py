@@ -19,15 +19,11 @@ from utils.namedtuple import namedtuple
 
 
 class EdgeLines(object):
-    def __init__(self, metrix, points=None):
+    def __init__(self, metrix):
         self.xy = None
         self.cellSize = metrix.cellSize
         self.stroking = False
         self.polylines = []
-        self.crossPoints = []
-
-        if points:
-            self.crossPoints = points
 
     def moveTo(self, x, y=None):
         self.stroking = False
@@ -53,43 +49,7 @@ class EdgeLines(object):
             if self.polylines[-1][-1] == elem:
                 return
 
-            start = self.polylines[-1][-1]
-            crosspoint = self.getCrosspoint(start, elem)
-            if crosspoint:
-                if start.x > elem.x:  # line goes right to left
-                    jump_width = - (self.cellSize / 2)
-                else:
-                    jump_width = self.cellSize / 2
-
-                if start.y == crosspoint.y:  # holizonal line
-                    p = XY(crosspoint.x - jump_width, crosspoint.y)
-                    self.lineTo(p)
-
-                    p = XY(crosspoint.x + jump_width, crosspoint.y)
-                    self.moveTo(p)
-                    self.lineTo(elem)
-                    return
-                else:
-                    raise
-
         self.polylines[-1].append(elem)
-
-    def getCrosspoint(self, start, end):
-        if start.x > end.x:
-            p1 = end
-            p2 = start
-        else:
-            p1 = start
-            p2 = end
-
-        for p in self.crossPoints:
-            if p1.x <= p.x and p.x <= p2.x and \
-               ((p1.y <= p2.y and p1.y <= p.y and p.y <= p2.y) or \
-                (p1.y > p2.y and p2.y <= p.y and p.y <= p1.y)) and \
-               (p.y - p1.y) * (p2.x - p1.x) == (p2.y - p1.y) * (p.x - p1.x):
-                return p
-
-        return None
 
     def lines(self):
         lines = []
@@ -117,7 +77,6 @@ def scale(value, ratio):
 
         ret = EdgeLines(Dummy(value.cellSize))
         ret.polylines = scale(value.polylines, ratio)
-        ret.crossPoints = scale(value.crossPoints, ratio)
     elif isinstance(value, int):
         ret = value * ratio
     else:
@@ -412,9 +371,6 @@ class EdgeMetrix(object):
     def labelbox(self):
         pass
 
-    def jumps(self):
-        return self.edge.crosspoints
-
 
 class LandscapeEdgeMetrix(EdgeMetrix):
     def heads(self):
@@ -455,7 +411,7 @@ class LandscapeEdgeMetrix(EdgeMetrix):
         node2 = self.metrix.node(self.edge.node2)
         cell2 = self.metrix.cell(self.edge.node2)
 
-        shaft = EdgeLines(self.metrix, self.edge.crosspoints)
+        shaft = EdgeLines(self.metrix)
         if dir == 'right':
             shaft.moveTo(node1.right())
 
@@ -654,7 +610,7 @@ class PortraitEdgeMetrix(EdgeMetrix):
         node2 = self.metrix.node(self.edge.node2)
         cell2 = self.metrix.cell(self.edge.node2)
 
-        shaft = EdgeLines(self.metrix, self.edge.crosspoints)
+        shaft = EdgeLines(self.metrix)
         if dir in ('up', 'right-up', 'same', 'right'):
             if dir == 'right' and not self.edge.skipped:
                 shaft.moveTo(node1.right())
@@ -804,7 +760,7 @@ class FlowchartLandscapeEdgeMetrix(LandscapeEdgeMetrix):
             node2 = self.metrix.node(self.edge.node2)
             cell2 = self.metrix.cell(self.edge.node2)
 
-            shaft = EdgeLines(self.metrix, self.edge.crosspoints)
+            shaft = EdgeLines(self.metrix)
             shaft.moveTo(node1.bottom())
 
             if self.edge.skipped:
@@ -869,7 +825,7 @@ class FlowchartPortraitEdgeMetrix(PortraitEdgeMetrix):
             node2 = self.metrix.node(self.edge.node2)
             cell2 = self.metrix.cell(self.edge.node2)
 
-            shaft = EdgeLines(self.metrix, self.edge.crosspoints)
+            shaft = EdgeLines(self.metrix)
             shaft.moveTo(node1.right())
 
             if self.edge.skipped:

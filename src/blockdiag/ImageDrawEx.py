@@ -77,7 +77,7 @@ def dashize_line(line, length):
             yield (p1, p2)
 
 
-class ImageDrawEx(ImageDraw.ImageDraw):
+class ImageDrawEx(object):
     def __init__(self, filename, size, scale_ratio, im=None, mode=None):
         if im:
             self.image = im
@@ -87,18 +87,16 @@ class ImageDrawEx(ImageDraw.ImageDraw):
         self.filename = filename
         self.scale_ratio = scale_ratio
         self.mode = mode
-        ImageDraw.ImageDraw.__init__(self, self.image, mode)
+        self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def resizeCanvas(self, size):
-        image = self.image.resize(size, Image.ANTIALIAS)
-        return ImageDrawEx(self.filename, None, self.scale_ratio, im=image)
+        self.image = self.image.resize(size, Image.ANTIALIAS)
+        self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def smoothCanvas(self):
-        image = self.image
         for i in range(15):
-            image = image.filter(ImageFilter.SMOOTH_MORE)
-
-        return ImageDrawEx(self.filename, None, self.scale_ratio, im=image)
+            self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
+        self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def arc(self, box, start, end, **kwargs):
         style = kwargs.get('style')
@@ -115,9 +113,9 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                 end += 360
 
             for pt in ellipse.dots(box, length, start, end):
-                ImageDraw.ImageDraw.line(self, [pt, pt], fill=kwargs['fill'])
+                self.draw.line([pt, pt], fill=kwargs['fill'])
         else:
-            ImageDraw.ImageDraw.arc(self, box, start, end, **kwargs)
+            self.draw.arc(box, start, end, **kwargs)
 
     def ellipse(self, box, **kwargs):
         if 'filter' in kwargs:
@@ -132,7 +130,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                 kwargs2 = dict(kwargs)
                 if 'outline' in kwargs2:
                     del kwargs2['outline']
-                ImageDraw.ImageDraw.ellipse(self, box, **kwargs2)
+                self.draw.ellipse(box, **kwargs2)
 
             if 'outline' in kwargs:
                 kwargs['fill'] = kwargs['outline']
@@ -144,25 +142,25 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                 length = 4
 
             for pt in ellipse.dots(box, length):
-                ImageDraw.ImageDraw.line(self, [pt, pt], fill=kwargs['fill'])
+                self.draw.line([pt, pt], fill=kwargs['fill'])
         else:
             if kwargs.get('fill') == 'none':
                 del kwargs['fill']
 
-            ImageDraw.ImageDraw.ellipse(self, box, **kwargs)
+            self.draw.ellipse(box, **kwargs)
 
     def line(self, xy, **kwargs):
         style = kwargs.get('style')
 
         if style in ('dotted', 'dashed'):
-            self.dashed_line(xy, **kwargs)
+            self.__dashed_line(xy, **kwargs)
         else:
             if 'style' in kwargs:
                 del kwargs['style']
 
-            ImageDraw.ImageDraw.line(self, xy, **kwargs)
+            self.draw.line(xy, **kwargs)
 
-    def dashed_line(self, xy, **kwargs):
+    def __dashed_line(self, xy, **kwargs):
         style = kwargs.get('style')
         del kwargs['style']
 
@@ -187,7 +185,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             d = int(math.ceil(thick / 2.0))
 
         if fill and fill != 'none':
-            ImageDraw.ImageDraw.rectangle(self, box, fill=fill)
+            self.draw.rectangle(box, fill=fill)
 
         x1, y1, x2, y2 = box
         lines = (((x1, y1), (x2, y1)), ((x1, y2), (x2, y2)),  # horizonal
@@ -208,7 +206,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
                 del kwargs2['style']
             if 'outline' in kwargs2:
                 del kwargs2['outline']
-            ImageDraw.ImageDraw.polygon(self, xy, **kwargs2)
+            self.draw.polygon(xy, **kwargs2)
 
         if kwargs.get('outline'):
             kwargs['fill'] = kwargs['outline']
@@ -233,7 +231,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
         if ttfont is None:
             if self.scale_ratio == 1:
-                ImageDraw.ImageDraw.text(self, xy, string, fill=fill)
+                self.draw.text(xy, string, fill=fill)
             else:
                 size = self.textsize(string)
                 image = Image.new('RGBA', size)
@@ -247,7 +245,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
 
                 self.image.paste(text_image, xy, text_image)
         else:
-            size = self.textsize(string, font=ttfont)
+            size = self.draw.textsize(string, font=ttfont)
 
             # Generate mask to support BDF(bitmap font)
             mask = Image.new('1', size)
@@ -258,7 +256,7 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             filler = Image.new('RGB', size, fill)
             self.image.paste(filler, xy, mask)
 
-            ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
+            self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def textarea(self, box, string, **kwargs):
         lines = TextFolder(box, string, scale=self.scale_ratio, **kwargs)
@@ -299,11 +297,16 @@ class ImageDrawEx(ImageDraw.ImageDraw):
             y = box[1]
 
         self.image.paste(image, (x, y))
-        ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
+        self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def save(self, filename, size, format):
         if filename:
             self.filename = filename
+
+        if size is None and format == 'PNG':
+            x = int(self.image.size[0] / self.scale_ratio)
+            y = int(self.image.size[1] / self.scale_ratio)
+            size = (x, y)
 
         self.image.thumbnail(size, Image.ANTIALIAS)
         self.image.save(self.filename, format)

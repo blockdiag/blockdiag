@@ -24,7 +24,7 @@ from utils import urlutil
 from utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 
-class PDFImageDraw:
+class PDFImageDraw(object):
     def __init__(self, filename, size):
         self.canvas = canvas.Canvas(filename, pagesize=size)
         self.size = size
