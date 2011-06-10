@@ -17,10 +17,10 @@ import math
 from itertools import islice, izip, tee
 from utils.myitertools import istep
 from utils.PILTextFolder import PILTextFolder as TextFolder
-import Image
-import ImageDraw
-import ImageFont
-import ImageFilter
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+from PIL import ImageFilter
 from utils.XY import XY
 from utils import ellipse
 from utils import urlutil
