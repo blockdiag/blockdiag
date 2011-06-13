@@ -75,6 +75,8 @@ setup(
         flowchart.loopout = blockdiag.noderenderer.flowchart.loopout
         flowchart.terminator = blockdiag.noderenderer.flowchart.terminator
         textbox = blockdiag.noderenderer.textbox
+        dots = blockdiag.noderenderer.dots
+        none = blockdiag.noderenderer.none
      """,
 )
 
