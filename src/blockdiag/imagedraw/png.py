@@ -156,7 +156,9 @@ class ImageDrawEx(ImageDraw.ImageDraw):
     def line(self, xy, **kwargs):
         style = kwargs.get('style')
 
-        if style in ('dotted', 'dashed'):
+        if kwargs.get('fill') == 'none':
+            pass
+        elif style in ('dotted', 'dashed'):
             self.dashed_line(xy, **kwargs)
         else:
             if 'style' in kwargs:
