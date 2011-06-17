@@ -102,6 +102,7 @@ class Element(Base):
         self.color = self.__class__.basecolor
         self.width = 1
         self.height = 1
+        self.stacked = False
 
     def __repr__(self):
         class_name = self.__class__.__name__
@@ -139,7 +140,6 @@ class DiagramNode(Element):
         self.background = None
         self.description = None
         self.drawable = True
-        self.stacked = False
 
     def set_style(self, value):
         if value in ('solid', 'dotted', 'dashed'):
