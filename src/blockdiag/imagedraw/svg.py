@@ -16,16 +16,16 @@
 import re
 import sys
 import base64
-from utils.XY import XY
-from utils import urlutil
-import utils.ellipse
+from blockdiag import utils
+from blockdiag.utils.XY import XY
+from blockdiag.utils import urlutil
 from SVGdraw import *
 import xml.sax.saxutils
 
 try:
-    from utils.PILTextFolder import PILTextFolder as TextFolder
+    from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
 except ImportError:
-    from utils.TextFolder import TextFolder
+    from blockdiag.utils.TextFolder import TextFolder
 
 
 class filter(SVGelement):
