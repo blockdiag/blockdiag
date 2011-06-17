@@ -19,16 +19,20 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.units import inch
-from utils.XY import XY
-from utils import urlutil
-from utils.PDFTextFolder import PDFTextFolder as TextFolder
+from blockdiag.utils.XY import XY
+from blockdiag.utils import urlutil
+from blockdiag.utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 
 class PDFImageDraw:
-    def __init__(self, filename, size):
+    def __init__(self, filename, size, **kwargs):
         self.canvas = canvas.Canvas(filename, pagesize=size)
         self.size = size
         self.fonts = {}
+
+        if kwargs.get('font') is None:
+            msg = "Could not detect fonts, use --font opiton\n"
+            raise RuntimeError(msg)
 
     def set_font(self, fontpath, fontsize):
         if fontpath not in self.fonts:

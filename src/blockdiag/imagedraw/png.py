@@ -15,15 +15,15 @@
 
 import math
 from itertools import islice, izip, tee
-from utils.myitertools import istep
-from utils.PILTextFolder import PILTextFolder as TextFolder
+from blockdiag.utils.myitertools import istep
+from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 from PIL import ImageFilter
-from utils.XY import XY
-from utils import ellipse
-from utils import urlutil
+from blockdiag.utils.XY import XY
+from blockdiag.utils import ellipse
+from blockdiag.utils import urlutil
 
 
 def point_pairs(xylist):
@@ -78,27 +78,29 @@ def dashize_line(line, length):
 
 
 class ImageDrawEx(ImageDraw.ImageDraw):
-    def __init__(self, filename, size, scale_ratio, im=None, mode=None):
-        if im:
-            self.image = im
+    def __init__(self, filename, size, **kwargs):
+        if kwargs.get('im'):
+            self.image = kwargs.get('im')
         else:
             self.image = Image.new('RGB', size, (256, 256, 256))
 
         self.filename = filename
-        self.scale_ratio = scale_ratio
-        self.mode = mode
-        ImageDraw.ImageDraw.__init__(self, self.image, mode)
+        self.scale_ratio = kwargs.get('scale_ratio', 1)
+        self.mode = kwargs.get('mode')
+        ImageDraw.ImageDraw.__init__(self, self.image, self.mode)
 
     def resizeCanvas(self, size):
         image = self.image.resize(size, Image.ANTIALIAS)
-        return ImageDrawEx(self.filename, None, self.scale_ratio, im=image)
+        return ImageDrawEx(self.filename, None, im=image,
+                           scale_ratio=self.scale_ratio)
 
     def smoothCanvas(self):
         image = self.image
         for i in range(15):
             image = image.filter(ImageFilter.SMOOTH_MORE)
 
-        return ImageDrawEx(self.filename, None, self.scale_ratio, im=image)
+        return ImageDrawEx(self.filename, None, im=image,
+                           scale_ratio=self.scale_ratio)
 
     def arc(self, box, start, end, **kwargs):
         style = kwargs.get('style')
