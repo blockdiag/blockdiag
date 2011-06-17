@@ -474,8 +474,10 @@ class SeparateDiagramBuilder:
             levels[group] = group.level
 
         groups = {}
+        orders = {}
         for node in self.diagram.traverse_nodes():
             groups[node] = node.group
+            orders[node] = node.order
 
         for group in self.diagram.traverse_groups():
             yield group
@@ -488,6 +490,7 @@ class SeparateDiagramBuilder:
 
             for n in groups:
                 n.group = groups[n]
+                n.order = orders[n]
                 n.xy = XY(0, 0)
                 n.width = 1
                 n.height = 1
@@ -552,10 +555,14 @@ class SeparateDiagramBuilder:
                     g.edges = []
 
             # pick up nodes to base diagram
-            nodes = [e.node1 for e in DiagramEdge.find(None, group)] + \
-                    [group] + \
-                    [e.node2 for e in DiagramEdge.find(group, None)]
-            for n in nodes:
+            nodes1 = [e.node1 for e in DiagramEdge.find(None, group)]
+            nodes1.sort(lambda x, y: cmp(x.order, y.order))
+            nodes2 = [e.node2 for e in DiagramEdge.find(group, None)]
+            nodes2.sort(lambda x, y: cmp(x.order, y.order))
+
+            nodes = nodes1 + [group] + nodes2
+            for i, n in enumerate(nodes):
+                n.order = i
                 if n not in base.nodes:
                     base.nodes.append(n)
                     n.group = base
