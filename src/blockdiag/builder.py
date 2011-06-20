@@ -44,7 +44,7 @@ class DiagramTreeBuilder:
 
         if node.group and node.group != group and override:
             if not self.is_related_group(node.group, group):
-                msg = "DiagramNode could not belong to two groups"
+                msg = "could not belong to two groups: %s" % node.id
                 raise RuntimeError(msg)
 
             old_group = node.group
