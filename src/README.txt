@@ -113,6 +113,15 @@ Apache License 2.0
 History
 =======
 
+0.8.2 (2011-06-29)
+------------------
+* Add node.stacked
+* Add node shapes: dots, none
+* Add hiragino-font to font search list
+* Support background image fetching from web
+* Add diagram.edge_layout (experimental)
+* Fix bugs
+
 0.8.1 (2011-05-14)
 ------------------
 * Change license to Apache License 2.0
