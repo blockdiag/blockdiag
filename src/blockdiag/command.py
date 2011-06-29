@@ -93,7 +93,8 @@ def detectfont(options):
              'c:/windows/fonts/msmincho.ttf',  # for Windows
              '/usr/share/fonts/truetype/ipafont/ipagp.ttf',  # for Debian
              '/usr/local/share/font-ipa/ipagp.otf',  # for FreeBSD
-             '/System/Library/Fonts/AppleGothic.ttf']  # for MaxOS
+             '/Library/Fonts/Hiragino Sans GB W3.otf',  # for MacOS
+             '/System/Library/Fonts/AppleGothic.ttf']  # for MacOS
 
     fontpath = None
     for path in fonts:
