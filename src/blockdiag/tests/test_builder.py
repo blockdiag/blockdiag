@@ -301,6 +301,15 @@ def test_skipped_circular_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_skipped_twin_circular_diagram():
+    screen = __build_diagram('skipped_twin_circular.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 1),
+                  'D': (2, 2), 'E': (3, 0), 'Z': (0, 3)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
 def test_nested_skipped_circular_diagram():
     screen = __build_diagram('nested_skipped_circular.diag')
 

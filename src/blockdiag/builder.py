@@ -211,12 +211,20 @@ class DiagramLayoutManager:
                 self.detect_circulars_sub(node, [node])
 
         # remove part of other circular
-        for c1 in self.circulars:
+        for c1 in self.circulars[:]:
             for c2 in self.circulars:
                 intersect = set(c1) & set(c2)
 
                 if c1 != c2 and set(c1) == intersect:
-                    self.circulars.remove(c1)
+                    if c1 in self.circulars:
+                        self.circulars.remove(c1)
+                    break
+
+                if c1 != c2 and intersect:
+                    if c1 in self.circulars:
+                        self.circulars.remove(c1)
+                    self.circulars.remove(c2)
+                    self.circulars.append(c1 + c2)
                     break
 
     def detect_circulars_sub(self, node, parents):
