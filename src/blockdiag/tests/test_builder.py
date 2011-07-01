@@ -670,3 +670,13 @@ def test_slided_children_diagram():
     for node in (x for x in screen.nodes if x.drawable):
         print node, assert_pos[node.id]
         assert node.xy == assert_pos[node.id]
+
+
+def test_rhombus_relation_height_diagram():
+    screen = __build_diagram('rhombus_relation_height.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'D': (2, 0),
+                  'E': (3, 0), 'F': (3, 1), 'Z': (0, 2)}
+    for node in (x for x in screen.nodes if x.drawable):
+        print node, assert_pos[node.id]
+        assert node.xy == assert_pos[node.id]

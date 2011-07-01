@@ -391,6 +391,7 @@ class DiagramLayoutManager:
             if self.get_child_nodes(child):
                 grandchild += 1
 
+        prev_child = None
         for child in children:
             if child.id in self.heightRefs:
                 pass
@@ -402,10 +403,11 @@ class DiagramLayoutManager:
                     if parent_height and parent_height > height:
                         height = parent_height
 
-                if grandchild > 1:
-                    height = max(xy.y for xy in self.coordinates)
-                    if children.index(child) > 0:
-                        height += 1
+                if prev_child and grandchild > 1 and \
+                   not self.is_rhombus(prev_child, child):
+                    coord = [p.y for p in self.coordinates if p.x > child.xy.x]
+                    if coord:
+                        height = max(coord) + 1
 
                 while True:
                     if self.set_node_height(child, height):
@@ -422,8 +424,29 @@ class DiagramLayoutManager:
                         height += 1
 
                 height += 1
+                prev_child = child
 
         return True
+
+    def is_rhombus(self, node1, node2):
+        ret = False
+        while True:
+            if node1 == node2:
+                ret = True
+                break
+
+            child1 = self.get_child_nodes(node1)
+            child2 = self.get_child_nodes(node2)
+
+            if len(child1) != 1 or len(child2) != 1:
+                break
+            elif node1.xy.x > child1[0].xy.x or node2.xy.x > child2[0].xy.x:
+                break
+            else:
+                node1 = child1[0]
+                node2 = child2[0]
+
+        return ret
 
     def get_parent_node_height(self, parent, child):
         heights = []
