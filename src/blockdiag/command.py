@@ -115,6 +115,8 @@ def main():
     infile = args[0]
     if options.filename:
         outfile = options.filename
+    elif infile == '-':
+        outfile = 'output.' + options.type.lower()
     else:
         outfile = re.sub('\..*', '', infile) + '.' + options.type.lower()
 
@@ -124,7 +126,12 @@ def main():
     fontpath = detectfont(options)
 
     try:
-        tree = diagparser.parse_file(infile)
+        if infile == '-':
+            import codecs
+            stream = codecs.getreader('utf-8')(sys.stdin)
+            tree = diagparser.parse_string(stream.read())
+        else:
+            tree = diagparser.parse_file(infile)
     except Exception, e:
         sys.stderr.write("ERROR: %s\n" % e)
         return
