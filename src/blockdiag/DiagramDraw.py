@@ -245,11 +245,12 @@ class DiagramDraw(object):
 
         # Drop node shadows.
         for node in self.nodes:
-            r = noderenderer.get(node.shape)
+            if node.color != 'none':
+                r = noderenderer.get(node.shape)
 
-            shape = r(node, metrix)
-            shape.render(self.drawer, self.format,
-                         fill=self.shadow, shadow=True)
+                shape = r(node, metrix)
+                shape.render(self.drawer, self.format,
+                             fill=self.shadow, shadow=True)
 
         # Smoothing back-ground images.
         if self.format == 'PNG':
