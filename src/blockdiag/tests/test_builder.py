@@ -117,7 +117,7 @@ def test_node_attribute():
 
     assert screen.nodes[0].id == 'A'
     assert screen.nodes[0].label == 'B'
-    assert screen.nodes[0].color == 'red'
+    assert screen.nodes[0].color == (255, 0, 0)
     assert screen.nodes[0].xy == (0, 0)
 
     assert screen.nodes[1].id == 'B'
@@ -429,7 +429,7 @@ def test_node_attribute_and_group_diagram():
                   'Z': (0, 1)}
     assert_labels = {'A': 'foo', 'B': 'bar', 'C': 'baz',
                      'Z': 'Z'}
-    assert_colors = {'A': 'red', 'B': '#888888', 'C': 'blue',
+    assert_colors = {'A': (255, 0, 0), 'B': '#888888', 'C': (0, 0, 255),
                      'Z': (255, 255, 255)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]

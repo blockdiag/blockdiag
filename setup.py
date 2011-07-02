@@ -39,6 +39,7 @@ setup(
         'setuptools',
         'PIL',
         'funcparserlib',
+        'webcolors',
          # -*- Extra requirements: -*-
      ],
      extras_require=dict(
