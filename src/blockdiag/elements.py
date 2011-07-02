@@ -116,6 +116,15 @@ class Element(Base):
                  "%(width)dx%(height)d at 0x%(addr)08x>"
         return format % locals()
 
+    def set_color(self, color):
+        import webcolors
+        if color == 'none' or isinstance(color, (list, tuple)):
+            self.color = color
+        elif re.match('#', color):
+            self.color = webcolors.hex_to_rgb(color)
+        else:
+            self.color = webcolors.name_to_rgb(color)
+
 
 class DiagramNode(Element):
     basecolor = (255, 255, 255)
