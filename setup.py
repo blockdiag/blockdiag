@@ -28,7 +28,7 @@ setup(
      keywords=['diagram','generator'],
      author='Takeshi Komiya',
      author_email='i.tkomiya at gmail.com',
-     url='http://tk0miya.bitbucket.org/blockdiag/build/html/index.html',
+     url='http://blockdiag.com/',
      license='Apache License 2.0',
      py_modules=['blockdiag_sphinxhelper'],
      packages=find_packages('src'),
