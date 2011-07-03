@@ -113,6 +113,11 @@ Apache License 2.0
 History
 =======
 
+0.8.3 (2011-07-03)
+------------------
+* Support input from stdin
+* Fix bugs
+
 0.8.2 (2011-06-29)
 ------------------
 * Add node.stacked
