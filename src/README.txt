@@ -6,7 +6,7 @@ Features
 * Multilingualization for node-label (utf-8 only).
 
 You can get some examples and generated images on 
-`tk0miya.bitbucket.org <http://tk0miya.bitbucket.org/blockdiag/build/html/index.html>`_ .
+`blockdiag.com <http://blockdiag.com/blockdiag/build/html/index.html>`_ .
 
 Setup
 =====
@@ -42,7 +42,7 @@ spec-text setting sample
 ========================
 Few examples are available.
 You can get more examples at
-`tk0miya.bitbucket.org <http://tk0miya.bitbucket.org/blockdiag/build/html/index.html>`_ .
+`blockdiag.com <http://blockdiag.com/blockdiag/build/html/index.html>`_ .
 
 simple.diag
 ------------
