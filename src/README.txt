@@ -6,7 +6,7 @@ Features
 * Multilingualization for node-label (utf-8 only).
 
 You can get some examples and generated images on 
-`tk0miya.bitbucket.org <http://tk0miya.bitbucket.org/blockdiag/build/html/index.html>`_ .
+`blockdiag.com <http://blockdiag.com/blockdiag/build/html/index.html>`_ .
 
 Setup
 =====
@@ -42,7 +42,7 @@ spec-text setting sample
 ========================
 Few examples are available.
 You can get more examples at
-`tk0miya.bitbucket.org <http://tk0miya.bitbucket.org/blockdiag/build/html/index.html>`_ .
+`blockdiag.com <http://blockdiag.com/blockdiag/build/html/index.html>`_ .
 
 simple.diag
 ------------
@@ -112,6 +112,20 @@ Apache License 2.0
 
 History
 =======
+
+0.8.3 (2011-07-03)
+------------------
+* Support input from stdin
+* Fix bugs
+
+0.8.2 (2011-06-29)
+------------------
+* Add node.stacked
+* Add node shapes: dots, none
+* Add hiragino-font to font search list
+* Support background image fetching from web
+* Add diagram.edge_layout (experimental)
+* Fix bugs
 
 0.8.1 (2011-05-14)
 ------------------

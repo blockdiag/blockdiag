@@ -16,16 +16,15 @@
 import re
 import sys
 import base64
-from utils.XY import XY
-from utils import urlutil
-import utils.ellipse
+from blockdiag.utils.XY import XY
+from blockdiag.utils import urlutil
 from SVGdraw import *
 import xml.sax.saxutils
 
 try:
-    from utils.PILTextFolder import PILTextFolder as TextFolder
+    from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
 except ImportError:
-    from utils.TextFolder import TextFolder
+    from blockdiag.utils.TextFolder import TextFolder
 
 
 class filter(SVGelement):
@@ -155,12 +154,14 @@ class SVGImageDrawElement(object):
         if start > end:
             end += 360
 
-        coord = utils.ellipse.coordinate(1, w, h, start, start + 1)
+        from blockdiag.utils import ellipse
+
+        coord = ellipse.coordinate(1, w, h, start, start + 1)
         point = iter(coord).next()
         pt1 = XY(xy[0] + w + round(point[0], 0),
                  xy[1] + h + round(point[1], 0))
 
-        coord = utils.ellipse.coordinate(1, w, h, end, end + 1)
+        coord = ellipse.coordinate(1, w, h, end, end + 1)
         point = iter(coord).next()
         pt2 = XY(xy[0] + w + round(point[0], 0),
                  xy[1] + h + round(point[1], 0))

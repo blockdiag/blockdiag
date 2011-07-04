@@ -19,6 +19,8 @@
   P [shape = "actor"];
   Q [shape = "flowchart.terminator"];
   R [shape = "textbox"];
+  S [shape = "dots"];
+  T [shape = "none"];
 
   Z;
 }

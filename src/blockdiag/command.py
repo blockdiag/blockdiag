@@ -93,7 +93,8 @@ def detectfont(options):
              'c:/windows/fonts/msmincho.ttf',  # for Windows
              '/usr/share/fonts/truetype/ipafont/ipagp.ttf',  # for Debian
              '/usr/local/share/font-ipa/ipagp.otf',  # for FreeBSD
-             '/System/Library/Fonts/AppleGothic.ttf']  # for MaxOS
+             '/Library/Fonts/Hiragino Sans GB W3.otf',  # for MacOS
+             '/System/Library/Fonts/AppleGothic.ttf']  # for MacOS
 
     fontpath = None
     for path in fonts:
@@ -114,6 +115,8 @@ def main():
     infile = args[0]
     if options.filename:
         outfile = options.filename
+    elif infile == '-':
+        outfile = 'output.' + options.type.lower()
     else:
         outfile = re.sub('\..*', '', infile) + '.' + options.type.lower()
 
@@ -123,7 +126,12 @@ def main():
     fontpath = detectfont(options)
 
     try:
-        tree = diagparser.parse_file(infile)
+        if infile == '-':
+            import codecs
+            stream = codecs.getreader('utf-8')(sys.stdin)
+            tree = diagparser.parse_string(stream.read())
+        else:
+            tree = diagparser.parse_file(infile)
     except Exception, e:
         sys.stderr.write("ERROR: %s\n" % e)
         return

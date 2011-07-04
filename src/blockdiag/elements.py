@@ -102,6 +102,7 @@ class Element(Base):
         self.color = self.__class__.basecolor
         self.width = 1
         self.height = 1
+        self.stacked = False
 
     def __repr__(self):
         class_name = self.__class__.__name__
@@ -114,6 +115,15 @@ class Element(Base):
         format = "<%(class_name)s '%(nodeid)s' %(xy)s " + \
                  "%(width)dx%(height)d at 0x%(addr)08x>"
         return format % locals()
+
+    def set_color(self, color):
+        import webcolors
+        if color == 'none' or isinstance(color, (list, tuple)):
+            self.color = color
+        elif re.match('#', color):
+            self.color = webcolors.hex_to_rgb(color)
+        else:
+            self.color = webcolors.name_to_rgb(color)
 
 
 class DiagramNode(Element):
@@ -139,7 +149,6 @@ class DiagramNode(Element):
         self.background = None
         self.description = None
         self.drawable = True
-        self.stacked = False
 
     def set_style(self, value):
         if value in ('solid', 'dotted', 'dashed'):
