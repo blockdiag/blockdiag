@@ -44,7 +44,7 @@ class DiagramTreeBuilder:
 
         if node.group and node.group != group and override:
             if not self.is_related_group(node.group, group):
-                msg = "DiagramNode could not belong to two groups"
+                msg = "could not belong to two groups: %s" % node.id
                 raise RuntimeError(msg)
 
             old_group = node.group
@@ -211,12 +211,20 @@ class DiagramLayoutManager:
                 self.detect_circulars_sub(node, [node])
 
         # remove part of other circular
-        for c1 in self.circulars:
+        for c1 in self.circulars[:]:
             for c2 in self.circulars:
                 intersect = set(c1) & set(c2)
 
                 if c1 != c2 and set(c1) == intersect:
-                    self.circulars.remove(c1)
+                    if c1 in self.circulars:
+                        self.circulars.remove(c1)
+                    break
+
+                if c1 != c2 and intersect:
+                    if c1 in self.circulars:
+                        self.circulars.remove(c1)
+                    self.circulars.remove(c2)
+                    self.circulars.append(c1 + c2)
                     break
 
     def detect_circulars_sub(self, node, parents):
@@ -383,6 +391,7 @@ class DiagramLayoutManager:
             if self.get_child_nodes(child):
                 grandchild += 1
 
+        prev_child = None
         for child in children:
             if child.id in self.heightRefs:
                 pass
@@ -394,10 +403,11 @@ class DiagramLayoutManager:
                     if parent_height and parent_height > height:
                         height = parent_height
 
-                if grandchild > 1:
-                    height = max(xy.y for xy in self.coordinates)
-                    if children.index(child) > 0:
-                        height += 1
+                if prev_child and grandchild > 1 and \
+                   not self.is_rhombus(prev_child, child):
+                    coord = [p.y for p in self.coordinates if p.x > child.xy.x]
+                    if coord:
+                        height = max(coord) + 1
 
                 while True:
                     if self.set_node_height(child, height):
@@ -414,8 +424,29 @@ class DiagramLayoutManager:
                         height += 1
 
                 height += 1
+                prev_child = child
 
         return True
+
+    def is_rhombus(self, node1, node2):
+        ret = False
+        while True:
+            if node1 == node2:
+                ret = True
+                break
+
+            child1 = self.get_child_nodes(node1)
+            child2 = self.get_child_nodes(node2)
+
+            if len(child1) != 1 or len(child2) != 1:
+                break
+            elif node1.xy.x > child1[0].xy.x or node2.xy.x > child2[0].xy.x:
+                break
+            else:
+                node1 = child1[0]
+                node2 = child2[0]
+
+        return ret
 
     def get_parent_node_height(self, parent, child):
         heights = []
@@ -474,8 +505,10 @@ class SeparateDiagramBuilder:
             levels[group] = group.level
 
         groups = {}
+        orders = {}
         for node in self.diagram.traverse_nodes():
             groups[node] = node.group
+            orders[node] = node.order
 
         for group in self.diagram.traverse_groups():
             yield group
@@ -488,6 +521,7 @@ class SeparateDiagramBuilder:
 
             for n in groups:
                 n.group = groups[n]
+                n.order = orders[n]
                 n.xy = XY(0, 0)
                 n.width = 1
                 n.height = 1
@@ -552,10 +586,14 @@ class SeparateDiagramBuilder:
                     g.edges = []
 
             # pick up nodes to base diagram
-            nodes = [e.node1 for e in DiagramEdge.find(None, group)] + \
-                    [group] + \
-                    [e.node2 for e in DiagramEdge.find(group, None)]
-            for n in nodes:
+            nodes1 = [e.node1 for e in DiagramEdge.find(None, group)]
+            nodes1.sort(lambda x, y: cmp(x.order, y.order))
+            nodes2 = [e.node2 for e in DiagramEdge.find(group, None)]
+            nodes2.sort(lambda x, y: cmp(x.order, y.order))
+
+            nodes = nodes1 + [group] + nodes2
+            for i, n in enumerate(nodes):
+                n.order = i
                 if n not in base.nodes:
                     base.nodes.append(n)
                     n.group = base

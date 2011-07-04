@@ -17,6 +17,7 @@ import sys
 import math
 from utils.XY import XY
 import noderenderer
+import imagedraw
 
 
 class DiagramDraw(object):
@@ -33,40 +34,25 @@ class DiagramDraw(object):
         self.badgeFill = kwargs.get('badgeFill', 'pink')
         self.font = kwargs.get('font')
         self.filename = filename
-        base_diagram = kwargs.get('basediagram', diagram)
 
         if self.format == 'PNG' and kwargs.get('antialias'):
             self.scale_ratio = 2
         else:
             self.scale_ratio = 1
-        self.metrix = self.MetrixClass(base_diagram,
+        self.metrix = self.MetrixClass(kwargs.get('basediagram', diagram),
                                        scale_ratio=self.scale_ratio, **kwargs)
 
-        if self.format == 'SVG':
-            import SVGImageDraw
+        kwargs = dict(font=self.font,
+                      nodoctype=kwargs.get('nodoctype'),
+                      scale_ratio=self.scale_ratio)
 
-            nodoctype = kwargs.get('nodoctype')
-            self.shadow = kwargs.get('shadow', (0, 0, 0))
-            self.drawer = SVGImageDraw.SVGImageDraw(self.filename,
-                                                    self.pagesize(),
-                                                    nodoctype=nodoctype)
-        elif self.format == 'PDF':
-            import PDFImageDraw
-
-            if self.font is None:
-                msg = "Could not detect fonts, use --font opiton\n"
-                raise RuntimeError(msg)
-
-            self.shadow = kwargs.get('shadow', (0, 0, 0))
-            self.drawer = PDFImageDraw.PDFImageDraw(self.filename,
-                                                    self.pagesize())
-        else:
-            import ImageDrawEx
-
+        if self.format == 'PNG':
             self.shadow = kwargs.get('shadow', (64, 64, 64))
-            self.drawer = ImageDrawEx.ImageDrawEx(self.filename,
-                                                  self.pagesize(),
-                                                  self.scale_ratio)
+        else:
+            self.shadow = kwargs.get('shadow', (0, 0, 0))
+
+        self.drawer = imagedraw.create(self.format, self.filename,
+                                       self.pagesize(), **kwargs)
 
         from LineJumpDrawFilter import LineJumpDrawFilter
         self.drawer = LineJumpDrawFilter(self.drawer, self.metrix.cellSize / 2)
@@ -231,11 +217,12 @@ class DiagramDraw(object):
 
         # Drop node shadows.
         for node in self.nodes:
-            r = noderenderer.get(node.shape)
+            if node.color != 'none':
+                r = noderenderer.get(node.shape)
 
-            shape = r(node, metrix)
-            shape.render(self.drawer, self.format,
-                         fill=self.shadow, shadow=True)
+                shape = r(node, metrix)
+                shape.render(self.drawer, self.format,
+                             fill=self.shadow, shadow=True)
 
         # Smoothing back-ground images.
         if self.format == 'PNG':

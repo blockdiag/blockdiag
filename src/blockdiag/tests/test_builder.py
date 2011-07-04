@@ -46,7 +46,7 @@ def test_node_shape_diagram():
                     'L': 'flowchart.database', 'M': 'flowchart.input',
                     'N': 'flowchart.loopin', 'O': 'flowchart.loopout',
                     'P': 'actor', 'Q': 'flowchart.terminator', 'R': 'textbox',
-                    'Z': 'box'}
+                    'S': 'dots', 'T': 'none', 'Z': 'box'}
     for node in screen.nodes:
         assert node.shape == assert_shape[node.id]
 
@@ -117,7 +117,7 @@ def test_node_attribute():
 
     assert screen.nodes[0].id == 'A'
     assert screen.nodes[0].label == 'B'
-    assert screen.nodes[0].color == 'red'
+    assert screen.nodes[0].color == (255, 0, 0)
     assert screen.nodes[0].xy == (0, 0)
 
     assert screen.nodes[1].id == 'B'
@@ -301,6 +301,15 @@ def test_skipped_circular_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_skipped_twin_circular_diagram():
+    screen = __build_diagram('skipped_twin_circular.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 1),
+                  'D': (2, 2), 'E': (3, 0), 'Z': (0, 3)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
 def test_nested_skipped_circular_diagram():
     screen = __build_diagram('nested_skipped_circular.diag')
 
@@ -420,7 +429,7 @@ def test_node_attribute_and_group_diagram():
                   'Z': (0, 1)}
     assert_labels = {'A': 'foo', 'B': 'bar', 'C': 'baz',
                      'Z': 'Z'}
-    assert_colors = {'A': 'red', 'B': '#888888', 'C': 'blue',
+    assert_colors = {'A': (255, 0, 0), 'B': '#888888', 'C': (0, 0, 255),
                      'Z': (255, 255, 255)}
     for node in (x for x in screen.nodes if x.drawable):
         assert node.xy == assert_pos[node.id]
@@ -658,6 +667,16 @@ def test_slided_children_diagram():
 
     assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'D': (1, 3),
                   'E': (2, 3), 'F': (3, 2), 'G': (2, 1), 'H': (4, 1)}
+    for node in (x for x in screen.nodes if x.drawable):
+        print node, assert_pos[node.id]
+        assert node.xy == assert_pos[node.id]
+
+
+def test_rhombus_relation_height_diagram():
+    screen = __build_diagram('rhombus_relation_height.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'D': (2, 0),
+                  'E': (3, 0), 'F': (3, 1), 'Z': (0, 2)}
     for node in (x for x in screen.nodes if x.drawable):
         print node, assert_pos[node.id]
         assert node.xy == assert_pos[node.id]

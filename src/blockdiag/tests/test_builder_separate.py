@@ -34,11 +34,11 @@ def test_separate1_diagram():
 def test_separate2_diagram():
     screen = __build_diagram('separate2.diag')
 
-    assert_pos = {0: {'A': (0, 2), 'C': (1, 0), 'D': (2, 0),
-                      'E': (0, 0), 'G': (3, 0), 'H': (3, 1)},
+    assert_pos = {0: {'A': (0, 0), 'C': (1, 0), 'D': (2, 0),
+                      'E': (0, 2), 'G': (3, 0), 'H': (3, 1)},
                   1: {'A': (0, 0), 'B': (1, 0), 'E': (2, 0),
                       'F': (4, 2), 'G': (4, 0), 'H': (4, 1)},
-                  2: {'A': (0, 0), 'F': (2, 0), 'G': (2, 2),
+                  2: {'A': (0, 0), 'F': (2, 2), 'G': (2, 0),
                       'H': (2, 1), 'Z': (0, 3)}}
 
     for i, diagram in enumerate(screen):
