@@ -24,7 +24,7 @@ from blockdiag.utils import urlutil
 from blockdiag.utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 
-class PDFImageDraw:
+class PDFImageDraw(object):
     def __init__(self, filename, size, **kwargs):
         self.canvas = canvas.Canvas(filename, pagesize=size)
         self.size = size
