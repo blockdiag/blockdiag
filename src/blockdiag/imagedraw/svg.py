@@ -41,7 +41,7 @@ class feGaussianBlur(SVGelement):
             self.attributes['inkspace:collect'] = inkspace_collect
 
 
-class SVGImageDrawElement:
+class SVGImageDrawElement(object):
     def __init__(self, svg):
         self.svg = svg
 
