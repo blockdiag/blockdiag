@@ -14,10 +14,39 @@
 #  limitations under the License.
 
 from utils.XY import XY
-import utils.LaterCall
 
 
-class LineJumpDrawFilter(utils.LaterCall.LaterCall):
+class LazyReciever(object):
+    def __init__(self, target):
+        self.target = target
+        self.calls = []
+
+    def __getattr__(self, name):
+        return self.get_lazy_method(name)
+
+    def get_lazy_method(self, name):
+        method = self._find_method(name)
+
+        def _(*args, **kwargs):
+            self.calls.append((method, args, kwargs))
+            return self
+
+        return _
+
+    def _find_method(self, name):
+        for p in self.target.__class__.__mro__:
+            if name in p.__dict__:
+                return p.__dict__[name]
+
+        raise AttributeError("%s instance has no attribute '%s'"
+            % (self.target.__class__.__name__, name))
+
+    def _run(self):
+        for method, args, kwargs in self.calls:
+            method(self.target, *args, **kwargs)
+
+
+class LineJumpDrawFilter(LazyReciever):
     def __init__(self, target, jump_radius):
         super(LineJumpDrawFilter, self).__init__(target)
         self.ytree = []
@@ -26,9 +55,9 @@ class LineJumpDrawFilter(utils.LaterCall.LaterCall):
 
     def _run(self):
         line_method = self._find_method("line")
-        for func, arg, kw in self.calls:
-            if func == line_method:
-                ((x1, y1), (x2, y2)) = arg[0]
+        for method, args, kwargs in self.calls:
+            if method == line_method:
+                ((x1, y1), (x2, y2)) = args[0]
                 if y1 == y2:
                     y = y1
                     if x2 < x1:
@@ -37,27 +66,27 @@ class LineJumpDrawFilter(utils.LaterCall.LaterCall):
                     for x in sorted(self.cross.get(y, [])):
                         if x1 <= x and x <= x2:
                             r = self.jump_radius
-                            self.target.line((XY(x1, y), XY(x - r, y)), **kw)
+                            self.target.line((XY(x1, y), XY(x - r, y)), **kwargs)
                             box = (x - r, y - r, x + r, y + r)
-                            self.target.arc(box, 180, 0, **kw)
+                            self.target.arc(box, 180, 0, **kwargs)
                             x1 = x + r
 
-                    self.target.line((XY(x1, y), XY(x2, y)), **kw)
+                    self.target.line((XY(x1, y), XY(x2, y)), **kwargs)
                     continue
 
-            func(self.target, *arg, **kw)
+            method(self.target, *args, **kwargs)
 
-    def line(self, xy, **kw):
+    def line(self, xy, **kwargs):
         from bisect import insort
         for st, ed in zip(xy[:-1], xy[1:]):
-            super(LineJumpDrawFilter, self)._add_call("line")((st, ed), **kw)
+            super(LineJumpDrawFilter, self).get_lazy_method("line")((st, ed), **kwargs)
             if st.y == ed.y:    # horizonal
                 insort(self.ytree, (st.y, 0, (st, ed)))
             elif st.x == ed.x:  # vertical
                 insort(self.ytree, (max(st.y, ed.y), -1, (st, ed)))
                 insort(self.ytree, (min(st.y, ed.y), +1, (st, ed)))
 
-    def save(self, *arg, **kw):
+    def save(self, *args, **kwargs):
         # Search crosspoints
         from bisect import insort, bisect_left, bisect_right
         xtree = []
@@ -76,4 +105,4 @@ class LineJumpDrawFilter(utils.LaterCall.LaterCall):
                     self.cross.setdefault(y, set()).add(x)
 
         self._run()
-        self.target.save(*arg, **kw)
+        self.target.save(*args, **kwargs)
