@@ -18,6 +18,7 @@ import math
 from utils.XY import XY
 import noderenderer
 import imagedraw
+from imagedraw.filters.linejump import LineJumpDrawFilter
 
 
 class DiagramDraw(object):
@@ -51,8 +52,9 @@ class DiagramDraw(object):
         else:
             self.shadow = kwargs.get('shadow', (0, 0, 0))
 
-        self.drawer = imagedraw.create(self.format, self.filename,
-                                       self.pagesize(), **kwargs)
+        drawer = imagedraw.create(self.format, self.filename,
+                                  self.pagesize(), **kwargs)
+        self.drawer = LineJumpDrawFilter(drawer, self.metrix.cellSize / 2)
 
     @property
     def nodes(self):
@@ -106,7 +108,7 @@ class DiagramDraw(object):
 
         if self.scale_ratio > 1:
             pagesize = self.pagesize(scaled=True)
-            self.drawer = self.drawer.resizeCanvas(pagesize)
+            self.drawer.resizeCanvas(pagesize)
 
         for node in self.nodes:
             self.node(node, **kwargs)
@@ -200,37 +202,6 @@ class DiagramDraw(object):
                             if len(nodes) > 0:
                                 edge.skipped = 1
 
-        # Search crosspoints
-        from bisect import insort, bisect_left, bisect_right
-
-        lines = [(ed, ln) for ed in self.edges
-                          for ln in self.metrix.edge(ed).shaft().lines()]
-        ytree = []
-        for i, (_, (st, ed)) in enumerate(lines):
-            if st.y == ed.y:  # horizonal line
-                insort(ytree, (st.y, 0, i))
-            else:             # vertical line
-                insort(ytree, (max(st.y, ed.y), -1, i))
-                insort(ytree, (min(st.y, ed.y), +1, i))
-
-        cross = []
-        xtree = []
-        for y, _, i in ytree:
-            edge, ((x1, y1), (x2, y2)) = lines[i]
-            if (x2 < x1):
-                x1, x2 = x2, x1
-            if (y2 < y1):
-                y1, y2 = y2, y1
-
-            if (y == y1):
-                insort(xtree, x1)
-
-            if (y == y2):
-                del xtree[bisect_left(xtree, x1)]
-                for x in xtree[bisect_right(xtree, x1):bisect_left(xtree, x2)]:
-                    if XY(x, y) not in edge.crosspoints:
-                        edge.crosspoints.append(XY(x, y))
-
     def _draw_background(self):
         metrix = self.metrix.originalMetrix()
 
@@ -254,7 +225,7 @@ class DiagramDraw(object):
 
         # Smoothing back-ground images.
         if self.format == 'PNG':
-            self.drawer = self.drawer.smoothCanvas()
+            self.drawer.smoothCanvas()
 
     def node(self, node, **kwargs):
         r = noderenderer.get(node.shape)
@@ -295,11 +266,6 @@ class DiagramDraw(object):
             else:
                 self.drawer.polygon(head, outline=color, fill=color)
 
-        r = self.metrix.cellSize / 2
-        for jump in metrix.jumps():
-            box = (jump.x - r, jump.y - r, jump.x + r, jump.y + r)
-            self.drawer.arc(box, 180, 0, fill=color, style=edge.style)
-
     def edge_label(self, edge):
         metrix = self.metrix.edge(edge)
 
@@ -313,11 +279,6 @@ class DiagramDraw(object):
 
             msg = "WARNING: DiagramDraw.save(filename) was deprecated.\n"
             sys.stderr.write(msg)
-
-        if size is None and self.format == 'PNG':
-            x = int(self.drawer.image.size[0] / self.scale_ratio)
-            y = int(self.drawer.image.size[1] / self.scale_ratio)
-            size = (x, y)
 
         return self.drawer.save(self.filename, size, self.format)
 
