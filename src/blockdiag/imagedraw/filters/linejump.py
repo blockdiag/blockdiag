@@ -79,7 +79,7 @@ class LineJumpDrawFilter(LazyReciever):
     def line(self, xy, **kwargs):
         from bisect import insort
         for st, ed in zip(xy[:-1], xy[1:]):
-            super(LineJumpDrawFilter, self).get_lazy_method("line")((st, ed), **kwargs)
+            self.get_lazy_method("line")((st, ed), **kwargs)
             if st.y == ed.y:    # horizonal
                 insort(self.ytree, (st.y, 0, (st, ed)))
             elif st.x == ed.x:  # vertical
