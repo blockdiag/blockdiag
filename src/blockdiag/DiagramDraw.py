@@ -18,6 +18,7 @@ import math
 from utils.XY import XY
 import noderenderer
 import imagedraw
+from imagedraw.filters.linejump import LineJumpDrawFilter
 
 
 class DiagramDraw(object):
@@ -51,11 +52,9 @@ class DiagramDraw(object):
         else:
             self.shadow = kwargs.get('shadow', (0, 0, 0))
 
-        self.drawer = imagedraw.create(self.format, self.filename,
-                                       self.pagesize(), **kwargs)
-
-        from LineJumpDrawFilter import LineJumpDrawFilter
-        self.drawer = LineJumpDrawFilter(self.drawer, self.metrix.cellSize / 2)
+        drawer = imagedraw.create(self.format, self.filename,
+                                  self.pagesize(), **kwargs)
+        self.drawer = LineJumpDrawFilter(drawer, self.metrix.cellSize / 2)
 
     @property
     def nodes(self):
