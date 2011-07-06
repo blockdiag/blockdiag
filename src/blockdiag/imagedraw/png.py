@@ -17,10 +17,16 @@ import math
 from itertools import islice, izip, tee
 from blockdiag.utils.myitertools import istep
 from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
-import Image
-import ImageDraw
-import ImageFont
-import ImageFilter
+try:
+    from PIL import Image
+    from PIL import ImageDraw
+    from PIL import ImageFont
+    from PIL import ImageFilter
+except ImportError:
+    import Image
+    import ImageDraw
+    import ImageFont
+    import ImageFilter
 from blockdiag.utils.XY import XY
 from blockdiag.utils import ellipse
 from blockdiag.utils import urlutil

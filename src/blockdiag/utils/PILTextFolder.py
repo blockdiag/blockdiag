@@ -13,9 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import Image
-import ImageDraw
-import ImageFont
+try:
+    from PIL import Image
+    from PIL import ImageDraw
+    from PIL import ImageFont
+except ImportError:
+    import Image
+    import ImageDraw
+    import ImageFont
 from TextFolder import TextFolder
 
 
