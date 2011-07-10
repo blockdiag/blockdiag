@@ -140,28 +140,30 @@ def main():
             tree = diagparser.parse_string(stream.read())
         else:
             tree = diagparser.parse_file(infile)
-    except Exception, e:
-        sys.stderr.write("ERROR: %s\n" % e)
-        return
 
-    if options.separate:
-        from builder import SeparateDiagramBuilder
+        if options.separate:
+            from builder import SeparateDiagramBuilder
 
-        for i, group in enumerate(SeparateDiagramBuilder.build(tree)):
-            outfile2 = re.sub('.svg$', '', outfile) + ('_%d.svg' % (i + 1))
-            draw = DiagramDraw.DiagramDraw(options.type, group, outfile2,
+            for i, group in enumerate(SeparateDiagramBuilder.build(tree)):
+                outfile2 = re.sub('.svg$', '', outfile) + ('_%d.svg' % (i + 1))
+                draw = DiagramDraw.DiagramDraw(options.type, group, outfile2,
+                                               font=fontpath,
+                                               #basediagram=diagram,
+                                               antialias=options.antialias,
+                                               nodoctype=options.nodoctype)
+                draw.draw()
+                draw.save()
+        else:
+            diagram = ScreenNodeBuilder.build(tree)
+
+            draw = DiagramDraw.DiagramDraw(options.type, diagram, outfile,
                                            font=fontpath,
-                                           #basediagram=diagram,
                                            antialias=options.antialias,
                                            nodoctype=options.nodoctype)
             draw.draw()
             draw.save()
-    else:
-        diagram = ScreenNodeBuilder.build(tree)
-
-        draw = DiagramDraw.DiagramDraw(options.type, diagram, outfile,
-                                       font=fontpath,
-                                       antialias=options.antialias,
-                                       nodoctype=options.nodoctype)
-        draw.draw()
-        draw.save()
+    except UnicodeEncodeError, e:
+        msg = "ERROR: UnicodeEncodeError caught (check your font settings)\n"
+        sys.stderr.write(msg)
+    except Exception, e:
+        sys.stderr.write("ERROR: %s\n" % e)
