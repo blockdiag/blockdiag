@@ -4,7 +4,7 @@ import os
 import sys
 import tempfile
 from nose.tools import raises
-from blockdiag.command import parse_option
+from blockdiag.command import parse_option, main
 
 
 def replace_argv(func):
@@ -111,6 +111,18 @@ def invalid_dir_config_option_test():
         tmp = tempfile.mkdtemp()
 
         sys.argv = ['', '-c', tmp, 'input.diag']
+        option = parse_option()
+    finally:
+        os.rmdir(tmp)
+
+
+@raises(RuntimeError)
+@replace_argv
+def not_exist_font_config_option_test():
+    try:
+        tmp = tempfile.mkdtemp()
+
+        sys.argv = ['', '-f', '/font_is_not_exist', '-c', tmp, 'input.diag']
         option = parse_option()
     finally:
         os.rmdir(tmp)

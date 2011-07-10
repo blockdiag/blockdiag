@@ -88,8 +88,7 @@ def parse_option():
 
 
 def detectfont(options):
-    fonts = options.font + \
-            ['c:/windows/fonts/VL-Gothic-Regular.ttf',  # for Windows
+    fonts = ['c:/windows/fonts/VL-Gothic-Regular.ttf',  # for Windows
              'c:/windows/fonts/msmincho.ttf',  # for Windows
              '/usr/share/fonts/truetype/ipafont/ipagp.ttf',  # for Debian
              '/usr/local/share/font-ipa/ipagp.otf',  # for FreeBSD
@@ -97,10 +96,19 @@ def detectfont(options):
              '/System/Library/Fonts/AppleGothic.ttf']  # for MacOS
 
     fontpath = None
-    for path in fonts:
-        if path and os.path.isfile(path):
+    for path in options.font:
+        if os.path.isfile(path):
             fontpath = path
             break
+        else:
+            msg = 'fontfile is not found: %s' % path
+            raise RuntimeError(msg)
+
+    if fontpath is None:
+        for path in fonts:
+            if path and os.path.isfile(path):
+                fontpath = path
+                break
 
     return fontpath
 
