@@ -68,7 +68,8 @@ def tokenize(str):
         ('Comment', (r'//.*',)),
         ('NL',      (r'[\r\n]+',)),
         ('Space',   (r'[ \t\r\n]+',)),
-        ('Name',    (ur'[A-Za-z_\u0080-\uffff][A-Za-z_0-9\u0080-\uffff]*',)),
+        ('Name',    (ur'[A-Za-z_\u0080-\uffff]'
+                     ur'[A-Za-z_\-.0-9\u0080-\uffff]*',)),
         ('Op',      (r'[{};,=\[\]]|(<->)|(<-)|(--)|(->)',)),
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),
         ('String',  (r'(?P<quote>"|\').*?(?<!\\)(?P=quote)', DOTALL)),

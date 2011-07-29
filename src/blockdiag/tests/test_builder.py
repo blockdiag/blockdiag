@@ -77,6 +77,14 @@ def test_quoted_node_id_diagram():
         assert node.xy == assert_pos[node.id]
 
 
+def test_node_id_includes_dot_diagram():
+    screen = __build_diagram('node_id_includes_dot.diag')
+
+    assert_pos = {'A.B': (0, 0), 'C.D': (1, 0), 'Z': (0, 1)}
+    for node in screen.nodes:
+        assert node.xy == assert_pos[node.id]
+
+
 def test_single_edge_diagram():
     screen = __build_diagram('single_edge.diag')
 
