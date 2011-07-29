@@ -25,6 +25,8 @@ from blockdiag.utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 
 class PDFImageDraw(object):
+    self_generative_methods = []
+
     def __init__(self, filename, size, **kwargs):
         self.canvas = canvas.Canvas(filename, pagesize=size)
         self.size = size

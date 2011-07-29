@@ -42,6 +42,8 @@ class feGaussianBlur(SVGelement):
 
 
 class SVGImageDrawElement(object):
+    self_generative_methods = ['link']
+
     def __init__(self, svg):
         self.svg = svg
 

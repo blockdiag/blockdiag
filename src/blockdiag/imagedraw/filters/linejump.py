@@ -20,6 +20,7 @@ class LazyReciever(object):
     def __init__(self, target):
         self.target = target
         self.calls = []
+        self.nested = []
 
     def __getattr__(self, name):
         return self.get_lazy_method(name)
@@ -28,8 +29,14 @@ class LazyReciever(object):
         method = self._find_method(name)
 
         def _(*args, **kwargs):
-            self.calls.append((method, args, kwargs))
-            return self
+            if name in self.target.self_generative_methods:
+                ret = method(self.target, *args, **kwargs)
+                reciever = LazyReciever(ret)
+                self.nested.append(reciever)
+                return reciever
+            else:
+                self.calls.append((method, args, kwargs))
+                return self
 
         return _
 
@@ -42,6 +49,9 @@ class LazyReciever(object):
             % (self.target.__class__.__name__, name))
 
     def _run(self):
+        for recv in self.nested:
+            recv._run()
+
         for method, args, kwargs in self.calls:
             method(self.target, *args, **kwargs)
 
@@ -54,6 +64,9 @@ class LineJumpDrawFilter(LazyReciever):
         self.jump_radius = jump_radius
 
     def _run(self):
+        for recv in self.nested:
+            recv._run()
+
         line_method = self._find_method("line")
         for method, args, kwargs in self.calls:
             if method == line_method:
