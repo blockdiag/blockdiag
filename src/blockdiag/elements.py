@@ -154,7 +154,7 @@ class DiagramNode(Element):
         if value in ('solid', 'dotted', 'dashed'):
             self.style = value
         else:
-            msg = "WARNING: unknown edge style: %s\n" % value
+            msg = "WARNING: unknown node style: %s\n" % value
             sys.stderr.write(msg)
 
     def set_shape(self, value):
