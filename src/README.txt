@@ -113,6 +113,11 @@ Apache License 2.0
 History
 =======
 
+0.8.5 (2011-07-31)
+------------------
+* Allow dot characters in node_id
+* Fix bugs
+
 0.8.4 (2011-07-05)
 ------------------
 * Fix bugs
