@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 import os, sys
+import pkg_resources
 
 sys.path.insert(0, 'src')
 import blockdiag
@@ -19,6 +20,20 @@ classifiers = [
     "Topic :: Text Processing :: Markup",
 ]
 
+requires = ['setuptools',
+            'funcparserlib',
+            'webcolors']
+
+try:
+    pkg_resources.get_distribution('PIL')
+    requires.append('PIL')
+except:
+    if os.name == 'nt':
+        requires.append('Pillow')
+    else:
+        requires.append('PIL')
+
+
 setup(
      name='blockdiag',
      version=blockdiag.__version__,
@@ -35,13 +50,7 @@ setup(
      package_dir={'': 'src'},
      package_data = {'': ['buildout.cfg']},
      include_package_data=True,
-     install_requires=[
-        'setuptools',
-        'PIL',
-        'funcparserlib',
-        'webcolors',
-         # -*- Extra requirements: -*-
-     ],
+     install_requires=requires,
      extras_require=dict(
          test=[
              'Nose',
