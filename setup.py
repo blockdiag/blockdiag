@@ -23,6 +23,7 @@ classifiers = [
 requires = ['setuptools',
             'funcparserlib',
             'webcolors']
+deplinks = []
 
 try:
     pkg_resources.get_distribution('PIL')
@@ -30,6 +31,7 @@ try:
 except:
     if os.name == 'nt':
         requires.append('Pillow')
+        deplinks.append('https://bitbucket.org/shimizukawa/pillow/downloads')
     else:
         requires.append('PIL')
 
@@ -61,6 +63,7 @@ setup(
              'reportlab',
          ],
      ),
+     dependency_links=deplinks,
      test_suite='nose.collector',
      tests_require=['Nose','minimock','pep8'],
      entry_points="""
