@@ -125,4 +125,4 @@ class LineJumpDrawFilter(LazyReciever):
                     self.cross.setdefault(y, set()).add(x)
 
         self._run()
-        self.target.save(*args, **kwargs)
+        return self.target.save(*args, **kwargs)
