@@ -39,7 +39,7 @@ if is_installed('PIL'):
     requires.append('PIL')
 elif is_installed('Pillow'):
     requires.append('Pillow')
-elif os.name == 'nt':
+elif sys.platform == 'win32':
     # Use shimizukawa's Pillow package
     requires.append('Pillow')
     deplinks.append('https://bitbucket.org/shimizukawa/pillow/downloads')
