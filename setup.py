@@ -6,6 +6,15 @@ import pkg_resources
 sys.path.insert(0, 'src')
 import blockdiag
 
+
+def is_installed(name):
+    try:
+        pkg_resources.get_distribution(name)
+        return True
+    except:
+        return False
+
+
 long_description = \
         open(os.path.join("src","README.txt")).read() + \
         open(os.path.join("src","TODO.txt")).read()
@@ -25,15 +34,17 @@ requires = ['setuptools',
             'webcolors']
 deplinks = []
 
-try:
-    pkg_resources.get_distribution('PIL')
+# Find imaging libraries
+if is_installed('PIL'):
     requires.append('PIL')
-except:
-    if os.name == 'nt':
-        requires.append('Pillow')
-        deplinks.append('https://bitbucket.org/shimizukawa/pillow/downloads')
-    else:
-        requires.append('PIL')
+elif is_installed('Pillow'):
+    requires.append('Pillow')
+elif os.name == 'nt':
+    # Use shimizukawa's Pillow package
+    requires.append('Pillow')
+    deplinks.append('https://bitbucket.org/shimizukawa/pillow/downloads')
+else:
+    requires.append('PIL')
 
 
 setup(
