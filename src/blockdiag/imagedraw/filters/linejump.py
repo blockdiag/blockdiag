@@ -38,12 +38,18 @@ class LazyReciever(object):
                 self.calls.append((method, args, kwargs))
                 return self
 
-        return _
+        if name == 'image':
+            return method
+        else:
+            return _
 
     def _find_method(self, name):
         for p in self.target.__class__.__mro__:
             if name in p.__dict__:
                 return p.__dict__[name]
+
+        if name == 'image':
+            return self.target.image
 
         raise AttributeError("%s instance has no attribute '%s'"
             % (self.target.__class__.__name__, name))
@@ -119,4 +125,4 @@ class LineJumpDrawFilter(LazyReciever):
                     self.cross.setdefault(y, set()).add(x)
 
         self._run()
-        return self.target.save(*args, **kwargs)
+        self.target.save(*args, **kwargs)
