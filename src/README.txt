@@ -115,6 +115,7 @@ History
 
 0.8.6 (2011-08-01)
 ------------------
+* Support Pillow as replacement of PIL (experimental)
 * Fix bugs
 
 0.8.5 (2011-07-31)
