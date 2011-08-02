@@ -75,7 +75,7 @@ class LineJumpDrawFilter(LazyReciever):
 
         line_method = self._find_method("line")
         for method, args, kwargs in self.calls:
-            if method == line_method:
+            if method == line_method and kwargs.get('jump'):
                 ((x1, y1), (x2, y2)) = args[0]
                 if y1 == y2:
                     y = y1
