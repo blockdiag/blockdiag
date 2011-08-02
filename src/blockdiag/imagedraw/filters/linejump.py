@@ -66,7 +66,9 @@ class LineJumpDrawFilter(LazyReciever):
     def __init__(self, target, jump_radius):
         super(LineJumpDrawFilter, self).__init__(target)
         self.ytree = []
-        self.cross = {}
+        self.x_cross = {}
+        self.y_cross = {}
+        self.forward = 'holizonal'
         self.jump_radius = jump_radius
 
     def _run(self):
@@ -77,24 +79,46 @@ class LineJumpDrawFilter(LazyReciever):
         for method, args, kwargs in self.calls:
             if method == line_method and kwargs.get('jump'):
                 ((x1, y1), (x2, y2)) = args[0]
-                if y1 == y2:
-                    y = y1
-                    if x2 < x1:
-                        x1, x2 = x2, x1
-
-                    for x in sorted(self.cross.get(y, [])):
-                        if x1 <= x and x <= x2:
-                            r = self.jump_radius
-                            line = (XY(x1, y), XY(x - r, y))
-                            self.target.line(line, **kwargs)
-                            box = (x - r, y - r, x + r, y + r)
-                            self.target.arc(box, 180, 0, **kwargs)
-                            x1 = x + r
-
-                    self.target.line((XY(x1, y), XY(x2, y)), **kwargs)
+                if self.forward == 'holizonal' and y1 == y2:
+                    self._holizonal_jumpline(x1, y1, x2, y2, **kwargs)
+                    continue
+                elif self.forward == 'vertical' and x1 == x2:
+                    self._vertical_jumpline(x1, y1, x2, y2, **kwargs)
                     continue
 
             method(self.target, *args, **kwargs)
+
+    def _holizonal_jumpline(self, x1, y1, x2, y2, **kwargs):
+        y = y1
+        if x2 < x1:
+            x1, x2 = x2, x1
+
+        for x in sorted(self.x_cross.get(y, [])):
+            if x1 <= x and x <= x2:
+                r = self.jump_radius
+                line = (XY(x1, y), XY(x - r, y))
+                self.target.line(line, **kwargs)
+                box = (x - r, y - r, x + r, y + r)
+                self.target.arc(box, 180, 0, **kwargs)
+                x1 = x + r
+
+        self.target.line((XY(x1, y), XY(x2, y)), **kwargs)
+
+    def _vertical_jumpline(self, x1, y1, x2, y2, **kwargs):
+        x = x1
+        if y2 < y1:
+            y1, y2 = y2, y1
+
+        for y in sorted(self.y_cross.get(x, [])):
+            if y1 <= y and y <= y2:
+                r = self.jump_radius
+                line = (XY(x, y1), XY(x, y - r))
+                self.target.line(line, **kwargs)
+                box = (x - r, y - r, x + r, y + r)
+                self.target.arc(box, 270, 90, **kwargs)
+                y1 = y + r
+
+        self.target.line((XY(x, y1), XY(x, y2)), **kwargs)
 
     def line(self, xy, **kwargs):
         from bisect import insort
@@ -122,7 +146,8 @@ class LineJumpDrawFilter(LazyReciever):
             if y == y2:
                 del xtree[bisect_left(xtree, x1)]
                 for x in xtree[bisect_right(xtree, x1):bisect_left(xtree, x2)]:
-                    self.cross.setdefault(y, set()).add(x)
+                    self.x_cross.setdefault(y, set()).add(x)
+                    self.y_cross.setdefault(x, set()).add(y)
 
         self._run()
         return self.target.save(*args, **kwargs)
