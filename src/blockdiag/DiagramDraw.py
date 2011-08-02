@@ -258,7 +258,7 @@ class DiagramDraw(object):
             color = self.fill
 
         for line in metrix.shaft().polylines:
-            self.drawer.line(line, fill=color, style=edge.style)
+            self.drawer.line(line, fill=color, style=edge.style, jump=True)
 
         for head in metrix.heads():
             if edge.hstyle in ('generalization', 'aggregation'):

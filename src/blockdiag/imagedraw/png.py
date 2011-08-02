@@ -160,8 +160,10 @@ class ImageDrawEx(object):
             self.draw.ellipse(box, **kwargs)
 
     def line(self, xy, **kwargs):
-        style = kwargs.get('style')
+        if 'jump' in kwargs:
+            del kwargs['jump']
 
+        style = kwargs.get('style')
         if kwargs.get('fill') == 'none':
             pass
         elif style in ('dotted', 'dashed'):
