@@ -323,4 +323,14 @@ class ImageDrawEx(object):
             size = (x, y)
 
         self.image.thumbnail(size, Image.ANTIALIAS)
-        self.image.save(self.filename, format)
+
+        if self.filename:
+            self.image.save(self.filename, format)
+            image = None
+        else:
+            import cStringIO
+            tmp = cStringIO.StringIO()
+            self.image.save(tmp, format)
+            image = tmp.getvalue()
+
+        return image
