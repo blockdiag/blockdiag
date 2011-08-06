@@ -113,6 +113,10 @@ Apache License 2.0
 History
 =======
 
+0.8.7 (2011-08-06)
+------------------
+* Fix bugs
+
 0.8.6 (2011-08-01)
 ------------------
 * Support Pillow as replacement of PIL (experimental)
