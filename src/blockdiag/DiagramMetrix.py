@@ -513,6 +513,7 @@ class LandscapeEdgeMetrix(EdgeMetrix):
 
     def labelbox(self):
         span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+        node = XY(self.metrix.nodeWidth, self.metrix.nodeHeight)
 
         dir = self.direction()
         node1 = self.metrix.cell(self.edge.node1)
@@ -532,9 +533,9 @@ class LandscapeEdgeMetrix(EdgeMetrix):
 
         elif dir == 'right-up':
             box = (node2.left().x - span.x,
-                   node2.left().y,
+                   node1.top().y - node.y / 2,
                    node2.bottomLeft().x,
-                   node2.bottomLeft().y)
+                   node1.top().y)
 
         elif dir == 'right-down':
             box = (node1.right().x,
@@ -724,11 +725,17 @@ class PortraitEdgeMetrix(EdgeMetrix):
                        node1.topRight().x + span.x / 4,
                        node1.topRight().y - span.y / 2)
 
-        elif dir in ('left-down', 'down'):
+        elif dir == 'down':
             box = (node2.top().x + span.x / 4,
                    node2.top().y - span.y / 2,
                    node2.topRight().x + span.x / 4,
                    node2.topRight().y)
+
+        elif dir == 'left-down':
+            box = (node1.bottomLeft().x,
+                   node1.bottomLeft().y,
+                   node1.bottom().x,
+                   node1.bottom().y + span.y / 2)
 
         # shrink box
         box = (box[0] + span.x / 8, box[1],
@@ -779,6 +786,7 @@ class FlowchartLandscapeEdgeMetrix(LandscapeEdgeMetrix):
         return shaft
 
     def labelbox(self):
+        dir = self.direction()
         if dir == 'right':
             span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
             node1 = self.metrix.node(self.edge.node1)
@@ -845,6 +853,7 @@ class FlowchartPortraitEdgeMetrix(PortraitEdgeMetrix):
         return shaft
 
     def labelbox(self):
+        dir = self.direction()
         if dir == 'right':
             span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
             node1 = self.metrix.node(self.edge.node1)
