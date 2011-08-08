@@ -114,11 +114,14 @@ class LineJumpDrawFilter(LazyReciever):
 
         for y in sorted(self.y_cross.get(x, [])):
             if y1 <= y and y <= y2:
+                arckwargs = dict(kwargs)
+                del arckwargs['jump']
+
                 r = self.jump_radius
                 line = (XY(x, y1), XY(x, y - r))
                 self.target.line(line, **kwargs)
                 box = (x - r, y - r, x + r, y + r)
-                self.target.arc(box, 270, 90, **kwargs)
+                self.target.arc(box, 270, 90, **arckwargs)
                 y1 = y + r
 
         self.target.line((XY(x, y1), XY(x, y2)), **kwargs)
