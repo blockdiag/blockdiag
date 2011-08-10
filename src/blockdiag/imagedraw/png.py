@@ -247,7 +247,7 @@ class ImageDrawEx(object):
             if self.scale_ratio == 1:
                 self.draw.text(xy, string, fill=fill)
             else:
-                size = self.textsize(string)
+                size = self.draw.textsize(string)
                 image = Image.new('RGBA', size)
                 draw = ImageDraw.Draw(image)
                 draw.text((0, 0), string, fill=fill)
