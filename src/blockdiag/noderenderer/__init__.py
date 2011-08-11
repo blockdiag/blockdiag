@@ -15,6 +15,7 @@
 
 import pkg_resources
 from blockdiag.utils.XY import XY
+from blockdiag.utils import images
 
 renderers = {}
 searchpath = []
@@ -55,9 +56,28 @@ class NodeShape(object):
         self.metrix = metrix
 
         m = self.metrix.cell(self.node)
-        self.textbox = m.box()
         self.textalign = 'center'
         self.connectors = [m.top(), m.right(), m.bottom(), m.left()]
+
+        if node.icon is None:
+            self.iconbox = None
+            self.textbox = m.box()
+        else:
+            image_size = images.get_image_size(node.icon)
+            if image_size is None:
+                iconsize = (0, 0)
+            else:
+                boundedbox = [metrix.nodeWidth / 2, metrix.nodeHeight]
+                iconsize = images.calc_image_size(image_size, boundedbox)
+
+            vmargin = (metrix.nodeHeight - iconsize[1]) / 2
+            self.iconbox = (m.topLeft().x,
+                            m.topLeft().y + vmargin,
+                            m.topLeft().x + iconsize[0],
+                            m.topLeft().y + vmargin + iconsize[1])
+
+            self.textbox = (self.iconbox[2], m.top().y,
+                            m.bottomRight().x, m.bottomRight().y)
 
     def render(self, drawer, format, **kwargs):
         if self.node.stacked and not kwargs.get('stacked'):
@@ -76,8 +96,13 @@ class NodeShape(object):
         else:
             self.render_shape(drawer, format, **kwargs)
 
+        self.render_icon(drawer, **kwargs)
         self.render_label(drawer, **kwargs)
         self.render_number_badge(drawer, **kwargs)
+
+    def render_icon(self, drawer, **kwargs):
+        if self.node.icon != None and kwargs.get('shadow') != True:
+            drawer.loadImage(self.node.icon, self.iconbox)
 
     def render_shape(self, drawer, format, **kwargs):
         pass
