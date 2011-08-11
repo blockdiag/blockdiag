@@ -146,6 +146,7 @@ class DiagramNode(Element):
         self.shape = DiagramNode.default_shape
         self.style = None
         self.numbered = None
+        self.icon = None
         self.background = None
         self.description = None
         self.drawable = True
@@ -164,6 +165,13 @@ class DiagramNode(Element):
         except:
             msg = "WARNING: unknown node shape: %s\n" % value
             raise RuntimeError(msg)
+
+    def set_icon(self, value):
+        if urlutil.isurl(value) or os.path.isfile(value):
+            self.icon = value
+        else:
+            msg = "WARNING: icon image not found: %s\n" % value
+            sys.stderr.write(msg)
 
     def set_background(self, value):
         if urlutil.isurl(value) or os.path.isfile(value):

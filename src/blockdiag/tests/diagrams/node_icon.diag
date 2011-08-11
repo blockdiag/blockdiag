@@ -1,0 +1,6 @@
+{
+  A -> B;
+
+  A [label = "aaaaaaaaaaaaaaaaa", icon = "/usr/share/pixmaps/debian-logo.png"];
+  B [label = "aaaaaaaaaaaaaaaaa", icon = "https://si2.twimg.com/profile_images/1287595787/tk0miya.jpg"];
+}
