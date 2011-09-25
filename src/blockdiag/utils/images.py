@@ -45,16 +45,23 @@ except ImportError:
                         return None
 
 
-def get_image_size(filename):
-    if urlutil.isurl(filename):
-        import cStringIO
-        import urllib
-        try:
-            filename = cStringIO.StringIO(urllib.urlopen(filename).read())
-        except:
-            return None
+_image_size_cache = {}
 
-    return Image.open(filename).size
+
+def get_image_size(filename):
+    if filename not in _image_size_cache:
+        uri = filename
+        if urlutil.isurl(filename):
+            import cStringIO
+            import urllib
+            try:
+                uri = cStringIO.StringIO(urllib.urlopen(filename).read())
+            except:
+                return None
+
+        _image_size_cache[filename] = Image.open(uri).size
+
+    return _image_size_cache[filename]
 
 
 def calc_image_size(size, bounded):
