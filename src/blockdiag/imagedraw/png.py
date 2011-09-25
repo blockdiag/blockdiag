@@ -92,6 +92,10 @@ class ImageDrawEx(object):
         else:
             self.image = Image.new('RGB', size, (256, 256, 256))
 
+            # set transparency to background
+            alpha = Image.new('L', size, 1)
+            self.image.putalpha(alpha)
+
         self.filename = filename
         self.scale_ratio = kwargs.get('scale_ratio', 1)
         self.mode = kwargs.get('mode')
