@@ -130,11 +130,13 @@ class LineJumpDrawFilter(LazyReciever):
         from bisect import insort
         for st, ed in zip(xy[:-1], xy[1:]):
             self.get_lazy_method("line")((st, ed), **kwargs)
-            if st.y == ed.y:    # horizonal
-                insort(self.ytree, (st.y, 0, (st, ed)))
-            elif st.x == ed.x:  # vertical
-                insort(self.ytree, (max(st.y, ed.y), -1, (st, ed)))
-                insort(self.ytree, (min(st.y, ed.y), +1, (st, ed)))
+
+            if 'jump' not in kwargs:
+                if st.y == ed.y:    # horizonal
+                    insort(self.ytree, (st.y, 0, (st, ed)))
+                elif st.x == ed.x:  # vertical
+                    insort(self.ytree, (max(st.y, ed.y), -1, (st, ed)))
+                    insort(self.ytree, (min(st.y, ed.y), +1, (st, ed)))
 
     def save(self, *args, **kwargs):
         # Search crosspoints
