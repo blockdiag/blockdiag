@@ -113,6 +113,12 @@ Apache License 2.0
 History
 =======
 
+0.9.0 (2011-09-25)
+------------------
+* Add icon attribute to node
+* Make transparency to background of PNG images 
+* Fix bugs
+
 0.8.9 (2011-08-09)
 ------------------
 * Fix bugs
