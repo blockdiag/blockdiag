@@ -47,7 +47,6 @@ except ImportError:
                     except:
                         size = None
 
-
                 if hasattr(self.filename, 'seek'):
                     self.filename.seek(0)
 
