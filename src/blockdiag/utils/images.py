@@ -34,16 +34,24 @@ except ImportError:
             @property
             def size(self):
                 try:
-                    return jpeg.JpegFile.get_size(self.filename)
+                    size = jpeg.JpegFile.get_size(self.filename)
                 except:
                     try:
                         if isinstance(self.filename, (str, unicode)):
-                            self.filename = open(self.filename, 'r')
-                        image = png.Reader(file=self.filename).read()
-                        return (image[0], image[1])
+                            content = open(self.filename, 'r')
+                        else:
+                            self.filename.seek(0)
+                            content = self.filename
+                        image = png.Reader(file=content).read()
+                        size = (image[0], image[1])
                     except:
-                        return None
+                        size = None
 
+
+                if hasattr(self.filename, 'seek'):
+                    self.filename.seek(0)
+
+                return size
 
 _image_size_cache = {}
 
