@@ -5,6 +5,11 @@
   span_height = 32;
   fontsize = 16;
   default_shape = 'diamond'
+  default_node_color = 'red'
+  default_group_color = 'blue'
 
   A;
+  group {
+    B;
+  }
 }
