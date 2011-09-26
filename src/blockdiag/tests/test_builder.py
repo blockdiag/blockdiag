@@ -24,9 +24,12 @@ def test_diagram_attributes():
     assert screen.span_width == 32
     assert screen.span_height == 32
     assert screen.fontsize == 16
+    assert screen.linecolor == (128, 128, 128)  # gray
     assert screen.nodes[0].shape == 'diamond'
     assert screen.nodes[0].color == (255, 0, 0)  # red
     assert screen.nodes[1].color == (0, 0, 255)  # blue
+
+    assert DiagramEdge.basecolor == (128, 128, 128)  # gray
 
 
 def test_single_node_diagram():
@@ -171,10 +174,10 @@ def test_edge_attribute():
     for edge in screen.edges:
         if edge.node1.id == 'D':
             assert edge.dir == 'none'
-            assert edge.color == None
+            assert edge.color == (0, 0, 0)
         else:
             assert edge.dir == 'forward'
-            assert edge.color == 'red'
+            assert edge.color == (255, 0, 0)  # red
 
 
 def test_node_height_diagram():

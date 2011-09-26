@@ -280,8 +280,14 @@ class NodeGroup(Element):
 
 
 class Diagram(NodeGroup):
+    linecolor = (0, 0, 0)
     int_attrs = ['width', 'height', 'fontsize',
                  'node_width', 'node_height', 'span_width', 'span_height']
+
+    @classmethod
+    def clear(cls):
+        super(NodeGroup, cls).clear()
+        cls.linecolor = (0, 0, 0)
 
     def __init__(self):
         super(Diagram, self).__init__(None)
@@ -306,6 +312,10 @@ class Diagram(NodeGroup):
         color = images.color_to_rgb(color)
         DiagramNode.set_default_color(color)
 
+    def set_default_line_color(self, color):
+        self.linecolor = images.color_to_rgb(color)
+        DiagramEdge.set_default_color(color)
+
     def set_default_group_color(self, color):
         color = images.color_to_rgb(color)
         NodeGroup.set_default_color(color)
@@ -326,6 +336,7 @@ class Diagram(NodeGroup):
 
 
 class DiagramEdge(Base):
+    basecolor = (0, 0, 0)
     namespace = {}
 
     @classmethod
@@ -398,8 +409,13 @@ class DiagramEdge(Base):
         return edges
 
     @classmethod
+    def set_default_color(cls, color):
+        cls.basecolor = images.color_to_rgb(color)
+
+    @classmethod
     def clear(cls):
         cls.namespace = {}
+        cls.basecolor = (0, 0, 0)
 
     def __init__(self, node1, node2):
         self.node1 = node1
@@ -409,7 +425,7 @@ class DiagramEdge(Base):
 
         self.label = None
         self.dir = 'forward'
-        self.color = None
+        self.color = self.__class__.basecolor
         self.style = None
         self.hstyle = None
         self.folded = None
@@ -441,6 +457,9 @@ class DiagramEdge(Base):
         else:
             msg = "WARNING: unknown edge dir: %s\n" % value
             sys.stderr.write(msg)
+
+    def set_color(self, color):
+        self.color = images.color_to_rgb(color)
 
     def set_style(self, value):
         value = value.lower()
