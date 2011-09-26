@@ -98,7 +98,7 @@ class Element(Base):
         self.group = None
         self.drawable = False
         self.order = 0
-        self.color = self.__class__.basecolor
+        self.color = self.basecolor
         self.width = 1
         self.height = 1
         self.stacked = False
@@ -142,6 +142,7 @@ class DiagramNode(Element):
 
         self.label = unquote(id) or ''
         self.shape = DiagramNode.default_shape
+        self.color = DiagramNode.basecolor
         self.style = None
         self.numbered = None
         self.icon = None
@@ -201,6 +202,7 @@ class NodeGroup(Element):
         self.level = 0
         self.separated = False
         self.shape = 'box'
+        self.color = NodeGroup.basecolor
         self.nodes = []
         self.edges = []
         self.orientation = 'landscape'
@@ -425,7 +427,7 @@ class DiagramEdge(Base):
 
         self.label = None
         self.dir = 'forward'
-        self.color = self.__class__.basecolor
+        self.color = DiagramEdge.basecolor
         self.style = None
         self.hstyle = None
         self.folded = None
