@@ -56,7 +56,7 @@ class Terminator(NodeShape):
                 drawer.ellipse(e, fill=fill, outline=fill,
                                filter='transp-blur')
             else:
-                drawer.ellipse(e, fill=self.node.color, outline=fill,
+                drawer.ellipse(e, fill=self.node.color, outline=outline,
                                style=self.node.style)
 
         rect = (box[0] + r, box[1], box[2] - r, box[3])
@@ -101,10 +101,10 @@ class Terminator(NodeShape):
         elif self.node.background:
             drawer.path(path, fill=self.node.color, outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.path(path, fill="none", outline=fill,
+            drawer.path(path, fill="none", outline=outline,
                         style=self.node.style)
         else:
-            drawer.path(path, fill=self.node.color, outline=fill,
+            drawer.path(path, fill=self.node.color, outline=outline,
                         style=self.node.style)
 
 

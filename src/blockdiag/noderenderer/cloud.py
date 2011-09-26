@@ -47,6 +47,7 @@ class Cloud(NodeShape):
             drawer.loadImage(self.node.background, self.textbox)
 
     def render_shape_background(self, drawer, format, **kwargs):
+        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
@@ -77,7 +78,7 @@ class Cloud(NodeShape):
                 drawer.ellipse(e, fill=fill, outline=fill,
                                filter='transp-blur')
             else:
-                drawer.ellipse(e, fill=self.node.color, outline=fill,
+                drawer.ellipse(e, fill=self.node.color, outline=outline,
                                style=self.node.style)
 
         rects = [(pt.x + rx * 2, pt.y + ry * 2, pt.x + rx * 11, pt.y + ry * 4),
@@ -121,10 +122,10 @@ class Cloud(NodeShape):
         elif self.node.background:
             drawer.path(path, fill=self.node.color, outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.path(path, fill="none", outline=fill,
+            drawer.path(path, fill="none", outline=outline,
                         style=self.node.style)
         else:
-            drawer.path(path, fill=self.node.color, outline=fill,
+            drawer.path(path, fill=self.node.color, outline=outline,
                         style=self.node.style)
 
 
