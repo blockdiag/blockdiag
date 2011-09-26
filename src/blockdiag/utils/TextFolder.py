@@ -204,11 +204,12 @@ class TextFolder:
             corners.append(XY(xy.x + width, xy.y + height))
 
         if corners:
-            margin = 2  # this is MAGIC number
-            box = (min(p.x for p in corners) - margin,
-                   min(p.y for p in corners) - margin,
-                   max(p.x for p in corners) + margin,
-                   max(p.y for p in corners) + margin)
+            x_margin = 4  # MAGIC number
+            y_margin = 2  # MAGIC number
+            box = (min(p.x for p in corners) - x_margin,
+                   min(p.y for p in corners) - y_margin,
+                   max(p.x for p in corners) + x_margin,
+                   max(p.y for p in corners) + y_margin)
         else:
             box = self.box
 
