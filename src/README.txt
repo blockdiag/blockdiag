@@ -113,6 +113,11 @@ Apache License 2.0
 History
 =======
 
+0.9.1 (2011-09-26)
+------------------
+* Add diagram attributes: default_node_color, default_group_color and default_line_color
+* Fix bugs
+
 0.9.0 (2011-09-25)
 ------------------
 * Add icon attribute to node
