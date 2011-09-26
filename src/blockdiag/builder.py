@@ -472,6 +472,7 @@ class ScreenNodeBuilder:
         DiagramNode.clear()
         DiagramEdge.clear()
         NodeGroup.clear()
+        Diagram.clear()
 
         diagram = DiagramTreeBuilder().build(tree)
         if layout:
@@ -487,6 +488,7 @@ class SeparateDiagramBuilder:
         DiagramNode.clear()
         DiagramEdge.clear()
         NodeGroup.clear()
+        Diagram.clear()
 
         return cls(tree).run()
 

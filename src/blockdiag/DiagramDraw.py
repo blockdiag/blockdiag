@@ -231,7 +231,7 @@ class DiagramDraw(object):
         r = noderenderer.get(node.shape)
         shape = r(node, self.metrix)
         shape.render(self.drawer, self.format,
-                     fill=self.fill, outline=self.fill,
+                     fill=self.fill, outline=self.diagram.linecolor,
                      font=self.font, badgeFill=self.badgeFill)
 
     def group_label(self, group):
@@ -252,19 +252,15 @@ class DiagramDraw(object):
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
 
-        if edge.color:
-            color = edge.color
-        else:
-            color = self.fill
-
         for line in metrix.shaft().polylines:
-            self.drawer.line(line, fill=color, style=edge.style, jump=True)
+            self.drawer.line(line, fill=edge.color,
+                             style=edge.style, jump=True)
 
         for head in metrix.heads():
             if edge.hstyle in ('generalization', 'aggregation'):
-                self.drawer.polygon(head, outline=color, fill='white')
+                self.drawer.polygon(head, outline=edge.color, fill='white')
             else:
-                self.drawer.polygon(head, outline=color, fill=color)
+                self.drawer.polygon(head, outline=edge.color, fill=edge.color)
 
     def edge_label(self, edge):
         metrix = self.metrix.edge(edge)
