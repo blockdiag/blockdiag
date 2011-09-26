@@ -17,9 +17,8 @@ import os
 import re
 import sys
 import copy
-from utils import uuid
 from utils.XY import XY
-from utils import urlutil
+from utils import images, urlutil, uuid
 import noderenderer
 
 
@@ -117,13 +116,7 @@ class Element(Base):
         return format % locals()
 
     def set_color(self, color):
-        import webcolors
-        if color == 'none' or isinstance(color, (list, tuple)):
-            self.color = color
-        elif re.match('#', color):
-            self.color = webcolors.hex_to_rgb(color)
-        else:
-            self.color = webcolors.name_to_rgb(color)
+        self.color = images.color_to_rgb(color)
 
 
 class DiagramNode(Element):
@@ -135,9 +128,14 @@ class DiagramNode(Element):
         cls.default_shape = shape
 
     @classmethod
+    def set_default_color(cls, color):
+        cls.basecolor = images.color_to_rgb(color)
+
+    @classmethod
     def clear(cls):
-        cls.namespace = {}
+        super(DiagramNode, cls).clear()
         cls.default_shape = 'box'
+        cls.basecolor = (255, 255, 255)
 
     def __init__(self, id):
         super(DiagramNode, self).__init__(id)
@@ -186,6 +184,15 @@ class DiagramNode(Element):
 
 class NodeGroup(Element):
     basecolor = (243, 152, 0)
+
+    @classmethod
+    def set_default_color(cls, color):
+        cls.basecolor = images.color_to_rgb(color)
+
+    @classmethod
+    def clear(cls):
+        super(NodeGroup, cls).clear()
+        cls.basecolor = (243, 152, 0)
 
     def __init__(self, id):
         super(NodeGroup, self).__init__(id)
@@ -294,6 +301,14 @@ class Diagram(NodeGroup):
         except:
             msg = "WARNING: unknown node shape: %s\n" % value
             raise RuntimeError(msg)
+
+    def set_default_node_color(self, color):
+        color = images.color_to_rgb(color)
+        DiagramNode.set_default_color(color)
+
+    def set_default_group_color(self, color):
+        color = images.color_to_rgb(color)
+        NodeGroup.set_default_color(color)
 
     def set_shape_namespace(self, value):
         noderenderer.set_default_namespace(value)

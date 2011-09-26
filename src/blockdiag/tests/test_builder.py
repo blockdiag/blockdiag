@@ -25,6 +25,8 @@ def test_diagram_attributes():
     assert screen.span_height == 32
     assert screen.fontsize == 16
     assert screen.nodes[0].shape == 'diamond'
+    assert screen.nodes[0].color == (255, 0, 0)  # red
+    assert screen.nodes[1].color == (0, 0, 255)  # blue
 
 
 def test_single_node_diagram():

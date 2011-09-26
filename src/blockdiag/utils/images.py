@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
 import urlutil
 try:
     from PIL import Image
@@ -79,3 +80,15 @@ def calc_image_size(size, bounded):
             size = (bounded[0], size[1] * bounded[0] / size[0])
 
     return size
+
+
+def color_to_rgb(color):
+    import webcolors
+    if color == 'none' or isinstance(color, (list, tuple)):
+        rgb = color
+    elif re.match('#', color):
+        rgb = webcolors.hex_to_rgb(color)
+    else:
+        rgb = webcolors.name_to_rgb(color)
+
+    return rgb
