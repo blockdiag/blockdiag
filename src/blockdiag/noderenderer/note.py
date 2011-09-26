@@ -51,7 +51,7 @@ class Note(NodeShape):
             folded = [XY(tr.x - r, tr.y),
                       XY(tr.x - r, tr.y + r),
                       XY(tr.x, tr.y + r)]
-            drawer.line(folded, fill=fill, style=self.node.style)
+            drawer.line(folded, fill=outline, style=self.node.style)
 
 
 def setup(self):

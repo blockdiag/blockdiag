@@ -117,7 +117,7 @@ class Database(NodeShape):
         if not kwargs.get('shadow'):
             path = pathdata(box[2], box[1] + r)
             path.ellarc(width / 2, r, 0, 0, 1, box[0], box[1] + r)
-            drawer.path(path, fill=self.node.color, outline=fill,
+            drawer.path(path, fill=self.node.color, outline=outline,
                         style=self.node.style)
 
 

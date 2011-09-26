@@ -52,7 +52,7 @@ class Mail(NodeShape):
         # draw flap
         if not kwargs.get('shadow'):
             flap = [m.topLeft(), XY(m.top().x, m.top().y + r), m.topRight()]
-            drawer.line(flap, fill=fill, style=self.node.style)
+            drawer.line(flap, fill=outline, style=self.node.style)
 
 
 def setup(self):

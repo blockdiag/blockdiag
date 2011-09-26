@@ -53,7 +53,7 @@ class RoundedBox(NodeShape):
                 ((box[0], box[3] - r * 2, box[0] + r * 2, box[3]), 90, 180)]
         for arc in arcs:
             drawer.arc(arc[0], arc[1], arc[2],
-                       fill=fill, style=self.node.style)
+                       fill=outline, style=self.node.style)
 
     def render_shape_background(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')
@@ -115,10 +115,10 @@ class RoundedBox(NodeShape):
         elif self.node.background:
             drawer.path(path, fill=self.node.color, outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.path(path, fill="none", outline=fill,
+            drawer.path(path, fill="none", outline=outline,
                         style=self.node.style)
         else:
-            drawer.path(path, fill=self.node.color, outline=fill,
+            drawer.path(path, fill=self.node.color, outline=outline,
                         style=self.node.style)
 
 
