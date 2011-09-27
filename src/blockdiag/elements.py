@@ -46,7 +46,22 @@ def unquote(string):
 
 
 class Base(object):
+    basecolor = (255, 255, 255)
+    textcolor = (0, 0, 0)
     int_attrs = ['width', 'height']
+
+    @classmethod
+    def set_default_color(cls, color):
+        cls.basecolor = images.color_to_rgb(color)
+
+    @classmethod
+    def set_default_text_color(cls, color):
+        cls.textcolor = images.color_to_rgb(color)
+
+    @classmethod
+    def clear(cls):
+        cls.basecolor = (255, 255, 255)
+        cls.textcolor = (0, 0, 0)
 
     def duplicate(self):
         return copy.copy(self)
@@ -72,8 +87,6 @@ class Base(object):
 
 
 class Element(Base):
-    basecolor = (255, 255, 255)
-    textcolor = (0, 0, 0)
     namespace = {}
 
     @classmethod
@@ -89,15 +102,8 @@ class Element(Base):
         return cls.namespace[unquote_id]
 
     @classmethod
-    def set_default_color(cls, color):
-        cls.basecolor = images.color_to_rgb(color)
-
-    @classmethod
-    def set_default_text_color(cls, color):
-        cls.textcolor = images.color_to_rgb(color)
-
-    @classmethod
     def clear(cls):
+        super(Element, cls).clear()
         cls.namespace = {}
         cls.basecolor = (255, 255, 255)
         cls.textcolor = (0, 0, 0)
@@ -134,26 +140,21 @@ class Element(Base):
 
 
 class DiagramNode(Element):
-    basecolor = (255, 255, 255)
-    default_shape = 'box'
+    shape = 'box'
 
     @classmethod
     def set_default_shape(cls, shape):
-        cls.default_shape = shape
+        cls.shape = shape
 
     @classmethod
     def clear(cls):
         super(DiagramNode, cls).clear()
-        cls.default_shape = 'box'
-        cls.basecolor = (255, 255, 255)
-        cls.textcolor = (0, 0, 0)
+        cls.shape = 'box'
 
     def __init__(self, id):
         super(DiagramNode, self).__init__(id)
 
         self.label = unquote(id) or ''
-        self.shape = DiagramNode.default_shape
-        self.color = DiagramNode.basecolor
         self.style = None
         self.numbered = None
         self.icon = None
@@ -201,7 +202,6 @@ class NodeGroup(Element):
     def clear(cls):
         super(NodeGroup, cls).clear()
         cls.basecolor = (243, 152, 0)
-        cls.textcolor = (0, 0, 0)
 
     def __init__(self, id):
         super(NodeGroup, self).__init__(id)
@@ -210,7 +210,6 @@ class NodeGroup(Element):
         self.level = 0
         self.separated = False
         self.shape = 'box'
-        self.color = NodeGroup.basecolor
         self.nodes = []
         self.edges = []
         self.orientation = 'landscape'
@@ -291,7 +290,6 @@ class NodeGroup(Element):
 
 class DiagramEdge(Base):
     basecolor = (0, 0, 0)
-    textcolor = (0, 0, 0)
     namespace = {}
 
     @classmethod
@@ -364,18 +362,10 @@ class DiagramEdge(Base):
         return edges
 
     @classmethod
-    def set_default_color(cls, color):
-        cls.basecolor = images.color_to_rgb(color)
-
-    @classmethod
-    def set_default_text_color(cls, color):
-        cls.textcolor = images.color_to_rgb(color)
-
-    @classmethod
     def clear(cls):
+        super(DiagramEdge, cls).clear()
         cls.namespace = {}
         cls.basecolor = (0, 0, 0)
-        cls.textcolor = (0, 0, 0)
 
     def __init__(self, node1, node2):
         self.node1 = node1
@@ -445,6 +435,9 @@ class DiagramEdge(Base):
 
 
 class Diagram(NodeGroup):
+    _DiagramNode = DiagramNode
+    _DiagramEdge = DiagramEdge
+    _NodeGroup = NodeGroup
     linecolor = (0, 0, 0)
     int_attrs = ['width', 'height', 'fontsize',
                  'node_width', 'node_height', 'span_width', 'span_height']
@@ -475,21 +468,21 @@ class Diagram(NodeGroup):
 
     def set_default_text_color(self, color):
         color = images.color_to_rgb(color)
-        DiagramNode.set_default_text_color(color)
-        NodeGroup.set_default_text_color(color)
-        DiagramEdge.set_default_text_color(color)
+        self._DiagramNode.set_default_text_color(color)
+        self._NodeGroup.set_default_text_color(color)
+        self._DiagramEdge.set_default_text_color(color)
 
     def set_default_node_color(self, color):
         color = images.color_to_rgb(color)
-        DiagramNode.set_default_color(color)
+        self._DiagramNode.set_default_color(color)
 
     def set_default_line_color(self, color):
         self.linecolor = images.color_to_rgb(color)
-        DiagramEdge.set_default_color(self.linecolor)
+        self._DiagramEdge.set_default_color(self.linecolor)
 
     def set_default_group_color(self, color):
         color = images.color_to_rgb(color)
-        NodeGroup.set_default_color(color)
+        self._NodeGroup.set_default_color(color)
 
     def set_shape_namespace(self, value):
         noderenderer.set_default_namespace(value)
