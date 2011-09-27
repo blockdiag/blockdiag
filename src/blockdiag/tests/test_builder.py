@@ -27,9 +27,12 @@ def test_diagram_attributes():
     assert screen.linecolor == (128, 128, 128)  # gray
     assert screen.nodes[0].shape == 'diamond'
     assert screen.nodes[0].color == (255, 0, 0)  # red
+    assert screen.nodes[0].textcolor == (0, 128, 0)  # green
     assert screen.nodes[1].color == (0, 0, 255)  # blue
+    assert screen.nodes[1].textcolor == (0, 128, 0)  # green
 
-    assert DiagramEdge.basecolor == (128, 128, 128)  # gray
+    assert screen.edges[0].color == (128, 128, 128)  # gray
+    assert screen.edges[0].textcolor == (0, 128, 0)  # green
 
 
 def test_single_node_diagram():
@@ -131,6 +134,7 @@ def test_node_attribute():
     assert screen.nodes[0].id == 'A'
     assert screen.nodes[0].label == 'B'
     assert screen.nodes[0].color == (255, 0, 0)
+    assert screen.nodes[0].textcolor == (0, 0, 0)
     assert screen.nodes[0].xy == (0, 0)
 
     assert screen.nodes[1].id == 'B'
@@ -140,13 +144,19 @@ def test_node_attribute():
 
     assert screen.nodes[2].id == 'C'
     assert screen.nodes[2].label == 'single quoted'
+    assert screen.nodes[2].color == (255, 0, 0)
 
     assert screen.nodes[3].id == 'D'
     assert screen.nodes[3].label == '\'"double" quoted\''
+    assert screen.nodes[3].color == (255, 0, 0)
 
     assert screen.nodes[4].id == 'E'
     assert screen.nodes[4].label == '"\'single\' quoted"'
+    assert screen.nodes[4].color == (255, 0, 0)
     assert screen.nodes[4].numbered == '1'
+
+    assert screen.nodes[5].id == 'F'
+    assert screen.nodes[5].textcolor == (255, 0, 0)
 
 
 def test_edge_shape():

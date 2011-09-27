@@ -8,8 +8,9 @@
   default_node_color = red
   default_group_color = blue
   default_line_color = gray
+  default_text_color = green
 
-  A;
+  A -> B;
   group {
     B;
   }
