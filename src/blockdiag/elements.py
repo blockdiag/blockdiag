@@ -289,68 +289,6 @@ class NodeGroup(Element):
             sys.stderr.write(msg)
 
 
-class Diagram(NodeGroup):
-    linecolor = (0, 0, 0)
-    int_attrs = ['width', 'height', 'fontsize',
-                 'node_width', 'node_height', 'span_width', 'span_height']
-
-    @classmethod
-    def clear(cls):
-        super(NodeGroup, cls).clear()
-        cls.linecolor = (0, 0, 0)
-
-    def __init__(self):
-        super(Diagram, self).__init__(None)
-
-        self.node_width = None
-        self.node_height = None
-        self.span_width = None
-        self.span_height = None
-        self.page_padding = None
-        self.fontsize = None
-        self.edge_layout = None
-
-    def set_default_shape(self, value):
-        try:
-            noderenderer.get(value)
-            DiagramNode.set_default_shape(value)
-        except:
-            msg = "WARNING: unknown node shape: %s\n" % value
-            raise RuntimeError(msg)
-
-    def set_default_text_color(self, color):
-        color = images.color_to_rgb(color)
-        DiagramNode.set_default_text_color(color)
-        NodeGroup.set_default_text_color(color)
-        DiagramEdge.set_default_text_color(color)
-
-    def set_default_node_color(self, color):
-        color = images.color_to_rgb(color)
-        DiagramNode.set_default_color(color)
-
-    def set_default_line_color(self, color):
-        self.linecolor = images.color_to_rgb(color)
-        DiagramEdge.set_default_color(self.linecolor)
-
-    def set_default_group_color(self, color):
-        color = images.color_to_rgb(color)
-        NodeGroup.set_default_color(color)
-
-    def set_shape_namespace(self, value):
-        noderenderer.set_default_namespace(value)
-
-    def set_edge_layout(self, value):
-        value = value.lower()
-        if value in ('normal', 'flowchart'):
-            msg = "WARNING: edge_layout is very experimental feature!\n"
-            sys.stderr.write(msg)
-
-            self.edge_layout = value
-        else:
-            msg = "WARNING: unknown edge dir: %s\n" % value
-            sys.stderr.write(msg)
-
-
 class DiagramEdge(Base):
     basecolor = (0, 0, 0)
     textcolor = (0, 0, 0)
@@ -504,3 +442,65 @@ class DiagramEdge(Base):
 
     def set_nofolded(self, value):
         self.folded = False
+
+
+class Diagram(NodeGroup):
+    linecolor = (0, 0, 0)
+    int_attrs = ['width', 'height', 'fontsize',
+                 'node_width', 'node_height', 'span_width', 'span_height']
+
+    @classmethod
+    def clear(cls):
+        super(NodeGroup, cls).clear()
+        cls.linecolor = (0, 0, 0)
+
+    def __init__(self):
+        super(Diagram, self).__init__(None)
+
+        self.node_width = None
+        self.node_height = None
+        self.span_width = None
+        self.span_height = None
+        self.page_padding = None
+        self.fontsize = None
+        self.edge_layout = None
+
+    def set_default_shape(self, value):
+        try:
+            noderenderer.get(value)
+            DiagramNode.set_default_shape(value)
+        except:
+            msg = "WARNING: unknown node shape: %s\n" % value
+            raise RuntimeError(msg)
+
+    def set_default_text_color(self, color):
+        color = images.color_to_rgb(color)
+        DiagramNode.set_default_text_color(color)
+        NodeGroup.set_default_text_color(color)
+        DiagramEdge.set_default_text_color(color)
+
+    def set_default_node_color(self, color):
+        color = images.color_to_rgb(color)
+        DiagramNode.set_default_color(color)
+
+    def set_default_line_color(self, color):
+        self.linecolor = images.color_to_rgb(color)
+        DiagramEdge.set_default_color(self.linecolor)
+
+    def set_default_group_color(self, color):
+        color = images.color_to_rgb(color)
+        NodeGroup.set_default_color(color)
+
+    def set_shape_namespace(self, value):
+        noderenderer.set_default_namespace(value)
+
+    def set_edge_layout(self, value):
+        value = value.lower()
+        if value in ('normal', 'flowchart'):
+            msg = "WARNING: edge_layout is very experimental feature!\n"
+            sys.stderr.write(msg)
+
+            self.edge_layout = value
+        else:
+            msg = "WARNING: unknown edge dir: %s\n" % value
+            sys.stderr.write(msg)
