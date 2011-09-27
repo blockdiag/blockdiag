@@ -243,10 +243,11 @@ class DiagramDraw(object):
             drawer = self.drawer
 
         if group.label and not group.separated:
-            drawer.textarea(m.groupLabelBox(), group.label, fill=self.fill,
-                            font=self.font, fontsize=self.metrix.fontSize)
+            drawer.textarea(m.groupLabelBox(), group.label,
+                            fill=group.textcolor, font=self.font,
+                            fontsize=self.metrix.fontSize)
         elif group.label:
-            drawer.textarea(m.coreBox(), group.label, fill=self.fill,
+            drawer.textarea(m.coreBox(), group.label, fill=group.textcolor,
                             font=self.font, fontsize=self.metrix.fontSize)
 
     def edge(self, edge):
@@ -266,8 +267,9 @@ class DiagramDraw(object):
         metrix = self.metrix.edge(edge)
 
         if edge.label:
-            self.drawer.label(metrix.labelbox(), edge.label, fill=self.fill,
-                              font=self.font, fontsize=self.metrix.fontSize)
+            self.drawer.label(metrix.labelbox(), edge.label,
+                              fill=edge.textcolor, font=self.font,
+                              fontsize=self.metrix.fontSize)
 
     def save(self, filename=None, size=None):
         if filename:

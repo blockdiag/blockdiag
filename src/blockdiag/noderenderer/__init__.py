@@ -109,26 +109,25 @@ class NodeShape(object):
 
     def render_label(self, drawer, **kwargs):
         font = kwargs.get('font')
-        fill = kwargs.get('fill')
 
         if not kwargs.get('shadow'):
             drawer.textarea(self.textbox, self.node.label,
-                            fill=fill, halign=self.textalign,
+                            fill=self.node.textcolor, halign=self.textalign,
                             font=font, fontsize=self.metrix.fontSize,
                             lineSpacing=self.metrix.lineSpacing)
 
     def render_number_badge(self, drawer, **kwargs):
         if self.node.numbered != None and kwargs.get('shadow') != True:
             font = kwargs.get('font')
-            fill = kwargs.get('fill')
+            outline = kwargs.get('outline')
             badgeFill = kwargs.get('badgeFill')
 
             xy = self.metrix.cell(self.node).topLeft()
             r = self.metrix.cellSize * 3 / 2
 
             box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
-            drawer.ellipse(box, outline=fill, fill=badgeFill)
-            drawer.textarea(box, self.node.numbered, fill=fill,
+            drawer.ellipse(box, outline=outline, fill=badgeFill)
+            drawer.textarea(box, self.node.numbered, fill=self.node.textcolor,
                             font=font, fontsize=self.metrix.fontSize)
 
     def top(self):
