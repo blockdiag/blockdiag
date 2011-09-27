@@ -375,7 +375,7 @@ class DiagramEdge(Base):
 
         self.label = None
         self.dir = 'forward'
-        self.color = DiagramEdge.basecolor
+        self.color = self.basecolor
         self.style = None
         self.hstyle = None
         self.folded = None
@@ -467,10 +467,10 @@ class Diagram(NodeGroup):
             raise RuntimeError(msg)
 
     def set_default_text_color(self, color):
-        color = images.color_to_rgb(color)
-        self._DiagramNode.set_default_text_color(color)
-        self._NodeGroup.set_default_text_color(color)
-        self._DiagramEdge.set_default_text_color(color)
+        self.textcolor = images.color_to_rgb(color)
+        self._DiagramNode.set_default_text_color(self.textcolor)
+        self._NodeGroup.set_default_text_color(self.textcolor)
+        self._DiagramEdge.set_default_text_color(self.textcolor)
 
     def set_default_node_color(self, color):
         color = images.color_to_rgb(color)
