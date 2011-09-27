@@ -460,6 +460,15 @@ def test_node_attribute_and_group_diagram():
         assert node.color == assert_colors[node.id]
 
 
+def test_group_sibling_diagram():
+    screen = __build_diagram('group_sibling.diag')
+
+    assert_pos = {'A': (0, 0), 'B': (1, 0), 'C': (1, 2), 'D': (2, 0),
+                  'E': (2, 1), 'F': (2, 2), 'Z': (0, 3)}
+    for node in (x for x in screen.nodes if x.drawable):
+        assert node.xy == assert_pos[node.id]
+
+
 def test_group_order_diagram():
     screen = __build_diagram('group_order.diag')
 

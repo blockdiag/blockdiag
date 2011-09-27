@@ -376,10 +376,12 @@ class DiagramLayoutManager:
                 self.coordinates.append(XY(xy.x + w, xy.y + h))
 
     def set_node_height(self, node, height=0):
-        xy = XY(node.xy.x, height)
-        if xy in self.coordinates:
-            return False
-        node.xy = xy
+        for x in range(node.width):
+            for y in range(node.height):
+                xy = XY(node.xy.x + x, height + y)
+                if xy in self.coordinates:
+                    return False
+        node.xy = XY(node.xy.x, height)
         self.mark_xy(node.xy, node.width, node.height)
 
         count = 0
