@@ -37,7 +37,7 @@ class BeginPoint(NodeShape):
         outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
-        # draw outer circle
+        # draw outline
         r = self.radius
         box = (self.center.x - r, self.center.y - r,
                self.center.x + r, self.center.y + r)
@@ -45,13 +45,6 @@ class BeginPoint(NodeShape):
             box = self.shift_shadow(box)
             drawer.ellipse(box, fill=fill, outline=fill, filter='transp-blur')
         else:
-            drawer.ellipse(box, fill='white', outline=outline,
-                           style=self.node.style)
-
-        # draw inner circle
-        box = (self.center.x - r / 2, self.center.y - r / 2,
-               self.center.x + r / 2, self.center.y + r / 2)
-        if not kwargs.get('shadow'):
             if self.node.color == self.node.basecolor:
                 color = outline
             else:
