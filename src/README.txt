@@ -113,6 +113,15 @@ Apache License 2.0
 History
 =======
 
+0.9.2 (2011-09-30)
+------------------
+* Add node attribute: textcolor
+* Add group attribute: textcolor
+* Add edge attribute: textcolor
+* Add diagram attributes: default_text_attribute
+* Fix beginpoint shape and endpoint shape were reversed
+* Fix bugs
+
 0.9.1 (2011-09-26)
 ------------------
 * Add diagram attributes: default_node_color, default_group_color and default_line_color
