@@ -21,9 +21,6 @@ except ImportError:
     try:
         import Image
     except ImportError:
-        import jpeg
-        import png
-
         class Image:
             @classmethod
             def open(cls, filename):
@@ -34,6 +31,9 @@ except ImportError:
 
             @property
             def size(self):
+                import jpeg
+                import png
+
                 try:
                     size = jpeg.JpegFile.get_size(self.filename)
                 except:
