@@ -231,12 +231,6 @@ class ImageDrawEx(object):
             del kwargs['outline']
             self.line(xy, **kwargs)
 
-    def label(self, box, string, **kwargs):
-        lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
-
-        self.rectangle(lines.outlineBox(), fill='white', outline='black')
-        self.textarea(box, string, **kwargs)
-
     def text(self, xy, string, **kwargs):
         fill = kwargs.get('fill')
         font = kwargs.get('font')
@@ -278,6 +272,11 @@ class ImageDrawEx(object):
 
     def textarea(self, box, string, **kwargs):
         lines = TextFolder(box, string, scale=self.scale_ratio, **kwargs)
+
+        if kwargs.get('outline'):
+            outline = kwargs.get('outline')
+            self.rectangle(lines.outlineBox(), fill='white', outline=outline)
+
         for string, xy in lines.each_line():
             self.text(xy, string, **kwargs)
 
