@@ -106,6 +106,10 @@ class DiagramDraw(object):
         self._prepare_edges()
         self._draw_background()
 
+        # Smoothing back-ground images.
+        if self.format == 'PNG':
+            self.drawer.smoothCanvas()
+
         if self.scale_ratio > 1:
             pagesize = self.pagesize(scaled=True)
             self.drawer.resizeCanvas(pagesize)
@@ -132,10 +136,6 @@ class DiagramDraw(object):
                 shape = r(node, metrix)
                 shape.render(self.drawer, self.format,
                              fill=self.shadow, shadow=True)
-
-        # Smoothing back-ground images.
-        if self.format == 'PNG':
-            self.drawer.smoothCanvas()
 
     def _draw_elements(self, **kwargs):
         for node in self.nodes:
