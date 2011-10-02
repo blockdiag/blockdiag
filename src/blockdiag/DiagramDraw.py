@@ -154,8 +154,7 @@ class DiagramDraw(object):
 
     def _prepare_edges(self):
         for edge in self.edges:
-            m = self.metrix.edge(edge)
-            dir = m.direction()
+            dir = edge.direction
 
             if edge.node1.group.orientation == 'landscape':
                 if dir == 'right':
