@@ -5,4 +5,5 @@ diagram {
   D [label="'\"double\" quoted'", color = 'red'];
   E [label='"\'single\' quoted"', color = 'red', numbered = "1"];
   F [textcolor = red];
+  G [stacked];
 }

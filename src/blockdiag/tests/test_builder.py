@@ -158,6 +158,9 @@ def test_node_attribute():
     assert screen.nodes[5].id == 'F'
     assert screen.nodes[5].textcolor == (255, 0, 0)
 
+    assert screen.nodes[6].id == 'G'
+    assert screen.nodes[6].stacked == True
+
 
 def test_edge_shape():
     screen = __build_diagram('edge_shape.diag')
