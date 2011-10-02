@@ -110,6 +110,9 @@ class DiagramDraw(object):
             pagesize = self.pagesize(scaled=True)
             self.drawer.resizeCanvas(pagesize)
 
+        self._draw_elements(**kwargs)
+
+    def _draw_elements(self, **kwargs):
         for node in self.nodes:
             self.node(node, **kwargs)
 
@@ -119,8 +122,10 @@ class DiagramDraw(object):
         for edge in self.edges:
             self.edge(edge)
 
-        for edge in (x for x in self.edges if x.label):
-            self.edge_label(edge)
+        # FIXME: edge_label() is obsoleted
+        if hasattr(self, 'edge_label'):
+            for edge in (x for x in self.edges if x.label):
+                self.edge_label(edge)
 
     def _prepare_edges(self):
         for edge in self.edges:
@@ -262,9 +267,6 @@ class DiagramDraw(object):
                 self.drawer.polygon(head, outline=edge.color, fill='white')
             else:
                 self.drawer.polygon(head, outline=edge.color, fill=edge.color)
-
-    def edge_label(self, edge):
-        metrix = self.metrix.edge(edge)
 
         if edge.label:
             self.drawer.label(metrix.labelbox(), edge.label,
