@@ -470,33 +470,26 @@ class DiagramLayoutManager:
 
 class ScreenNodeBuilder:
     @classmethod
-    def build(klass, tree, layout=True):
+    def build(cls, tree, layout=True):
         DiagramNode.clear()
         DiagramEdge.clear()
         NodeGroup.clear()
         Diagram.clear()
 
-        diagram = DiagramTreeBuilder().build(tree)
-        if layout:
-            DiagramLayoutManager(diagram).run()
-            diagram.fixiate(True)
+        return cls(tree, layout).run()
 
-        return diagram
-
-
-class SeparateDiagramBuilder:
-    @classmethod
-    def build(cls, tree):
-        DiagramNode.clear()
-        DiagramEdge.clear()
-        NodeGroup.clear()
-        Diagram.clear()
-
-        return cls(tree).run()
-
-    def __init__(self, tree):
+    def __init__(self, tree, layout):
         self.diagram = DiagramTreeBuilder().build(tree)
+        self.layout = layout
 
+    def run(self):
+        if self.layout:
+            DiagramLayoutManager(self.diagram).run()
+            self.diagram.fixiate(True)
+        return self.diagram
+
+
+class SeparateDiagramBuilder(ScreenNodeBuilder):
     @property
     def _groups(self):
         # Store nodes and edges of subgroups
