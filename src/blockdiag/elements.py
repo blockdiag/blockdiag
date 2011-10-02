@@ -433,6 +433,35 @@ class DiagramEdge(Base):
     def set_nofolded(self, value):
         self.folded = False
 
+    @property
+    def direction(self):
+        node1 = self.node1.xy
+        node2 = self.node2.xy
+
+        if node1.x > node2.x:
+            if node1.y > node2.y:
+                dir = 'left-up'
+            elif node1.y == node2.y:
+                dir = 'left'
+            else:
+                dir = 'left-down'
+        elif node1.x == node2.x:
+            if node1.y > node2.y:
+                dir = 'up'
+            elif node1.y == node2.y:
+                dir = 'same'
+            else:
+                dir = 'down'
+        else:
+            if node1.y > node2.y:
+                dir = 'right-up'
+            elif node1.y == node2.y:
+                dir = 'right'
+            else:
+                dir = 'right-down'
+
+        return dir
+
 
 class Diagram(NodeGroup):
     _DiagramNode = DiagramNode

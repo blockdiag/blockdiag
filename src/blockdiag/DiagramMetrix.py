@@ -295,34 +295,6 @@ class EdgeMetrix(object):
         self.metrix = metrix
         self.edge = edge
 
-    def direction(self):
-        node1 = self.metrix.cell(self.edge.node1)
-        node2 = self.metrix.cell(self.edge.node2)
-
-        if node1.x > node2.x:
-            if node1.y > node2.y:
-                dir = 'left-up'
-            elif node1.y == node2.y:
-                dir = 'left'
-            else:
-                dir = 'left-down'
-        elif node1.x == node2.x:
-            if node1.y > node2.y:
-                dir = 'up'
-            elif node1.y == node2.y:
-                dir = 'same'
-            else:
-                dir = 'down'
-        else:
-            if node1.y > node2.y:
-                dir = 'right-up'
-            elif node1.y == node2.y:
-                dir = 'right'
-            else:
-                dir = 'right-down'
-
-        return dir
-
     def heads(self):
         pass
 
@@ -375,7 +347,7 @@ class EdgeMetrix(object):
 class LandscapeEdgeMetrix(EdgeMetrix):
     def heads(self):
         heads = []
-        dir = self.direction()
+        dir = self.edge.direction
 
         if self.edge.dir in ('back', 'both'):
             if dir in ('left-up', 'left', 'same',
@@ -404,7 +376,7 @@ class LandscapeEdgeMetrix(EdgeMetrix):
 
     def shaft(self):
         span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
-        dir = self.direction()
+        dir = self.edge.direction
 
         node1 = self.metrix.node(self.edge.node1)
         cell1 = self.metrix.cell(self.edge.node1)
@@ -515,7 +487,7 @@ class LandscapeEdgeMetrix(EdgeMetrix):
         span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
         node = XY(self.metrix.nodeWidth, self.metrix.nodeHeight)
 
-        dir = self.direction()
+        dir = self.edge.direction
         node1 = self.metrix.cell(self.edge.node1)
         node2 = self.metrix.cell(self.edge.node2)
 
@@ -571,7 +543,7 @@ class LandscapeEdgeMetrix(EdgeMetrix):
 class PortraitEdgeMetrix(EdgeMetrix):
     def heads(self):
         heads = []
-        dir = self.direction()
+        dir = self.edge.direction
 
         if self.edge.dir in ('back', 'both'):
             if dir == 'right':
@@ -604,7 +576,7 @@ class PortraitEdgeMetrix(EdgeMetrix):
 
     def shaft(self):
         span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
-        dir = self.direction()
+        dir = self.edge.direction
 
         node1 = self.metrix.node(self.edge.node1)
         cell1 = self.metrix.cell(self.edge.node1)
@@ -685,7 +657,7 @@ class PortraitEdgeMetrix(EdgeMetrix):
     def labelbox(self):
         span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
 
-        dir = self.direction()
+        dir = self.edge.direction
         node1 = self.metrix.cell(self.edge.node1)
         node2 = self.metrix.cell(self.edge.node2)
 
@@ -748,7 +720,7 @@ class FlowchartLandscapeEdgeMetrix(LandscapeEdgeMetrix):
     def heads(self):
         heads = []
 
-        if self.direction() == 'right-down':
+        if self.edge.direction == 'right-down':
             if self.edge.dir in ('back', 'both'):
                 heads.append(self._head(self.edge.node1, 'up'))
 
@@ -760,7 +732,7 @@ class FlowchartLandscapeEdgeMetrix(LandscapeEdgeMetrix):
         return heads
 
     def shaft(self):
-        if self.direction() == 'right-down':
+        if self.edge.direction == 'right-down':
             span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
             node1 = self.metrix.node(self.edge.node1)
             cell1 = self.metrix.cell(self.edge.node1)
@@ -786,7 +758,7 @@ class FlowchartLandscapeEdgeMetrix(LandscapeEdgeMetrix):
         return shaft
 
     def labelbox(self):
-        dir = self.direction()
+        dir = self.edge.direction
         if dir == 'right':
             span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
             node1 = self.metrix.node(self.edge.node1)
@@ -814,7 +786,7 @@ class FlowchartPortraitEdgeMetrix(PortraitEdgeMetrix):
     def heads(self):
         heads = []
 
-        if self.direction() == 'right-down':
+        if self.edge.direction == 'right-down':
             if self.edge.dir in ('back', 'both'):
                 heads.append(self._head(self.edge.node1, 'left'))
 
@@ -826,7 +798,7 @@ class FlowchartPortraitEdgeMetrix(PortraitEdgeMetrix):
         return heads
 
     def shaft(self):
-        if self.direction() == 'right-down':
+        if self.edge.direction == 'right-down':
             span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
             node1 = self.metrix.node(self.edge.node1)
             cell1 = self.metrix.cell(self.edge.node1)
@@ -853,7 +825,7 @@ class FlowchartPortraitEdgeMetrix(PortraitEdgeMetrix):
         return shaft
 
     def labelbox(self):
-        dir = self.direction()
+        dir = self.edge.direction
         if dir == 'right':
             span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
             node1 = self.metrix.node(self.edge.node1)
