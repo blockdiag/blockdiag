@@ -230,9 +230,10 @@ class SVGImageDrawElement(object):
 
 class SVGImageDraw(SVGImageDrawElement):
     def __init__(self, filename, size, **kwargs):
+
         self.filename = filename
-        self.svg = svg((0, 0, size[0], size[1]))
         self.nodoctype = kwargs.get('nodoctype')
+        super(SVGImageDraw, self).__init__(svg((0, 0, size[0], size[1])))
 
         uri = 'http://www.inkscape.org/namespaces/inkscape'
         self.svg.namespaces['inkspace'] = uri
