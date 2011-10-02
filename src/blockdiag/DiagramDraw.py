@@ -112,6 +112,31 @@ class DiagramDraw(object):
 
         self._draw_elements(**kwargs)
 
+    def _draw_background(self):
+        metrix = self.metrix.originalMetrix()
+
+        # Draw node groups.
+        for node in self.groups:
+            box = metrix.cell(node).marginBox()
+            if self.format == 'SVG' and node.href:
+                drawer = self.drawer.link(node.href)
+                drawer.rectangle(box, fill=node.color, filter='blur')
+            else:
+                self.drawer.rectangle(box, fill=node.color, filter='blur')
+
+        # Drop node shadows.
+        for node in self.nodes:
+            if node.color != 'none':
+                r = noderenderer.get(node.shape)
+
+                shape = r(node, metrix)
+                shape.render(self.drawer, self.format,
+                             fill=self.shadow, shadow=True)
+
+        # Smoothing back-ground images.
+        if self.format == 'PNG':
+            self.drawer.smoothCanvas()
+
     def _draw_elements(self, **kwargs):
         for node in self.nodes:
             self.node(node, **kwargs)
@@ -206,31 +231,6 @@ class DiagramDraw(object):
                             nodes = [x for x in self.nodes if x.xy == xy]
                             if len(nodes) > 0:
                                 edge.skipped = 1
-
-    def _draw_background(self):
-        metrix = self.metrix.originalMetrix()
-
-        # Draw node groups.
-        for node in self.groups:
-            box = metrix.cell(node).marginBox()
-            if self.format == 'SVG' and node.href:
-                drawer = self.drawer.link(node.href)
-                drawer.rectangle(box, fill=node.color, filter='blur')
-            else:
-                self.drawer.rectangle(box, fill=node.color, filter='blur')
-
-        # Drop node shadows.
-        for node in self.nodes:
-            if node.color != 'none':
-                r = noderenderer.get(node.shape)
-
-                shape = r(node, metrix)
-                shape.render(self.drawer, self.format,
-                             fill=self.shadow, shadow=True)
-
-        # Smoothing back-ground images.
-        if self.format == 'PNG':
-            self.drawer.smoothCanvas()
 
     def node(self, node, **kwargs):
         r = noderenderer.get(node.shape)
