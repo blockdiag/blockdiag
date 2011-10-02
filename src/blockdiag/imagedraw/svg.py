@@ -114,12 +114,6 @@ class SVGImageDrawElement(object):
             p = point(pt[0], pt[1], fill)
             self.svg.addElement(p)
 
-    def label(self, box, string, **kwargs):
-        lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
-
-        self.rectangle(lines.outlineBox(), fill='white', outline='black')
-        self.textarea(box, string, **kwargs)
-
     def text(self, xy, string, **kwargs):
         fill = kwargs.get('fill')
         fontname = kwargs.get('font')
@@ -131,6 +125,11 @@ class SVGImageDrawElement(object):
 
     def textarea(self, box, string, **kwargs):
         lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
+
+        if kwargs.get('outline'):
+            outline = kwargs.get('outline')
+            self.rectangle(lines.outlineBox(), fill='white', outline=outline)
+
         for string, xy in lines.each_line():
             self.text(xy, string, **kwargs)
 

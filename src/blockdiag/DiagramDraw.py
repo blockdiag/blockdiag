@@ -269,9 +269,9 @@ class DiagramDraw(object):
                 self.drawer.polygon(head, outline=edge.color, fill=edge.color)
 
         if edge.label:
-            self.drawer.label(metrix.labelbox(), edge.label,
-                              fill=edge.textcolor, font=self.font,
-                              fontsize=self.metrix.fontSize)
+            self.drawer.textarea(metrix.labelbox(), edge.label,
+                                 fill=edge.textcolor, outline=self.fill,
+                                 font=self.font, fontsize=self.metrix.fontSize)
 
     def save(self, filename=None, size=None):
         if filename:

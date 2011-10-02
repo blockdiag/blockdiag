@@ -116,14 +116,6 @@ class PDFImageDraw(object):
             box = (pt[0], y, pt[0] + 1, y + 1)
             self.rectangle(box, fill=fill, outline=fill)
 
-    def label(self, box, string, **kwargs):
-        self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
-        lines = TextFolder(box, string, adjustBaseline=True,
-                           canvas=self.canvas, **kwargs)
-
-        self.rectangle(lines.outlineBox(), fill='white', outline='black')
-        self.textarea(box, string, **kwargs)
-
     def text(self, xy, string, **kwargs):
         self.set_fill_color(kwargs.get('fill'))
         self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
@@ -133,6 +125,10 @@ class PDFImageDraw(object):
         self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
         lines = TextFolder(box, string, adjustBaseline=True,
                            canvas=self.canvas, **kwargs)
+
+        if kwargs.get('outline'):
+            outline = kwargs.get('outline')
+            self.rectangle(lines.outlineBox(), fill='white', outline=outline)
 
         for string, xy in lines.each_line():
             self.text(xy, string, **kwargs)
