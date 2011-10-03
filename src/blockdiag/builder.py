@@ -608,10 +608,6 @@ class ScreenNodeBuilder:
 
 
 class SeparateDiagramBuilder(ScreenNodeBuilder):
-    def run(self):
-        self.layout_diagram()
-        EdgeLayoutManager(self.diagram).run()
-
     @property
     def _groups(self):
         # Store nodes and edges of subgroups
@@ -678,7 +674,7 @@ class SeparateDiagramBuilder(ScreenNodeBuilder):
 
         return filtered.values()
 
-    def layout_diagram(self):
+    def run(self):
         for i, group in enumerate(self._groups):
             base = self.diagram.duplicate()
             base.level = group.level - 1
@@ -722,5 +718,6 @@ class SeparateDiagramBuilder(ScreenNodeBuilder):
 
             DiagramLayoutManager(base).run()
             base.fixiate(True)
+            EdgeLayoutManager(base).run()
 
             yield base
