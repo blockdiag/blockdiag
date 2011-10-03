@@ -206,7 +206,6 @@ class NodeGroup(Element):
     def __init__(self, id):
         super(NodeGroup, self).__init__(id)
 
-        self.href = None
         self.level = 0
         self.separated = False
         self.shape = 'box'

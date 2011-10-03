@@ -121,11 +121,7 @@ class DiagramDraw(object):
         # Draw node groups.
         for node in self.groups:
             box = metrix.cell(node).marginBox()
-            if self.format == 'SVG' and node.href:
-                drawer = self.drawer.link(node.href)
-                drawer.rectangle(box, fill=node.color, filter='blur')
-            else:
-                self.drawer.rectangle(box, fill=node.color, filter='blur')
+            self.drawer.rectangle(box, fill=node.color, filter='blur')
 
         # Drop node shadows.
         for node in self.nodes:
@@ -161,18 +157,14 @@ class DiagramDraw(object):
     def group_label(self, group):
         m = self.metrix.cell(group)
 
-        if self.format == 'SVG' and group.href:
-            drawer = self.drawer.link(group.href)
-        else:
-            drawer = self.drawer
-
         if group.label and not group.separated:
-            drawer.textarea(m.groupLabelBox(), group.label,
-                            fill=group.textcolor, font=self.font,
-                            fontsize=self.metrix.fontSize)
+            self.drawer.textarea(m.groupLabelBox(), group.label,
+                                 fill=group.textcolor, font=self.font,
+                                 fontsize=self.metrix.fontSize)
         elif group.label:
-            drawer.textarea(m.coreBox(), group.label, fill=group.textcolor,
-                            font=self.font, fontsize=self.metrix.fontSize)
+            self.drawer.textarea(m.coreBox(), group.label,
+                                 fill=group.textcolor, font=self.font,
+                                 fontsize=self.metrix.fontSize)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
