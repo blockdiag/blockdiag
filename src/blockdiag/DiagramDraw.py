@@ -184,13 +184,7 @@ class DiagramDraw(object):
                                  fill=edge.textcolor, outline=self.fill,
                                  font=self.font, fontsize=self.metrix.fontSize)
 
-    def save(self, filename=None, size=None):
-        if filename:
-            self.filename = filename
-
-            msg = "WARNING: DiagramDraw.save(filename) was deprecated.\n"
-            sys.stderr.write(msg)
-
+    def save(self, size=None):
         return self.drawer.save(self.filename, size, self.format)
 
 
