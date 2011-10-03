@@ -118,37 +118,22 @@ def test_multiple_node_relation_diagram():
 
 
 def test_node_attribute():
-    diagram = __build_diagram('node_attribute.diag')
-
-    assert diagram.nodes[0].id == 'A'
-    assert diagram.nodes[0].label == 'B'
-    assert diagram.nodes[0].color == (255, 0, 0)
-    assert diagram.nodes[0].textcolor == (0, 0, 0)
-    assert diagram.nodes[0].xy == (0, 0)
-
-    assert diagram.nodes[1].id == 'B'
-    assert diagram.nodes[1].label == 'double quoted'
-    assert diagram.nodes[1].color == (255, 255, 255)
-    assert diagram.nodes[1].xy == (0, 1)
-
-    assert diagram.nodes[2].id == 'C'
-    assert diagram.nodes[2].label == 'single quoted'
-    assert diagram.nodes[2].color == (255, 0, 0)
-
-    assert diagram.nodes[3].id == 'D'
-    assert diagram.nodes[3].label == '\'"double" quoted\''
-    assert diagram.nodes[3].color == (255, 0, 0)
-
-    assert diagram.nodes[4].id == 'E'
-    assert diagram.nodes[4].label == '"\'single\' quoted"'
-    assert diagram.nodes[4].color == (255, 0, 0)
-    assert diagram.nodes[4].numbered == '1'
-
-    assert diagram.nodes[5].id == 'F'
-    assert diagram.nodes[5].textcolor == (255, 0, 0)
-
-    assert diagram.nodes[6].id == 'G'
-    assert diagram.nodes[6].stacked == True
+    labels = {'A': 'B', 'B': 'double quoted', 'C': 'single quoted',
+              'D': '\'"double" quoted\'', 'E': '"\'single\' quoted"',
+              'F': 'F', 'G': 'G'}
+    colors = {'A': (255, 0, 0), 'B': (255, 255, 255), 'C': (255, 0, 0),
+              'D': (255, 0, 0), 'E': (255, 0, 0), 'F': (255, 255, 255),
+              'G': (255, 255, 255)}
+    textcolors = {'A': (0, 0, 0), 'B': (0, 0, 0), 'C': (0, 0, 0),
+                  'D': (0, 0, 0), 'E': (0, 0, 0), 'F': (255, 0, 0),
+                  'G': (0, 0, 0)}
+    numbered = {'A': None, 'B': None, 'C': None, 'D': None,
+                'E': '1', 'F': None, 'G': None}
+    stacked = {'A': False, 'B': False, 'C': False, 'D': False,
+               'E': False, 'F': False, 'G': True}
+    __validate_node_attributes('node_attribute.diag', label=labels,
+                               color=colors, textcolor=textcolors,
+                               numbered=numbered, stacked=stacked)
 
 
 def test_edge_shape():
