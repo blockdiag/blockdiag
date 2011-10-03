@@ -468,6 +468,121 @@ class DiagramLayoutManager:
             return None
 
 
+class EdgeLayoutManager(object):
+    def __init__(self, diagram):
+        self.diagram = diagram
+
+    @property
+    def groups(self):
+        if self.diagram.separated:
+            seq = self.diagram.nodes
+        else:
+            seq = self.diagram.traverse_groups(preorder=True)
+
+        for group in seq:
+            if not group.drawable:
+                yield group
+
+    @property
+    def nodes(self):
+        if self.diagram.separated:
+            seq = self.diagram.nodes
+        else:
+            seq = self.diagram.traverse_nodes()
+
+        for node in seq:
+            if node.drawable:
+                yield node
+
+    @property
+    def edges(self):
+        for edge in (e for e in self.diagram.edges  if e.style != 'none'):
+            yield edge
+
+        for group in self.groups:
+            for edge in (e for e in group.edges  if e.style != 'none'):
+                yield edge
+
+    def run(self):
+        for edge in self.edges:
+            dir = edge.direction
+
+            if edge.node1.group.orientation == 'landscape':
+                if dir == 'right':
+                    r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
+                    for x in r:
+                        xy = (x, edge.node1.xy.y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+                elif dir == 'right-up':
+                    r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
+                    for x in r:
+                        xy = (x, edge.node1.xy.y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+                elif dir == 'right-down':
+                    if self.diagram.edge_layout == 'flowchart':
+                        r = range(edge.node1.xy.y, edge.node2.xy.y)
+                        for y in r:
+                            xy = (edge.node1.xy.x, y + 1)
+                            nodes = [x for x in self.nodes if x.xy == xy]
+                            if len(nodes) > 0:
+                                edge.skipped = 1
+                    else:
+                        r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
+                        for x in r:
+                            xy = (x, edge.node2.xy.y)
+                            nodes = [x for x in self.nodes if x.xy == xy]
+                            if len(nodes) > 0:
+                                edge.skipped = 1
+                elif dir in ('left-down', 'down'):
+                    r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
+                    for y in r:
+                        xy = (edge.node1.xy.x, y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+                elif dir == 'up':
+                    r = range(edge.node2.xy.y + 1, edge.node1.xy.y)
+                    for y in r:
+                        xy = (edge.node1.xy.x, y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+            else:
+                if dir == 'right':
+                    r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
+                    for x in r:
+                        xy = (x, edge.node1.xy.y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+                elif dir in ('left-down', 'down'):
+                    r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
+                    for y in r:
+                        xy = (edge.node1.xy.x, y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
+                elif dir == 'right-down':
+                    if self.diagram.edge_layout == 'flowchart':
+                        r = range(edge.node1.xy.x, edge.node2.xy.x)
+                        for x in r:
+                            xy = (x + 1, edge.node1.xy.y)
+                            nodes = [x for x in self.nodes if x.xy == xy]
+                            if len(nodes) > 0:
+                                edge.skipped = 1
+                    else:
+                        r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
+                        for y in r:
+                            xy = (edge.node2.xy.x, y)
+                            nodes = [x for x in self.nodes if x.xy == xy]
+                            if len(nodes) > 0:
+                                edge.skipped = 1
+
+
 class ScreenNodeBuilder:
     @classmethod
     def build(cls, tree, layout=True):
@@ -486,10 +601,17 @@ class ScreenNodeBuilder:
         if self.layout:
             DiagramLayoutManager(self.diagram).run()
             self.diagram.fixiate(True)
+
+        EdgeLayoutManager(self.diagram).run()
+
         return self.diagram
 
 
 class SeparateDiagramBuilder(ScreenNodeBuilder):
+    def run(self):
+        self.layout_diagram()
+        EdgeLayoutManager(self.diagram).run()
+
     @property
     def _groups(self):
         # Store nodes and edges of subgroups
@@ -556,7 +678,7 @@ class SeparateDiagramBuilder(ScreenNodeBuilder):
 
         return filtered.values()
 
-    def run(self):
+    def layout_diagram(self):
         for i, group in enumerate(self._groups):
             base = self.diagram.duplicate()
             base.level = group.level - 1
