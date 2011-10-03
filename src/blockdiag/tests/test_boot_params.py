@@ -3,7 +3,7 @@
 import os
 import sys
 import tempfile
-from nose.tools import raises
+from nose.tools import raises, ok_, eq_
 from blockdiag.command import parse_option, detectfont
 
 
@@ -116,13 +116,29 @@ def invalid_dir_config_option_test():
         os.rmdir(tmp)
 
 
+@replace_argv
+def config_option_fontpath_test():
+    tmp = tempfile.mkstemp()
+    os.fdopen(tmp[0], 'wt').write('[blockdiag]\nfontpath = /path/to/font\n')
+
+    sys.argv = ['', '-c', tmp[1], 'input.diag']
+    (options, args) = parse_option()
+    eq_(['/path/to/font'], options.font)
+
+    os.unlink(tmp[1])
+
+
 @raises(RuntimeError)
 @replace_argv
 def not_exist_font_config_option_test():
-    try:
-        tmp = tempfile.mkdtemp()
+    sys.argv = ['', '-f', '/font_is_not_exist', 'input.diag']
+    (options, args) = parse_option()
+    detectfont(options)
 
-        sys.argv = ['', '-f', '/font_is_not_exist', '-c', tmp, 'input.diag']
-        (options, args) = parse_option()
-    finally:
-        os.rmdir(tmp)
+
+@replace_argv
+def auto_font_detection_test():
+    sys.argv = ['', 'input.diag']
+    (options, args) = parse_option()
+    fontpath = detectfont(options)
+    ok_(fontpath)
