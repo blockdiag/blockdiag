@@ -40,3 +40,8 @@ def test_node_follows_group_diagram():
 @raises(NoParseError)
 def test_group_follows_node_diagram():
     diagram = __build_diagram('errors/group_follows_node.diag')
+
+
+@raises(AttributeError)
+def test_group_follows_node_diagram():
+    diagram = __build_diagram('errors/unknown_node_attribute.diag')
