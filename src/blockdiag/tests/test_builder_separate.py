@@ -1,19 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import tempfile
 from blockdiag.builder import *
 from blockdiag.elements import *
 from blockdiag.diagparser import parse_string
-
-
-def __build_diagram(filename):
-    import os
-    testdir = os.path.dirname(__file__)
-    pathname = "%s/diagrams/%s" % (testdir, filename)
-
-    str = open(pathname).read()
-    tree = parse_string(str)
-    return SeparateDiagramBuilder.build(tree)
+from utils import __build_diagram
 
 
 def test_separate1_diagram():

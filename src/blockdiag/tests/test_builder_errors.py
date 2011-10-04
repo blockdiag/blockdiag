@@ -1,20 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import tempfile
-from blockdiag.builder import *
-from blockdiag.elements import *
 from blockdiag.diagparser import *
 from nose.tools import raises
-
-
-def __build_diagram(filename):
-    import os
-    testdir = os.path.dirname(__file__)
-    pathname = "%s/diagrams/%s" % (testdir, filename)
-
-    str = open(pathname).read()
-    tree = parse_string(str)
-    return ScreenNodeBuilder.build(tree)
+from utils import __build_diagram
 
 
 @raises(AttributeError)
