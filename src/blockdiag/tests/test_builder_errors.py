@@ -13,7 +13,7 @@ def __build_diagram(filename):
     pathname = "%s/diagrams/%s" % (testdir, filename)
 
     str = open(pathname).read()
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     return ScreenNodeBuilder.build(tree)
 
 
@@ -67,11 +67,16 @@ def test_belongs_to_two_groups_diagram():
     diagram = __build_diagram('errors/belongs_to_two_groups.diag')
 
 
-@raises(NoParseError)
+@raises(ParseException)
 def test_node_follows_group_diagram():
     diagram = __build_diagram('errors/node_follows_group.diag')
 
 
-@raises(NoParseError)
+@raises(ParseException)
 def test_group_follows_node_diagram():
     diagram = __build_diagram('errors/group_follows_node.diag')
+
+
+@raises(ParseException)
+def test_lexer_error_diagram():
+    diagram = __build_diagram('errors/lexer_error.diag')
