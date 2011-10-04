@@ -2,6 +2,7 @@
 
 import os
 import sys
+import re
 import tempfile
 import blockdiag.command
 from blockdiag.elements import *
@@ -29,9 +30,12 @@ def __build_diagram(filename, format, *args):
 
     try:
         argv = sys.argv
-        tmpfile = tempfile.mkstemp()[1]
+        tmpdir = tempfile.mkdtemp()
+        tmpfile = tempfile.mkstemp(dir=tmpdir)
+        os.close(tmpfile[0])
+
         sys.argv = ['blockdiag.py', '-T', format, '-f', fontpath,
-                    '-o', tmpfile, diagpath]
+                    '-o', tmpfile[1], diagpath]
         if args:
             sys.argv += args
 
@@ -42,7 +46,9 @@ def __build_diagram(filename, format, *args):
         blockdiag.command.main()
     finally:
         sys.argv = argv
-        os.unlink(tmpfile)
+        for file in os.listdir(tmpdir):
+            os.unlink(tmpdir + "/" + file)
+        os.rmdir(tmpdir)
 
 
 def diagram_files():
@@ -68,6 +74,9 @@ def test_generator():
     for diagram in diagram_files():
         for format in formats:
             yield __build_diagram, diagram, format
+
+            if re.search('separate', diagram):
+                yield __build_diagram, diagram, format, '--separate'
 
             if format == 'png':
                 yield __build_diagram, diagram, format, '--antialias'
