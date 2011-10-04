@@ -637,6 +637,7 @@ class SeparateDiagramBuilder(ScreenNodeBuilder):
                 n.xy = XY(0, 0)
                 n.width = 1
                 n.height = 1
+                n.separated = False
 
             for edge in DiagramEdge.find_all():
                 edge.skipped = False
@@ -696,6 +697,7 @@ class SeparateDiagramBuilder(ScreenNodeBuilder):
                 if isinstance(g, NodeGroup):
                     g.nodes = []
                     g.edges = []
+                    g.separated = True
 
             # pick up nodes to base diagram
             nodes1 = [e.node1 for e in DiagramEdge.find(None, group)]

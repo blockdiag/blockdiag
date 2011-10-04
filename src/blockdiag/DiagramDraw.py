@@ -58,23 +58,13 @@ class DiagramDraw(object):
 
     @property
     def nodes(self):
-        if self.diagram.separated:
-            seq = self.diagram.nodes
-        else:
-            seq = self.diagram.traverse_nodes()
-
-        for node in seq:
+        for node in self.diagram.traverse_nodes():
             if node.drawable:
                 yield node
 
     @property
     def groups(self):
-        if self.diagram.separated:
-            seq = self.diagram.nodes
-        else:
-            seq = self.diagram.traverse_groups(preorder=True)
-
-        for group in seq:
+        for group in self.diagram.traverse_groups(preorder=True):
             if not group.drawable:
                 yield group
 
@@ -93,13 +83,8 @@ class DiagramDraw(object):
         else:
             metrix = self.metrix.originalMetrix()
 
-        if self.diagram.separated:
-            width = max(n.xy.x + n.width for n in self.diagram.nodes)
-            height = max(n.xy.y + n.height for n in self.diagram.nodes)
-        else:
-            width = self.diagram.width
-            height = self.diagram.height
-
+        width = self.diagram.width
+        height = self.diagram.height
         return metrix.pageSize(width, height)
 
     def draw(self, **kwargs):
