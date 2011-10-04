@@ -115,9 +115,6 @@ class DiagramTreeBuilder:
             elif isinstance(stmt, diagparser.DefAttrs):
                 group.set_attributes(stmt.attrs)
 
-            else:
-                raise AttributeError("Unknown sentense: " + str(type(stmt)))
-
         group.update_order()
         return group
 
