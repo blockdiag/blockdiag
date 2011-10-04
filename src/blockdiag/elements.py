@@ -220,18 +220,15 @@ class NodeGroup(Element):
 
         return copied
 
-    def parent(self, level=None):
-        if level is None:
-            return self.group
-        else:
-            if self.level < level:
-                return None
+    def parent(self, level):
+        if self.level < level:
+            return None
 
-            group = self
-            while group.level != level:
-                group = group.group
+        group = self
+        while group.level != level:
+            group = group.group
 
-            return group
+        return group
 
     def is_parent(self, other):
         parent = self.parent(other.level)
