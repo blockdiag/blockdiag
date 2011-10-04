@@ -44,21 +44,13 @@ def invalid_type_option_test():
 
 
 @replace_argv
-def svg_separate_option_test():
+def separate_option_test():
     sys.argv = ['', '-Tsvg', '--separate', 'input.diag']
     (options, args) = parse_option()
 
-
-@raises(RuntimeError)
-@replace_argv
-def png_separate_option_test():
     sys.argv = ['', '-Tpng', '--separate', 'input.diag']
     (options, args) = parse_option()
 
-
-@raises(RuntimeError)
-@replace_argv
-def pdf_separate_option_test():
     sys.argv = ['', '-Tpdf', '--separate', 'input.diag']
     (options, args) = parse_option()
 

@@ -63,10 +63,6 @@ def parse_option():
             msg = "colud not output PDF format; Install reportlab."
             raise RuntimeError(msg)
 
-    if options.separate and options.type != 'SVG':
-        msg = "--separate option work in SVG images."
-        raise RuntimeError(msg)
-
     if options.nodoctype and options.type != 'SVG':
         msg = "--nodoctype option work in SVG images."
         raise RuntimeError(msg)
