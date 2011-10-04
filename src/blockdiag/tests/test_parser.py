@@ -12,7 +12,7 @@ def test_diagparser_basic():
           }
           """
 
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     assert isinstance(tree, Graph)
 
 
@@ -22,7 +22,7 @@ def test_diagparser_without_diagram_id():
              A -> B -> C, D;
           }
           """
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     assert isinstance(tree, Graph)
 
     str = """
@@ -30,7 +30,7 @@ def test_diagparser_without_diagram_id():
              A -> B -> C, D;
           }
           """
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     assert isinstance(tree, Graph)
 
 
@@ -39,14 +39,14 @@ def test_diagparser_empty_diagram():
           diagram {
           }
           """
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     assert isinstance(tree, Graph)
 
     str = """
           {
           }
           """
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     assert isinstance(tree, Graph)
 
 
@@ -58,7 +58,7 @@ def test_diagparser_diagram_includes_nodes():
             C [color = "red"];
           }
           """
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     assert isinstance(tree, Graph)
     assert len(tree.stmts) == 3
     assert isinstance(tree.stmts[0], Node)
@@ -72,7 +72,7 @@ def test_diagparser_diagram_includes_edges():
             A -> B -> C;
           }
           """
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     assert isinstance(tree, Graph)
     print tree.stmts
     assert len(tree.stmts) == 1
@@ -84,7 +84,7 @@ def test_diagparser_diagram_includes_edges():
             D -> E, F;
           }
           """
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     assert isinstance(tree, Graph)
     print tree.stmts
     assert len(tree.stmts) == 2
@@ -103,7 +103,7 @@ def test_diagparser_diagram_includes_groups():
             }
           }
           """
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     assert isinstance(tree, Graph)
     assert len(tree.stmts) == 2
 
@@ -124,12 +124,12 @@ def test_diagparser_diagram_includes_diagram_attributes():
             node_width = 80;
           }
           """
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     assert isinstance(tree, Graph)
     assert len(tree.stmts) == 2
 
 
-@raises(NoParseError)
+@raises(ParseException)
 def test_diagparser_parenthesis_ness():
     str = ""
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
