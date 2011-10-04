@@ -167,7 +167,7 @@ class DiagramNode(Element):
             self.style = value
         else:
             msg = "WARNING: unknown node style: %s\n" % value
-            sys.stderr.write(msg)
+            raise AttributeError(msg)
 
     def set_shape(self, value):
         try:
@@ -175,7 +175,7 @@ class DiagramNode(Element):
             self.shape = value
         except:
             msg = "WARNING: unknown node shape: %s\n" % value
-            raise RuntimeError(msg)
+            raise AttributeError(msg)
 
     def set_icon(self, value):
         if urlutil.isurl(value) or os.path.isfile(value):
@@ -281,7 +281,7 @@ class NodeGroup(Element):
             self.orientation = value
         else:
             msg = "WARNING: unknown diagram orientation: %s\n" % value
-            sys.stderr.write(msg)
+            raise AttributeError(msg)
 
 
 class DiagramEdge(Base):
@@ -402,7 +402,7 @@ class DiagramEdge(Base):
             self.dir = 'none'
         else:
             msg = "WARNING: unknown edge dir: %s\n" % value
-            sys.stderr.write(msg)
+            raise AttributeError(msg)
 
     def set_color(self, color):
         self.color = images.color_to_rgb(color)
@@ -413,7 +413,7 @@ class DiagramEdge(Base):
             self.style = value
         else:
             msg = "WARNING: unknown edge style: %s\n" % value
-            sys.stderr.write(msg)
+            raise AttributeError(msg)
 
     def set_hstyle(self, value):
         value = value.lower()
@@ -421,7 +421,7 @@ class DiagramEdge(Base):
             self.hstyle = value
         else:
             msg = "WARNING: unknown edge hstyle: %s\n" % value
-            sys.stderr.write(msg)
+            raise AttributeError(msg)
 
     def set_folded(self, value):
         self.folded = True
@@ -489,7 +489,7 @@ class Diagram(NodeGroup):
             DiagramNode.set_default_shape(value)
         except:
             msg = "WARNING: unknown node shape: %s\n" % value
-            raise RuntimeError(msg)
+            raise AttributeError(msg)
 
     def set_default_text_color(self, color):
         self.textcolor = images.color_to_rgb(color)
@@ -520,5 +520,5 @@ class Diagram(NodeGroup):
 
             self.edge_layout = value
         else:
-            msg = "WARNING: unknown edge dir: %s\n" % value
-            sys.stderr.write(msg)
+            msg = "WARNING: unknown edge layout: %s\n" % value
+            raise AttributeError(msg)
