@@ -39,10 +39,6 @@ def __build_diagram(filename, format, *args):
         if args:
             sys.argv += args
 
-        DiagramNode.clear()
-        DiagramEdge.clear()
-        NodeGroup.clear()
-
         blockdiag.command.main()
     finally:
         sys.argv = argv
