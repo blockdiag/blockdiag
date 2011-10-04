@@ -4,7 +4,7 @@ import tempfile
 from nose.tools import eq_
 from blockdiag.builder import *
 from blockdiag.elements import *
-from blockdiag.diagparser import *
+from blockdiag.diagparser import parse_string
 
 
 def __build_diagram(filename):
@@ -13,7 +13,7 @@ def __build_diagram(filename):
     pathname = "%s/diagrams/%s" % (testdir, filename)
 
     str = open(pathname).read()
-    tree = parse(tokenize(str))
+    tree = parse_string(str)
     return ScreenNodeBuilder.build(tree)
 
 
