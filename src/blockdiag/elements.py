@@ -211,6 +211,7 @@ class NodeGroup(Element):
         self.shape = 'box'
         self.nodes = []
         self.edges = []
+        self.icon = None
         self.orientation = 'landscape'
 
     def duplicate(self):
