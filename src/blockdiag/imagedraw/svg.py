@@ -198,8 +198,8 @@ class SVGImageDrawElement(object):
 class SVGImageDraw(SVGImageDrawElement):
     def __init__(self, filename, size, **kwargs):
         self.filename = filename
-        self.nodoctype = kwargs.get('nodoctype')
         super(SVGImageDraw, self).__init__(svg(0, 0, size[0], size[1]))
+        self.svg.use_doctype = not kwargs.get('nodoctype')
 
         uri = 'http://www.inkscape.org/namespaces/inkscape'
         self.svg.add_attribute('xmlns:inkspace', uri)
@@ -229,10 +229,6 @@ class SVGImageDraw(SVGImageDrawElement):
             self.svg.attributes['height'] = size[1]
 
         svg = self.svg.to_xml()
-
-        if self.nodoctype:
-            svg = re.sub('<\?xml.*?>\n', '', svg)
-            svg = re.sub('<!DOCTYPE.*?>\n', '', svg)
 
         if self.filename:
             open(self.filename, 'w').write(svg)
