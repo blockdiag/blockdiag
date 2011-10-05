@@ -128,7 +128,7 @@ class polygon(base):
 
 
 class path(base):
-    def __inti__(self, data, **kwargs):
+    def __init__(self, data, **kwargs):
         super(path, self).__init__(d=data, **kwargs)
 
 
@@ -201,12 +201,12 @@ class pathdata:
         return ' '.join(self.path)
 
 
-class defs(element):
+class defs(base):
     pass
 
 
 class filter(element):
-    def __init__(x, y, width, height, **kwargs):
+    def __init__(self, x, y, width, height, **kwargs):
         super(filter, self).__init__(x, y, width, height, **kwargs)
 
 
