@@ -32,10 +32,7 @@ class base(object):
         self.elements = []
         self.attributes = {}
         for key, value in kwargs.items():
-            if key == 'elements':
-                self.elements += value
-            else:
-                self.add_attribute(key, value)
+            self.add_attribute(key, value)
 
     def add_attribute(self, key, value):
         setter = 'set_%s' % key
