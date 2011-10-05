@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import re
+import cStringIO
 
 
 def _escape(s):
@@ -50,27 +51,25 @@ class base(object):
     def set_text(self, text):
         self.text = text
 
-    def to_xml(self, level=0):
+    def to_xml(self, io, level=0):
+        clsname = self.__class__.__name__
         indent = '  ' * level
-        s = '%s<%s' % (indent, self.__class__.__name__)
+
+        io.write('%s<%s' % (indent, clsname))
         for key in sorted(self.attributes):
             value = self.attributes[key]
-            if value is None:
-                pass
-            else:
-                s += ' %s=%s' % (_escape(key), _quote(value))
+            if value is not None:
+                io.write(' %s=%s' % (_escape(key), _quote(value)))
 
         if self.elements == [] and self.text is None:
-            s += " />\n"
+            io.write(" />\n")
         elif self.text is not None:
-            s += ">%s</%s>\n" % (_escape(self.text), self.__class__.__name__)
+            io.write(">%s</%s>\n" % (_escape(self.text), clsname))
         elif self.elements:
-            s += ">\n"
+            io.write(">\n")
             for e in self.elements:
-                s += e.to_xml(level + 1)
-            s += '%s</%s>\n' % (indent, self.__class__.__name__)
-
-        return s
+                e.to_xml(io, level + 1)
+            io.write('%s</%s>\n' % (indent, clsname))
 
 
 class element(base):
@@ -90,6 +89,12 @@ class svg(base):
         super(svg, self).__init__(viewBox=viewbox)
 
         self.add_attribute('xmlns', 'http://www.w3.org/2000/svg')
+
+    def to_xml(self):
+        io = cStringIO.StringIO()
+        super(svg, self).to_xml(io)
+
+        return io.getvalue()
 
 
 class title(base):
