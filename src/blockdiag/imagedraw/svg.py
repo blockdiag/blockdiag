@@ -18,7 +18,7 @@ import sys
 import base64
 from blockdiag.utils.XY import XY
 from blockdiag.utils import urlutil
-from SVGdraw import *
+from simplesvg import *
 import xml.sax.saxutils
 
 try:
@@ -26,19 +26,7 @@ try:
 except ImportError:
     from blockdiag.utils.TextFolder import TextFolder
 
-
-class filter(SVGelement):
-    def __init__(self, inkspace_collect=None, **args):
-        SVGelement.__init__(self, 'filter', **args)
-        if inkspace_collect != None:
-            self.attributes['inkspace:collect'] = inkspace_collect
-
-
-class feGaussianBlur(SVGelement):
-    def __init__(self, inkspace_collect=None, **args):
-        SVGelement.__init__(self, 'feGaussianBlur', **args)
-        if inkspace_collect != None:
-            self.attributes['inkspace:collect'] = inkspace_collect
+feGaussianBlur = svgclass('feGaussianBlur')
 
 
 class SVGImageDrawElement(object):
@@ -106,7 +94,7 @@ class SVGImageDrawElement(object):
         fontsize = kwargs.get('fontsize')
 
         string = xml.sax.saxutils.escape(string)
-        t = text(xy[0], xy[1], string, fontsize, fontname, fill=self.rgb(fill))
+        t = text(xy[0], xy[1], string, font_size=fontsize, fill=self.rgb(fill))
         self.svg.addElement(t)
 
     def textarea(self, box, string, **kwargs):
@@ -186,8 +174,7 @@ class SVGImageDrawElement(object):
         style = kwargs.get('style')
         filter = kwargs.get('filter')
 
-        points = [[p[0], p[1]] for p in xy]
-        pg = polygon(points, fill=self.rgb(fill), stroke=self.rgb(outline),
+        pg = polygon(xy, fill=self.rgb(fill), stroke=self.rgb(outline),
                      stroke_dasharray=self.style(style),
                      style=self.filter(filter))
         self.svg.addElement(pg)
@@ -210,21 +197,20 @@ class SVGImageDrawElement(object):
 
 class SVGImageDraw(SVGImageDrawElement):
     def __init__(self, filename, size, **kwargs):
-
         self.filename = filename
         self.nodoctype = kwargs.get('nodoctype')
-        super(SVGImageDraw, self).__init__(svg((0, 0, size[0], size[1])))
+        super(SVGImageDraw, self).__init__(svg(0, 0, size[0], size[1]))
 
         uri = 'http://www.inkscape.org/namespaces/inkscape'
-        self.svg.namespaces['inkspace'] = uri
+        self.svg.add_attribute('xmlns:inkspace', uri)
         uri = 'http://www.w3.org/1999/xlink'
-        self.svg.namespaces['xlink'] = uri
+        self.svg.add_attribute('xmlns:xlink', uri)
 
         # inkspace's Gaussian filter
-        fgb = feGaussianBlur(id='feGaussianBlur3780', stdDeviation=4.2,
-                             inkspace_collect='always')
-        f = filter(id='filter_blur', inkspace_collect='always',
-                   x=-0.07875, y=-0.252, width=1.1575, height=1.504)
+        fgb = feGaussianBlur(id='feGaussianBlur3780', stdDeviation=4.2)
+        fgb.add_attribute('inkspace:collect', 'always')
+        f = filter(-0.07875, -0.252, 1.1575, 1.504, id='filter_blur')
+        f.add_attribute('inkspace:collect', 'always')
         f.addElement(fgb)
         d = defs(id='defs_block')
         d.addElement(f)
@@ -242,9 +228,7 @@ class SVGImageDraw(SVGImageDrawElement):
             self.svg.attributes['width'] = size[0]
             self.svg.attributes['height'] = size[1]
 
-        self.drawing = drawing()
-        self.drawing.setSVG(self.svg)
-        svg = self.drawing.toXml('')
+        svg = self.svg.to_xml()
 
         if self.nodoctype:
             svg = re.sub('<\?xml.*?>\n', '', svg)
