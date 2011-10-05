@@ -16,7 +16,7 @@
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
 from blockdiag.utils.XY import XY
-from blockdiag.imagedraw.SVGdraw import pathdata
+from blockdiag.imagedraw.simplesvg import pathdata
 
 
 class Terminator(NodeShape):
