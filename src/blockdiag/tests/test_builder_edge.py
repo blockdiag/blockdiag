@@ -97,6 +97,18 @@ def test_skipped_edge_leftdown_diagram():
     __validate_node_attributes(filename, edge_skipped=skipped)
 
 
+def test_skipped_edge_flowchart_rightdown_diagram():
+    filename = 'skipped_edge_flowchart_rightdown.diag'
+    skipped = {('A', 'B'): False, ('A', 'D'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_flowchart_rightdown2_diagram():
+    filename = 'skipped_edge_flowchart_rightdown2.diag'
+    skipped = {('B', 'C'): False, ('A', 'C'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
 def test_skipped_edge_portrait_right_diagram():
     filename = 'skipped_edge_portrait_right.diag'
     skipped = {('A', 'C'): True}
@@ -118,4 +130,16 @@ def test_skipped_edge_portrait_leftdown_diagram():
 def test_skipped_edge_portrait_down_diagram():
     filename = 'skipped_edge_portrait_down.diag'
     skipped = {('A', 'B'): False, ('A', 'C'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_portrait_flowchart_rightdown_diagram():
+    filename = 'skipped_edge_portrait_flowchart_rightdown.diag'
+    skipped = {('A', 'B'): False, ('A', 'D'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_portrait_flowchart_rightdown2_diagram():
+    filename = 'skipped_edge_portrait_flowchart_rightdown2.diag'
+    skipped = {('B', 'C'): False, ('A', 'C'): True}
     __validate_node_attributes(filename, edge_skipped=skipped)

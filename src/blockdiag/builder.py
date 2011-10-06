@@ -527,13 +527,13 @@ class EdgeLayoutManager(object):
                             nodes = [x for x in self.nodes if x.xy == xy]
                             if len(nodes) > 0:
                                 edge.skipped = 1
-                    else:
-                        r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
-                        for x in r:
-                            xy = (x, edge.node2.xy.y)
-                            nodes = [x for x in self.nodes if x.xy == xy]
-                            if len(nodes) > 0:
-                                edge.skipped = 1
+
+                    r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
+                    for x in r:
+                        xy = (x, edge.node2.xy.y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
                 elif dir in ('left-down', 'down'):
                     r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
                     for y in r:
@@ -571,13 +571,13 @@ class EdgeLayoutManager(object):
                             nodes = [x for x in self.nodes if x.xy == xy]
                             if len(nodes) > 0:
                                 edge.skipped = 1
-                    else:
-                        r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
-                        for y in r:
-                            xy = (edge.node2.xy.x, y)
-                            nodes = [x for x in self.nodes if x.xy == xy]
-                            if len(nodes) > 0:
-                                edge.skipped = 1
+
+                    r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
+                    for y in r:
+                        xy = (edge.node2.xy.x, y)
+                        nodes = [x for x in self.nodes if x.xy == xy]
+                        if len(nodes) > 0:
+                            edge.skipped = 1
 
 
 class ScreenNodeBuilder:
