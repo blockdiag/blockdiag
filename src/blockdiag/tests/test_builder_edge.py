@@ -95,3 +95,27 @@ def test_skipped_edge_leftdown_diagram():
     filename = 'skipped_edge_leftdown.diag'
     skipped = {('A', 'B'): False, ('C', 'G'): True}
     __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_portrait_right_diagram():
+    filename = 'skipped_edge_portrait_right.diag'
+    skipped = {('A', 'C'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_portrait_rightdown_diagram():
+    filename = 'skipped_edge_portrait_rightdown.diag'
+    skipped = {('A', 'B'): False, ('A', 'E'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_portrait_leftdown_diagram():
+    filename = 'skipped_edge_portrait_leftdown.diag'
+    skipped = {('A', 'B'): False, ('D', 'C'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_portrait_down_diagram():
+    filename = 'skipped_edge_portrait_down.diag'
+    skipped = {('A', 'B'): False, ('A', 'C'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
