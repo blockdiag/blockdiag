@@ -82,7 +82,7 @@ class LineJumpDrawFilter(LazyReciever):
             x1, x2 = x2, x1
 
         for x in sorted(self.x_cross.get(y, [])):
-            if x1 <= x and x <= x2:
+            if x1 < x and x < x2:
                 arckwargs = dict(kwargs)
                 del arckwargs['jump']
 
@@ -101,7 +101,7 @@ class LineJumpDrawFilter(LazyReciever):
             y1, y2 = y2, y1
 
         for y in sorted(self.y_cross.get(x, [])):
-            if y1 <= y and y <= y2:
+            if y1 < y and y < y2:
                 arckwargs = dict(kwargs)
                 del arckwargs['jump']
 
