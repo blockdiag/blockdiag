@@ -59,3 +59,39 @@ def test_folded_edge_diagram():
     positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'D': (0, 1),
                  'E': (0, 2), 'F': (1, 1), 'Z': (0, 3)}
     __validate_node_attributes('folded_edge.diag', xy=positions)
+
+
+def test_skipped_edge_right_diagram():
+    filename = 'skipped_edge_right.diag'
+    skipped = {('A', 'B'): False, ('A', 'C'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_rightup_diagram():
+    filename = 'skipped_edge_rightup.diag'
+    skipped = {('A', 'B'): False, ('D', 'C'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_rightdown_diagram():
+    filename = 'skipped_edge_rightdown.diag'
+    skipped = {('A', 'B'): False, ('A', 'C'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_up_diagram():
+    filename = 'skipped_edge_up.diag'
+    skipped = {('C', 'A'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_down_diagram():
+    filename = 'skipped_edge_down.diag'
+    skipped = {('A', 'C'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
+
+
+def test_skipped_edge_leftdown_diagram():
+    filename = 'skipped_edge_leftdown.diag'
+    skipped = {('A', 'B'): False, ('C', 'G'): True}
+    __validate_node_attributes(filename, edge_skipped=skipped)
