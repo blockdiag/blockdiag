@@ -113,6 +113,10 @@ Apache License 2.0
 History
 =======
 
+0.9.4 (2011-10-07)
+------------------
+* Fix bugs
+
 0.9.3 (2011-10-06)
 ------------------
 * Replace SVG core by original's (simplesvg.py)
