@@ -58,7 +58,7 @@ class LineJumpDrawFilter(LazyReciever):
         self.y_cross = {}
         self.forward = 'holizonal'
         self.jump_radius = jump_radius
-        self.jump_shifte = 0
+        self.jump_shift = 0
 
     def _run(self):
         for recv in self.nested:
