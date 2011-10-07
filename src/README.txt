@@ -113,6 +113,12 @@ Apache License 2.0
 History
 =======
 
+0.9.3 (2011-10-06)
+------------------
+* Replace SVG core by original's (simplesvg.py)
+* Refactored
+* Fix bugs
+
 0.9.2 (2011-09-30)
 ------------------
 * Add node attribute: textcolor
