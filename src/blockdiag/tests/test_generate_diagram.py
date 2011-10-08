@@ -5,6 +5,7 @@ import sys
 import re
 import tempfile
 import blockdiag.command
+from utils import *
 from blockdiag.elements import *
 
 
@@ -21,6 +22,8 @@ def extra_case(func):
     return func
 
 
+@argv_wrapper
+@stderr_wrapper
 def __build_diagram(filename, format, *args):
     testdir = os.path.dirname(__file__)
     diagpath = "%s/diagrams/%s" % (testdir, filename)
@@ -29,7 +32,6 @@ def __build_diagram(filename, format, *args):
     fontpath = "%s/truetype/%s" % (testdir, fontfile)
 
     try:
-        argv = sys.argv
         tmpdir = tempfile.mkdtemp()
         tmpfile = tempfile.mkstemp(dir=tmpdir)
         os.close(tmpfile[0])
@@ -40,8 +42,10 @@ def __build_diagram(filename, format, *args):
             sys.argv += args
 
         blockdiag.command.main()
+
+        if re.search('ERROR', sys.stderr.getvalue()):
+            raise RuntimeError(sys.stderr.getvalue())
     finally:
-        sys.argv = argv
         for file in os.listdir(tmpdir):
             os.unlink(tmpdir + "/" + file)
         os.rmdir(tmpdir)
