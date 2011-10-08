@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from nose.tools import eq_
-from utils import __build_diagram, __validate_node_attributes
+from utils import stderr_wrapper, __build_diagram, __validate_node_attributes
 
 
 def test_single_edge_diagram():
@@ -97,12 +97,14 @@ def test_skipped_edge_leftdown_diagram():
     __validate_node_attributes(filename, edge_skipped=skipped)
 
 
+@stderr_wrapper
 def test_skipped_edge_flowchart_rightdown_diagram():
     filename = 'skipped_edge_flowchart_rightdown.diag'
     skipped = {('A', 'B'): False, ('A', 'D'): True}
     __validate_node_attributes(filename, edge_skipped=skipped)
 
 
+@stderr_wrapper
 def test_skipped_edge_flowchart_rightdown2_diagram():
     filename = 'skipped_edge_flowchart_rightdown2.diag'
     skipped = {('B', 'C'): False, ('A', 'C'): True}
@@ -133,12 +135,14 @@ def test_skipped_edge_portrait_down_diagram():
     __validate_node_attributes(filename, edge_skipped=skipped)
 
 
+@stderr_wrapper
 def test_skipped_edge_portrait_flowchart_rightdown_diagram():
     filename = 'skipped_edge_portrait_flowchart_rightdown.diag'
     skipped = {('A', 'B'): False, ('A', 'D'): True}
     __validate_node_attributes(filename, edge_skipped=skipped)
 
 
+@stderr_wrapper
 def test_skipped_edge_portrait_flowchart_rightdown2_diagram():
     filename = 'skipped_edge_portrait_flowchart_rightdown2.diag'
     skipped = {('B', 'C'): False, ('A', 'C'): True}

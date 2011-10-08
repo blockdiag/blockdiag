@@ -1,8 +1,39 @@
 # -*- coding: utf-8 -*-
 import re
+from StringIO import StringIO
 from nose.tools import eq_
 from blockdiag.builder import *
 from blockdiag.diagparser import parse_string
+
+
+def argv_wrapper(func, argv=[]):
+    def wrap(*args, **kwargs):
+        try:
+            argv = sys.argv
+            sys.argv = []
+            func(*args, **kwargs)
+        finally:
+            sys.argv = argv
+
+    return wrap
+
+
+def stderr_wrapper(func):
+    def wrap(*args, **kwargs):
+        try:
+            stderr = sys.stderr
+            sys.stderr = StringIO()
+
+            print args, kwargs
+            func(*args, **kwargs)
+        finally:
+            if sys.stderr.getvalue():
+                print "---[ stderr ] ---"
+                print sys.stderr.getvalue()
+
+            sys.stderr = stderr
+
+    return wrap
 
 
 def __build_diagram(filename):
