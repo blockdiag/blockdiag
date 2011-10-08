@@ -1,0 +1,6 @@
+{
+  orientation = portrait;
+  A -> B, C;
+  B -> A;
+  C -> E;
+}
