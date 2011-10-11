@@ -21,7 +21,6 @@ from optparse import OptionParser
 import blockdiag
 import DiagramDraw
 import diagparser
-import utils
 from builder import ScreenNodeBuilder
 
 
@@ -37,8 +36,6 @@ def parse_option():
                  help='write diagram to FILE', metavar='FILE')
     p.add_option('-f', '--font', default=[], action='append',
                  help='use FONT to draw diagram', metavar='FONT')
-    p.add_option('-P', '--pdb', dest='pdb', action='store_true', default=False,
-                 help='Drop into debugger on exception')
     p.add_option('-s', '--separate', action='store_true',
                  help='Separate diagram images for each group (SVG only)')
     p.add_option('-T', dest='type', default='PNG',
@@ -123,9 +120,6 @@ def main():
         outfile = 'output.' + options.type.lower()
     else:
         outfile = re.sub('\..*', '', infile) + '.' + options.type.lower()
-
-    if options.pdb:
-        sys.excepthook = utils.postmortem
 
     fontpath = detectfont(options)
 
