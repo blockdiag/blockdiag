@@ -49,7 +49,7 @@ class Actor(NodeShape):
         legXin = r * 2  # toe inner position
         legYin = bodyHeight + r * 3
 
-        return [XY(bodyC.x + neckWidth, m.topCenter().y + r),
+        return [XY(bodyC.x + neckWidth, m.top().y + r),
                 XY(bodyC.x + neckWidth, bodyC.y - armWidth),  # neck end
                 XY(bodyC.x + arm, bodyC.y - armWidth),
                 XY(bodyC.x + arm, bodyC.y),  # right arm end
@@ -67,7 +67,7 @@ class Actor(NodeShape):
                 XY(bodyC.x - arm, bodyC.y),
                 XY(bodyC.x - arm, bodyC.y - armWidth),
                 XY(bodyC.x - neckWidth, bodyC.y - armWidth),  # left arm end
-                XY(bodyC.x - neckWidth, m.topCenter().y + r)]
+                XY(bodyC.x - neckWidth, m.top().y + r)]
 
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')

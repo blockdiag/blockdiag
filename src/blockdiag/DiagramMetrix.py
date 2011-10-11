@@ -236,7 +236,7 @@ class NodeMetrix(Box):
     def topLeft(self):
         return XY(self.x1, self.y1)
 
-    def topCenter(self):
+    def top(self):
         return XY(self.x1 + self.width / 2, self.y1)
 
     def topRight(self):
@@ -245,26 +245,20 @@ class NodeMetrix(Box):
     def bottomLeft(self):
         return XY(self.x1, self.y2)
 
-    def bottomCenter(self):
+    def bottom(self):
         return XY(self.x1 + self.width / 2, self.y1 + self.height / 2)
 
     def bottomRight(self):
         return XY(self.x2, self.y2)
 
-    def leftCenter(self):
+    def left(self):
         return XY(self.x1, self.y1 + self.height / 2)
 
-    def rightCenter(self):
+    def right(self):
         return XY(self.x2, self.y1 + self.height / 2)
 
     def center(self):
         return XY(self.x1 + self.width / 2, self.y1 + self.height / 2)
-
-    # method aliases
-    top = topCenter
-    bottom = bottomCenter
-    right = rightCenter
-    left = leftCenter
 
 
 class EdgeMetrix(object):
