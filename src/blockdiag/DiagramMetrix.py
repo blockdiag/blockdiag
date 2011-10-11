@@ -22,7 +22,6 @@ from utils.namedtuple import namedtuple
 class EdgeLines(object):
     def __init__(self, metrix):
         self.xy = None
-        self.cellSize = metrix.cellSize
         self.stroking = False
         self.polylines = []
 
