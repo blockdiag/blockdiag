@@ -18,7 +18,8 @@ import cStringIO
 
 
 def _escape(s):
-    s = str(s)
+    if not isinstance(s, (str, unicode)):
+        s = str(s)
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
@@ -61,7 +62,8 @@ class base(object):
         if self.elements == [] and self.text is None:
             io.write(" />\n")
         elif self.text is not None:
-            io.write(">%s</%s>\n" % (_escape(self.text), clsname))
+            text = _escape(self.text).encode('utf-8')
+            io.write(">%s</%s>\n" % (text, clsname))
         elif self.elements:
             io.write(">\n")
             for e in self.elements:
