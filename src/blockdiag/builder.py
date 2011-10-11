@@ -149,7 +149,7 @@ class DiagramLayoutManager:
     def rotate_diagram(self):
         for node in self.diagram.traverse_nodes():
             node.xy = XY(node.xy.y, node.xy.x)
-            node.width, node.height = (node.height, node.width)
+            node.colwidth, node.colheight = (node.colheight, node.colwidth)
 
             if isinstance(node, NodeGroup):
                 if node.orientation == 'portrait':
@@ -157,8 +157,8 @@ class DiagramLayoutManager:
                 else:
                     node.orientation = 'portrait'
 
-        xy = (self.diagram.height, self.diagram.width)
-        self.diagram.width, self.diagram.height = xy
+        xy = (self.diagram.colheight, self.diagram.colwidth)
+        self.diagram.colwidth, self.diagram.colheight = xy
 
     def do_layout(self):
         self.detect_circulars()
@@ -268,10 +268,10 @@ class DiagramLayoutManager:
                     pass
                 elif node == child:
                     pass
-                elif child.xy.x > node.xy.x + node.width:
+                elif child.xy.x > node.xy.x + node.colwidth:
                     pass
                 else:
-                    child.xy = XY(node.xy.x + node.width, 0)
+                    child.xy = XY(node.xy.x + node.colwidth, 0)
 
         depther_node = [x for x in self.diagram.nodes if x.xy.x > depth]
         if len(depther_node) > 0:
@@ -373,13 +373,13 @@ class DiagramLayoutManager:
                 self.coordinates.append(XY(xy.x + w, xy.y + h))
 
     def set_node_height(self, node, height=0):
-        for x in range(node.width):
-            for y in range(node.height):
+        for x in range(node.colwidth):
+            for y in range(node.colheight):
                 xy = XY(node.xy.x + x, height + y)
                 if xy in self.coordinates:
                     return False
         node.xy = XY(node.xy.x, height)
-        self.mark_xy(node.xy, node.width, node.height)
+        self.mark_xy(node.xy, node.colwidth, node.colheight)
 
         count = 0
         children = self.get_child_nodes(node)
@@ -411,7 +411,7 @@ class DiagramLayoutManager:
                 while True:
                     if self.set_node_height(child, height):
                         child.xy = XY(child.xy.x, height)
-                        self.mark_xy(child.xy, child.width, child.height)
+                        self.mark_xy(child.xy, child.colwidth, child.colheight)
                         self.heightRefs.append(child.id)
 
                         count += 1
@@ -635,8 +635,8 @@ class SeparateDiagramBuilder(ScreenNodeBuilder):
                 n.group = groups[n]
                 n.order = orders[n]
                 n.xy = XY(0, 0)
-                n.width = 1
-                n.height = 1
+                n.colwidth = 1
+                n.colheight = 1
                 n.separated = False
 
             for edge in DiagramEdge.find_all():

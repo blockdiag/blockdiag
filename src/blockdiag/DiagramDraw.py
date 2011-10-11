@@ -83,8 +83,8 @@ class DiagramDraw(object):
         else:
             metrix = self.metrix.originalMetrix()
 
-        width = self.diagram.width
-        height = self.diagram.height
+        width = self.diagram.colwidth
+        height = self.diagram.colheight
         return metrix.pageSize(width, height)
 
     def draw(self, **kwargs):
