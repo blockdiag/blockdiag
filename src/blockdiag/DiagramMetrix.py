@@ -15,6 +15,7 @@
 
 from utils.XY import XY
 import noderenderer
+from utils import Box
 from utils.namedtuple import namedtuple
 
 
@@ -199,89 +200,66 @@ class DiagramMetrix(dict):
                   xy.y + self.pageMargin.y + padding[2])
 
 
-class NodeMetrix(object):
+class NodeMetrix(Box):
     def __init__(self, node, metrix):
         self.metrix = metrix
-        self.width = node.width
-        self.height = node.height
 
-        self.x = metrix.pageMargin.x + metrix.pagePadding[3] + \
-                 node.xy.x * (metrix.nodeWidth + metrix.spanWidth)
-        self.y = metrix.pageMargin.y + metrix.pagePadding[0] + \
-                 node.xy.y * (metrix.nodeHeight + metrix.spanHeight)
+        m = metrix
+        margin = metrix.pageMargin
+        padding = metrix.pagePadding
+
+        x1 = margin.x + padding[3] + node.xy.x * (m.nodeWidth + m.spanWidth)
+        y1 = margin.y + padding[0] + node.xy.y * (m.nodeHeight + m.spanHeight)
+        x2 = x1 + node.width * m.nodeWidth + (node.width - 1) * m.spanWidth
+        y2 = y1 + node.height * m.nodeHeight + (node.height - 1) * m.spanHeight
+
+        super(NodeMetrix, self).__init__(x1, y1, x2, y2)
 
     def box(self):
-        m = self.metrix
-        topLeft = self.topLeft()
-        bottomRight = self.bottomRight()
-
-        return (topLeft.x, topLeft.y, bottomRight.x, bottomRight.y)
+        return self
 
     def marginBox(self):
-        m = self.metrix
-        topLeft = self.topLeft()
-        bottomRight = self.bottomRight()
-
-        return (topLeft.x - m.spanWidth / 8,
-                topLeft.y - m.spanHeight / 4,
-                bottomRight.x + m.spanWidth / 8,
-                bottomRight.y + m.spanHeight / 4)
+        return Box(self.x1 - self.metrix.spanWidth / 8,
+                   self.y1 - self.metrix.spanHeight / 4,
+                   self.x2 + self.metrix.spanWidth / 8,
+                   self.y2 + self.metrix.spanHeight / 4)
 
     def coreBox(self):
-        m = self.metrix
-        topLeft = self.topLeft()
-        bottomRight = self.bottomRight()
-
-        return (topLeft.x + m.nodePadding,
-                topLeft.y + m.nodePadding,
-                bottomRight.x - m.nodePadding * 2,
-                bottomRight.y - m.nodePadding * 2)
+        return Box(self.x1 + self.metrix.nodePadding,
+                   self.y1 + self.metrix.nodePadding,
+                   self.x2 - self.metrix.nodePadding * 2,
+                   self.y2 - self.metrix.nodePadding * 2)
 
     def groupLabelBox(self):
-        m = self.metrix
-        topLeft = self.topLeft()
-        topRight = self.topRight()
-
-        return (topLeft.x,
-                topLeft.y - m.spanHeight / 2,
-                topRight.x,
-                topRight.y)
-
-    def _nodeWidth(self):
-        m = self.metrix
-        return self.width * m.nodeWidth + (self.width - 1) * m.spanWidth
-
-    def _nodeHeight(self):
-        m = self.metrix
-        return self.height * m.nodeHeight + (self.height - 1) * m.spanHeight
+        return Box(self.x1, self.y1 - self.metrix.spanHeight / 2,
+                   self.x2, self.y1)
 
     def topLeft(self):
-        return XY(self.x, self.y)
+        return XY(self.x1, self.y1)
 
     def topCenter(self):
-        return XY(self.x + self._nodeWidth() / 2, self.y)
+        return XY(self.x1 + self.width / 2, self.y1)
 
     def topRight(self):
-        return XY(self.x + self._nodeWidth(), self.y)
+        return XY(self.x2, self.y1)
 
     def bottomLeft(self):
-        return XY(self.x, self.y + self._nodeHeight())
+        return XY(self.x1, self.y2)
 
     def bottomCenter(self):
-        return XY(self.x + self._nodeWidth() / 2, self.y + self._nodeHeight())
+        return XY(self.x1 + self.width / 2, self.y1 + self.height / 2)
 
     def bottomRight(self):
-        return XY(self.x + self._nodeWidth(), self.y + self._nodeHeight())
+        return XY(self.x2, self.y2)
 
     def leftCenter(self):
-        return XY(self.x, self.y + self._nodeHeight() / 2)
+        return XY(self.x1, self.y1 + self.height / 2)
 
     def rightCenter(self):
-        return XY(self.x + self._nodeWidth(), self.y + self._nodeHeight() / 2)
+        return XY(self.x2, self.y1 + self.height / 2)
 
     def center(self):
-        return XY(self.x + self._nodeWidth() / 2,
-                  self.y + self._nodeHeight() / 2)
+        return XY(self.x1 + self.width / 2, self.y1 + self.height / 2)
 
     # method aliases
     top = topCenter

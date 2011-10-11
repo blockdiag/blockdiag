@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import pkg_resources
+from blockdiag.utils import Box
 from blockdiag.utils.XY import XY
 from blockdiag.utils import images
 
@@ -164,5 +165,8 @@ class NodeShape(object):
                         ret.append(x + xdiff)
                     else:
                         ret.append(x + ydiff)
+        elif isinstance(value, Box):
+            ret = Box(value.x1 + xdiff, value.y1 + ydiff,
+                      value.x2 + xdiff, value.y2 + ydiff)
 
         return ret
