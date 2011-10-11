@@ -48,7 +48,7 @@ def unquote(string):
 class Base(object):
     basecolor = (255, 255, 255)
     textcolor = (0, 0, 0)
-    int_attrs = ['width', 'height']
+    int_attrs = ['colwidth', 'colheight']
 
     @classmethod
     def set_default_color(cls, color):
@@ -116,16 +116,16 @@ class Element(Base):
         self.drawable = False
         self.order = 0
         self.color = self.basecolor
-        self.width = 1
-        self.height = 1
+        self.colwidth = 1
+        self.colheight = 1
         self.stacked = False
 
     def __repr__(self):
         class_name = self.__class__.__name__
         nodeid = self.id
         xy = str(self.xy)
-        width = self.width
-        height = self.height
+        width = self.colwidth
+        height = self.colheight
         addr = id(self)
 
         format = "<%(class_name)s '%(nodeid)s' %(xy)s " + \
@@ -256,13 +256,13 @@ class NodeGroup(Element):
 
     def fixiate(self, fixiate_nodes=False):
         if self.separated:
-            self.width = 1
-            self.height = 1
+            self.colwidth = 1
+            self.colheight = 1
 
             return
         elif len(self.nodes) > 0:
-            self.width = max(x.xy.x + x.width for x in self.nodes)
-            self.height = max(x.xy.y + x.height for x in self.nodes)
+            self.colwidth = max(x.xy.x + x.colwidth for x in self.nodes)
+            self.colheight = max(x.xy.y + x.colheight for x in self.nodes)
 
         for node in self.nodes:
             if fixiate_nodes:
@@ -465,7 +465,7 @@ class Diagram(NodeGroup):
     _DiagramEdge = DiagramEdge
     _NodeGroup = NodeGroup
     linecolor = (0, 0, 0)
-    int_attrs = ['width', 'height', 'fontsize',
+    int_attrs = ['colwidth', 'colheight', 'fontsize',
                  'node_width', 'node_height', 'span_width', 'span_height']
 
     @classmethod

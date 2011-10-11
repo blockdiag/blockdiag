@@ -190,7 +190,7 @@ class DiagramMetrix(dict):
                 return PortraitEdgeMetrix(edge, self)
 
     def pageSize(self, width, height):
-        DummyNode = namedtuple('DummyNode', 'width height xy')
+        DummyNode = namedtuple('DummyNode', 'colwidth colheight xy')
 
         node = DummyNode(width, height, XY(0, 0))
         xy = NodeMetrix(node, self).bottomRight()
@@ -209,8 +209,10 @@ class NodeMetrix(Box):
 
         x1 = margin.x + padding[3] + node.xy.x * (m.nodeWidth + m.spanWidth)
         y1 = margin.y + padding[0] + node.xy.y * (m.nodeHeight + m.spanHeight)
-        x2 = x1 + node.width * m.nodeWidth + (node.width - 1) * m.spanWidth
-        y2 = y1 + node.height * m.nodeHeight + (node.height - 1) * m.spanHeight
+        x2 = x1 + node.colwidth * m.nodeWidth + \
+             (node.colwidth - 1) * m.spanWidth
+        y2 = y1 + node.colheight * m.nodeHeight + \
+             (node.colheight - 1) * m.spanHeight
 
         super(NodeMetrix, self).__init__(x1, y1, x2, y2)
 
