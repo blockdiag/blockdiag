@@ -13,10 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import copy
 from utils.XY import XY
 import noderenderer
 from utils import Box
 from utils.namedtuple import namedtuple
+
+cellsize = 8
 
 
 class EdgeLines(object):
@@ -115,48 +118,41 @@ class AutoScaler(object):
         return self.subject
 
 
-class DiagramMetrix(dict):
+class DiagramMetrix(object):
+    cellSize = cellsize
+    edge_layout = 'normal'
+    nodePadding = 4
+    lineSpacing = 2
+    shadowOffsetX = 3
+    shadowOffsetY = 6
+    fontSize = 11
+    pagePadding = [0, 0, 0, 0]
+    nodeWidth = cellsize * 16
+    nodeHeight = cellsize * 5
+    spanWidth = cellsize * 8
+    spanHeight = cellsize * 5
+
     def __init__(self, diagram, **kwargs):
-        for key in kwargs:
-            self[key] = kwargs[key]
-
-        self.setdefault('cellSize', 8)
-        self.setdefault('nodePadding', 4)
-        self.setdefault('lineSpacing', 2)
-        self.setdefault('shadowOffsetX', 3)
-        self.setdefault('shadowOffsetY', 6)
-        self.setdefault('edge_layout', diagram.edge_layout)
-
-        cellsize = self.cellSize
         if diagram.node_width is not None:
-            self.setdefault('nodeWidth', diagram.node_width)
-        else:
-            self.setdefault('nodeWidth', cellsize * 16)
+            self.nodeWidth = diagram.node_width
 
         if diagram.node_height is not None:
-            self.setdefault('nodeHeight', diagram.node_height)
-        else:
-            self.setdefault('nodeHeight', cellsize * 5)
+            self.nodeHeight = diagram.node_height
 
         if diagram.span_width is not None:
-            self.setdefault('spanWidth', diagram.span_width)
-        else:
-            self.setdefault('spanWidth', cellsize * 8)
+            self.spanWidth = diagram.span_width
 
         if diagram.span_height is not None:
-            self.setdefault('spanHeight', diagram.span_height)
-        else:
-            self.setdefault('spanHeight', cellsize * 5)
+            self.spanHeight = diagram.span_height
 
         if diagram.fontsize is not None:
-            self.setdefault('fontSize', diagram.fontsize)
-        else:
-            self.setdefault('fontSize', 11)
+            self.fontSize = diagram.fontsize
 
         if diagram.page_padding is not None:
-            self.setdefault('pagePadding', diagram.page_padding)
-        else:
-            self.setdefault('pagePadding', [0, 0, 0, 0])
+            self.pagePadding = diagram.page_padding
+
+        if diagram.edge_layout is not None:
+            self.edge_layout = diagram.edge_layout
 
         pageMarginX = cellsize * 3
         if pageMarginX < self.spanWidth:
@@ -166,23 +162,19 @@ class DiagramMetrix(dict):
         if pageMarginY < self.spanHeight:
             pageMarginY = self.spanHeight + cellsize
 
-        self.setdefault('pageMargin', XY(pageMarginX, pageMarginY))
-
-    def __getattr__(self, name):
-        return self.get(name, None)
+        self.pageMargin = XY(pageMarginX, pageMarginY)
 
     def originalMetrix(self):
         return self
 
     def shiftedMetrix(self, top, right, bottom, left):
-        kwargs = {}
-        for key in self:
-            kwargs[key] = self[key]
-        padding = self['pagePadding']
-        kwargs['pagePadding'] = [padding[0] + top, padding[1] + right,
-                                 padding[2] + bottom, padding[3] + left]
+        metrix = copy.copy(self)
 
-        return self.__class__(self, **kwargs)
+        padding = metrix.pagePadding
+        metrix.pagePadding = [padding[0] + top, padding[1] + right,
+                              padding[2] + bottom, padding[3] + left]
+
+        return metrix
 
     def node(self, node):
         renderer = noderenderer.get(node.shape)
