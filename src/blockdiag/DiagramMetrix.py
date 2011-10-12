@@ -15,9 +15,10 @@
 
 import copy
 from utils.XY import XY
+import elements
 import noderenderer
 from utils import Box
-from utils.namedtuple import namedtuple
+from utils.collections import defaultdict, namedtuple
 
 cellsize = 8
 
@@ -164,6 +165,12 @@ class DiagramMetrix(object):
 
         self.pageMargin = XY(pageMarginX, pageMarginY)
 
+        sheet = self.spreadsheet = SpreadSheetMetrix(self)
+        for node in diagram.nodes:
+            if isinstance(node, elements.DiagramNode):
+                sheet.set_node_width(node.xy.x, node.width)
+                sheet.set_node_height(node.xy.y, node.height)
+
     def originalMetrix(self):
         return self
 
@@ -182,10 +189,10 @@ class DiagramMetrix(object):
         if hasattr(renderer, 'render'):
             return renderer(node, self)
         else:
-            return NodeMetrix(node, self)
+            return self.cell(node)
 
     def cell(self, node):
-        return NodeMetrix(node, self)
+        return self.spreadsheet.node(node)
 
     def group(self, group):
         return NodeMetrix(group, self)
@@ -203,30 +210,76 @@ class DiagramMetrix(object):
                 return PortraitEdgeMetrix(edge, self)
 
     def pageSize(self, width, height):
-        DummyNode = namedtuple('DummyNode', 'colwidth colheight xy')
+        return self.spreadsheet.pagesize(width, height)
 
-        node = DummyNode(width, height, XY(0, 0))
-        xy = NodeMetrix(node, self).bottomRight()
-        padding = self.pagePadding
-        return XY(xy.x + self.pageMargin.x + padding[1],
-                  xy.y + self.pageMargin.y + padding[2])
+
+class SpreadSheetMetrix(object):
+    def __init__(self, metrix):
+        self.metrix = metrix
+        self.node_width = defaultdict(lambda: metrix.nodeWidth)
+        self.node_height = defaultdict(lambda: metrix.nodeHeight)
+        self.span_width = defaultdict(lambda: metrix.spanWidth)
+        self.span_height = defaultdict(lambda: metrix.spanHeight)
+
+    def set_node_width(self, x, width):
+        if width is not None and 0 < width and \
+           (x not in self.node_width or self.node_width[x] < width):
+            self.node_width[x] = width
+
+    def set_node_height(self, y, height):
+        if height is not None and 0 < height and \
+           (y not in self.node_height or self.node_height[y] < height):
+            self.node_height[y] = height
+
+    def set_span_width(self, x, width):
+        if width is not None and 0 < width and \
+           (x not in self.span_width or self.span_width[x] < width):
+            self.span_width[x] = width
+
+    def set_span_height(self, y, height):
+        if height is not None and 0 < height and \
+           (y not in self.span_height or self.span_height[y] < height):
+            self.span_height[y] = height
+
+    def node(self, node):
+        x, y = node.xy
+        x1, y1 = self._node_topleft(x, y)
+        x2, y2 = self._node_bottomright(x + node.colwidth - 1,
+                                        y + node.colheight - 1)
+
+        return NodeMetrix(self.metrix, x1, y1, x2, y2)
+
+    def _node_topleft(self, x, y):
+        margin = self.metrix.pageMargin
+        padding = self.metrix.pagePadding
+
+        node_width = sum(self.node_width[i] for i in range(x))
+        node_height = sum(self.node_height[i] for i in range(y))
+        span_width = sum(self.span_width[i] for i in range(x))
+        span_height = sum(self.span_height[i] for i in range(y))
+
+        x1 = margin.x + padding[3] + node_width + span_width
+        y1 = margin.y + padding[0] + node_height + span_height
+        return XY(x1, y1)
+
+    def _node_bottomright(self, x, y):
+        xy = self._node_topleft(x, y)
+        width = self.node_width[x]
+        height = self.node_height[y]
+
+        return XY(xy.x + width, xy.y + height)
+
+    def pagesize(self, width, height):
+        margin = self.metrix.pageMargin
+        padding = self.metrix.pagePadding
+
+        x, y = self._node_bottomright(width - 1, height - 1)
+        return XY(x + margin.x + padding[1], y + margin.y + padding[2])
 
 
 class NodeMetrix(Box):
-    def __init__(self, node, metrix):
+    def __init__(self, metrix, x1, y1, x2, y2):
         self.metrix = metrix
-
-        m = metrix
-        margin = metrix.pageMargin
-        padding = metrix.pagePadding
-
-        x1 = margin.x + padding[3] + node.xy.x * (m.nodeWidth + m.spanWidth)
-        y1 = margin.y + padding[0] + node.xy.y * (m.nodeHeight + m.spanHeight)
-        x2 = x1 + node.colwidth * m.nodeWidth + \
-             (node.colwidth - 1) * m.spanWidth
-        y2 = y1 + node.colheight * m.nodeHeight + \
-             (node.colheight - 1) * m.spanHeight
-
         super(NodeMetrix, self).__init__(x1, y1, x2, y2)
 
     def box(self):

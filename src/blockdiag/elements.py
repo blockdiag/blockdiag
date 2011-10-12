@@ -141,6 +141,7 @@ class Element(Base):
 
 class DiagramNode(Element):
     shape = 'box'
+    int_attrs = ['width', 'height', 'colwidth', 'colheight']
 
     @classmethod
     def set_default_shape(cls, shape):
@@ -157,6 +158,8 @@ class DiagramNode(Element):
         self.label = unquote(id) or ''
         self.style = None
         self.numbered = None
+        self.width = None
+        self.height = None
         self.icon = None
         self.background = None
         self.description = None
