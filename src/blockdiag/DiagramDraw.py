@@ -18,6 +18,7 @@ import math
 from utils.XY import XY
 import noderenderer
 import imagedraw
+from DiagramMetrix import AutoScaler
 from imagedraw.filters.linejump import LineJumpDrawFilter
 
 
@@ -35,23 +36,22 @@ class DiagramDraw(object):
         self.badgeFill = kwargs.get('badgeFill', 'pink')
         self.font = kwargs.get('font')
         self.filename = filename
+        self.scale_ratio = 1
 
-        if self.format == 'PNG' and kwargs.get('antialias'):
-            self.scale_ratio = 2
-        else:
-            self.scale_ratio = 1
-        self.metrix = self.MetrixClass(kwargs.get('basediagram', diagram),
-                                       scale_ratio=self.scale_ratio, **kwargs)
-
-        kwargs = dict(font=self.font,
-                      nodoctype=kwargs.get('nodoctype'),
-                      scale_ratio=self.scale_ratio)
+        basediagram = kwargs.get('basediagram', diagram)
+        self.metrix = self.MetrixClass(basediagram, **kwargs)
 
         if self.format == 'PNG':
+            if kwargs.get('antialias'):
+                self.scale_ratio = ratio = 2
+                self.metrix = AutoScaler(self.metrix, scale_ratio=ratio)
             self.shadow = kwargs.get('shadow', (64, 64, 64))
         else:
             self.shadow = kwargs.get('shadow', (0, 0, 0))
 
+        kwargs = dict(font=self.font,
+                      nodoctype=kwargs.get('nodoctype'),
+                      scale_ratio=self.scale_ratio)
         drawer = imagedraw.create(self.format, self.filename,
                                   self.pagesize(), **kwargs)
         self.drawer = LineJumpDrawFilter(drawer, self.metrix.cellSize / 2)
