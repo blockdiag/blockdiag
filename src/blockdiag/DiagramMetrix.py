@@ -20,7 +20,7 @@ from utils.namedtuple import namedtuple
 
 
 class EdgeLines(object):
-    def __init__(self, metrix):
+    def __init__(self):
         self.xy = None
         self.stroking = False
         self.polylines = []
@@ -73,9 +73,7 @@ def scale(value, ratio):
     elif isinstance(value, list):
         ret = [scale(x, ratio) for x in value]
     elif isinstance(value, EdgeLines):
-        Dummy = namedtuple('DummyMetrix', 'cellSize')
-
-        ret = EdgeLines(Dummy(value.cellSize))
+        ret = EdgeLines()
         ret.polylines = scale(value.polylines, ratio)
     elif isinstance(value, int):
         ret = value * ratio
@@ -85,12 +83,43 @@ def scale(value, ratio):
     return ret
 
 
+class AutoScaler(object):
+    def __init__(self, subject, scale_ratio):
+        self.subject = subject
+        self.scale_ratio = scale_ratio
+
+    def __getattr__(self, name):
+        ratio = self.scale_ratio
+        attr = getattr(self.subject, name)
+
+        if not callable(attr):
+            return scale(attr, ratio)
+        else:
+            def _(*args, **kwargs):
+                ret = attr(*args, **kwargs)
+
+                if ratio == 1:
+                    pass
+                elif isinstance(ret, (NodeMetrix,)):
+                    ret = AutoScaler(ret, ratio)
+                elif isinstance(ret, (int, XY, tuple, list, EdgeLines)):
+                    ret = scale(ret, ratio)
+                else:
+                    ret = AutoScaler(ret, ratio)
+
+                return ret
+
+            return _
+
+    def originalMetrix(self):
+        return self.subject
+
+
 class DiagramMetrix(dict):
     def __init__(self, diagram, **kwargs):
         for key in kwargs:
             self[key] = kwargs[key]
 
-        self.setdefault('scale_ratio', 1)
         self.setdefault('cellSize', 8)
         self.setdefault('nodePadding', 4)
         self.setdefault('lineSpacing', 2)
@@ -98,7 +127,7 @@ class DiagramMetrix(dict):
         self.setdefault('shadowOffsetY', 6)
         self.setdefault('edge_layout', diagram.edge_layout)
 
-        cellsize = self.cellSize / self.scale_ratio
+        cellsize = self.cellSize
         if diagram.node_width is not None:
             self.setdefault('nodeWidth', diagram.node_width)
         else:
@@ -130,28 +159,20 @@ class DiagramMetrix(dict):
             self.setdefault('pagePadding', [0, 0, 0, 0])
 
         pageMarginX = cellsize * 3
-        if pageMarginX < self.spanWidth / self.scale_ratio:
-            pageMarginX = self.spanWidth / self.scale_ratio
+        if pageMarginX < self.spanWidth:
+            pageMarginX = self.spanWidth
 
         pageMarginY = cellsize * 3
-        if pageMarginY < self.spanHeight / self.scale_ratio:
-            pageMarginY = self.spanHeight / self.scale_ratio + cellsize
+        if pageMarginY < self.spanHeight:
+            pageMarginY = self.spanHeight + cellsize
 
         self.setdefault('pageMargin', XY(pageMarginX, pageMarginY))
 
     def __getattr__(self, name):
-        if name == 'scale_ratio':
-            return self[name]
-        elif name in self:
-            return scale(self[name], self['scale_ratio'])
+        return self.get(name, None)
 
     def originalMetrix(self):
-        kwargs = {}
-        for key in self:
-            kwargs[key] = self[key]
-        kwargs['scale_ratio'] = 1
-
-        return self.__class__(self, **kwargs)
+        return self
 
     def shiftedMetrix(self, top, right, bottom, left):
         kwargs = {}
@@ -217,7 +238,7 @@ class NodeMetrix(Box):
         super(NodeMetrix, self).__init__(x1, y1, x2, y2)
 
     def box(self):
-        return self
+        return Box(self.x1, self.y1, self.x2, self.y2)
 
     def marginBox(self):
         return Box(self.x1 - self.metrix.spanWidth / 8,
@@ -356,7 +377,7 @@ class LandscapeEdgeMetrix(EdgeMetrix):
         node2 = self.metrix.node(self.edge.node2)
         cell2 = self.metrix.cell(self.edge.node2)
 
-        shaft = EdgeLines(self.metrix)
+        shaft = EdgeLines()
         if dir == 'right':
             shaft.moveTo(node1.right())
 
@@ -556,7 +577,7 @@ class PortraitEdgeMetrix(EdgeMetrix):
         node2 = self.metrix.node(self.edge.node2)
         cell2 = self.metrix.cell(self.edge.node2)
 
-        shaft = EdgeLines(self.metrix)
+        shaft = EdgeLines()
         if dir in ('up', 'right-up', 'same', 'right'):
             if dir == 'right' and not self.edge.skipped:
                 shaft.moveTo(node1.right())
@@ -712,7 +733,7 @@ class FlowchartLandscapeEdgeMetrix(LandscapeEdgeMetrix):
             node2 = self.metrix.node(self.edge.node2)
             cell2 = self.metrix.cell(self.edge.node2)
 
-            shaft = EdgeLines(self.metrix)
+            shaft = EdgeLines()
             shaft.moveTo(node1.bottom())
 
             if self.edge.skipped:
@@ -778,7 +799,7 @@ class FlowchartPortraitEdgeMetrix(PortraitEdgeMetrix):
             node2 = self.metrix.node(self.edge.node2)
             cell2 = self.metrix.cell(self.edge.node2)
 
-            shaft = EdgeLines(self.metrix)
+            shaft = EdgeLines()
             shaft.moveTo(node1.right())
 
             if self.edge.skipped:
