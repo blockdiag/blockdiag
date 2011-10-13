@@ -36,10 +36,11 @@ def __build_diagram(filename, format, *args):
         tmpfile = tempfile.mkstemp(dir=tmpdir)
         os.close(tmpfile[0])
 
-        sys.argv = ['blockdiag.py', '-T', format, '-f', fontpath,
-                    '-o', tmpfile[1], diagpath]
+        sys.argv = ['blockdiag.py', '-T', format, '-o', tmpfile[1], diagpath]
         if args:
             sys.argv += args
+        if os.path.exists(fontpath):
+            sys.argv += ['-f', fontpath]
 
         blockdiag.command.main()
 
@@ -61,22 +62,34 @@ def diagram_files():
     return [d for d in os.listdir(pathname) if d not in skipped]
 
 
+def test_generator_svg():
+    for testcase in generator_core('svg'):
+        yield testcase
+
+
 @extra_case
-def test_generator():
-    formats = ['svg', 'png']
+def test_generator_png():
+    for testcase in generator_core('png'):
+        yield testcase
+
+
+@extra_case
+def test_generator_pdf():
     try:
         import reportlab.pdfgen.canvas
-        formats.append('pdf')
+        for testcase in generator_core('pdf'):
+            yield testcase
     except ImportError:
         sys.stderr.write("Skip testing about pdf exporting.\n")
         pass
 
+
+def generator_core(format):
     for diagram in diagram_files():
-        for format in formats:
-            yield __build_diagram, diagram, format
+        yield __build_diagram, diagram, format
 
-            if re.search('separate', diagram):
-                yield __build_diagram, diagram, format, '--separate'
+        if re.search('separate', diagram):
+            yield __build_diagram, diagram, format, '--separate'
 
-            if format == 'png':
-                yield __build_diagram, diagram, format, '--antialias'
+        if format == 'png':
+            yield __build_diagram, diagram, format, '--antialias'
