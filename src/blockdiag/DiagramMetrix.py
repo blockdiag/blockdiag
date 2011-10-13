@@ -106,7 +106,9 @@ class AutoScaler(object):
                     pass
                 elif isinstance(ret, (NodeMetrix,)):
                     ret = AutoScaler(ret, ratio)
-                elif isinstance(ret, (int, XY, tuple, list, EdgeLines)):
+                elif ret.__class__ == tuple:
+                    ret = scale(ret, ratio)
+                elif isinstance(ret, (int, XY, list, EdgeLines)):
                     ret = scale(ret, ratio)
                 else:
                     ret = AutoScaler(ret, ratio)
