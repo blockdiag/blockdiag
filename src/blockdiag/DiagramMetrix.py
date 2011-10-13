@@ -15,7 +15,7 @@
 
 import copy
 from utils.XY import XY
-import elements
+from elements import DiagramNode
 import noderenderer
 from utils import Box
 from utils.collections import defaultdict, namedtuple
@@ -167,7 +167,7 @@ class DiagramMetrix(object):
 
         sheet = self.spreadsheet = SpreadSheetMetrix(self)
         for node in diagram.nodes:
-            if isinstance(node, elements.DiagramNode):
+            if isinstance(node, DiagramNode):
                 sheet.set_node_width(node.xy.x, node.width)
                 sheet.set_node_height(node.xy.y, node.height)
 
@@ -243,37 +243,65 @@ class SpreadSheetMetrix(object):
 
     def node(self, node):
         x, y = node.xy
-        x1, y1 = self._node_topleft(x, y)
-        x2, y2 = self._node_bottomright(x + node.colwidth - 1,
-                                        y + node.colheight - 1)
+        x1, y1 = self._node_topleft(node)
+        x2, y2 = self._node_bottomright(node)
 
         return NodeMetrix(self.metrix, x1, y1, x2, y2)
 
-    def _node_topleft(self, x, y):
-        margin = self.metrix.pageMargin
-        padding = self.metrix.pagePadding
+    def _node_topleft(self, node, centering=True):
+        m = self.metrix
+        x, y = node.xy
+        margin = m.pageMargin
+        padding = m.pagePadding
 
         node_width = sum(self.node_width[i] for i in range(x))
         node_height = sum(self.node_height[i] for i in range(y))
         span_width = sum(self.span_width[i] for i in range(x))
         span_height = sum(self.span_height[i] for i in range(y))
 
-        x1 = margin.x + padding[3] + node_width + span_width
-        y1 = margin.y + padding[0] + node_height + span_height
+        if centering:
+            xdiff = (self.node_width[x] - (node.width or m.nodeWidth)) / 2
+            ydiff = (self.node_height[y] - (node.height or m.nodeHeight)) / 2
+        else:
+            xdiff = 0
+            ydiff = 0
+
+        x1 = margin.x + padding[3] + node_width + span_width + xdiff
+        y1 = margin.y + padding[0] + node_height + span_height + ydiff
+
         return XY(x1, y1)
 
-    def _node_bottomright(self, x, y):
-        xy = self._node_topleft(x, y)
-        width = self.node_width[x]
-        height = self.node_height[y]
+    def _node_bottomright(self, node, centering=True):
+        m = self.metrix
+        x = node.xy.x + node.colwidth - 1
+        y = node.xy.y + node.colheight - 1
+        margin = m.pageMargin
+        padding = m.pagePadding
 
-        return XY(xy.x + width, xy.y + height)
+        node_width = sum(self.node_width[i] for i in range(x + 1))
+        node_height = sum(self.node_height[i] for i in range(y + 1))
+        span_width = sum(self.span_width[i] for i in range(x))
+        span_height = sum(self.span_height[i] for i in range(y))
+
+        if centering:
+            xdiff = (self.node_width[x] - (node.width or m.nodeWidth)) / 2
+            ydiff = (self.node_height[y] - (node.height or m.nodeHeight)) / 2
+        else:
+            xdiff = 0
+            ydiff = 0
+
+        x2 = margin.x + padding[3] + node_width + span_width - xdiff
+        y2 = margin.y + padding[0] + node_height + span_height - ydiff
+
+        return XY(x2, y2)
 
     def pagesize(self, width, height):
         margin = self.metrix.pageMargin
         padding = self.metrix.pagePadding
 
-        x, y = self._node_bottomright(width - 1, height - 1)
+        dummy = DiagramNode(None)
+        dummy.xy = XY(width - 1, height - 1)
+        x, y = self._node_bottomright(dummy, centering=False)
         return XY(x + margin.x + padding[1], y + margin.y + padding[2])
 
 
