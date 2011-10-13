@@ -23,8 +23,8 @@ class LoopOut(NodeShape):
         super(LoopOut, self).__init__(node, metrix)
 
         m = self.metrix.cell(self.node)
-        xdiff = self.metrix.nodeWidth / 4
-        ydiff = self.metrix.nodeHeight / 4
+        xdiff = self.metrix.node_width / 4
+        ydiff = self.metrix.node_height / 4
 
         self.textbox = (m.topLeft().x, m.topLeft().y,
                         m.bottomRight().x, m.bottomRight().y - ydiff)
@@ -34,8 +34,8 @@ class LoopOut(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        xdiff = self.metrix.nodeWidth / 4
-        ydiff = self.metrix.nodeHeight / 4
+        xdiff = self.metrix.node_width / 4
+        ydiff = self.metrix.node_height / 4
 
         shape = [XY(m.topLeft().x, m.topLeft().y),
                 XY(m.topRight().x, m.topRight().y),

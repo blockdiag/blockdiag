@@ -22,7 +22,7 @@ class Actor(NodeShape):
     def __init__(self, node, metrix=None):
         super(Actor, self).__init__(node, metrix)
 
-        self.radius = metrix.nodeHeight / 8  # radius of actor's head
+        self.radius = metrix.node_height / 8  # radius of actor's head
         self.center = metrix.cell(node).center()
 
         self.connectors[1] = XY(self.center.x + self.radius * 5, self.center.y)
@@ -37,7 +37,7 @@ class Actor(NodeShape):
         r = self.radius
         m = self.metrix.cell(self.node)
 
-        r = self.metrix.nodeHeight / 8  # radius of actor's head
+        r = self.metrix.node_height / 8  # radius of actor's head
         bodyC = m.center()
         neckWidth = r * 2 / 3  # neck size
         arm = r * 4  # arm length

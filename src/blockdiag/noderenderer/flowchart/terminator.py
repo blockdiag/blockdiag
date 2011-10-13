@@ -24,7 +24,7 @@ class Terminator(NodeShape):
         super(Terminator, self).__init__(node, metrix)
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize * 2
+        r = self.metrix.cellsize * 2
         self.textbox = (m.topLeft().x + r, m.topLeft().y,
                         m.bottomRight().x - r, m.bottomRight().y)
 
@@ -44,7 +44,7 @@ class Terminator(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize * 2
+        r = self.metrix.cellsize * 2
 
         box = m.box()
         ellipses = [(box[0], box[1], box[0] + r * 2, box[3]),
@@ -80,8 +80,8 @@ class Terminator(NodeShape):
 
         # create pathdata
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize * 2
-        height = self.metrix.nodeHeight
+        r = self.metrix.cellsize * 2
+        height = self.metrix.node_height
 
         box = (m.topLeft().x + r, m.topLeft().y,
                m.bottomRight().x - r, m.bottomRight().y)

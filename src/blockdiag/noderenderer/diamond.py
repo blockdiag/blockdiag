@@ -22,7 +22,7 @@ class Diamond(NodeShape):
     def __init__(self, node, metrix=None):
         super(Diamond, self).__init__(node, metrix)
 
-        r = metrix.cellSize
+        r = metrix.cellsize
         m = metrix.cell(node)
         self.connectors = [XY(m.top().x, m.top().y - r),
                            XY(m.right().x + r, m.right().y),

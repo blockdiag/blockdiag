@@ -68,10 +68,10 @@ class NodeShape(object):
             if image_size is None:
                 iconsize = (0, 0)
             else:
-                boundedbox = [metrix.nodeWidth / 2, metrix.nodeHeight]
+                boundedbox = [metrix.node_width / 2, metrix.node_height]
                 iconsize = images.calc_image_size(image_size, boundedbox)
 
-            vmargin = (metrix.nodeHeight - iconsize[1]) / 2
+            vmargin = (metrix.node_height - iconsize[1]) / 2
             self.iconbox = (m.topLeft().x,
                             m.topLeft().y + vmargin,
                             m.topLeft().x + iconsize[0],
@@ -86,7 +86,7 @@ class NodeShape(object):
             node.label = ""
             node.background = ""
             for i in range(2, 0, -1):
-                r = self.metrix.cellSize / 2 * i
+                r = self.metrix.cellsize / 2 * i
                 metrix = self.metrix.shiftedMetrix(r, 0, 0, r)
 
                 self.__class__(node, metrix).render(drawer, format,
@@ -114,8 +114,8 @@ class NodeShape(object):
         if not kwargs.get('shadow'):
             drawer.textarea(self.textbox, self.node.label,
                             fill=self.node.textcolor, halign=self.textalign,
-                            font=font, fontsize=self.metrix.fontSize,
-                            lineSpacing=self.metrix.lineSpacing)
+                            font=font, fontsize=self.metrix.fontsize,
+                            line_spacing=self.metrix.line_spacing)
 
     def render_number_badge(self, drawer, **kwargs):
         if self.node.numbered != None and kwargs.get('shadow') != True:
@@ -124,12 +124,12 @@ class NodeShape(object):
             badgeFill = kwargs.get('badgeFill')
 
             xy = self.metrix.cell(self.node).topLeft()
-            r = self.metrix.cellSize * 3 / 2
+            r = self.metrix.cellsize * 3 / 2
 
             box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
             drawer.ellipse(box, outline=outline, fill=badgeFill)
             drawer.textarea(box, self.node.numbered, fill=self.node.textcolor,
-                            font=font, fontsize=self.metrix.fontSize)
+                            font=font, fontsize=self.metrix.fontsize)
 
     def top(self):
         return self.connectors[0]
@@ -140,18 +140,18 @@ class NodeShape(object):
     def right(self):
         point = self.connectors[1]
         if self.node.stacked:
-            point = XY(point.x + self.metrix.cellSize, point.y)
+            point = XY(point.x + self.metrix.cellsize, point.y)
         return point
 
     def bottom(self):
         point = self.connectors[2]
         if self.node.stacked:
-            point = XY(point.x, point.y + self.metrix.cellSize)
+            point = XY(point.x, point.y + self.metrix.cellsize)
         return point
 
     def shift_shadow(self, value):
-        xdiff = self.metrix.shadowOffsetX
-        ydiff = self.metrix.shadowOffsetY
+        xdiff = self.metrix.shadow_offset.x
+        ydiff = self.metrix.shadow_offset.y
 
         if isinstance(value, XY):
             ret = XY(value.x + xdiff, value.y + ydiff)

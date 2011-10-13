@@ -22,7 +22,7 @@ class Ellipse(NodeShape):
     def __init__(self, node, metrix=None):
         super(Ellipse, self).__init__(node, metrix)
 
-        r = metrix.cellSize
+        r = metrix.cellsize
         box = metrix.cell(node).box()
         self.textbox = (box[0] + r, box[1] + r, box[2] - r, box[3] - r)
 

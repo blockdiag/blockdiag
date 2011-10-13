@@ -37,7 +37,7 @@ class RoundedBox(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize
+        r = self.metrix.cellsize
         box = m.box()
 
         lines = [(XY(box[0] + r, box[1]), XY(box[2] - r, box[1])),
@@ -59,7 +59,7 @@ class RoundedBox(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize
+        r = self.metrix.cellsize
 
         box = m.box()
         ellipses = [(box[0], box[1], box[0] + r * 2, box[1] + r * 2),
@@ -93,7 +93,7 @@ class RoundedBox(NodeShape):
 
         # create pathdata
         box = self.metrix.cell(self.node).box()
-        r = self.metrix.cellSize
+        r = self.metrix.cellsize
 
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)

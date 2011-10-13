@@ -23,7 +23,7 @@ class Input(NodeShape):
         super(Input, self).__init__(node, metrix)
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize * 3
+        r = self.metrix.cellsize * 3
 
         textbox = (m.topLeft().x + r, m.topLeft().y,
                    m.bottomRight().x - r, m.bottomRight().y)
@@ -33,7 +33,7 @@ class Input(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize * 3
+        r = self.metrix.cellsize * 3
 
         shape = [XY(m.topLeft().x + r,  m.topLeft().y),
                  XY(m.topRight().x, m.topRight().y),

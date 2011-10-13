@@ -24,7 +24,7 @@ class Database(NodeShape):
         super(Database, self).__init__(node, metrix)
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize
+        r = self.metrix.cellsize
         self.textbox = (m.topLeft().x, m.topLeft().y + r * 3 / 2,
                         m.bottomRight().x, m.bottomRight().y - r / 2)
 
@@ -44,7 +44,7 @@ class Database(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize
+        r = self.metrix.cellsize
         box = m.box()
 
         ellipse = (box[0], box[3] - r * 2, box[2], box[3])
@@ -86,8 +86,8 @@ class Database(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize
-        width = self.metrix.nodeWidth
+        r = self.metrix.cellsize
+        width = self.metrix.node_width
 
         box = m.box()
         if kwargs.get('shadow'):
