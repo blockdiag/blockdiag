@@ -88,6 +88,7 @@ class Base(object):
 
 class Element(Base):
     namespace = {}
+    int_attrs = ['width', 'height', 'colwidth', 'colheight']
 
     @classmethod
     def get(cls, id):
@@ -116,6 +117,8 @@ class Element(Base):
         self.drawable = False
         self.order = 0
         self.color = self.basecolor
+        self.width = None
+        self.height = None
         self.colwidth = 1
         self.colheight = 1
         self.stacked = False
@@ -141,7 +144,6 @@ class Element(Base):
 
 class DiagramNode(Element):
     shape = 'box'
-    int_attrs = ['width', 'height', 'colwidth', 'colheight']
 
     @classmethod
     def set_default_shape(cls, shape):
@@ -158,8 +160,6 @@ class DiagramNode(Element):
         self.label = unquote(id) or ''
         self.style = None
         self.numbered = None
-        self.width = None
-        self.height = None
         self.icon = None
         self.background = None
         self.description = None
