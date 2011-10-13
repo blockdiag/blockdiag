@@ -171,13 +171,17 @@ class DiagramMetrix(object):
 
         node_width = self.nodeWidth
         for x in range(diagram.colwidth):
-            width = max(n.width or node_width for n in nodes if n.xy.x == x)
-            sheet.set_node_width(x, width)
+            widths = [n.width for n in nodes if n.xy.x == x]
+            if widths:
+                width = max(n or node_width for n in widths)
+                sheet.set_node_width(x, width)
 
         node_height = self.nodeHeight
         for y in range(diagram.colheight):
-            height = max(n.height or node_height for n in nodes if n.xy.y == y)
-            sheet.set_node_width(y, height)
+            heights = [n.height for n in nodes if n.xy.y == y]
+            if heights:
+                height = max(n or node_height for n in heights)
+                sheet.set_node_width(y, height)
 
     def originalMetrix(self):
         return self
