@@ -165,11 +165,19 @@ class DiagramMetrix(object):
 
         self.pageMargin = XY(pageMarginX, pageMarginY)
 
+        # setup spreadsheet
         sheet = self.spreadsheet = SpreadSheetMetrix(self)
-        for node in diagram.nodes:
-            if isinstance(node, DiagramNode):
-                sheet.set_node_width(node.xy.x, node.width)
-                sheet.set_node_height(node.xy.y, node.height)
+        nodes = [n for n in diagram.nodes if isinstance(n, DiagramNode)]
+
+        node_width = self.nodeWidth
+        for x in range(diagram.colwidth):
+            width = max(n.width or node_width for n in nodes if n.xy.x == x)
+            sheet.set_node_width(x, width)
+
+        node_height = self.nodeHeight
+        for y in range(diagram.colheight):
+            height = max(n.height or node_height for n in nodes if n.xy.y == y)
+            sheet.set_node_width(y, height)
 
     def originalMetrix(self):
         return self
