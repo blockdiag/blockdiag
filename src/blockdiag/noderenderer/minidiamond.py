@@ -22,7 +22,7 @@ class MiniDiamond(NodeShape):
     def __init__(self, node, metrix=None):
         super(MiniDiamond, self).__init__(node, metrix)
 
-        r = metrix.cellSize
+        r = metrix.cellsize
         m = metrix.cell(node)
         c = m.center()
         self.connectors = (XY(c.x, c.y - r),

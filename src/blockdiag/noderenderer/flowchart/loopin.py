@@ -23,8 +23,8 @@ class LoopIn(NodeShape):
         super(LoopIn, self).__init__(node, metrix)
 
         m = self.metrix.cell(self.node)
-        xdiff = self.metrix.nodeWidth / 4
-        ydiff = self.metrix.nodeHeight / 4
+        xdiff = self.metrix.node_width / 4
+        ydiff = self.metrix.node_height / 4
 
         textbox = (m.topLeft().x, m.topLeft().y + ydiff,
                    m.bottomRight().x, m.bottomRight().y)
@@ -34,8 +34,8 @@ class LoopIn(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        xdiff = self.metrix.nodeWidth / 4
-        ydiff = self.metrix.nodeHeight / 4
+        xdiff = self.metrix.node_width / 4
+        ydiff = self.metrix.node_height / 4
 
         shape = [XY(m.topLeft().x + xdiff, m.topLeft().y),
                  XY(m.topRight().x - xdiff, m.topLeft().y),

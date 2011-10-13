@@ -23,10 +23,10 @@ class Cloud(NodeShape):
     def __init__(self, node, metrix=None):
         super(Cloud, self).__init__(node, metrix)
 
-        r = metrix.cellSize
+        r = metrix.cellsize
         pt = metrix.cell(node).topLeft()
-        rx = self.metrix.nodeWidth / 12
-        ry = self.metrix.nodeHeight / 5
+        rx = self.metrix.node_width / 12
+        ry = self.metrix.node_height / 5
         self.textbox = (pt.x + rx * 2, pt.y + ry,
                         pt.x + rx * 11, pt.y + ry * 4)
 
@@ -35,8 +35,8 @@ class Cloud(NodeShape):
 
         m = self.metrix.cell(self.node)
         pt = m.topLeft()
-        rx = self.metrix.nodeWidth / 12
-        ry = self.metrix.nodeHeight / 5
+        rx = self.metrix.node_width / 12
+        ry = self.metrix.node_height / 5
         textbox = (pt.x + rx * 3, pt.y + ry, pt.x + rx * 10, pt.y + ry * 4)
 
         # draw background
@@ -52,8 +52,8 @@ class Cloud(NodeShape):
 
         m = self.metrix.cell(self.node)
         pt = m.topLeft()
-        rx = self.metrix.nodeWidth / 12
-        ry = self.metrix.nodeHeight / 5
+        rx = self.metrix.node_width / 12
+        ry = self.metrix.node_height / 5
 
         ellipses = [(pt.x + rx * 2, pt.y + ry,
                      pt.x + rx * 5, pt.y + ry * 3),
@@ -98,8 +98,8 @@ class Cloud(NodeShape):
 
         # create pathdata
         m = self.metrix.cell(self.node)
-        rx = self.metrix.nodeWidth / 12
-        ry = self.metrix.nodeHeight / 5
+        rx = self.metrix.node_width / 12
+        ry = self.metrix.node_height / 5
 
         pt = m.topLeft()
         if kwargs.get('shadow'):

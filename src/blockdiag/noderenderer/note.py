@@ -24,7 +24,7 @@ class Note(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize * 2
+        r = self.metrix.cellsize * 2
 
         tr = m.topRight()
         note = [m.topLeft(), XY(tr.x - r, tr.y), XY(tr.x, tr.y + r),

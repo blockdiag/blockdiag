@@ -122,63 +122,62 @@ class AutoScaler(object):
 
 
 class DiagramMetrix(object):
-    cellSize = cellsize
+    cellsize = cellsize
     edge_layout = 'normal'
-    nodePadding = 4
-    lineSpacing = 2
-    shadowOffsetX = 3
-    shadowOffsetY = 6
-    fontSize = 11
-    pagePadding = [0, 0, 0, 0]
-    nodeWidth = cellsize * 16
-    nodeHeight = cellsize * 5
-    spanWidth = cellsize * 8
-    spanHeight = cellsize * 5
+    node_padding = 4
+    line_spacing = 2
+    shadow_offset = XY(3, 6)
+    fontsize = 11
+    page_padding = [0, 0, 0, 0]
+    node_width = cellsize * 16
+    node_height = cellsize * 5
+    span_width = cellsize * 8
+    span_height = cellsize * 5
 
     def __init__(self, diagram, **kwargs):
         if diagram.node_width is not None:
-            self.nodeWidth = diagram.node_width
+            self.node_width = diagram.node_width
 
         if diagram.node_height is not None:
-            self.nodeHeight = diagram.node_height
+            self.node_height = diagram.node_height
 
         if diagram.span_width is not None:
-            self.spanWidth = diagram.span_width
+            self.span_width = diagram.span_width
 
         if diagram.span_height is not None:
-            self.spanHeight = diagram.span_height
+            self.span_height = diagram.span_height
 
         if diagram.fontsize is not None:
-            self.fontSize = diagram.fontsize
+            self.fontsize = diagram.fontsize
 
         if diagram.page_padding is not None:
-            self.pagePadding = diagram.page_padding
+            self.page_padding = diagram.page_padding
 
         if diagram.edge_layout is not None:
             self.edge_layout = diagram.edge_layout
 
-        pageMarginX = cellsize * 3
-        if pageMarginX < self.spanWidth:
-            pageMarginX = self.spanWidth
+        page_margin_x = cellsize * 3
+        if page_margin_x < self.span_width:
+            page_margin_x = self.span_width
 
-        pageMarginY = cellsize * 3
-        if pageMarginY < self.spanHeight:
-            pageMarginY = self.spanHeight + cellsize
+        page_margin_y = cellsize * 3
+        if page_margin_y < self.span_height:
+            page_margin_y = self.span_height + cellsize
 
-        self.pageMargin = XY(pageMarginX, pageMarginY)
+        self.page_margin = XY(page_margin_x, page_margin_y)
 
         # setup spreadsheet
         sheet = self.spreadsheet = SpreadSheetMetrix(self)
         nodes = [n for n in diagram.nodes if isinstance(n, DiagramNode)]
 
-        node_width = self.nodeWidth
+        node_width = self.node_width
         for x in range(diagram.colwidth):
             widths = [n.width for n in nodes if n.xy.x == x]
             if widths:
                 width = max(n or node_width for n in widths)
                 sheet.set_node_width(x, width)
 
-        node_height = self.nodeHeight
+        node_height = self.node_height
         for y in range(diagram.colheight):
             heights = [n.height for n in nodes if n.xy.y == y]
             if heights:
@@ -191,9 +190,9 @@ class DiagramMetrix(object):
     def shiftedMetrix(self, top, right, bottom, left):
         metrix = copy.copy(self)
 
-        padding = metrix.pagePadding
-        metrix.pagePadding = [padding[0] + top, padding[1] + right,
-                              padding[2] + bottom, padding[3] + left]
+        padding = metrix.page_padding
+        metrix.page_padding = [padding[0] + top, padding[1] + right,
+                               padding[2] + bottom, padding[3] + left]
 
         return metrix
 
@@ -230,10 +229,10 @@ class DiagramMetrix(object):
 class SpreadSheetMetrix(object):
     def __init__(self, metrix):
         self.metrix = metrix
-        self.node_width = defaultdict(lambda: metrix.nodeWidth)
-        self.node_height = defaultdict(lambda: metrix.nodeHeight)
-        self.span_width = defaultdict(lambda: metrix.spanWidth)
-        self.span_height = defaultdict(lambda: metrix.spanHeight)
+        self.node_width = defaultdict(lambda: metrix.node_width)
+        self.node_height = defaultdict(lambda: metrix.node_height)
+        self.span_width = defaultdict(lambda: metrix.span_width)
+        self.span_height = defaultdict(lambda: metrix.span_height)
 
     def set_node_width(self, x, width):
         if width is not None and 0 < width and \
@@ -265,8 +264,8 @@ class SpreadSheetMetrix(object):
     def _node_topleft(self, node, centering=True):
         m = self.metrix
         x, y = node.xy
-        margin = m.pageMargin
-        padding = m.pagePadding
+        margin = m.page_margin
+        padding = m.page_padding
 
         node_width = sum(self.node_width[i] for i in range(x))
         node_height = sum(self.node_height[i] for i in range(y))
@@ -274,8 +273,8 @@ class SpreadSheetMetrix(object):
         span_height = sum(self.span_height[i] for i in range(y))
 
         if centering:
-            xdiff = (self.node_width[x] - (node.width or m.nodeWidth)) / 2
-            ydiff = (self.node_height[y] - (node.height or m.nodeHeight)) / 2
+            xdiff = (self.node_width[x] - (node.width or m.node_width)) / 2
+            ydiff = (self.node_height[y] - (node.height or m.node_height)) / 2
         else:
             xdiff = 0
             ydiff = 0
@@ -289,8 +288,8 @@ class SpreadSheetMetrix(object):
         m = self.metrix
         x = node.xy.x + node.colwidth - 1
         y = node.xy.y + node.colheight - 1
-        margin = m.pageMargin
-        padding = m.pagePadding
+        margin = m.page_margin
+        padding = m.page_padding
 
         node_width = sum(self.node_width[i] for i in range(x + 1))
         node_height = sum(self.node_height[i] for i in range(y + 1))
@@ -298,8 +297,8 @@ class SpreadSheetMetrix(object):
         span_height = sum(self.span_height[i] for i in range(y))
 
         if centering:
-            xdiff = (self.node_width[x] - (node.width or m.nodeWidth)) / 2
-            ydiff = (self.node_height[y] - (node.height or m.nodeHeight)) / 2
+            xdiff = (self.node_width[x] - (node.width or m.node_width)) / 2
+            ydiff = (self.node_height[y] - (node.height or m.node_height)) / 2
         else:
             xdiff = 0
             ydiff = 0
@@ -310,8 +309,8 @@ class SpreadSheetMetrix(object):
         return XY(x2, y2)
 
     def pagesize(self, width, height):
-        margin = self.metrix.pageMargin
-        padding = self.metrix.pagePadding
+        margin = self.metrix.page_margin
+        padding = self.metrix.page_padding
 
         dummy = DiagramNode(None)
         dummy.xy = XY(width - 1, height - 1)
@@ -328,19 +327,19 @@ class NodeMetrix(Box):
         return Box(self.x1, self.y1, self.x2, self.y2)
 
     def marginBox(self):
-        return Box(self.x1 - self.metrix.spanWidth / 8,
-                   self.y1 - self.metrix.spanHeight / 4,
-                   self.x2 + self.metrix.spanWidth / 8,
-                   self.y2 + self.metrix.spanHeight / 4)
+        return Box(self.x1 - self.metrix.span_width / 8,
+                   self.y1 - self.metrix.span_height / 4,
+                   self.x2 + self.metrix.span_width / 8,
+                   self.y2 + self.metrix.span_height / 4)
 
     def coreBox(self):
-        return Box(self.x1 + self.metrix.nodePadding,
-                   self.y1 + self.metrix.nodePadding,
-                   self.x2 - self.metrix.nodePadding * 2,
-                   self.y2 - self.metrix.nodePadding * 2)
+        return Box(self.x1 + self.metrix.node_padding,
+                   self.y1 + self.metrix.node_padding,
+                   self.x2 - self.metrix.node_padding * 2,
+                   self.y2 - self.metrix.node_padding * 2)
 
     def groupLabelBox(self):
-        return Box(self.x1, self.y1 - self.metrix.spanHeight / 2,
+        return Box(self.x1, self.y1 - self.metrix.span_height / 2,
                    self.x2, self.y1)
 
     def topLeft(self):
@@ -381,7 +380,7 @@ class EdgeMetrix(object):
 
     def _head(self, node, direct):
         head = []
-        cell = self.metrix.cellSize
+        cell = self.metrix.cellsize
         node = self.metrix.node(node)
 
         if direct == 'up':
@@ -456,7 +455,7 @@ class LandscapeEdgeMetrix(EdgeMetrix):
         return heads
 
     def shaft(self):
-        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+        span = XY(self.metrix.span_width, self.metrix.span_height)
         dir = self.edge.direction
 
         node1 = self.metrix.node(self.edge.node1)
@@ -565,8 +564,8 @@ class LandscapeEdgeMetrix(EdgeMetrix):
         return shaft
 
     def labelbox(self):
-        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
-        node = XY(self.metrix.nodeWidth, self.metrix.nodeHeight)
+        span = XY(self.metrix.span_width, self.metrix.span_height)
+        node = XY(self.metrix.node_width, self.metrix.node_height)
 
         dir = self.edge.direction
         node1 = self.metrix.cell(self.edge.node1)
@@ -656,7 +655,7 @@ class PortraitEdgeMetrix(EdgeMetrix):
         return heads
 
     def shaft(self):
-        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+        span = XY(self.metrix.span_width, self.metrix.span_height)
         dir = self.edge.direction
 
         node1 = self.metrix.node(self.edge.node1)
@@ -736,7 +735,7 @@ class PortraitEdgeMetrix(EdgeMetrix):
         return shaft
 
     def labelbox(self):
-        span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+        span = XY(self.metrix.span_width, self.metrix.span_height)
 
         dir = self.edge.direction
         node1 = self.metrix.cell(self.edge.node1)
@@ -814,7 +813,7 @@ class FlowchartLandscapeEdgeMetrix(LandscapeEdgeMetrix):
 
     def shaft(self):
         if self.edge.direction == 'right-down':
-            span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+            span = XY(self.metrix.span_width, self.metrix.span_height)
             node1 = self.metrix.node(self.edge.node1)
             cell1 = self.metrix.cell(self.edge.node1)
             node2 = self.metrix.node(self.edge.node2)
@@ -841,7 +840,7 @@ class FlowchartLandscapeEdgeMetrix(LandscapeEdgeMetrix):
     def labelbox(self):
         dir = self.edge.direction
         if dir == 'right':
-            span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+            span = XY(self.metrix.span_width, self.metrix.span_height)
             node1 = self.metrix.node(self.edge.node1)
             cell1 = self.metrix.cell(self.edge.node1)
             node2 = self.metrix.node(self.edge.node2)
@@ -880,7 +879,7 @@ class FlowchartPortraitEdgeMetrix(PortraitEdgeMetrix):
 
     def shaft(self):
         if self.edge.direction == 'right-down':
-            span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+            span = XY(self.metrix.span_width, self.metrix.span_height)
             node1 = self.metrix.node(self.edge.node1)
             cell1 = self.metrix.cell(self.edge.node1)
             node2 = self.metrix.node(self.edge.node2)
@@ -908,7 +907,7 @@ class FlowchartPortraitEdgeMetrix(PortraitEdgeMetrix):
     def labelbox(self):
         dir = self.edge.direction
         if dir == 'right':
-            span = XY(self.metrix.spanWidth, self.metrix.spanHeight)
+            span = XY(self.metrix.span_width, self.metrix.span_height)
             node1 = self.metrix.node(self.edge.node1)
             cell1 = self.metrix.cell(self.edge.node1)
             node2 = self.metrix.node(self.edge.node2)

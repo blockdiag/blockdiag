@@ -23,7 +23,7 @@ class Mail(NodeShape):
         super(Mail, self).__init__(node, metrix)
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize * 2
+        r = self.metrix.cellsize * 2
         self.textbox = (m.topLeft().x, m.topLeft().y + r,
                         m.bottomRight().x, m.bottomRight().y)
 
@@ -32,7 +32,7 @@ class Mail(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        r = self.metrix.cellSize * 2
+        r = self.metrix.cellsize * 2
 
         # draw outline
         box = self.metrix.cell(self.node).box()

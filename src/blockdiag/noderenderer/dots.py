@@ -16,19 +16,19 @@ class Dots(NodeShape):
         center = m.cell(self.node).center()
         dots = [center]
         if self.node.group.orientation == 'landscape':
-            pt = XY(center.x, center.y - m.nodeHeight / 2)
+            pt = XY(center.x, center.y - m.node_height / 2)
             dots.append(pt)
 
-            pt = XY(center.x, center.y + m.nodeHeight / 2)
+            pt = XY(center.x, center.y + m.node_height / 2)
             dots.append(pt)
         else:
-            pt = XY(center.x - m.nodeWidth / 3, center.y)
+            pt = XY(center.x - m.node_width / 3, center.y)
             dots.append(pt)
 
-            pt = XY(center.x + m.nodeWidth / 3, center.y)
+            pt = XY(center.x + m.node_width / 3, center.y)
             dots.append(pt)
 
-        r = m.cellSize / 2
+        r = m.cellsize / 2
         for dot in dots:
             box = (dot.x - r, dot.y - r, dot.x + r, dot.y + r)
             drawer.ellipse(box, fill='black', outline='black')

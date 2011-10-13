@@ -92,7 +92,7 @@ class TextFolder:
         self.valign = kwargs.get('valign', 'center')
         self.fontsize = kwargs.get('fontsize', 11)
         self.padding = kwargs.get('padding', 12)
-        self.lineSpacing = kwargs.get('lineSpacing', 2)
+        self.line_spacing = kwargs.get('line_spacing', 2)
 
         if kwargs.get('adjustBaseline'):
             self.adjustBaseline = True
@@ -143,9 +143,9 @@ class TextFolder:
         50
         >>> TextFolder(box, u"abc", fontsize=24).height()
         24
-        >>> TextFolder(box, u"abc\\ndef", lineSpacing=8).height()
+        >>> TextFolder(box, u"abc\\ndef", line_spacing=8).height()
         30
-        >>> TextFolder(box, u"abc\\ndef", fontsize=15, lineSpacing=8).height()
+        >>> TextFolder(box, u"abc\\ndef", fontsize=15, line_spacing=8).height()
         38
         """
         height = 0
@@ -153,7 +153,7 @@ class TextFolder:
             height += self.textsize(string)[1]
 
         if len(self._result) > 1:
-            height += (len(self._result) - 1) * self.lineSpacing
+            height += (len(self._result) - 1) * self.line_spacing
 
         return height
 
@@ -186,9 +186,9 @@ class TextFolder:
             yield string, draw_xy
 
             if self.adjustBaseline:
-                height += self.lineSpacing
+                height += self.line_spacing
             else:
-                height += textsize[1] + self.lineSpacing
+                height += textsize[1] + self.line_spacing
 
     def outlineBox(self):
         corners = []
@@ -264,7 +264,7 @@ class TextFolder:
                     break
 
                 lines.append(string[0:length])
-                height += metrics[1] + self.lineSpacing
+                height += metrics[1] + self.line_spacing
 
                 line = string[length:]
                 if line == "":

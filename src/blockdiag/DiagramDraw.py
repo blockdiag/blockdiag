@@ -54,7 +54,7 @@ class DiagramDraw(object):
                       scale_ratio=self.scale_ratio)
         drawer = imagedraw.create(self.format, self.filename,
                                   self.pagesize(), **kwargs)
-        self.drawer = LineJumpDrawFilter(drawer, self.metrix.cellSize / 2)
+        self.drawer = LineJumpDrawFilter(drawer, self.metrix.cellsize / 2)
 
     @property
     def nodes(self):
@@ -145,11 +145,11 @@ class DiagramDraw(object):
         if group.label and not group.separated:
             self.drawer.textarea(m.groupLabelBox(), group.label,
                                  fill=group.textcolor, font=self.font,
-                                 fontsize=self.metrix.fontSize)
+                                 fontsize=self.metrix.fontsize)
         elif group.label:
             self.drawer.textarea(m.coreBox(), group.label,
                                  fill=group.textcolor, font=self.font,
-                                 fontsize=self.metrix.fontSize)
+                                 fontsize=self.metrix.fontsize)
 
     def edge(self, edge):
         metrix = self.metrix.edge(edge)
@@ -167,7 +167,7 @@ class DiagramDraw(object):
         if edge.label:
             self.drawer.textarea(metrix.labelbox(), edge.label,
                                  fill=edge.textcolor, outline=self.fill,
-                                 font=self.font, fontsize=self.metrix.fontSize)
+                                 font=self.font, fontsize=self.metrix.fontsize)
 
     def save(self, size=None):
         return self.drawer.save(self.filename, size, self.format)
