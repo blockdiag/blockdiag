@@ -20,11 +20,11 @@ from blockdiag.imagedraw.simplesvg import pathdata
 
 
 class Database(NodeShape):
-    def __init__(self, node, metrix=None):
-        super(Database, self).__init__(node, metrix)
+    def __init__(self, node, metrics=None):
+        super(Database, self).__init__(node, metrics)
 
-        m = self.metrix.cell(self.node)
-        r = self.metrix.cellsize
+        m = self.metrics.cell(self.node)
+        r = self.metrics.cellsize
         self.textbox = (m.topleft.x, m.topleft.y + r * 3 / 2,
                         m.bottomright.x, m.bottomright.y - r / 2)
 
@@ -43,8 +43,8 @@ class Database(NodeShape):
         outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
-        m = self.metrix.cell(self.node)
-        r = self.metrix.cellsize
+        m = self.metrics.cell(self.node)
+        r = self.metrics.cellsize
         box = m.box
 
         ellipse = (box[0], box[3] - r * 2, box[2], box[3])
@@ -85,9 +85,9 @@ class Database(NodeShape):
         outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
-        m = self.metrix.cell(self.node)
-        r = self.metrix.cellsize
-        width = self.metrix.node_width
+        m = self.metrics.cell(self.node)
+        r = self.metrics.cellsize
+        width = self.metrics.node_width
 
         box = m.box
         if kwargs.get('shadow'):

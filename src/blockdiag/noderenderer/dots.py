@@ -12,7 +12,7 @@ class Dots(NodeShape):
         if kwargs.get('shadow'):
             return
 
-        m = self.metrix
+        m = self.metrics
         center = m.cell(self.node).center
         dots = [center]
         if self.node.group.orientation == 'landscape':

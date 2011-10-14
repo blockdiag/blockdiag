@@ -19,11 +19,11 @@ from blockdiag.utils.XY import XY
 
 
 class Mail(NodeShape):
-    def __init__(self, node, metrix=None):
-        super(Mail, self).__init__(node, metrix)
+    def __init__(self, node, metrics=None):
+        super(Mail, self).__init__(node, metrics)
 
-        m = self.metrix.cell(self.node)
-        r = self.metrix.cellsize * 2
+        m = self.metrics.cell(self.node)
+        r = self.metrics.cellsize * 2
         self.textbox = (m.topleft.x, m.topleft.y + r,
                         m.bottomright.x, m.bottomright.y)
 
@@ -31,11 +31,11 @@ class Mail(NodeShape):
         outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
-        m = self.metrix.cell(self.node)
-        r = self.metrix.cellsize * 2
+        m = self.metrics.cell(self.node)
+        r = self.metrics.cellsize * 2
 
         # draw outline
-        box = self.metrix.cell(self.node).box
+        box = self.metrics.cell(self.node).box
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
             drawer.rectangle(box, fill=fill, outline=fill,

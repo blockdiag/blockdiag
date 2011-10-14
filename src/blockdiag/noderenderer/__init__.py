@@ -52,11 +52,11 @@ def get(shape):
 
 
 class NodeShape(object):
-    def __init__(self, node, metrix=None):
+    def __init__(self, node, metrics=None):
         self.node = node
-        self.metrix = metrix
+        self.metrics = metrics
 
-        m = self.metrix.cell(self.node)
+        m = self.metrics.cell(self.node)
         self.textalign = 'center'
         self.connectors = [m.top, m.right, m.bottom, m.left]
 
@@ -68,10 +68,10 @@ class NodeShape(object):
             if image_size is None:
                 iconsize = (0, 0)
             else:
-                boundedbox = [metrix.node_width / 2, metrix.node_height]
+                boundedbox = [metrics.node_width / 2, metrics.node_height]
                 iconsize = images.calc_image_size(image_size, boundedbox)
 
-            vmargin = (metrix.node_height - iconsize[1]) / 2
+            vmargin = (metrics.node_height - iconsize[1]) / 2
             self.iconbox = (m.topleft.x,
                             m.topleft.y + vmargin,
                             m.topleft.x + iconsize[0],
@@ -86,10 +86,10 @@ class NodeShape(object):
             node.label = ""
             node.background = ""
             for i in range(2, 0, -1):
-                r = self.metrix.cellsize / 2 * i
-                metrix = self.metrix.shiftedMetrix(r, 0, 0, r)
+                r = self.metrics.cellsize / 2 * i
+                metrics = self.metrics.shiftedMetrics(r, 0, 0, r)
 
-                self.__class__(node, metrix).render(drawer, format,
+                self.__class__(node, metrics).render(drawer, format,
                                                     stacked=True, **kwargs)
 
         if hasattr(self, 'render_vector_shape') and format == 'SVG':
@@ -114,8 +114,8 @@ class NodeShape(object):
         if not kwargs.get('shadow'):
             drawer.textarea(self.textbox, self.node.label,
                             fill=self.node.textcolor, halign=self.textalign,
-                            font=font, fontsize=self.metrix.fontsize,
-                            line_spacing=self.metrix.line_spacing)
+                            font=font, fontsize=self.metrics.fontsize,
+                            line_spacing=self.metrics.line_spacing)
 
     def render_number_badge(self, drawer, **kwargs):
         if self.node.numbered != None and kwargs.get('shadow') != True:
@@ -123,13 +123,13 @@ class NodeShape(object):
             outline = kwargs.get('outline')
             badgeFill = kwargs.get('badgeFill')
 
-            xy = self.metrix.cell(self.node).topleft
-            r = self.metrix.cellsize * 3 / 2
+            xy = self.metrics.cell(self.node).topleft
+            r = self.metrics.cellsize * 3 / 2
 
             box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
             drawer.ellipse(box, outline=outline, fill=badgeFill)
             drawer.textarea(box, self.node.numbered, fill=self.node.textcolor,
-                            font=font, fontsize=self.metrix.fontsize)
+                            font=font, fontsize=self.metrics.fontsize)
 
     @property
     def top(self):
@@ -143,19 +143,19 @@ class NodeShape(object):
     def right(self):
         point = self.connectors[1]
         if self.node.stacked:
-            point = XY(point.x + self.metrix.cellsize, point.y)
+            point = XY(point.x + self.metrics.cellsize, point.y)
         return point
 
     @property
     def bottom(self):
         point = self.connectors[2]
         if self.node.stacked:
-            point = XY(point.x, point.y + self.metrix.cellsize)
+            point = XY(point.x, point.y + self.metrics.cellsize)
         return point
 
     def shift_shadow(self, value):
-        xdiff = self.metrix.shadow_offset.x
-        ydiff = self.metrix.shadow_offset.y
+        xdiff = self.metrics.shadow_offset.x
+        ydiff = self.metrics.shadow_offset.y
 
         if isinstance(value, XY):
             ret = XY(value.x + xdiff, value.y + ydiff)

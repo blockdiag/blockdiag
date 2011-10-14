@@ -19,11 +19,11 @@ from blockdiag.utils.XY import XY
 
 
 class Input(NodeShape):
-    def __init__(self, node, metrix=None):
-        super(Input, self).__init__(node, metrix)
+    def __init__(self, node, metrics=None):
+        super(Input, self).__init__(node, metrics)
 
-        m = self.metrix.cell(self.node)
-        r = self.metrix.cellsize * 3
+        m = self.metrics.cell(self.node)
+        r = self.metrics.cellsize * 3
 
         textbox = (m.topleft.x + r, m.topleft.y,
                    m.bottomright.x - r, m.bottomright.y)
@@ -32,8 +32,8 @@ class Input(NodeShape):
         outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
-        m = self.metrix.cell(self.node)
-        r = self.metrix.cellsize * 3
+        m = self.metrics.cell(self.node)
+        r = self.metrics.cellsize * 3
 
         shape = [XY(m.topleft.x + r,  m.topleft.y),
                  XY(m.topright.x, m.topright.y),
