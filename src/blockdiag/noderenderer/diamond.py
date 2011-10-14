@@ -19,11 +19,11 @@ from blockdiag.utils.XY import XY
 
 
 class Diamond(NodeShape):
-    def __init__(self, node, metrix=None):
-        super(Diamond, self).__init__(node, metrix)
+    def __init__(self, node, metrics=None):
+        super(Diamond, self).__init__(node, metrics)
 
-        r = metrix.cellsize
-        m = metrix.cell(node)
+        r = metrics.cellsize
+        m = metrics.cell(node)
         self.connectors = [XY(m.top.x, m.top.y - r),
                            XY(m.right.x + r, m.right.y),
                            XY(m.bottom.x, m.bottom.y + r),

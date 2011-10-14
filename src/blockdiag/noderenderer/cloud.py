@@ -20,23 +20,23 @@ from blockdiag.imagedraw.simplesvg import pathdata
 
 
 class Cloud(NodeShape):
-    def __init__(self, node, metrix=None):
-        super(Cloud, self).__init__(node, metrix)
+    def __init__(self, node, metrics=None):
+        super(Cloud, self).__init__(node, metrics)
 
-        r = metrix.cellsize
-        pt = metrix.cell(node).topleft
-        rx = self.metrix.node_width / 12
-        ry = self.metrix.node_height / 5
+        r = metrics.cellsize
+        pt = metrics.cell(node).topleft
+        rx = self.metrics.node_width / 12
+        ry = self.metrics.node_height / 5
         self.textbox = (pt.x + rx * 2, pt.y + ry,
                         pt.x + rx * 11, pt.y + ry * 4)
 
     def render_shape(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')
 
-        m = self.metrix.cell(self.node)
+        m = self.metrics.cell(self.node)
         pt = m.topleft
-        rx = self.metrix.node_width / 12
-        ry = self.metrix.node_height / 5
+        rx = self.metrics.node_width / 12
+        ry = self.metrics.node_height / 5
         textbox = (pt.x + rx * 3, pt.y + ry, pt.x + rx * 10, pt.y + ry * 4)
 
         # draw background
@@ -50,10 +50,10 @@ class Cloud(NodeShape):
         outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
-        m = self.metrix.cell(self.node)
+        m = self.metrics.cell(self.node)
         pt = m.topleft
-        rx = self.metrix.node_width / 12
-        ry = self.metrix.node_height / 5
+        rx = self.metrics.node_width / 12
+        ry = self.metrics.node_height / 5
 
         ellipses = [(pt.x + rx * 2, pt.y + ry,
                      pt.x + rx * 5, pt.y + ry * 3),
@@ -97,9 +97,9 @@ class Cloud(NodeShape):
         fill = kwargs.get('fill')
 
         # create pathdata
-        m = self.metrix.cell(self.node)
-        rx = self.metrix.node_width / 12
-        ry = self.metrix.node_height / 5
+        m = self.metrics.cell(self.node)
+        rx = self.metrics.node_width / 12
+        ry = self.metrics.node_height / 5
 
         pt = m.topleft
         if kwargs.get('shadow'):

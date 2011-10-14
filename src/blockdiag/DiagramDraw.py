@@ -18,16 +18,16 @@ import math
 from utils.XY import XY
 import noderenderer
 import imagedraw
-from DiagramMetrix import AutoScaler
+from DiagramMetrics import AutoScaler
 from imagedraw.filters.linejump import LineJumpDrawFilter
 
 
 class DiagramDraw(object):
-    MetrixClass = None
+    MetricsClass = None
 
     @classmethod
-    def set_metrix_class(cls, MetrixClass):
-        cls.MetrixClass = MetrixClass
+    def set_metrics_class(cls, MetricsClass):
+        cls.MetricsClass = MetricsClass
 
     def __init__(self, format, diagram, filename=None, **kwargs):
         self.format = format.upper()
@@ -39,12 +39,12 @@ class DiagramDraw(object):
         self.scale_ratio = 1
 
         basediagram = kwargs.get('basediagram', diagram)
-        self.metrix = self.MetrixClass(basediagram, **kwargs)
+        self.metrics = self.MetricsClass(basediagram, **kwargs)
 
         if self.format == 'PNG':
             if kwargs.get('antialias'):
                 self.scale_ratio = ratio = 2
-                self.metrix = AutoScaler(self.metrix, scale_ratio=ratio)
+                self.metrics = AutoScaler(self.metrics, scale_ratio=ratio)
             self.shadow = kwargs.get('shadow', (64, 64, 64))
         else:
             self.shadow = kwargs.get('shadow', (0, 0, 0))
@@ -54,7 +54,7 @@ class DiagramDraw(object):
                       scale_ratio=self.scale_ratio)
         drawer = imagedraw.create(self.format, self.filename,
                                   self.pagesize(), **kwargs)
-        self.drawer = LineJumpDrawFilter(drawer, self.metrix.cellsize / 2)
+        self.drawer = LineJumpDrawFilter(drawer, self.metrics.cellsize / 2)
 
     @property
     def nodes(self):
@@ -79,13 +79,13 @@ class DiagramDraw(object):
 
     def pagesize(self, scaled=False):
         if scaled:
-            metrix = self.metrix
+            metrics = self.metrics
         else:
-            metrix = self.metrix.originalMetrix()
+            metrics = self.metrics.originalMetrics()
 
         width = self.diagram.colwidth
         height = self.diagram.colheight
-        return metrix.pagesize(width, height)
+        return metrics.pagesize(width, height)
 
     def draw(self, **kwargs):
         self._draw_background()
@@ -101,11 +101,11 @@ class DiagramDraw(object):
         self._draw_elements(**kwargs)
 
     def _draw_background(self):
-        metrix = self.metrix.originalMetrix()
+        metrics = self.metrics.originalMetrics()
 
         # Draw node groups.
         for node in self.groups:
-            box = metrix.cell(node).marginbox
+            box = metrics.cell(node).marginbox
             self.drawer.rectangle(box, fill=node.color, filter='blur')
 
         # Drop node shadows.
@@ -113,7 +113,7 @@ class DiagramDraw(object):
             if node.color != 'none':
                 r = noderenderer.get(node.shape)
 
-                shape = r(node, metrix)
+                shape = r(node, metrics)
                 shape.render(self.drawer, self.format,
                              fill=self.shadow, shadow=True)
 
@@ -134,44 +134,45 @@ class DiagramDraw(object):
 
     def node(self, node, **kwargs):
         r = noderenderer.get(node.shape)
-        shape = r(node, self.metrix)
+        shape = r(node, self.metrics)
         shape.render(self.drawer, self.format,
                      fill=self.fill, outline=self.diagram.linecolor,
                      font=self.font, badgeFill=self.badgeFill)
 
     def group_label(self, group):
-        m = self.metrix.cell(group)
+        m = self.metrics.cell(group)
 
         if group.label and not group.separated:
             self.drawer.textarea(m.grouplabelbox, group.label,
                                  fill=group.textcolor, font=self.font,
-                                 fontsize=self.metrix.fontsize)
+                                 fontsize=self.metrics.fontsize)
         elif group.label:
             self.drawer.textarea(m.corebox, group.label,
                                  fill=group.textcolor, font=self.font,
-                                 fontsize=self.metrix.fontsize)
+                                 fontsize=self.metrics.fontsize)
 
     def edge(self, edge):
-        metrix = self.metrix.edge(edge)
+        metrics = self.metrics.edge(edge)
 
-        for line in metrix.shaft().polylines:
+        for line in metrics.shaft().polylines:
             self.drawer.line(line, fill=edge.color,
                              style=edge.style, jump=True)
 
-        for head in metrix.heads():
+        for head in metrics.heads():
             if edge.hstyle in ('generalization', 'aggregation'):
                 self.drawer.polygon(head, outline=edge.color, fill='white')
             else:
                 self.drawer.polygon(head, outline=edge.color, fill=edge.color)
 
         if edge.label:
-            self.drawer.textarea(metrix.labelbox(), edge.label,
+            self.drawer.textarea(metrics.labelbox(), edge.label,
                                  fill=edge.textcolor, outline=self.fill,
-                                 font=self.font, fontsize=self.metrix.fontsize)
+                                 font=self.font,
+                                 fontsize=self.metrics.fontsize)
 
     def save(self, size=None):
         return self.drawer.save(self.filename, size, self.format)
 
 
-from DiagramMetrix import DiagramMetrix
-DiagramDraw.set_metrix_class(DiagramMetrix)
+from DiagramMetrics import DiagramMetrics
+DiagramDraw.set_metrics_class(DiagramMetrics)

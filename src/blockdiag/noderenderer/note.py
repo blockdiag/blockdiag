@@ -23,13 +23,13 @@ class Note(NodeShape):
         outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
-        m = self.metrix.cell(self.node)
-        r = self.metrix.cellsize * 2
+        m = self.metrics.cell(self.node)
+        r = self.metrics.cellsize * 2
 
         tr = m.topright
         note = [m.topleft, XY(tr.x - r, tr.y), XY(tr.x, tr.y + r),
                 m.bottomright, m.bottomleft, m.topleft]
-        box = self.metrix.cell(self.node).box
+        box = self.metrics.cell(self.node).box
 
         # draw outline
         if kwargs.get('shadow'):

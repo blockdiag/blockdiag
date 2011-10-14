@@ -19,12 +19,12 @@ from blockdiag.utils.XY import XY
 
 
 class LoopIn(NodeShape):
-    def __init__(self, node, metrix=None):
-        super(LoopIn, self).__init__(node, metrix)
+    def __init__(self, node, metrics=None):
+        super(LoopIn, self).__init__(node, metrics)
 
-        m = self.metrix.cell(self.node)
-        xdiff = self.metrix.node_width / 4
-        ydiff = self.metrix.node_height / 4
+        m = self.metrics.cell(self.node)
+        xdiff = self.metrics.node_width / 4
+        ydiff = self.metrics.node_height / 4
 
         textbox = (m.topleft.x, m.topleft.y + ydiff,
                    m.bottomright.x, m.bottomright.y)
@@ -33,9 +33,9 @@ class LoopIn(NodeShape):
         outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
-        m = self.metrix.cell(self.node)
-        xdiff = self.metrix.node_width / 4
-        ydiff = self.metrix.node_height / 4
+        m = self.metrics.cell(self.node)
+        xdiff = self.metrics.node_width / 4
+        ydiff = self.metrics.node_height / 4
 
         shape = [XY(m.topleft.x + xdiff, m.topleft.y),
                  XY(m.topright.x - xdiff, m.topleft.y),

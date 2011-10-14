@@ -20,11 +20,11 @@ from blockdiag.imagedraw.simplesvg import pathdata
 
 
 class Terminator(NodeShape):
-    def __init__(self, node, metrix=None):
-        super(Terminator, self).__init__(node, metrix)
+    def __init__(self, node, metrics=None):
+        super(Terminator, self).__init__(node, metrics)
 
-        m = self.metrix.cell(self.node)
-        r = self.metrix.cellsize * 2
+        m = self.metrics.cell(self.node)
+        r = self.metrics.cellsize * 2
         self.textbox = (m.topleft.x + r, m.topleft.y,
                         m.bottomright.x - r, m.bottomright.y)
 
@@ -35,7 +35,7 @@ class Terminator(NodeShape):
         self.render_shape_background(drawer, format, **kwargs)
 
         # draw outline
-        box = self.metrix.cell(self.node).box
+        box = self.metrics.cell(self.node).box
         if not kwargs.get('shadow') and self.node.background:
             drawer.loadImage(self.node.background, self.textbox)
 
@@ -43,8 +43,8 @@ class Terminator(NodeShape):
         outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
-        m = self.metrix.cell(self.node)
-        r = self.metrix.cellsize * 2
+        m = self.metrics.cell(self.node)
+        r = self.metrics.cellsize * 2
 
         box = m.box
         ellipses = [(box[0], box[1], box[0] + r * 2, box[3]),
@@ -79,9 +79,9 @@ class Terminator(NodeShape):
         fill = kwargs.get('fill')
 
         # create pathdata
-        m = self.metrix.cell(self.node)
-        r = self.metrix.cellsize * 2
-        height = self.metrix.node_height
+        m = self.metrics.cell(self.node)
+        r = self.metrics.cellsize * 2
+        height = self.metrics.node_height
 
         box = (m.topleft.x + r, m.topleft.y,
                m.bottomright.x - r, m.bottomright.y)

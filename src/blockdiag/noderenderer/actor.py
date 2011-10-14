@@ -19,25 +19,25 @@ from blockdiag.utils.XY import XY
 
 
 class Actor(NodeShape):
-    def __init__(self, node, metrix=None):
-        super(Actor, self).__init__(node, metrix)
+    def __init__(self, node, metrics=None):
+        super(Actor, self).__init__(node, metrics)
 
-        self.radius = metrix.node_height / 8  # radius of actor's head
-        self.center = metrix.cell(node).center
+        self.radius = metrics.node_height / 8  # radius of actor's head
+        self.center = metrics.cell(node).center
 
         self.connectors[1] = XY(self.center.x + self.radius * 5, self.center.y)
         self.connectors[3] = XY(self.center.x - self.radius * 5, self.center.y)
 
     def head_part(self):
         r = self.radius
-        top = self.metrix.cell(self.node).top
+        top = self.metrics.cell(self.node).top
         return (top.x - r, top.y, top.x + r, top.y + r * 2)
 
     def body_part(self):
         r = self.radius
-        m = self.metrix.cell(self.node)
+        m = self.metrics.cell(self.node)
 
-        r = self.metrix.node_height / 8  # radius of actor's head
+        r = self.metrics.node_height / 8  # radius of actor's head
         bodyC = m.center
         neckWidth = r * 2 / 3  # neck size
         arm = r * 4  # arm length

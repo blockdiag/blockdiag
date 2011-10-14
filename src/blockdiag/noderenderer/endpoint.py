@@ -19,12 +19,12 @@ from blockdiag.utils.XY import XY
 
 
 class EndPoint(NodeShape):
-    def __init__(self, node, metrix=None):
-        super(EndPoint, self).__init__(node, metrix)
+    def __init__(self, node, metrics=None):
+        super(EndPoint, self).__init__(node, metrics)
 
-        m = metrix.cell(node)
+        m = metrics.cell(node)
 
-        self.radius = metrix.cellsize
+        self.radius = metrics.cellsize
         self.center = m.center
         self.textbox = [m.top.x, m.top.y, m.right.x, m.right.y]
         self.textalign = 'left'
