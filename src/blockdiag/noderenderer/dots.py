@@ -13,7 +13,7 @@ class Dots(NodeShape):
             return
 
         m = self.metrix
-        center = m.cell(self.node).center()
+        center = m.cell(self.node).center
         dots = [center]
         if self.node.group.orientation == 'landscape':
             pt = XY(center.x, center.y - m.node_height / 2)

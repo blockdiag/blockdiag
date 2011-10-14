@@ -24,7 +24,7 @@ class Cloud(NodeShape):
         super(Cloud, self).__init__(node, metrix)
 
         r = metrix.cellsize
-        pt = metrix.cell(node).topLeft()
+        pt = metrix.cell(node).topleft
         rx = self.metrix.node_width / 12
         ry = self.metrix.node_height / 5
         self.textbox = (pt.x + rx * 2, pt.y + ry,
@@ -34,7 +34,7 @@ class Cloud(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        pt = m.topLeft()
+        pt = m.topleft
         rx = self.metrix.node_width / 12
         ry = self.metrix.node_height / 5
         textbox = (pt.x + rx * 3, pt.y + ry, pt.x + rx * 10, pt.y + ry * 4)
@@ -51,7 +51,7 @@ class Cloud(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrix.cell(self.node)
-        pt = m.topLeft()
+        pt = m.topleft
         rx = self.metrix.node_width / 12
         ry = self.metrix.node_height / 5
 
@@ -101,7 +101,7 @@ class Cloud(NodeShape):
         rx = self.metrix.node_width / 12
         ry = self.metrix.node_height / 5
 
-        pt = m.topLeft()
+        pt = m.topleft
         if kwargs.get('shadow'):
             pt = self.shift_shadow(pt)
 

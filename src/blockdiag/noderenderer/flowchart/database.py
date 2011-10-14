@@ -25,8 +25,8 @@ class Database(NodeShape):
 
         m = self.metrix.cell(self.node)
         r = self.metrix.cellsize
-        self.textbox = (m.topLeft().x, m.topLeft().y + r * 3 / 2,
-                        m.bottomRight().x, m.bottomRight().y - r / 2)
+        self.textbox = (m.topleft.x, m.topleft.y + r * 3 / 2,
+                        m.bottomright.x, m.bottomright.y - r / 2)
 
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
@@ -45,7 +45,7 @@ class Database(NodeShape):
 
         m = self.metrix.cell(self.node)
         r = self.metrix.cellsize
-        box = m.box()
+        box = m.box
 
         ellipse = (box[0], box[3] - r * 2, box[2], box[3])
         if kwargs.get('shadow'):
@@ -89,7 +89,7 @@ class Database(NodeShape):
         r = self.metrix.cellsize
         width = self.metrix.node_width
 
-        box = m.box()
+        box = m.box
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
 

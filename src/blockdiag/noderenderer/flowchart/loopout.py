@@ -26,8 +26,8 @@ class LoopOut(NodeShape):
         xdiff = self.metrix.node_width / 4
         ydiff = self.metrix.node_height / 4
 
-        self.textbox = (m.topLeft().x, m.topLeft().y,
-                        m.bottomRight().x, m.bottomRight().y - ydiff)
+        self.textbox = (m.topleft.x, m.topleft.y,
+                        m.bottomright.x, m.bottomright.y - ydiff)
 
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
@@ -37,13 +37,13 @@ class LoopOut(NodeShape):
         xdiff = self.metrix.node_width / 4
         ydiff = self.metrix.node_height / 4
 
-        shape = [XY(m.topLeft().x, m.topLeft().y),
-                XY(m.topRight().x, m.topRight().y),
-                XY(m.bottomRight().x, m.bottomRight().y - ydiff),
-                XY(m.bottomRight().x - xdiff, m.bottomRight().y),
-                XY(m.bottomLeft().x + xdiff, m.bottomLeft().y),
-                XY(m.bottomLeft().x, m.bottomLeft().y - ydiff),
-                XY(m.topLeft().x, m.topLeft().y)]
+        shape = [XY(m.topleft.x, m.topleft.y),
+                XY(m.topright.x, m.topright.y),
+                XY(m.bottomright.x, m.bottomright.y - ydiff),
+                XY(m.bottomright.x - xdiff, m.bottomright.y),
+                XY(m.bottomleft.x + xdiff, m.bottomleft.y),
+                XY(m.bottomleft.x, m.bottomleft.y - ydiff),
+                XY(m.topleft.x, m.topleft.y)]
 
         # draw outline
         if kwargs.get('shadow'):

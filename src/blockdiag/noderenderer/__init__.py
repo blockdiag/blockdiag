@@ -58,11 +58,11 @@ class NodeShape(object):
 
         m = self.metrix.cell(self.node)
         self.textalign = 'center'
-        self.connectors = [m.top(), m.right(), m.bottom(), m.left()]
+        self.connectors = [m.top, m.right, m.bottom, m.left]
 
         if node.icon is None:
             self.iconbox = None
-            self.textbox = m.box()
+            self.textbox = m.box
         else:
             image_size = images.get_image_size(node.icon)
             if image_size is None:
@@ -72,13 +72,13 @@ class NodeShape(object):
                 iconsize = images.calc_image_size(image_size, boundedbox)
 
             vmargin = (metrix.node_height - iconsize[1]) / 2
-            self.iconbox = (m.topLeft().x,
-                            m.topLeft().y + vmargin,
-                            m.topLeft().x + iconsize[0],
-                            m.topLeft().y + vmargin + iconsize[1])
+            self.iconbox = (m.topleft.x,
+                            m.topleft.y + vmargin,
+                            m.topleft.x + iconsize[0],
+                            m.topleft.y + vmargin + iconsize[1])
 
-            self.textbox = (self.iconbox[2], m.top().y,
-                            m.bottomRight().x, m.bottomRight().y)
+            self.textbox = (self.iconbox[2], m.top.y,
+                            m.bottomright.x, m.bottomright.y)
 
     def render(self, drawer, format, **kwargs):
         if self.node.stacked and not kwargs.get('stacked'):
@@ -123,7 +123,7 @@ class NodeShape(object):
             outline = kwargs.get('outline')
             badgeFill = kwargs.get('badgeFill')
 
-            xy = self.metrix.cell(self.node).topLeft()
+            xy = self.metrix.cell(self.node).topleft
             r = self.metrix.cellsize * 3 / 2
 
             box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
@@ -131,18 +131,22 @@ class NodeShape(object):
             drawer.textarea(box, self.node.numbered, fill=self.node.textcolor,
                             font=font, fontsize=self.metrix.fontsize)
 
+    @property
     def top(self):
         return self.connectors[0]
 
+    @property
     def left(self):
         return self.connectors[3]
 
+    @property
     def right(self):
         point = self.connectors[1]
         if self.node.stacked:
             point = XY(point.x + self.metrix.cellsize, point.y)
         return point
 
+    @property
     def bottom(self):
         point = self.connectors[2]
         if self.node.stacked:

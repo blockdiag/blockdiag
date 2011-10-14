@@ -25,8 +25,8 @@ class Input(NodeShape):
         m = self.metrix.cell(self.node)
         r = self.metrix.cellsize * 3
 
-        textbox = (m.topLeft().x + r, m.topLeft().y,
-                   m.bottomRight().x - r, m.bottomRight().y)
+        textbox = (m.topleft.x + r, m.topleft.y,
+                   m.bottomright.x - r, m.bottomright.y)
 
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
@@ -35,11 +35,11 @@ class Input(NodeShape):
         m = self.metrix.cell(self.node)
         r = self.metrix.cellsize * 3
 
-        shape = [XY(m.topLeft().x + r,  m.topLeft().y),
-                 XY(m.topRight().x, m.topRight().y),
-                 XY(m.bottomRight().x - r, m.bottomRight().y),
-                 XY(m.bottomLeft().x,  m.bottomLeft().y),
-                 XY(m.topLeft().x + r,  m.topLeft().y)]
+        shape = [XY(m.topleft.x + r,  m.topleft.y),
+                 XY(m.topright.x, m.topright.y),
+                 XY(m.bottomright.x - r, m.bottomright.y),
+                 XY(m.bottomleft.x,  m.bottomleft.y),
+                 XY(m.topleft.x + r,  m.topleft.y)]
 
         # draw outline
         if kwargs.get('shadow'):

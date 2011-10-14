@@ -7,7 +7,7 @@ class NoneShape(NodeShape):
     def __init__(self, node, metrix=None):
         super(NoneShape, self).__init__(node, metrix)
 
-        p = metrix.cell(node).center()
+        p = metrix.cell(node).center
         self.connectors = [p, p, p, p]
 
     def render_label(self, drawer, **kwargs):

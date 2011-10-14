@@ -23,14 +23,14 @@ class Actor(NodeShape):
         super(Actor, self).__init__(node, metrix)
 
         self.radius = metrix.node_height / 8  # radius of actor's head
-        self.center = metrix.cell(node).center()
+        self.center = metrix.cell(node).center
 
         self.connectors[1] = XY(self.center.x + self.radius * 5, self.center.y)
         self.connectors[3] = XY(self.center.x - self.radius * 5, self.center.y)
 
     def head_part(self):
         r = self.radius
-        top = self.metrix.cell(self.node).top()
+        top = self.metrix.cell(self.node).top
         return (top.x - r, top.y, top.x + r, top.y + r * 2)
 
     def body_part(self):
@@ -38,7 +38,7 @@ class Actor(NodeShape):
         m = self.metrix.cell(self.node)
 
         r = self.metrix.node_height / 8  # radius of actor's head
-        bodyC = m.center()
+        bodyC = m.center
         neckWidth = r * 2 / 3  # neck size
         arm = r * 4  # arm length
         armWidth = r
@@ -49,7 +49,7 @@ class Actor(NodeShape):
         legXin = r * 2  # toe inner position
         legYin = bodyHeight + r * 3
 
-        return [XY(bodyC.x + neckWidth, m.top().y + r),
+        return [XY(bodyC.x + neckWidth, m.top.y + r),
                 XY(bodyC.x + neckWidth, bodyC.y - armWidth),  # neck end
                 XY(bodyC.x + arm, bodyC.y - armWidth),
                 XY(bodyC.x + arm, bodyC.y),  # right arm end
@@ -67,7 +67,7 @@ class Actor(NodeShape):
                 XY(bodyC.x - arm, bodyC.y),
                 XY(bodyC.x - arm, bodyC.y - armWidth),
                 XY(bodyC.x - neckWidth, bodyC.y - armWidth),  # left arm end
-                XY(bodyC.x - neckWidth, m.top().y + r)]
+                XY(bodyC.x - neckWidth, m.top.y + r)]
 
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
