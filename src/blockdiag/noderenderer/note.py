@@ -26,10 +26,10 @@ class Note(NodeShape):
         m = self.metrix.cell(self.node)
         r = self.metrix.cellsize * 2
 
-        tr = m.topRight()
-        note = [m.topLeft(), XY(tr.x - r, tr.y), XY(tr.x, tr.y + r),
-                m.bottomRight(), m.bottomLeft(), m.topLeft()]
-        box = self.metrix.cell(self.node).box()
+        tr = m.topright
+        note = [m.topleft, XY(tr.x - r, tr.y), XY(tr.x, tr.y + r),
+                m.bottomright, m.bottomleft, m.topleft]
+        box = self.metrix.cell(self.node).box
 
         # draw outline
         if kwargs.get('shadow'):
@@ -38,7 +38,7 @@ class Note(NodeShape):
                            filter='transp-blur')
         elif self.node.background:
             drawer.polygon(note, fill=self.node.color,
-                             outline=self.node.color)
+                           outline=self.node.color)
             drawer.loadImage(self.node.background, box)
             drawer.polygon(note, fill="none", outline=outline,
                            style=self.node.style)

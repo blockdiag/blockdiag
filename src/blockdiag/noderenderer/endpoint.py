@@ -25,8 +25,8 @@ class EndPoint(NodeShape):
         m = metrix.cell(node)
 
         self.radius = metrix.cellsize
-        self.center = m.center()
-        self.textbox = [m.top().x, m.top().y, m.right().x, m.right().y]
+        self.center = m.center
+        self.textbox = [m.top.x, m.top.y, m.right.x, m.right.y]
         self.textalign = 'left'
         self.connectors = [XY(self.center.x, self.center.y - self.radius),
                            XY(self.center.x + self.radius, self.center.y),

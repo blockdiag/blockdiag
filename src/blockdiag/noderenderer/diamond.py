@@ -24,11 +24,11 @@ class Diamond(NodeShape):
 
         r = metrix.cellsize
         m = metrix.cell(node)
-        self.connectors = [XY(m.top().x, m.top().y - r),
-                           XY(m.right().x + r, m.right().y),
-                           XY(m.bottom().x, m.bottom().y + r),
-                           XY(m.left().x - r, m.left().y),
-                           XY(m.top().x, m.top().y - r)]
+        self.connectors = [XY(m.top.x, m.top.y - r),
+                           XY(m.right.x + r, m.right.y),
+                           XY(m.bottom.x, m.bottom.y + r),
+                           XY(m.left.x - r, m.left.y),
+                           XY(m.top.x, m.top.y - r)]
         self.textbox = ((self.connectors[0].x + self.connectors[3].x) / 2,
                         (self.connectors[0].y + self.connectors[3].y) / 2,
                         (self.connectors[1].x + self.connectors[2].x) / 2,

@@ -24,13 +24,13 @@ class MiniDiamond(NodeShape):
 
         r = metrix.cellsize
         m = metrix.cell(node)
-        c = m.center()
+        c = m.center
         self.connectors = (XY(c.x, c.y - r),
                            XY(c.x + r, c.y),
                            XY(c.x, c.y + r),
                            XY(c.x - r, c.y),
                            XY(c.x, c.y - r))
-        self.textbox = (m.top().x, m.top().y, m.right().x, m.right().y)
+        self.textbox = (m.top.x, m.top.y, m.right.x, m.right.y)
         self.textalign = 'left'
 
     def render_shape(self, drawer, format, **kwargs):

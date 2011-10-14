@@ -25,8 +25,8 @@ class Terminator(NodeShape):
 
         m = self.metrix.cell(self.node)
         r = self.metrix.cellsize * 2
-        self.textbox = (m.topLeft().x + r, m.topLeft().y,
-                        m.bottomRight().x - r, m.bottomRight().y)
+        self.textbox = (m.topleft.x + r, m.topleft.y,
+                        m.bottomright.x - r, m.bottomright.y)
 
     def render_shape(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')
@@ -35,7 +35,7 @@ class Terminator(NodeShape):
         self.render_shape_background(drawer, format, **kwargs)
 
         # draw outline
-        box = self.metrix.cell(self.node).box()
+        box = self.metrix.cell(self.node).box
         if not kwargs.get('shadow') and self.node.background:
             drawer.loadImage(self.node.background, self.textbox)
 
@@ -46,7 +46,7 @@ class Terminator(NodeShape):
         m = self.metrix.cell(self.node)
         r = self.metrix.cellsize * 2
 
-        box = m.box()
+        box = m.box
         ellipses = [(box[0], box[1], box[0] + r * 2, box[3]),
                     (box[2] - r * 2, box[1], box[2], box[3])]
 
@@ -83,8 +83,8 @@ class Terminator(NodeShape):
         r = self.metrix.cellsize * 2
         height = self.metrix.node_height
 
-        box = (m.topLeft().x + r, m.topLeft().y,
-               m.bottomRight().x - r, m.bottomRight().y)
+        box = (m.topleft.x + r, m.topleft.y,
+               m.bottomright.x - r, m.bottomright.y)
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
 

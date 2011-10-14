@@ -23,7 +23,7 @@ class Ellipse(NodeShape):
         super(Ellipse, self).__init__(node, metrix)
 
         r = metrix.cellsize
-        box = metrix.cell(node).box()
+        box = metrix.cell(node).box
         self.textbox = (box[0] + r, box[1] + r, box[2] - r, box[3] - r)
 
     def render_shape(self, drawer, format, **kwargs):
@@ -31,14 +31,14 @@ class Ellipse(NodeShape):
         fill = kwargs.get('fill')
 
         # draw outline
-        box = self.metrix.cell(self.node).box()
+        box = self.metrix.cell(self.node).box
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
             drawer.ellipse(box, fill=fill, outline=fill,
                            filter='transp-blur')
         elif self.node.background:
             drawer.ellipse(box, fill=self.node.color,
-                             outline=self.node.color)
+                           outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
             drawer.ellipse(box, fill="none", outline=outline,
                            style=self.node.style)

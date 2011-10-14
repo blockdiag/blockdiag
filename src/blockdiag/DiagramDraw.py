@@ -85,7 +85,7 @@ class DiagramDraw(object):
 
         width = self.diagram.colwidth
         height = self.diagram.colheight
-        return metrix.pageSize(width, height)
+        return metrix.pagesize(width, height)
 
     def draw(self, **kwargs):
         self._draw_background()
@@ -105,7 +105,7 @@ class DiagramDraw(object):
 
         # Draw node groups.
         for node in self.groups:
-            box = metrix.cell(node).marginBox()
+            box = metrix.cell(node).marginbox
             self.drawer.rectangle(box, fill=node.color, filter='blur')
 
         # Drop node shadows.
@@ -143,11 +143,11 @@ class DiagramDraw(object):
         m = self.metrix.cell(group)
 
         if group.label and not group.separated:
-            self.drawer.textarea(m.groupLabelBox(), group.label,
+            self.drawer.textarea(m.grouplabelbox, group.label,
                                  fill=group.textcolor, font=self.font,
                                  fontsize=self.metrix.fontsize)
         elif group.label:
-            self.drawer.textarea(m.coreBox(), group.label,
+            self.drawer.textarea(m.corebox, group.label,
                                  fill=group.textcolor, font=self.font,
                                  fontsize=self.metrix.fontsize)
 

@@ -24,7 +24,7 @@ class Box(NodeShape):
         fill = kwargs.get('fill')
 
         # draw outline
-        box = self.metrix.cell(self.node).box()
+        box = self.metrix.cell(self.node).box
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
             drawer.rectangle(box, fill=fill, outline=fill,

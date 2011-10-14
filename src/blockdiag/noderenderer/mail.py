@@ -24,8 +24,8 @@ class Mail(NodeShape):
 
         m = self.metrix.cell(self.node)
         r = self.metrix.cellsize * 2
-        self.textbox = (m.topLeft().x, m.topLeft().y + r,
-                        m.bottomRight().x, m.bottomRight().y)
+        self.textbox = (m.topleft.x, m.topleft.y + r,
+                        m.bottomright.x, m.bottomright.y)
 
     def render_shape(self, drawer, format, **kwargs):
         outline = kwargs.get('outline')
@@ -35,7 +35,7 @@ class Mail(NodeShape):
         r = self.metrix.cellsize * 2
 
         # draw outline
-        box = self.metrix.cell(self.node).box()
+        box = self.metrix.cell(self.node).box
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
             drawer.rectangle(box, fill=fill, outline=fill,
@@ -51,7 +51,7 @@ class Mail(NodeShape):
 
         # draw flap
         if not kwargs.get('shadow'):
-            flap = [m.topLeft(), XY(m.top().x, m.top().y + r), m.topRight()]
+            flap = [m.topleft, XY(m.top.x, m.top.y + r), m.topright]
             drawer.line(flap, fill=outline, style=self.node.style)
 
 
