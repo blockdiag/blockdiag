@@ -106,7 +106,7 @@ class AutoScaler(object):
             ret = value * ratio
         else:
             ret = cls(value, ratio)
-    
+
         return ret
 
     def originalMetrics(self):
