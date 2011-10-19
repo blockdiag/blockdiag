@@ -179,7 +179,7 @@ class DiagramMetrics(object):
             heights = [n.height for n in nodes if n.xy.y == y]
             if heights:
                 height = max(n or node_height for n in heights)
-                sheet.set_node_width(y, height)
+                sheet.set_node_height(y, height)
 
     def originalMetrics(self):
         return self
