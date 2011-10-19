@@ -119,6 +119,7 @@ class DiagramMetrics(object):
     node_padding = 4
     line_spacing = 2
     shadow_offset = XY(3, 6)
+    font = 11
     fontsize = 11
     page_padding = [0, 0, 0, 0]
     node_width = cellsize * 16
@@ -138,6 +139,10 @@ class DiagramMetrics(object):
 
         if diagram.span_height is not None:
             self.span_height = diagram.span_height
+
+        fontname = kwargs.get('font')
+        if fontname is not None:
+            self.font = fontname
 
         if diagram.fontsize is not None:
             self.fontsize = diagram.fontsize
