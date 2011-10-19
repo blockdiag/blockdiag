@@ -113,6 +113,11 @@ Apache License 2.0
 History
 =======
 
+0.9.5 (2011-10-19)
+------------------
+* Add node attributes: width and height
+* Fix bugs
+
 0.9.4 (2011-10-07)
 ------------------
 * Fix bugs
