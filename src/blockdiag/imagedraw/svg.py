@@ -93,7 +93,6 @@ class SVGImageDrawElement(object):
         fontname = kwargs.get('font')
         fontsize = kwargs.get('fontsize')
 
-        string = xml.sax.saxutils.escape(string)
         t = text(xy[0], xy[1], string, font_size=fontsize, fill=self.rgb(fill))
         self.svg.addElement(t)
 
