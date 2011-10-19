@@ -66,27 +66,6 @@ class EdgeLines(object):
         return lines
 
 
-def scale(value, ratio):
-    if ratio == 1:
-        return value
-
-    if isinstance(value, XY):
-        ret = XY(value.x * ratio, value.y * ratio)
-    elif isinstance(value, tuple):
-        ret = tuple([scale(x, ratio) for x in value])
-    elif isinstance(value, list):
-        ret = [scale(x, ratio) for x in value]
-    elif isinstance(value, EdgeLines):
-        ret = EdgeLines()
-        ret.polylines = scale(value.polylines, ratio)
-    elif isinstance(value, int):
-        ret = value * ratio
-    else:
-        ret = value
-
-    return ret
-
-
 class AutoScaler(object):
     def __init__(self, subject, scale_ratio):
         self.subject = subject
@@ -97,25 +76,38 @@ class AutoScaler(object):
         attr = getattr(self.subject, name)
 
         if not callable(attr):
-            return scale(attr, ratio)
+            return self.scale(attr, ratio)
         else:
             def _(*args, **kwargs):
                 ret = attr(*args, **kwargs)
-
-                if ratio == 1:
-                    pass
-                elif isinstance(ret, (NodeMetrics,)):
-                    ret = AutoScaler(ret, ratio)
-                elif ret.__class__ == tuple:
-                    ret = scale(ret, ratio)
-                elif isinstance(ret, (int, XY, list, EdgeLines)):
-                    ret = scale(ret, ratio)
-                else:
-                    ret = AutoScaler(ret, ratio)
-
-                return ret
+                return self.scale(ret, ratio)
 
             return _
+
+    @classmethod
+    def scale(cls, value, ratio):
+        if ratio == 1:
+            return value
+
+        klass = value.__class__
+        if klass == XY:
+            ret = XY(value.x * ratio, value.y * ratio)
+        elif klass == Box:
+            ret = Box(value[0] * ratio, value[1] * ratio,
+                      value[2] * ratio, value[3] * ratio)
+        elif klass == tuple:
+            ret = tuple([cls.scale(x, ratio) for x in value])
+        elif klass == list:
+            ret = [cls.scale(x, ratio) for x in value]
+        elif klass == EdgeLines:
+            ret = EdgeLines()
+            ret.polylines = cls.scale(value.polylines, ratio)
+        elif klass == int:
+            ret = value * ratio
+        else:
+            ret = cls(value, ratio)
+    
+        return ret
 
     def originalMetrics(self):
         return self.subject
