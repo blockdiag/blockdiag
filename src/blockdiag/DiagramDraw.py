@@ -104,9 +104,9 @@ class DiagramDraw(object):
         metrics = self.metrics.originalMetrics()
 
         # Draw node groups.
-        for node in self.groups:
-            box = metrics.cell(node).marginbox
-            self.drawer.rectangle(box, fill=node.color, filter='blur')
+        for group in self.groups:
+            box = metrics.group(group).marginbox
+            self.drawer.rectangle(box, fill=group.color, filter='blur')
 
         # Drop node shadows.
         for node in self.nodes:
@@ -140,7 +140,7 @@ class DiagramDraw(object):
                      font=self.font, badgeFill=self.badgeFill)
 
     def group_label(self, group):
-        m = self.metrics.cell(group)
+        m = self.metrics.group(group)
 
         if group.label and not group.separated:
             self.drawer.textarea(m.grouplabelbox, group.label,

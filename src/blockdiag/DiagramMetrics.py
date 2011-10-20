@@ -165,7 +165,7 @@ class DiagramMetrics(object):
 
         # setup spreadsheet
         sheet = self.spreadsheet = SpreadSheetMetrics(self)
-        nodes = [n for n in diagram.nodes if isinstance(n, DiagramNode)]
+        nodes = [n for n in diagram.traverse_nodes() if n.drawable]
 
         node_width = self.node_width
         for x in range(diagram.colwidth):
@@ -207,7 +207,7 @@ class DiagramMetrics(object):
         return self.spreadsheet.node(node)
 
     def group(self, group):
-        return NodeMetrics(group, self)
+        return self.spreadsheet.node(group, centering=False)
 
     def edge(self, edge):
         if self.edge_layout == 'flowchart':
@@ -253,10 +253,10 @@ class SpreadSheetMetrics(object):
            (y not in self.span_height or self.span_height[y] < height):
             self.span_height[y] = height
 
-    def node(self, node):
+    def node(self, node, centering=True):
         x, y = node.xy
-        x1, y1 = self._node_topleft(node)
-        x2, y2 = self._node_bottomright(node)
+        x1, y1 = self._node_topleft(node, centering)
+        x2, y2 = self._node_bottomright(node, centering)
 
         return NodeMetrics(self.metrics, x1, y1, x2, y2)
 
