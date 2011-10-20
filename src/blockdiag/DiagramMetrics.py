@@ -203,11 +203,11 @@ class DiagramMetrics(object):
         else:
             return self.cell(node)
 
-    def cell(self, node):
-        return self.spreadsheet.node(node)
+    def cell(self, node, use_padding=True):
+        return self.spreadsheet.node(node, use_padding)
 
     def group(self, group):
-        return self.spreadsheet.node(group, centering=False)
+        return self.spreadsheet.node(group, use_padding=False)
 
     def edge(self, edge):
         if self.edge_layout == 'flowchart':
@@ -253,14 +253,14 @@ class SpreadSheetMetrics(object):
            (y not in self.span_height or self.span_height[y] < height):
             self.span_height[y] = height
 
-    def node(self, node, centering=True):
+    def node(self, node, use_padding=True):
         x, y = node.xy
-        x1, y1 = self._node_topleft(node, centering)
-        x2, y2 = self._node_bottomright(node, centering)
+        x1, y1 = self._node_topleft(node, use_padding)
+        x2, y2 = self._node_bottomright(node, use_padding)
 
         return NodeMetrics(self.metrics, x1, y1, x2, y2)
 
-    def _node_topleft(self, node, centering=True):
+    def _node_topleft(self, node, use_padding=True):
         m = self.metrics
         x, y = node.xy
         margin = m.page_margin
@@ -271,7 +271,7 @@ class SpreadSheetMetrics(object):
         span_width = sum(self.span_width[i] for i in range(x))
         span_height = sum(self.span_height[i] for i in range(y))
 
-        if centering:
+        if use_padding:
             xdiff = (self.node_width[x] - (node.width or m.node_width)) / 2
             ydiff = (self.node_height[y] - (node.height or m.node_height)) / 2
         else:
@@ -283,7 +283,7 @@ class SpreadSheetMetrics(object):
 
         return XY(x1, y1)
 
-    def _node_bottomright(self, node, centering=True):
+    def _node_bottomright(self, node, use_padding=True):
         m = self.metrics
         x = node.xy.x + node.colwidth - 1
         y = node.xy.y + node.colheight - 1
@@ -295,7 +295,7 @@ class SpreadSheetMetrics(object):
         span_width = sum(self.span_width[i] for i in range(x))
         span_height = sum(self.span_height[i] for i in range(y))
 
-        if centering:
+        if use_padding:
             xdiff = (self.node_width[x] - (node.width or m.node_width)) / 2
             ydiff = (self.node_height[y] - (node.height or m.node_height)) / 2
         else:
@@ -313,7 +313,7 @@ class SpreadSheetMetrics(object):
 
         dummy = DiagramNode(None)
         dummy.xy = XY(width - 1, height - 1)
-        x, y = self._node_bottomright(dummy, centering=False)
+        x, y = self._node_bottomright(dummy, use_padding=False)
         return XY(x + margin.x + padding[1], y + margin.y + padding[2])
 
 
@@ -471,9 +471,9 @@ class LandscapeEdgeMetrics(EdgeMetrics):
         dir = self.edge.direction
 
         node1 = self.metrics.node(self.edge.node1)
-        cell1 = self.metrics.cell(self.edge.node1)
+        cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
         node2 = self.metrics.node(self.edge.node2)
-        cell2 = self.metrics.cell(self.edge.node2)
+        cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
         shaft = EdgeLines()
         if dir == 'right':
@@ -576,8 +576,8 @@ class LandscapeEdgeMetrics(EdgeMetrics):
         node = XY(self.metrics.node_width, self.metrics.node_height)
 
         dir = self.edge.direction
-        node1 = self.metrics.cell(self.edge.node1)
-        node2 = self.metrics.cell(self.edge.node2)
+        node1 = self.metrics.cell(self.edge.node1, use_padding=False)
+        node2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
         if dir == 'right':
             if self.edge.skipped:
@@ -661,9 +661,9 @@ class PortraitEdgeMetrics(EdgeMetrics):
         dir = self.edge.direction
 
         node1 = self.metrics.node(self.edge.node1)
-        cell1 = self.metrics.cell(self.edge.node1)
+        cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
         node2 = self.metrics.node(self.edge.node2)
-        cell2 = self.metrics.cell(self.edge.node2)
+        cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
         shaft = EdgeLines()
         if dir in ('up', 'right-up', 'same', 'right'):
@@ -739,8 +739,8 @@ class PortraitEdgeMetrics(EdgeMetrics):
         span = XY(self.metrics.span_width, self.metrics.span_height)
 
         dir = self.edge.direction
-        node1 = self.metrics.cell(self.edge.node1)
-        node2 = self.metrics.cell(self.edge.node2)
+        node1 = self.metrics.cell(self.edge.node1, use_padding=False)
+        node2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
         if dir == 'right':
             if self.edge.skipped:
@@ -808,9 +808,9 @@ class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
         if self.edge.direction == 'right-down':
             span = XY(self.metrics.span_width, self.metrics.span_height)
             node1 = self.metrics.node(self.edge.node1)
-            cell1 = self.metrics.cell(self.edge.node1)
+            cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
             node2 = self.metrics.node(self.edge.node2)
-            cell2 = self.metrics.cell(self.edge.node2)
+            cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
             shaft = EdgeLines()
             shaft.moveTo(node1.bottom)
@@ -834,9 +834,9 @@ class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
         if dir == 'right':
             span = XY(self.metrics.span_width, self.metrics.span_height)
             node1 = self.metrics.node(self.edge.node1)
-            cell1 = self.metrics.cell(self.edge.node1)
+            cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
             node2 = self.metrics.node(self.edge.node2)
-            cell2 = self.metrics.cell(self.edge.node2)
+            cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
             if self.edge.skipped:
                 box = (cell1.bottom.x, cell1.bottom.y,
@@ -869,9 +869,9 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
         if self.edge.direction == 'right-down':
             span = XY(self.metrics.span_width, self.metrics.span_height)
             node1 = self.metrics.node(self.edge.node1)
-            cell1 = self.metrics.cell(self.edge.node1)
+            cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
             node2 = self.metrics.node(self.edge.node2)
-            cell2 = self.metrics.cell(self.edge.node2)
+            cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
             shaft = EdgeLines()
             shaft.moveTo(node1.right)
@@ -895,9 +895,9 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
         if dir == 'right':
             span = XY(self.metrics.span_width, self.metrics.span_height)
             node1 = self.metrics.node(self.edge.node1)
-            cell1 = self.metrics.cell(self.edge.node1)
+            cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
             node2 = self.metrics.node(self.edge.node2)
-            cell2 = self.metrics.cell(self.edge.node2)
+            cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
             if self.edge.skipped:
                 box = (cell1.bottom.x, cell1.bottom.y,
