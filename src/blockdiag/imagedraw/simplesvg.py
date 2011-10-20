@@ -126,6 +126,7 @@ class ellipse(base):
 class image(element):
     def __init__(self, uri, x, y, width, height, **kwargs):
         super(image, self).__init__(x, y, width, height, **kwargs)
+        self.add_attribute('xlink:href', uri)
 
 
 class polygon(base):
