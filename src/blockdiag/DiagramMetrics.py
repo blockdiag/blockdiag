@@ -186,6 +186,8 @@ class DiagramMetrics(object):
 
     def shiftedMetrics(self, top, right, bottom, left):
         metrics = copy.copy(self)
+        metrics.spreadsheet = copy.copy(self.spreadsheet)
+        metrics.spreadsheet.metrics = metrics
 
         padding = metrics.page_padding
         metrics.page_padding = [padding[0] + top, padding[1] + right,
