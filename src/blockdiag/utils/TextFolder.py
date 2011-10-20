@@ -232,13 +232,18 @@ class TextFolder:
         [u'abc', u'def']
         >>> [l for l in TextFolder(box, u" \\nabc\\\\ndef")._splitlines()]
         [u'abc', u'def']
-        >>> [l for l in TextFolder(box, u" \\\\nabc\\\\ndef")._splitlines()]
+        >>> [l for l in TextFolder(box, u" \\\\nabc \\\\ndef")._splitlines()]
         [u'', u'abc', u'def']
+        >>> [l for l in TextFolder(box, u"abc\\\\\\\\ndef")._splitlines()]
+        [u'abc\\\\ndef']
+        >>> [l for l in TextFolder(box, u"abc\xa5\\\\ndef")._splitlines()]
+        [u'abc\\\\ndef']
         """
         string = re.sub('^\s*(.*?)\s*$', '\\1', self.string)
+        string = re.sub('(?:\xa5|\\\\){2}', '\x00', string)
+        string = re.sub('(?:\xa5|\\\\)n', '\n', string)
         for line in string.splitlines():
-            for subline in line.split("\\n"):
-                yield subline.strip()
+            yield re.sub('\x00', '\\\\', line).strip()
 
     def _lines(self):
         lines = []
