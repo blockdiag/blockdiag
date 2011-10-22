@@ -54,6 +54,8 @@ class SVGImageDrawElement(object):
             length = 2
         elif name == 'dashed':
             length = 4
+        elif re.search('^\d+(,\d+)*$', name or ""):
+            length = re.sub(',', ' ', name)
         else:
             length = None
 

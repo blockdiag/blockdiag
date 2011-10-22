@@ -39,12 +39,20 @@ def dots(box, cycle, start=0, end=360):
     height = box[3] - box[1]
     center = XY(box[0] + width / 2, box[1] + height / 2)
 
+    # calcrate rendering pattern from cycle
+    base = 0
+    rendered = []
+    for index in range(0, len(cycle), 2):
+        i, j = cycle[index:index + 2]
+        for n in range(base * 2, (base + i) * 2):
+            rendered.append(n)
+        base += i + j
+
     a = float(width) / 2
     b = float(height) / 2
     du = 1
-
+    _max = sum(cycle) * 2
     for i, coord in enumerate(coordinate(du, a, b, start, end)):
-        i %= cycle * 2
-        if i < cycle:
+        if i % _max in rendered:
             dot = XY(center.x + coord[0], center.y + coord[1])
             yield dot
