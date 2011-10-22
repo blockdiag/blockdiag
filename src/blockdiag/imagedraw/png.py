@@ -13,9 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
 import math
 from itertools import islice, izip, tee
-from blockdiag.utils.myitertools import istep
+from blockdiag.utils.myitertools import istep, stepslice
 from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
 try:
     from PIL import Image
@@ -53,16 +54,16 @@ def dashize_line(line, length):
         if pt1[1] > pt2[1]:
             pt2, pt1 = line
 
-        r = range(pt1[1], pt2[1], length)
-        for y1, y2 in istep(r):
+        r = stepslice(xrange(pt1[1], pt2[1]), length)
+        for y1, y2 in istep(n for n in r):
             yield [(pt1[0], y1), (pt1[0], y2)]
 
     elif pt1[1] == pt2[1]:  # vertical
         if pt1[0] > pt2[0]:
             pt2, pt1 = line
 
-        r = range(pt1[0], pt2[0], length)
-        for x1, x2 in istep(r):
+        r = stepslice(xrange(pt1[0], pt2[0]), length)
+        for x1, x2 in istep(n for n in r):
             yield [(x1, pt1[1]), (x2, pt1[1])]
     else:  # diagonal
         if pt1[0] > pt2[0]:
@@ -79,8 +80,21 @@ def dashize_line(line, length):
             x += 1
             y += m
 
-        for p1, p2 in istep(islice(locus, None, None, length)):
+        for p1, p2 in istep(stepslice(locus, length)):
             yield (p1, p2)
+
+
+def style2cycle(style):
+    if style == 'dotted':
+        length = [2, 2]
+    elif style == 'dashed':
+        length = [4, 4]
+    elif re.search('^\d+(,\d+)*$', style or ""):
+        length = [int(n) for n in style.split(',')]
+    else:
+        length = None
+
+    return length
 
 
 class ImageDrawEx(object):
@@ -116,15 +130,12 @@ class ImageDrawEx(object):
             del kwargs['style']
 
         if style:
-            if style == 'dotted':
-                length = 2
-            elif style == 'dashed':
-                length = 4
 
             while start > end:
                 end += 360
 
-            for pt in ellipse.dots(box, length, start, end):
+            cycle = style2cycle(style)
+            for pt in ellipse.dots(box, cycle, start, end):
                 self.draw.line([pt, pt], fill=kwargs['fill'])
         else:
             self.draw.arc(box, start, end, **kwargs)
@@ -148,12 +159,8 @@ class ImageDrawEx(object):
                 kwargs['fill'] = kwargs['outline']
                 del kwargs['outline']
 
-            if style == 'dotted':
-                length = 2
-            elif style == 'dashed':
-                length = 4
-
-            for pt in ellipse.dots(box, length):
+            cycle = style2cycle(style)
+            for pt in ellipse.dots(box, cycle):
                 self.draw.line([pt, pt], fill=kwargs['fill'])
         else:
             if kwargs.get('fill') == 'none':
@@ -168,7 +175,8 @@ class ImageDrawEx(object):
         style = kwargs.get('style')
         if kwargs.get('fill') == 'none':
             pass
-        elif style in ('dotted', 'dashed'):
+        elif style in ('dotted', 'dashed') or \
+             re.search('^\d+(,\d+)*$', style or ""):
             self.dashed_line(xy, **kwargs)
         else:
             if 'style' in kwargs:
@@ -180,13 +188,9 @@ class ImageDrawEx(object):
         style = kwargs.get('style')
         del kwargs['style']
 
-        if style == 'dotted':
-            length = 2
-        elif style == 'dashed':
-            length = 4
-
+        cycle = style2cycle(style)
         for line in line_segments(xy):
-            for subline in dashize_line(line, length):
+            for subline in dashize_line(line, cycle):
                 self.line(subline, **kwargs)
 
     def rectangle(self, box, **kwargs):

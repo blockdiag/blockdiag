@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
 import sys
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
@@ -66,6 +67,8 @@ class PDFImageDraw(object):
             self.canvas.setDash([2, 2])
         elif style == 'dashed':
             self.canvas.setDash([4, 4])
+        elif re.search('^\d+(,\d+)*$', style or ""):
+            self.canvas.setDash([int(n) for n in style.split(',')])
         else:
             self.canvas.setDash()
 

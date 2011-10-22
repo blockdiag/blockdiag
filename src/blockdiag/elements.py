@@ -166,8 +166,8 @@ class DiagramNode(Element):
         self.drawable = True
 
     def set_style(self, value):
-        if value in ('solid', 'dotted', 'dashed'):
-            self.style = value
+        if re.search('^(?:solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
+            self.style = value.lower()
         else:
             msg = "WARNING: unknown node style: %s\n" % value
             raise AttributeError(msg)
@@ -412,9 +412,8 @@ class DiagramEdge(Base):
         self.color = images.color_to_rgb(color)
 
     def set_style(self, value):
-        value = value.lower()
-        if value in ('none', 'solid', 'dotted', 'dashed'):
-            self.style = value
+        if re.search('^(?:none|solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
+            self.style = value.lower()
         else:
             msg = "WARNING: unknown edge style: %s\n" % value
             raise AttributeError(msg)

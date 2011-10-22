@@ -13,8 +13,27 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from itertools import cycle
+
 
 def istep(seq, step=2):
     iterable = iter(seq)
     while True:
         yield [iterable.next() for i in range(step)]
+
+
+def stepslice(iterable, steps):
+    iterable = iter(iterable)
+    step = cycle(steps)
+    yield iterable.next()
+
+    while True:
+        # skip (1)
+        for i in xrange(step.next() - 1):
+            iterable.next()
+        yield iterable.next()
+
+        # skip (2)
+        for i in xrange(step.next() - 1):
+            iterable.next()
+        yield iterable.next()
