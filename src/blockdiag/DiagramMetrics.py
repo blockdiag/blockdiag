@@ -894,13 +894,16 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
 
     def labelbox(self):
         dir = self.edge.direction
-        if dir == 'right':
-            span = XY(self.metrics.span_width, self.metrics.span_height)
-            node1 = self.metrics.node(self.edge.node1)
-            cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
-            node2 = self.metrics.node(self.edge.node2)
-            cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
+        span = XY(self.metrics.span_width, self.metrics.span_height)
+        node1 = self.metrics.node(self.edge.node1)
+        cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
+        node2 = self.metrics.node(self.edge.node2)
+        cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
+        if dir == 'down':
+            box = (cell2.topleft.x, cell2.top.y - span.y / 2,
+                   cell2.top.x, cell2.top.y)
+        elif dir == 'right':
             if self.edge.skipped:
                 box = (cell1.bottom.x, cell1.bottom.y,
                        cell1.bottomright.x, cell1.bottomright.y + span.y / 2)
