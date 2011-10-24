@@ -104,6 +104,8 @@ class AutoScaler(object):
             ret.polylines = cls.scale(value.polylines, ratio)
         elif klass == int:
             ret = value * ratio
+        elif klass == str:
+            ret = value
         else:
             ret = cls(value, ratio)
 
