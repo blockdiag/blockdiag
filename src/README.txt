@@ -113,6 +113,11 @@ Apache License 2.0
 History
 =======
 
+0.9.6 (2011-10-22)
+------------------
+* node.style supports dashed_array format style
+* Fix bugs
+
 0.9.5 (2011-10-19)
 ------------------
 * Add node attributes: width and height
