@@ -55,6 +55,7 @@ class DiagramDraw(object):
         drawer = imagedraw.create(self.format, self.filename,
                                   self.pagesize(), **kwargs)
         self.drawer = LineJumpDrawFilter(drawer, self.metrics.cellsize / 2)
+        self.drawer = drawer
 
     @property
     def nodes(self):
