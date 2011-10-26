@@ -155,7 +155,7 @@ class DiagramDraw(object):
         metrics = self.metrics.edge(edge)
 
         for line in metrics.shaft().polylines:
-            self.drawer.line(line, fill=edge.color,
+            self.drawer.line(line, fill=edge.color, thick=edge.thick,
                              style=edge.style, jump=True)
 
         for head in metrics.heads():

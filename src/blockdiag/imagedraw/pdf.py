@@ -124,11 +124,17 @@ class PDFImageDraw(object):
         self.set_stroke_color(kwargs.get('fill', 'none'))
         self.set_style(kwargs.get('style'))
 
+        if 'thick' in kwargs:
+            self.canvas.setLineWidth(kwargs['thick'])
+
         p1 = xy[0]
         y = self.size[1]
         for p2 in xy[1:]:
             self.canvas.line(p1.x, y - p1.y, p2.x, y - p2.y)
             p1 = p2
+
+        if 'thick' in kwargs:
+            self.canvas.setLineWidth(1)
 
     def arc(self, xy, start, end, **kwargs):
         start, end = 360 - end, 360 - start

@@ -72,7 +72,7 @@ class SVGImageDrawElement(object):
         self.svg.addElement(p)
 
     def rectangle(self, box, **kwargs):
-        thick = kwargs.get('width', 1)
+        thick = kwargs.get('width')
         fill = kwargs.get('fill', 'none')
         outline = kwargs.get('outline')
         style = kwargs.get('style')
@@ -110,13 +110,14 @@ class SVGImageDrawElement(object):
     def line(self, xy, **kwargs):
         fill = kwargs.get('fill')
         style = kwargs.get('style')
+        thick = kwargs.get('thick')
 
         pd = pathdata(xy[0].x, xy[0].y)
         for pt in xy[1:]:
             pd.line(pt.x, pt.y)
 
         p = path(pd, fill="none", stroke=self.rgb(fill),
-                 stroke_dasharray=self.style(style))
+                 stroke_width=thick, stroke_dasharray=self.style(style))
         self.svg.addElement(p)
 
     def arc(self, xy, start, end, **kwargs):

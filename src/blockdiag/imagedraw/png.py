@@ -169,6 +169,9 @@ class ImageDrawEx(object):
     def line(self, xy, **kwargs):
         if 'jump' in kwargs:
             del kwargs['jump']
+        if 'thick' in kwargs:
+            kwargs['width'] = kwargs['thick']
+            del kwargs['thick']
 
         style = kwargs.get('style')
         if kwargs.get('fill') == 'none':
