@@ -16,8 +16,7 @@
 import re
 import sys
 import base64
-from blockdiag.utils.XY import XY
-from blockdiag.utils import urlutil
+from blockdiag.utils import urlutil, XY
 from simplesvg import *
 import xml.sax.saxutils
 

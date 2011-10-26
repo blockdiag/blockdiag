@@ -14,9 +14,7 @@
 #  limitations under the License.
 
 import pkg_resources
-from blockdiag.utils import Box
-from blockdiag.utils.XY import XY
-from blockdiag.utils import images
+from blockdiag.utils import images, Box, XY
 
 renderers = {}
 searchpath = []

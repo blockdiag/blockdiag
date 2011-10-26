@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from blockdiag.utils.XY import XY
+from blockdiag.utils import XY
 
 
 class LazyReciever(object):

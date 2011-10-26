@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils.XY import XY
+from blockdiag.utils import XY
 
 
 class Dots(NodeShape):

@@ -14,6 +14,9 @@
 #  limitations under the License.
 
 
+from XY import XY
+
+
 class Box(list):
     mapper = dict(x1=0, y1=1, x2=2, y2=3)
 

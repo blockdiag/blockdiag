@@ -15,7 +15,7 @@
 
 import sys
 import math
-from utils.XY import XY
+from utils import XY
 import noderenderer
 import imagedraw
 from DiagramMetrics import AutoScaler

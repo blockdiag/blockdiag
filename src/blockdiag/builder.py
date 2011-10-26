@@ -17,7 +17,7 @@ import os
 import re
 from elements import *
 import diagparser
-from utils.XY import XY
+from utils import XY
 
 
 class DiagramTreeBuilder:
