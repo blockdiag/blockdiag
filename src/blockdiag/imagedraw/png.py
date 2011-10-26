@@ -16,6 +16,7 @@
 import re
 import math
 from itertools import islice, izip, tee
+from blockdiag.utils import ellipse, urlutil, XY
 from blockdiag.utils.myitertools import istep, stepslice
 from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
 try:
@@ -28,9 +29,6 @@ except ImportError:
     import ImageDraw
     import ImageFont
     import ImageFilter
-from blockdiag.utils.XY import XY
-from blockdiag.utils import ellipse
-from blockdiag.utils import urlutil
 
 
 def point_pairs(xylist):

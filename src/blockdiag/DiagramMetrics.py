@@ -14,10 +14,9 @@
 #  limitations under the License.
 
 import copy
-from utils.XY import XY
 from elements import DiagramNode
 import noderenderer
-from utils import Box
+from utils import Box, XY
 from utils.collections import defaultdict, namedtuple
 
 cellsize = 8

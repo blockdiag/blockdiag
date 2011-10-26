@@ -20,8 +20,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.units import inch
-from blockdiag.utils.XY import XY
-from blockdiag.utils import urlutil
+from blockdiag.utils import urlutil, XY
 from blockdiag.utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 

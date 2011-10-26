@@ -17,8 +17,7 @@ import os
 import re
 import sys
 import copy
-from utils.XY import XY
-from utils import images, urlutil, uuid
+from utils import images, urlutil, uuid, XY
 import noderenderer
 
 
