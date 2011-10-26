@@ -583,43 +583,43 @@ class LandscapeEdgeMetrics(EdgeMetrics):
 
         if dir == 'right':
             if self.edge.skipped:
-                box = (node1.bottomright.x + span.x,
-                       node1.bottomright.y,
-                       node2.bottomleft.x - span.x,
-                       node2.bottomleft.y + span.y / 2)
+                box = Box(node1.bottomright.x + span.x,
+                          node1.bottomright.y,
+                          node2.bottomleft.x - span.x,
+                          node2.bottomleft.y + span.y / 2)
             else:
-                box = (node1.topright.x, node1.topright.y - span.y / 8,
-                       node2.left.x, node2.left.y - span.y / 8)
+                box = Box(node1.topright.x, node1.topright.y - span.y / 8,
+                          node2.left.x, node2.left.y - span.y / 8)
 
         elif dir == 'right-up':
-            box = (node2.left.x - span.x, node1.top.y - node.y / 2,
-                   node2.bottomleft.x, node1.top.y)
+            box = Box(node2.left.x - span.x, node1.top.y - node.y / 2,
+                      node2.bottomleft.x, node1.top.y)
 
         elif dir == 'right-down':
-            box = (node1.right.x, node2.topleft.y - span.y / 8,
-                   node1.right.x + span.x, node2.left.y - span.y / 8)
+            box = Box(node1.right.x, node2.topleft.y - span.y / 8,
+                      node1.right.x + span.x, node2.left.y - span.y / 8)
 
         elif dir in ('up', 'left-up', 'left', 'same'):
             if self.edge.node2.xy.y < self.edge.node1.xy.y:
-                box = (node1.topright.x - span.x / 2 + span.x / 4,
-                       node1.topright.y - span.y / 2,
-                       node1.topright.x + span.x / 2 + span.x / 4,
-                       node1.topright.y)
+                box = Box(node1.topright.x - span.x / 2 + span.x / 4,
+                          node1.topright.y - span.y / 2,
+                          node1.topright.x + span.x / 2 + span.x / 4,
+                          node1.topright.y)
             else:
-                box = (node1.top.x + span.x / 4,
-                       node1.top.y - span.y,
-                       node1.topright.x + span.x / 4,
-                       node1.topright.y - span.y / 2)
+                box = Box(node1.top.x + span.x / 4,
+                          node1.top.y - span.y,
+                          node1.topright.x + span.x / 4,
+                          node1.topright.y - span.y / 2)
 
         elif dir in ('left-down', 'down'):
-            box = (node2.top.x + span.x / 4,
-                   node2.top.y - span.y,
-                   node2.topright.x + span.x / 4,
-                   node2.topright.y - span.y / 2)
+            box = Box(node2.top.x + span.x / 4,
+                      node2.top.y - span.y,
+                      node2.topright.x + span.x / 4,
+                      node2.topright.y - span.y / 2)
 
         # shrink box
-        box = (box[0] + span.x / 8, box[1],
-               box[2] - span.x / 8, box[3])
+        box = Box(box[0] + span.x / 8, box[1],
+                  box[2] - span.x / 8, box[3])
 
         return box
 
@@ -746,47 +746,47 @@ class PortraitEdgeMetrics(EdgeMetrics):
 
         if dir == 'right':
             if self.edge.skipped:
-                box = (node1.bottomright.x + span.x,
-                       node1.bottomright.y,
-                       node2.bottomleft.x - span.x,
-                       node2.bottomleft.y + span.y / 2)
+                box = Box(node1.bottomright.x + span.x,
+                          node1.bottomright.y,
+                          node2.bottomleft.x - span.x,
+                          node2.bottomleft.y + span.y / 2)
             else:
-                box = (node1.topright.x, node1.topright.y - span.y / 8,
-                       node2.left.x, node2.left.y - span.y / 8)
+                box = Box(node1.topright.x, node1.topright.y - span.y / 8,
+                          node2.left.x, node2.left.y - span.y / 8)
 
         elif dir == 'right-up':
-            box = (node2.left.x - span.x, node2.left.y,
-                   node2.bottomleft.x, node2.bottomleft.y)
+            box = Box(node2.left.x - span.x, node2.left.y,
+                      node2.bottomleft.x, node2.bottomleft.y)
 
         elif dir == 'right-down':
-            box = (node2.topleft.x, node2.topleft.y - span.y / 2,
-                   node2.top.x, node2.top.y)
+            box = Box(node2.topleft.x, node2.topleft.y - span.y / 2,
+                      node2.top.x, node2.top.y)
 
         elif dir in ('up', 'left-up', 'left', 'same'):
             if self.edge.node2.xy.y < self.edge.node1.xy.y:
-                box = (node1.topright.x - span.x / 2 + span.x / 4,
-                       node1.topright.y - span.y / 2,
-                       node1.topright.x + span.x / 2 + span.x / 4,
-                       node1.topright.y)
+                box = Box(node1.topright.x - span.x / 2 + span.x / 4,
+                          node1.topright.y - span.y / 2,
+                          node1.topright.x + span.x / 2 + span.x / 4,
+                          node1.topright.y)
             else:
-                box = (node1.top.x + span.x / 4,
-                       node1.top.y - span.y,
-                       node1.topright.x + span.x / 4,
-                       node1.topright.y - span.y / 2)
+                box = Box(node1.top.x + span.x / 4,
+                          node1.top.y - span.y,
+                          node1.topright.x + span.x / 4,
+                          node1.topright.y - span.y / 2)
 
         elif dir == 'down':
-            box = (node2.top.x + span.x / 4,
-                   node2.top.y - span.y / 2,
-                   node2.topright.x + span.x / 4,
-                   node2.topright.y)
+            box = Box(node2.top.x + span.x / 4,
+                      node2.top.y - span.y / 2,
+                      node2.topright.x + span.x / 4,
+                      node2.topright.y)
 
         elif dir == 'left-down':
-            box = (node1.bottomleft.x, node1.bottomleft.y,
-                   node1.bottom.x, node1.bottom.y + span.y / 2)
+            box = Box(node1.bottomleft.x, node1.bottomleft.y,
+                      node1.bottom.x, node1.bottom.y + span.y / 2)
 
         # shrink box
-        box = (box[0] + span.x / 8, box[1],
-               box[2] - span.x / 8, box[3])
+        box = Box(box[0] + span.x / 8, box[1],
+                  box[2] - span.x / 8, box[3])
 
         return box
 
@@ -841,11 +841,12 @@ class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
             cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
             if self.edge.skipped:
-                box = (cell1.bottom.x, cell1.bottom.y,
-                       cell1.bottomright.x, cell1.bottomright.y + span.y / 2)
+                box = Box(cell1.bottom.x, cell1.bottom.y,
+                          cell1.bottomright.x,
+                          cell1.bottomright.y + span.y / 2)
             else:
-                box = (cell1.bottom.x, cell2.left.y - span.y / 2,
-                       cell1.bottom.x, cell2.left.y)
+                box = Box(cell1.bottom.x, cell2.left.y - span.y / 2,
+                          cell1.bottom.x, cell2.left.y)
         else:
             box = super(FlowchartLandscapeEdgeMetrics, self).labelbox()
 
@@ -901,15 +902,16 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
         cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
         if dir == 'down':
-            box = (cell2.topleft.x, cell2.top.y - span.y / 2,
-                   cell2.top.x, cell2.top.y)
+            box = Box(cell2.topleft.x, cell2.top.y - span.y / 2,
+                      cell2.top.x, cell2.top.y)
         elif dir == 'right':
             if self.edge.skipped:
-                box = (cell1.bottom.x, cell1.bottom.y,
-                       cell1.bottomright.x, cell1.bottomright.y + span.y / 2)
+                box = Box(cell1.bottom.x, cell1.bottom.y,
+                          cell1.bottomright.x,
+                          cell1.bottomright.y + span.y / 2)
             else:
-                box = (cell1.bottom.x, cell2.left.y - span.y / 2,
-                       cell1.bottom.x, cell2.left.y)
+                box = Box(cell1.bottom.x, cell2.left.y - span.y / 2,
+                          cell1.bottom.x, cell2.left.y)
         else:
             box = super(FlowchartPortraitEdgeMetrics, self).labelbox()
 
