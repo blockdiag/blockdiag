@@ -277,9 +277,9 @@ class ImageDrawEx(object):
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')
-            self.rectangle(lines.outlineBox(), fill='white', outline=outline)
+            self.rectangle(lines.outlinebox, fill='white', outline=outline)
 
-        for string, xy in lines.each_line():
+        for string, xy in lines.lines:
             self.text(xy, string, **kwargs)
 
     def loadImage(self, filename, box):

@@ -17,6 +17,7 @@ import re
 import math
 import unicodedata
 from XY import XY
+from blockdiag.utils import Box
 
 
 def is_zenkaku(char):
@@ -157,7 +158,8 @@ class TextFolder:
 
         return height
 
-    def each_line(self):
+    @property
+    def lines(self):
         size = XY(self.box[2] - self.box[0], self.box[3] - self.box[1])
 
         if self.valign == 'top':
@@ -190,9 +192,10 @@ class TextFolder:
             else:
                 height += textsize[1] + self.line_spacing
 
-    def outlineBox(self):
+    @property
+    def outlinebox(self):
         corners = []
-        for string, xy in self.each_line():
+        for string, xy in self.lines:
             textsize = self.textsize(string)
             width = textsize[0] * self.scale
             height = textsize[1] * self.scale
@@ -206,10 +209,10 @@ class TextFolder:
         if corners:
             x_margin = 4  # MAGIC number
             y_margin = 2  # MAGIC number
-            box = (min(p.x for p in corners) - x_margin,
-                   min(p.y for p in corners) - y_margin,
-                   max(p.x for p in corners) + x_margin,
-                   max(p.y for p in corners) + y_margin)
+            box = Box(min(p.x for p in corners) - x_margin,
+                      min(p.y for p in corners) - y_margin,
+                      max(p.x for p in corners) + x_margin,
+                      max(p.y for p in corners) + y_margin)
         else:
             box = self.box
 
