@@ -378,6 +378,7 @@ class DiagramEdge(Base):
         self.style = None
         self.hstyle = None
         self.folded = None
+        self.thick = None
 
     def __repr__(self):
         class_name = self.__class__.__name__
@@ -430,6 +431,9 @@ class DiagramEdge(Base):
 
     def set_nofolded(self, value):
         self.folded = False
+
+    def set_thick(self, value):
+        self.thick = 3
 
     @property
     def direction(self):
