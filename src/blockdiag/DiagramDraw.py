@@ -154,18 +154,18 @@ class DiagramDraw(object):
     def edge(self, edge):
         metrics = self.metrics.edge(edge)
 
-        for line in metrics.shaft().polylines:
+        for line in metrics.shaft.polylines:
             self.drawer.line(line, fill=edge.color, thick=edge.thick,
                              style=edge.style, jump=True)
 
-        for head in metrics.heads():
+        for head in metrics.heads:
             if edge.hstyle in ('generalization', 'aggregation'):
                 self.drawer.polygon(head, outline=edge.color, fill='white')
             else:
                 self.drawer.polygon(head, outline=edge.color, fill=edge.color)
 
         if edge.label:
-            self.drawer.textarea(metrics.labelbox(), edge.label,
+            self.drawer.textarea(metrics.labelbox, edge.label,
                                  fill=edge.textcolor, outline=self.fill,
                                  font=self.font,
                                  fontsize=self.metrics.fontsize)
