@@ -388,8 +388,18 @@ class EdgeMetrics(object):
         self.metrics = metrics
         self.edge = edge
 
+    @property
     def heads(self):
-        pass
+        heads = []
+        head1, head2 = self.headshapes
+
+        if head1:
+            heads.append(self._head(self.edge.node1, head1))
+
+        if head2:
+            heads.append(self._head(self.edge.node2, head2))
+
+        return heads
 
     def _head(self, node, direct):
         head = []
@@ -430,44 +440,78 @@ class EdgeMetrics(object):
 
         return head
 
+    @property
     def shaft(self):
-        pass
+        cell = self.metrics.cellsize
+        lines = self._shaft
+        head1, head2 = self.headshapes
 
+        if head1:
+            pt = lines.polylines[0].pop(0)
+            if head1 == 'up':
+                lines.polylines[0].insert(0, XY(pt.x, pt.y + cell))
+            elif head1 == 'right':
+                lines.polylines[0].insert(0, XY(pt.x - cell, pt.y))
+            elif head1 == 'left':
+                lines.polylines[0].insert(0, XY(pt.x + cell, pt.y))
+            elif head1 == 'down':
+                lines.polylines[0].insert(0, XY(pt.x, pt.y - cell))
+
+        if head2:
+            pt = lines.polylines[-1].pop()
+            if head2 == 'up':
+                lines.polylines[-1].append(XY(pt.x, pt.y + cell))
+            elif head2 == 'right':
+                lines.polylines[-1].append(XY(pt.x - cell, pt.y))
+            elif head2 == 'left':
+                lines.polylines[-1].append(XY(pt.x + cell, pt.y))
+            elif head2 == 'down':
+                lines.polylines[-1].append(XY(pt.x, pt.y - cell))
+
+        return lines
+
+    @property
     def labelbox(self):
         pass
 
 
 class LandscapeEdgeMetrics(EdgeMetrics):
-    def heads(self):
+    @property
+    def headshapes(self):
         heads = []
         dir = self.edge.direction
 
         if self.edge.dir in ('back', 'both'):
             if dir in ('left-up', 'left', 'same',
                        'right-up', 'right', 'right-down'):
-                heads.append(self._head(self.edge.node1, 'left'))
+                heads.append('left')
             elif dir == 'up':
                 if self.edge.skipped:
-                    heads.append(self._head(self.edge.node1, 'left'))
+                    heads.append('left')
                 else:
-                    heads.append(self._head(self.edge.node1, 'down'))
+                    heads.append('down')
             elif dir in ('left-down', 'down'):
                 if self.edge.skipped:
-                    heads.append(self._head(self.edge.node1, 'left'))
+                    heads.append('left')
                 else:
-                    heads.append(self._head(self.edge.node1, 'up'))
+                    heads.append('up')
+        else:
+            heads.append(None)
 
         if self.edge.dir in ('forward', 'both'):
             if dir in ('right-up', 'right', 'right-down'):
-                heads.append(self._head(self.edge.node2, 'right'))
+                heads.append('right')
             elif dir == 'up':
-                heads.append(self._head(self.edge.node2, 'up'))
+                heads.append('up')
             elif dir in ('left-up', 'left', 'left-down', 'down', 'same'):
-                heads.append(self._head(self.edge.node2, 'down'))
+                heads.append('down')
+        else:
+            heads.append(None)
 
         return heads
 
-    def shaft(self):
+    @property
+    def _shaft(self):
         span = XY(self.metrics.span_width, self.metrics.span_height)
         dir = self.edge.direction
 
@@ -572,6 +616,7 @@ class LandscapeEdgeMetrics(EdgeMetrics):
 
         return shaft
 
+    @property
     def labelbox(self):
         span = XY(self.metrics.span_width, self.metrics.span_height)
         node = XY(self.metrics.node_width, self.metrics.node_height)
@@ -624,40 +669,46 @@ class LandscapeEdgeMetrics(EdgeMetrics):
 
 
 class PortraitEdgeMetrics(EdgeMetrics):
-    def heads(self):
+    @property
+    def headshapes(self):
         heads = []
         dir = self.edge.direction
 
         if self.edge.dir in ('back', 'both'):
             if dir == 'right':
                 if self.edge.skipped:
-                    heads.append(self._head(self.edge.node1, 'up'))
+                    heads.append('up')
                 else:
-                    heads.append(self._head(self.edge.node1, 'left'))
+                    heads.append('left')
             elif dir in ('up', 'right-up', 'same'):
-                heads.append(self._head(self.edge.node1, 'up'))
+                heads.append('up')
             elif dir in ('left-up', 'left'):
-                heads.append(self._head(self.edge.node1, 'left'))
+                heads.append('left')
             elif dir in ('left-down', 'down', 'right-down'):
                 if self.edge.skipped:
-                    heads.append(self._head(self.edge.node1, 'left'))
+                    heads.append('left')
                 else:
-                    heads.append(self._head(self.edge.node1, 'up'))
+                    heads.append('up')
+        else:
+            heads.append(None)
 
         if self.edge.dir in ('forward', 'both'):
             if dir == 'right':
                 if self.edge.skipped:
-                    heads.append(self._head(self.edge.node2, 'down'))
+                    heads.append('down')
                 else:
-                    heads.append(self._head(self.edge.node2, 'right'))
+                    heads.append('right')
             elif dir in ('up', 'right-up', 'same'):
-                heads.append(self._head(self.edge.node2, 'down'))
+                heads.append('down')
             elif dir in ('left-up', 'left', 'left-down', 'down', 'right-down'):
-                heads.append(self._head(self.edge.node2, 'down'))
+                heads.append('down')
+        else:
+            heads.append(None)
 
         return heads
 
-    def shaft(self):
+    @property
+    def _shaft(self):
         span = XY(self.metrics.span_width, self.metrics.span_height)
         dir = self.edge.direction
 
@@ -736,6 +787,7 @@ class PortraitEdgeMetrics(EdgeMetrics):
 
         return shaft
 
+    @property
     def labelbox(self):
         span = XY(self.metrics.span_width, self.metrics.span_height)
 
@@ -791,21 +843,27 @@ class PortraitEdgeMetrics(EdgeMetrics):
 
 
 class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
-    def heads(self):
+    @property
+    def headshapes(self):
         heads = []
 
         if self.edge.direction == 'right-down':
             if self.edge.dir in ('back', 'both'):
-                heads.append(self._head(self.edge.node1, 'up'))
+                heads.append('up')
+            else:
+                heads.append(None)
 
             if self.edge.dir in ('forward', 'both'):
-                heads.append(self._head(self.edge.node2, 'right'))
+                heads.append('right')
+            else:
+                heads.append(None)
         else:
-            heads = super(FlowchartLandscapeEdgeMetrics, self).heads()
+            heads = super(FlowchartLandscapeEdgeMetrics, self).headshapes
 
         return heads
 
-    def shaft(self):
+    @property
+    def _shaft(self):
         if self.edge.direction == 'right-down':
             span = XY(self.metrics.span_width, self.metrics.span_height)
             node1 = self.metrics.node(self.edge.node1)
@@ -826,10 +884,11 @@ class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
 
             shaft.lineTo(node2.left)
         else:
-            shaft = super(FlowchartLandscapeEdgeMetrics, self).shaft()
+            shaft = super(FlowchartLandscapeEdgeMetrics, self)._shaft
 
         return shaft
 
+    @property
     def labelbox(self):
         dir = self.edge.direction
         if dir == 'right':
@@ -853,21 +912,27 @@ class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
 
 
 class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
-    def heads(self):
+    @property
+    def headshapes(self):
         heads = []
 
         if self.edge.direction == 'right-down':
             if self.edge.dir in ('back', 'both'):
-                heads.append(self._head(self.edge.node1, 'left'))
+                heads.append('left')
+            else:
+                heads.append(None)
 
             if self.edge.dir in ('forward', 'both'):
-                heads.append(self._head(self.edge.node2, 'down'))
+                heads.append('down')
+            else:
+                heads.append(None)
         else:
-            heads = super(FlowchartPortraitEdgeMetrics, self).heads()
+            heads = super(FlowchartPortraitEdgeMetrics, self).headshapes
 
         return heads
 
-    def shaft(self):
+    @property
+    def _shaft(self):
         if self.edge.direction == 'right-down':
             span = XY(self.metrics.span_width, self.metrics.span_height)
             node1 = self.metrics.node(self.edge.node1)
@@ -888,10 +953,11 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
 
             shaft.lineTo(node2.top)
         else:
-            shaft = super(FlowchartPortraitEdgeMetrics, self).shaft()
+            shaft = super(FlowchartPortraitEdgeMetrics, self)._shaft
 
         return shaft
 
+    @property
     def labelbox(self):
         dir = self.edge.direction
         span = XY(self.metrics.span_width, self.metrics.span_height)
