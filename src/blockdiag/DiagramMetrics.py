@@ -408,32 +408,32 @@ class EdgeMetrics(object):
 
         if direct == 'up':
             xy = node.bottom
-            head.append(xy)
+            head.append(XY(xy.x, xy.y + 1))
             head.append(XY(xy.x - cell / 2, xy.y + cell))
             head.append(XY(xy.x, xy.y + cell * 2))
             head.append(XY(xy.x + cell / 2, xy.y + cell))
-            head.append(xy)
+            head.append(XY(xy.x, xy.y + 1))
         elif direct == 'down':
             xy = node.top
-            head.append(xy)
+            head.append(XY(xy.x, xy.y - 1))
             head.append(XY(xy.x - cell / 2, xy.y - cell))
             head.append(XY(xy.x, xy.y - cell * 2))
             head.append(XY(xy.x + cell / 2, xy.y - cell))
-            head.append(xy)
+            head.append(XY(xy.x, xy.y - 1))
         elif direct == 'right':
             xy = node.left
-            head.append(xy)
+            head.append(XY(xy.x - 1, xy.y))
             head.append(XY(xy.x - cell, xy.y - cell / 2))
             head.append(XY(xy.x - cell * 2, xy.y))
             head.append(XY(xy.x - cell, xy.y + cell / 2))
-            head.append(xy)
+            head.append(XY(xy.x - 1, xy.y))
         elif direct == 'left':
             xy = node.right
-            head.append(xy)
+            head.append(XY(xy.x + 1, xy.y))
             head.append(XY(xy.x + cell, xy.y - cell / 2))
             head.append(XY(xy.x + cell * 2, xy.y))
             head.append(XY(xy.x + cell, xy.y + cell / 2))
-            head.append(xy)
+            head.append(XY(xy.x + 1, xy.y))
 
         if self.edge.hstyle not in ('composition', 'aggregation'):
             head.pop(2)
