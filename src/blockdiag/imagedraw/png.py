@@ -170,7 +170,8 @@ class ImageDrawEx(object):
         if 'jump' in kwargs:
             del kwargs['jump']
         if 'thick' in kwargs:
-            kwargs['width'] = kwargs['thick']
+            if kwargs['thick'] is not None:
+                kwargs['width'] = kwargs['thick']
             del kwargs['thick']
 
         style = kwargs.get('style')
