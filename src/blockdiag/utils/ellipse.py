@@ -15,7 +15,7 @@
 
 import sys
 import math
-from XY import XY
+from blockdiag.utils import XY
 
 DIVISION = 1000.0
 CYCLE = 10

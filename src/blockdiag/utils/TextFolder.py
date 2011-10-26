@@ -16,8 +16,7 @@
 import re
 import math
 import unicodedata
-from XY import XY
-from blockdiag.utils import Box
+from blockdiag.utils import Box, XY
 
 
 def is_zenkaku(char):
