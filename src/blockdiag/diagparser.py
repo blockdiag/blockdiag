@@ -45,7 +45,7 @@ from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
     oneplus, forward_decl, NoParseError)
 
-from utils.namedtuple import namedtuple
+from utils.collections import namedtuple
 
 ENCODING = 'utf-8'
 
@@ -106,15 +106,11 @@ def parse(seq):
     attr_list = (
         many(op_('[') + many(a_list) + op_(']'))
         >> flatten)
-    attr_stmt = (
-       (n('graph') | n('node') | n('edge')) +
-       attr_list
-       >> unarg(DefAttrs))
     graph_attr = id + op_('=') + id >> make_graph_attr
     node_stmt = node_id + attr_list >> unarg(Node)
     # We use a forward_decl becaue of circular definitions like (stmt_list ->
-    # stmt -> subgraph -> stmt_list)
-    subgraph = forward_decl()
+    # stmt -> group -> stmt_list)
+    group = forward_decl()
     edge_rhs = (op('->') | op('--') | op('<-') | op('<->')) + node_list
     edge_stmt = (
         node_list +
@@ -123,14 +119,13 @@ def parse(seq):
         attr_list
         >> unarg(make_edge))
     stmt = (
-          attr_stmt
-        | edge_stmt
-        | subgraph
+          edge_stmt
+        | group
         | graph_attr
         | node_stmt
     )
     stmt_list = many(stmt + skip(maybe(op(';'))))
-    subgraph.define(
+    group.define(
         skip(n('group')) +
         maybe(id) +
         op_('{') +
