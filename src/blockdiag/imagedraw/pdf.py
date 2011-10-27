@@ -124,7 +124,7 @@ class PDFImageDraw(object):
         self.set_stroke_color(kwargs.get('fill', 'none'))
         self.set_style(kwargs.get('style'))
 
-        if 'thick' in kwargs:
+        if 'thick' in kwargs and kwargs['thick'] is not None:
             self.canvas.setLineWidth(kwargs['thick'])
 
         p1 = xy[0]
