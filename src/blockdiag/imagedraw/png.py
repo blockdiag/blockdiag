@@ -132,9 +132,10 @@ class ImageDrawEx(object):
         style = kwargs.get('style')
         if 'style' in kwargs:
             del kwargs['style']
+        if 'thick' in kwargs:
+            del kwargs['thick']
 
         if style:
-
             while start > end:
                 end += 360
 
