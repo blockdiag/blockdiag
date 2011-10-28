@@ -46,6 +46,8 @@ class DiagramDraw(object):
                 self.scale_ratio = ratio = 2
                 self.metrics = AutoScaler(self.metrics, scale_ratio=ratio)
             self.shadow = kwargs.get('shadow', (64, 64, 64))
+        elif self.format == 'PDF':
+            self.shadow = kwargs.get('shadow', (144, 144, 144))
         else:
             self.shadow = kwargs.get('shadow', (0, 0, 0))
 
