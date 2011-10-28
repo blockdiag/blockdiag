@@ -32,6 +32,10 @@ class SVGImageDrawElement(object):
     def __init__(self, svg):
         self.svg = svg
 
+    def set_font(self, fontpath, fontsize):
+        self.fontpath = fontpath
+        self.fontsize = fontsize
+
     def rgb(self, color):
         if isinstance(color, tuple):
             color = 'rgb(%d,%d,%d)' % color
@@ -91,14 +95,15 @@ class SVGImageDrawElement(object):
 
     def text(self, xy, string, **kwargs):
         fill = kwargs.get('fill')
-        fontname = kwargs.get('font')
-        fontsize = kwargs.get('fontsize')
 
-        t = text(xy[0], xy[1], string, font_size=fontsize, fill=self.rgb(fill))
+        t = text(xy[0], xy[1], string,
+                 font_size=self.fontsize, fill=self.rgb(fill))
         self.svg.addElement(t)
 
     def textarea(self, box, string, **kwargs):
-        lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
+        lines = TextFolder(box, string, adjustBaseline=True,
+                           font=self.fontpath, fontsize=self.fontsize,
+                           **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')

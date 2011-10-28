@@ -34,7 +34,6 @@ class DiagramDraw(object):
         self.diagram = diagram
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.badgeFill = kwargs.get('badgeFill', 'pink')
-        self.font = kwargs.get('font')
         self.filename = filename
         self.scale_ratio = 1
 
@@ -51,11 +50,12 @@ class DiagramDraw(object):
         else:
             self.shadow = kwargs.get('shadow', (0, 0, 0))
 
-        kwargs = dict(font=self.font,
+        kwargs = dict(font=kwargs.get('font'),
                       nodoctype=kwargs.get('nodoctype'),
                       scale_ratio=self.scale_ratio)
         drawer = imagedraw.create(self.format, self.filename,
                                   self.pagesize(), **kwargs)
+        drawer.set_font(self.metrics.font, self.metrics.fontsize)
         self.drawer = LineJumpDrawFilter(drawer, self.metrics.cellsize / 2)
         self.drawer = drawer
 
@@ -140,19 +140,16 @@ class DiagramDraw(object):
         shape = r(node, self.metrics)
         shape.render(self.drawer, self.format,
                      fill=self.fill, outline=self.diagram.linecolor,
-                     font=self.font, badgeFill=self.badgeFill)
+                     badgeFill=self.badgeFill)
 
     def group_label(self, group):
         m = self.metrics.group(group)
 
         if group.label and not group.separated:
             self.drawer.textarea(m.grouplabelbox, group.label,
-                                 fill=group.textcolor, font=self.font,
-                                 fontsize=self.metrics.fontsize)
+                                 fill=group.textcolor)
         elif group.label:
-            self.drawer.textarea(m.corebox, group.label,
-                                 fill=group.textcolor, font=self.font,
-                                 fontsize=self.metrics.fontsize)
+            self.drawer.textarea(m.corebox, group.label, fill=group.textcolor)
 
     def edge(self, edge):
         metrics = self.metrics.edge(edge)
@@ -169,9 +166,7 @@ class DiagramDraw(object):
 
         if edge.label:
             self.drawer.textarea(metrics.labelbox, edge.label,
-                                 fill=edge.textcolor, outline=self.fill,
-                                 font=self.font,
-                                 fontsize=self.metrics.fontsize)
+                                 fill=edge.textcolor, outline=self.fill)
 
     def save(self, size=None):
         return self.drawer.save(self.filename, size, self.format)
