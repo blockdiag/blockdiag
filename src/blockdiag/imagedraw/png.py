@@ -110,6 +110,12 @@ class ImageDrawEx(object):
         self.scale_ratio = kwargs.get('scale_ratio', 1)
         self.mode = kwargs.get('mode')
         self.draw = ImageDraw.ImageDraw(self.image, self.mode)
+        self.fontpath = None
+        self.fontsize = None
+
+    def set_font(self, fontpath, fontsize):
+        self.fontpath = fontpath
+        self.fontsize = fontsize
 
     def resizeCanvas(self, size):
         image = self.image.resize(size, Image.ANTIALIAS)
@@ -237,11 +243,9 @@ class ImageDrawEx(object):
 
     def text(self, xy, string, **kwargs):
         fill = kwargs.get('fill')
-        font = kwargs.get('font')
-        fontsize = kwargs.get('fontsize', 11)
 
-        if font:
-            ttfont = ImageFont.truetype(font, fontsize)
+        if self.fontpath:
+            ttfont = ImageFont.truetype(self.fontpath, self.fontsize)
         else:
             ttfont = None
 
@@ -275,7 +279,9 @@ class ImageDrawEx(object):
             self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def textarea(self, box, string, **kwargs):
-        lines = TextFolder(box, string, scale=self.scale_ratio, **kwargs)
+        lines = TextFolder(box, string, scale=self.scale_ratio,
+                           font=self.fontpath, fontsize=self.fontsize,
+                           **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')

@@ -129,6 +129,8 @@ class DiagramMetrics(object):
     span_height = cellsize * 5
 
     def __init__(self, diagram, **kwargs):
+        self.format = kwargs.get('format')
+
         if diagram.node_width is not None:
             self.node_width = diagram.node_width
 
@@ -195,6 +197,20 @@ class DiagramMetrics(object):
                                padding[2] + bottom, padding[3] + left]
 
         return metrics
+
+    def textsize(self, string):
+        try:
+            if self.format == 'PDF':
+                from utils.PDFTextFolder import PILTextFolder as TextFolder
+            else:
+                from utils.PILTextFolder import PILTextFolder as TextFolder
+        except ImportError:
+            from utils.TextFolder import TextFolder
+
+        lines = TextFolder((0, 0, 65535, 65535), string,
+                           font=self.font, fontsize=self.fontsize)
+        textbox = lines.outlinebox
+        return XY(textbox.width, textbox.height + self.line_spacing)
 
     def node(self, node):
         renderer = noderenderer.get(node.shape)

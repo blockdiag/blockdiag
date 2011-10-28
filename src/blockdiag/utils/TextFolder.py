@@ -83,7 +83,7 @@ def string_width(string):
     return width
 
 
-class TextFolder:
+class TextFolder(object):
     def __init__(self, box, string, **kwargs):
         self.box = box
         self.string = string

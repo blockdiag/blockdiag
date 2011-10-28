@@ -35,6 +35,9 @@ class PDFImageDraw(object):
             raise RuntimeError(msg)
 
     def set_font(self, fontpath, fontsize):
+        self.fontpath = fontpath
+        self.fontsize = fontsize
+
         if fontpath not in self.fonts:
             ttfont = TTFont(fontpath, fontpath)
             pdfmetrics.registerFont(ttfont)
@@ -105,13 +108,12 @@ class PDFImageDraw(object):
 
     def text(self, xy, string, **kwargs):
         self.set_fill_color(kwargs.get('fill'))
-        self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
         self.canvas.drawString(xy[0], self.size[1] - xy[1], string)
 
     def textarea(self, box, string, **kwargs):
-        self.set_font(kwargs.get('font'), kwargs.get('fontsize', 11))
         lines = TextFolder(box, string, adjustBaseline=True,
-                           canvas=self.canvas, **kwargs)
+                           canvas=self.canvas, font=self.fontpath,
+                           fontsize=self.fontsize, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')
