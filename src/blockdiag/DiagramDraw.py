@@ -57,7 +57,6 @@ class DiagramDraw(object):
                                   self.pagesize(), **kwargs)
         drawer.set_font(self.metrics.font, self.metrics.fontsize)
         self.drawer = LineJumpDrawFilter(drawer, self.metrics.cellsize / 2)
-        self.drawer = drawer
 
     @property
     def nodes(self):
