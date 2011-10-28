@@ -129,11 +129,6 @@ class DiagramDraw(object):
         for edge in self.edges:
             self.edge(edge)
 
-        # FIXME: edge_label() is obsoleted
-        if hasattr(self, 'edge_label'):
-            for edge in (x for x in self.edges if x.label):
-                self.edge_label(edge)
-
     def node(self, node, **kwargs):
         r = noderenderer.get(node.shape)
         shape = r(node, self.metrics)
