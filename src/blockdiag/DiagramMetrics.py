@@ -110,7 +110,8 @@ class AutoScaler(object):
 
         return ret
 
-    def originalMetrics(self):
+    @property
+    def original_metrics(self):
         return self.subject
 
 
@@ -184,7 +185,8 @@ class DiagramMetrics(object):
                 height = max(n or node_height for n in heights)
                 sheet.set_node_height(y, height)
 
-    def originalMetrics(self):
+    @property
+    def original_metrics(self):
         return self
 
     def shiftedMetrics(self, top, right, bottom, left):

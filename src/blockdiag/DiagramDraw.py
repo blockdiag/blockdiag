@@ -83,16 +83,19 @@ class DiagramDraw(object):
         if scaled:
             metrics = self.metrics
         else:
-            metrics = self.metrics.originalMetrics()
+            metrics = self.metrics.original_metrics
 
         width = self.diagram.colwidth
         height = self.diagram.colheight
         return metrics.pagesize(width, height)
 
     def draw(self, **kwargs):
+        # switch metrics object during draw backgrounds
+        temp, self.metrics = self.metrics, self.metrics.original_metrics
         self._draw_background()
+        self.metrics = temp
 
-        # Smoothing back-ground images.
+        # Smoothing background images.
         if self.format == 'PNG':
             self.drawer.smoothCanvas()
 
@@ -103,11 +106,9 @@ class DiagramDraw(object):
         self._draw_elements(**kwargs)
 
     def _draw_background(self):
-        metrics = self.metrics.originalMetrics()
-
         # Draw node groups.
         for group in self.groups:
-            box = metrics.group(group).marginbox
+            box = self.metrics.group(group).marginbox
             self.drawer.rectangle(box, fill=group.color, filter='blur')
 
         # Drop node shadows.
@@ -115,7 +116,7 @@ class DiagramDraw(object):
             if node.color != 'none':
                 r = noderenderer.get(node.shape)
 
-                shape = r(node, metrics)
+                shape = r(node, self.metrics)
                 shape.render(self.drawer, self.format,
                              fill=self.shadow, shadow=True)
 
