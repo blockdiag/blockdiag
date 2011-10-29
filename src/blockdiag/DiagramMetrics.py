@@ -16,7 +16,7 @@
 import copy
 from elements import DiagramNode
 import noderenderer
-from utils import Box, XY
+from utils import Box, Size, XY
 from utils.collections import defaultdict, namedtuple
 
 cellsize = 8
@@ -91,6 +91,8 @@ class AutoScaler(object):
         klass = value.__class__
         if klass == XY:
             ret = XY(value.x * ratio, value.y * ratio)
+        elif klass == Size:
+            ret = Size(value.width * ratio, value.height * ratio)
         elif klass == Box:
             ret = Box(value[0] * ratio, value[1] * ratio,
                       value[2] * ratio, value[3] * ratio)
