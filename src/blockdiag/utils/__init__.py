@@ -15,7 +15,21 @@
 
 from namedtuple import namedtuple
 
-XY = namedtuple('XY', 'x y')
+
+Size = namedtuple('Size', 'width height')
+
+
+class XY(tuple):
+    mapper = dict(x=0, y=1)
+
+    def __new__(cls, x, y):
+        return super(XY, cls).__new__(cls, (x, y))
+
+    def __getattr__(self, name):
+        return self[self.mapper[name]]
+
+    def shift(self, x=0, y=0):
+        return self.__class__(self.x + x, self.y + y)
 
 
 class Box(list):
@@ -27,6 +41,22 @@ class Box(list):
     def __getattr__(self, name):
         return self[self.mapper[name]]
 
+    def __repr__(self):
+        class_name = self.__class__.__name__
+        x1 = self.x1
+        y1 = self.y1
+        width = self.width
+        height = self.height
+        addr = id(self)
+
+        format = "<%(class_name)s (%(x1)s, %(y1)s) " + \
+                 "%(width)dx%(height)d at 0x%(addr)08x>"
+        return format % locals()
+
+    @property
+    def size(self):
+        return Size(self.width, self.height)
+
     @property
     def width(self):
         return self.x2 - self.x1
@@ -34,3 +64,39 @@ class Box(list):
     @property
     def height(self):
         return self.y2 - self.y1
+
+    @property
+    def topleft(self):
+        return XY(self.x1, self.y1)
+
+    @property
+    def top(self):
+        return XY(self.x1 + self.width / 2, self.y1)
+
+    @property
+    def topright(self):
+        return XY(self.x2, self.y1)
+
+    @property
+    def bottomleft(self):
+        return XY(self.x1, self.y2)
+
+    @property
+    def bottom(self):
+        return XY(self.x1 + self.width / 2, self.y2)
+
+    @property
+    def bottomright(self):
+        return XY(self.x2, self.y2)
+
+    @property
+    def left(self):
+        return XY(self.x1, self.y1 + self.height / 2)
+
+    @property
+    def right(self):
+        return XY(self.x2, self.y1 + self.height / 2)
+
+    @property
+    def center(self):
+        return XY(self.x1 + self.width / 2, self.y1 + self.height / 2)

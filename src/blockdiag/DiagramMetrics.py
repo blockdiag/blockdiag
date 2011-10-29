@@ -364,42 +364,6 @@ class NodeMetrics(Box):
         return Box(self.x1, self.y1 - self.metrics.span_height / 2,
                    self.x2, self.y1)
 
-    @property
-    def topleft(self):
-        return XY(self.x1, self.y1)
-
-    @property
-    def top(self):
-        return XY(self.x1 + self.width / 2, self.y1)
-
-    @property
-    def topright(self):
-        return XY(self.x2, self.y1)
-
-    @property
-    def bottomleft(self):
-        return XY(self.x1, self.y2)
-
-    @property
-    def bottom(self):
-        return XY(self.x1 + self.width / 2, self.y2)
-
-    @property
-    def bottomright(self):
-        return XY(self.x2, self.y2)
-
-    @property
-    def left(self):
-        return XY(self.x1, self.y1 + self.height / 2)
-
-    @property
-    def right(self):
-        return XY(self.x2, self.y1 + self.height / 2)
-
-    @property
-    def center(self):
-        return XY(self.x1 + self.width / 2, self.y1 + self.height / 2)
-
 
 class EdgeMetrics(object):
     def __init__(self, edge, metrics):
