@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
+from blockdiag.utils import XY, Box
 
 
 class EndPoint(NodeShape):
@@ -39,8 +39,8 @@ class EndPoint(NodeShape):
 
         # draw outer circle
         r = self.radius
-        box = (self.center.x - r, self.center.y - r,
-               self.center.x + r, self.center.y + r)
+        box = Box(self.center.x - r, self.center.y - r,
+                  self.center.x + r, self.center.y + r)
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
             drawer.ellipse(box, fill=fill, outline=fill, filter='transp-blur')
@@ -49,8 +49,8 @@ class EndPoint(NodeShape):
                            style=self.node.style)
 
         # draw inner circle
-        box = (self.center.x - r / 2, self.center.y - r / 2,
-               self.center.x + r / 2, self.center.y + r / 2)
+        box = Box(self.center.x - r / 2, self.center.y - r / 2,
+                  self.center.x + r / 2, self.center.y + r / 2)
         if not kwargs.get('shadow'):
             if self.node.color == self.node.basecolor:
                 color = outline

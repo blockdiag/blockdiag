@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
+from blockdiag.utils import XY, Box
 
 
 class BeginPoint(NodeShape):
@@ -39,8 +39,8 @@ class BeginPoint(NodeShape):
 
         # draw outline
         r = self.radius
-        box = (self.center.x - r, self.center.y - r,
-               self.center.x + r, self.center.y + r)
+        box = Box(self.center.x - r, self.center.y - r,
+                  self.center.x + r, self.center.y + r)
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
             drawer.ellipse(box, fill=fill, outline=fill, filter='transp-blur')

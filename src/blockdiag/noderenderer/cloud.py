@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
+from blockdiag.utils import XY, Box
 from blockdiag.imagedraw.simplesvg import pathdata
 
 
@@ -55,22 +55,22 @@ class Cloud(NodeShape):
         rx = (self.node.width or self.metrics.node_width) / 12
         ry = (self.node.height or self.metrics.node_height) / 5
 
-        ellipses = [(pt.x + rx * 2, pt.y + ry,
-                     pt.x + rx * 5, pt.y + ry * 3),
-                    (pt.x + rx * 4, pt.y,
-                     pt.x + rx * 9, pt.y + ry * 2),
-                    (pt.x + rx * 8, pt.y + ry,
-                     pt.x + rx * 11, pt.y + ry * 3),
-                    (pt.x + rx * 9, pt.y + ry * 2,
-                     pt.x + rx * 13, pt.y + ry * 4),
-                    (pt.x + rx * 8, pt.y + ry * 2,
-                     pt.x + rx * 11, pt.y + ry * 5),
-                    (pt.x + rx * 5, pt.y + ry * 2,
-                     pt.x + rx * 8, pt.y + ry * 5),
-                    (pt.x + rx * 2, pt.y + ry * 2,
-                     pt.x + rx * 5, pt.y + ry * 5),
-                    (pt.x + rx * 0, pt.y + ry * 2,
-                     pt.x + rx * 4, pt.y + ry * 4)]
+        ellipses = [Box(pt.x + rx * 2, pt.y + ry,
+                        pt.x + rx * 5, pt.y + ry * 3),
+                    Box(pt.x + rx * 4, pt.y,
+                        pt.x + rx * 9, pt.y + ry * 2),
+                    Box(pt.x + rx * 8, pt.y + ry,
+                        pt.x + rx * 11, pt.y + ry * 3),
+                    Box(pt.x + rx * 9, pt.y + ry * 2,
+                        pt.x + rx * 13, pt.y + ry * 4),
+                    Box(pt.x + rx * 8, pt.y + ry * 2,
+                        pt.x + rx * 11, pt.y + ry * 5),
+                    Box(pt.x + rx * 5, pt.y + ry * 2,
+                        pt.x + rx * 8, pt.y + ry * 5),
+                    Box(pt.x + rx * 2, pt.y + ry * 2,
+                        pt.x + rx * 5, pt.y + ry * 5),
+                    Box(pt.x + rx * 0, pt.y + ry * 2,
+                        pt.x + rx * 4, pt.y + ry * 4)]
 
         for e in ellipses:
             if kwargs.get('shadow'):
@@ -81,8 +81,10 @@ class Cloud(NodeShape):
                 drawer.ellipse(e, fill=self.node.color, outline=outline,
                                style=self.node.style)
 
-        rects = [(pt.x + rx * 2, pt.y + ry * 2, pt.x + rx * 11, pt.y + ry * 4),
-                 (pt.x + rx * 4, pt.y + ry, pt.x + rx * 9, pt.y + ry * 2)]
+        rects = [Box(pt.x + rx * 2, pt.y + ry * 2,
+                     pt.x + rx * 11, pt.y + ry * 4),
+                 Box(pt.x + rx * 4, pt.y + ry,
+                     pt.x + rx * 9, pt.y + ry * 2)]
         for rect in rects:
             if kwargs.get('shadow'):
                 rect = self.shift_shadow(rect)

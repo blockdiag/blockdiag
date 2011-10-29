@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
+from blockdiag.utils import XY, Box
 
 
 class Actor(NodeShape):
@@ -35,7 +35,7 @@ class Actor(NodeShape):
     def head_part(self):
         r = self.radius
         pt = self.metrics.cell(self.node).center
-        return (pt.x - r, pt.y - r * 4, pt.x + r, pt.y - r * 2)
+        return Box(pt.x - r, pt.y - r * 4, pt.x + r, pt.y - r * 2)
 
     def body_part(self):
         r = self.radius

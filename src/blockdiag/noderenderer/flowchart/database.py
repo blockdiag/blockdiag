@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
+from blockdiag.utils import XY, Box
 from blockdiag.imagedraw.simplesvg import pathdata
 
 
@@ -47,7 +47,7 @@ class Database(NodeShape):
         r = self.metrics.cellsize
         box = m.box
 
-        ellipse = (box[0], box[3] - r * 2, box[2], box[3])
+        ellipse = Box(box[0], box[3] - r * 2, box[2], box[3])
         if kwargs.get('shadow'):
             ellipse = self.shift_shadow(ellipse)
             drawer.ellipse(ellipse, fill=fill, outline=fill,
@@ -56,7 +56,7 @@ class Database(NodeShape):
             drawer.ellipse(ellipse, fill=self.node.color, outline=outline,
                            style=self.node.style)
 
-        rect = (box[0], box[1] + r, box[2], box[3] - r)
+        rect = Box(box[0], box[1] + r, box[2], box[3] - r)
         if kwargs.get('shadow'):
             rect = self.shift_shadow(rect)
             drawer.rectangle(rect, fill=fill, outline=fill,
@@ -65,7 +65,7 @@ class Database(NodeShape):
             drawer.rectangle(rect, fill=self.node.color,
                              outline=self.node.color)
 
-        ellipse = (box[0], box[1], box[2], box[1] + r * 2)
+        ellipse = Box(box[0], box[1], box[2], box[1] + r * 2)
         if kwargs.get('shadow'):
             ellipse = self.shift_shadow(ellipse)
             drawer.ellipse(ellipse, fill=fill, outline=fill,

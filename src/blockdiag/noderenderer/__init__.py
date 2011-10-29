@@ -152,18 +152,10 @@ class NodeShape(object):
 
         if isinstance(value, XY):
             ret = XY(value.x + xdiff, value.y + ydiff)
-        elif isinstance(value, (list, tuple)):
-            if isinstance(value[0], (XY, list)):
-                ret = [self.shift_shadow(x) for x in value]
-            else:
-                ret = []
-                for i, x in enumerate(value):
-                    if i % 2 == 0:
-                        ret.append(x + xdiff)
-                    else:
-                        ret.append(x + ydiff)
         elif isinstance(value, Box):
             ret = Box(value.x1 + xdiff, value.y1 + ydiff,
                       value.x2 + xdiff, value.y2 + ydiff)
+        elif isinstance(value, (list, tuple)):
+            ret = [self.shift_shadow(x) for x in value]
 
         return ret
