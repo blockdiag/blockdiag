@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
+from blockdiag.utils import XY, Box
 from blockdiag.imagedraw.simplesvg import pathdata
 
 
@@ -47,8 +47,8 @@ class Terminator(NodeShape):
         r = self.metrics.cellsize * 2
 
         box = m.box
-        ellipses = [(box[0], box[1], box[0] + r * 2, box[3]),
-                    (box[2] - r * 2, box[1], box[2], box[3])]
+        ellipses = [Box(box[0], box[1], box[0] + r * 2, box[3]),
+                    Box(box[2] - r * 2, box[1], box[2], box[3])]
 
         for e in ellipses:
             if kwargs.get('shadow'):
@@ -59,7 +59,7 @@ class Terminator(NodeShape):
                 drawer.ellipse(e, fill=self.node.color, outline=outline,
                                style=self.node.style)
 
-        rect = (box[0] + r, box[1], box[2] - r, box[3])
+        rect = Box(box[0] + r, box[1], box[2] - r, box[3])
         if kwargs.get('shadow'):
             rect = self.shift_shadow(rect)
             drawer.rectangle(rect, fill=fill, outline=fill,
@@ -83,8 +83,8 @@ class Terminator(NodeShape):
         r = self.metrics.cellsize * 2
         height = self.metrics.node_height
 
-        box = (m.topleft.x + r, m.topleft.y,
-               m.bottomright.x - r, m.bottomright.y)
+        box = Box(m.topleft.x + r, m.topleft.y,
+                  m.bottomright.x - r, m.bottomright.y)
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
 

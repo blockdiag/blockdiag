@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
+from blockdiag.utils import XY, Box
 from blockdiag.imagedraw.simplesvg import pathdata
 
 
@@ -62,10 +62,10 @@ class RoundedBox(NodeShape):
         r = self.metrics.cellsize
 
         box = m.box
-        ellipses = [(box[0], box[1], box[0] + r * 2, box[1] + r * 2),
-                    (box[2] - r * 2, box[1], box[2], box[1] + r * 2),
-                    (box[0], box[3] - r * 2, box[0] + r * 2, box[3]),
-                    (box[2] - r * 2, box[3] - r * 2, box[2], box[3])]
+        ellipses = [Box(box[0], box[1], box[0] + r * 2, box[1] + r * 2),
+                    Box(box[2] - r * 2, box[1], box[2], box[1] + r * 2),
+                    Box(box[0], box[3] - r * 2, box[0] + r * 2, box[3]),
+                    Box(box[2] - r * 2, box[3] - r * 2, box[2], box[3])]
 
         for e in ellipses:
             if kwargs.get('shadow'):
@@ -76,8 +76,8 @@ class RoundedBox(NodeShape):
                 drawer.ellipse(e, fill=self.node.color,
                                outline=self.node.color)
 
-        rects = [(box[0] + r, box[1], box[2] - r, box[3]),
-                 (box[0], box[1] + r, box[2], box[3] - r)]
+        rects = [Box(box[0] + r, box[1], box[2] - r, box[3]),
+                 Box(box[0], box[1] + r, box[2], box[3] - r)]
         for rect in rects:
             if kwargs.get('shadow'):
                 rect = self.shift_shadow(rect)
