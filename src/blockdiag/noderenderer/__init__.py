@@ -85,7 +85,7 @@ class NodeShape(object):
             node.background = ""
             for i in range(2, 0, -1):
                 r = self.metrics.cellsize / 2 * i
-                metrics = self.metrics.shiftedMetrics(r, 0, 0, r)
+                metrics = self.metrics.shift(r, r)
 
                 self.__class__(node, metrics).render(drawer, format,
                                                     stacked=True, **kwargs)

@@ -125,6 +125,7 @@ class DiagramMetrics(object):
     shadow_offset = XY(3, 6)
     font = 11
     fontsize = 11
+    page_margin = XY(0, 0)
     page_padding = [0, 0, 0, 0]
     node_width = cellsize * 16
     node_height = cellsize * 5
@@ -159,16 +160,6 @@ class DiagramMetrics(object):
         if diagram.edge_layout is not None:
             self.edge_layout = diagram.edge_layout
 
-        page_margin_x = cellsize * 3
-        if page_margin_x < self.span_width:
-            page_margin_x = self.span_width
-
-        page_margin_y = cellsize * 3
-        if page_margin_y < self.span_height:
-            page_margin_y = self.span_height + cellsize
-
-        self.page_margin = XY(page_margin_x, page_margin_y)
-
         # setup spreadsheet
         sheet = self.spreadsheet = SpreadSheetMetrics(self)
         nodes = [n for n in diagram.traverse_nodes() if n.drawable]
@@ -191,14 +182,11 @@ class DiagramMetrics(object):
     def original_metrics(self):
         return self
 
-    def shiftedMetrics(self, top, right, bottom, left):
+    def shift(self, x, y):
         metrics = copy.copy(self)
         metrics.spreadsheet = copy.copy(self.spreadsheet)
         metrics.spreadsheet.metrics = metrics
-
-        padding = metrics.page_padding
-        metrics.page_padding = [padding[0] + top, padding[1] + right,
-                               padding[2] + bottom, padding[3] + left]
+        metrics.page_margin = XY(x, y)
 
         return metrics
 
@@ -289,8 +277,8 @@ class SpreadSheetMetrics(object):
 
         node_width = sum(self.node_width[i] for i in range(x))
         node_height = sum(self.node_height[i] for i in range(y))
-        span_width = sum(self.span_width[i] for i in range(x))
-        span_height = sum(self.span_height[i] for i in range(y))
+        span_width = sum(self.span_width[i] for i in range(x + 1))
+        span_height = sum(self.span_height[i] for i in range(y + 1))
 
         if use_padding:
             xdiff = (self.node_width[x] - (node.width or m.node_width)) / 2
@@ -313,8 +301,8 @@ class SpreadSheetMetrics(object):
 
         node_width = sum(self.node_width[i] for i in range(x + 1))
         node_height = sum(self.node_height[i] for i in range(y + 1))
-        span_width = sum(self.span_width[i] for i in range(x))
-        span_height = sum(self.span_height[i] for i in range(y))
+        span_width = sum(self.span_width[i] for i in range(x + 1))
+        span_height = sum(self.span_height[i] for i in range(y + 1))
 
         if use_padding:
             xdiff = (self.node_width[x] - (node.width or m.node_width)) / 2
@@ -335,7 +323,10 @@ class SpreadSheetMetrics(object):
         dummy = DiagramNode(None)
         dummy.xy = XY(width - 1, height - 1)
         x, y = self._node_bottomright(dummy, use_padding=False)
-        return XY(x + margin.x + padding[1], y + margin.y + padding[2])
+        x_span = self.span_width[width + 1]
+        y_span = self.span_height[height + 1]
+        return XY(x + margin.x + padding[1] + x_span,
+                  y + margin.y + padding[2] + y_span)
 
 
 class NodeMetrics(Box):
