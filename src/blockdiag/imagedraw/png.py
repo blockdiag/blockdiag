@@ -113,7 +113,7 @@ class ImageDrawEx(object):
         self.fontpath = None
         self.fontsize = None
 
-    def set_font(self, fontpath, fontsize):
+    def set_default_font(self, fontpath, fontsize):
         self.fontpath = fontpath
         self.fontsize = fontsize
 
@@ -246,7 +246,8 @@ class ImageDrawEx(object):
         fill = kwargs.get('fill')
 
         if self.fontpath:
-            ttfont = ImageFont.truetype(self.fontpath, self.fontsize)
+            fontsize = kwargs.get('fontsize') or self.fontsize
+            ttfont = ImageFont.truetype(self.fontpath, fontsize)
         else:
             ttfont = None
 
@@ -280,16 +281,21 @@ class ImageDrawEx(object):
             self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def textarea(self, box, string, **kwargs):
+        if 'fontsize' in kwargs:
+            fontsize = kwargs.get('fontsize') or self.fontsize
+            del kwargs['fontsize']
+        else:
+            fontsize = self.fontsize
+
         lines = TextFolder(box, string, scale=self.scale_ratio,
-                           font=self.fontpath, fontsize=self.fontsize,
-                           **kwargs)
+                           font=self.fontpath, fontsize=fontsize, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')
             self.rectangle(lines.outlinebox, fill='white', outline=outline)
 
         for string, xy in lines.lines:
-            self.text(xy, string, **kwargs)
+            self.text(xy, string, fontsize=fontsize, **kwargs)
 
     def loadImage(self, filename, box):
         box_width = box[2] - box[0]
