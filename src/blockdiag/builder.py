@@ -115,6 +115,9 @@ class DiagramTreeBuilder:
             elif isinstance(stmt, diagparser.DefAttrs):
                 group.set_attributes(stmt.attrs)
 
+            elif isinstance(stmt, diagparser.AttrClass):
+                Diagram.classes[stmt.name] = stmt
+
         group.update_order()
         return group
 

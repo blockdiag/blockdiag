@@ -55,6 +55,7 @@ Node = namedtuple('Node', 'id attrs')
 Attr = namedtuple('Attr', 'name value')
 Edge = namedtuple('Edge', 'nodes attrs')
 DefAttrs = namedtuple('DefAttrs', 'object attrs')
+AttrClass = namedtuple('AttrClass', 'name attrs')
 
 
 class ParseException(Exception):
@@ -118,8 +119,14 @@ def parse(seq):
         many(edge_rhs) +
         attr_list
         >> unarg(make_edge))
+    class_stmt = (
+        skip(n('class')) +
+        node_id +
+        attr_list
+        >> unarg(AttrClass))
     stmt = (
           edge_stmt
+        | class_stmt
         | group
         | graph_attr
         | node_stmt
