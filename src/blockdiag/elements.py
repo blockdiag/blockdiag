@@ -18,6 +18,7 @@ import re
 import sys
 import copy
 from utils import images, urlutil, uuid, XY
+import plugins
 import noderenderer
 
 
@@ -164,6 +165,12 @@ class DiagramNode(Element):
         self.background = None
         self.description = None
         self.drawable = True
+
+        plugins.fire_node_event(self, 'created')
+
+    def set_attribute(self, attr):
+        super(DiagramNode, self).set_attribute(attr)
+        plugins.fire_node_event(self, 'attr_changed', attr)
 
     def set_style(self, value):
         if re.search('^(?:solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
@@ -489,6 +496,10 @@ class Diagram(NodeGroup):
         self.page_padding = None
         self.fontsize = None
         self.edge_layout = None
+
+    def set_plugins(self, value):
+        modules = [name.strip() for name in value.split(',')]
+        plugins.load(modules, diagram=self)
 
     def set_default_shape(self, value):
         try:
