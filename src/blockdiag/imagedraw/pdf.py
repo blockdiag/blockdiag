@@ -34,10 +34,11 @@ class PDFImageDraw(object):
             msg = "Could not detect fonts, use --font opiton\n"
             raise RuntimeError(msg)
 
-    def set_font(self, fontpath, fontsize):
+    def set_default_font(self, fontpath, fontsize):
         self.fontpath = fontpath
         self.fontsize = fontsize
 
+    def set_font(self, fontpath, fontsize):
         if fontpath not in self.fonts:
             ttfont = TTFont(fontpath, fontpath)
             pdfmetrics.registerFont(ttfont)
@@ -107,20 +108,30 @@ class PDFImageDraw(object):
         self.canvas.rect(x, y, width, height, **params)
 
     def text(self, xy, string, **kwargs):
+        fontsize = kwargs.get('fontsize') or self.fontsize
+
+        self.set_font(self.fontpath, fontsize)
         self.set_fill_color(kwargs.get('fill'))
         self.canvas.drawString(xy[0], self.size[1] - xy[1], string)
 
     def textarea(self, box, string, **kwargs):
+        if 'fontsize' in kwargs:
+            fontsize = kwargs.get('fontsize') or self.fontsize
+            del kwargs['fontsize']
+        else:
+            fontsize = self.fontsize
+
+        self.set_font(self.fontpath, fontsize)
         lines = TextFolder(box, string, adjustBaseline=True,
                            canvas=self.canvas, font=self.fontpath,
-                           fontsize=self.fontsize, **kwargs)
+                           fontsize=fontsize, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')
             self.rectangle(lines.outlinebox, fill='white', outline=outline)
 
         for string, xy in lines.lines:
-            self.text(xy, string, **kwargs)
+            self.text(xy, string, fontsize=fontsize, **kwargs)
 
     def line(self, xy, **kwargs):
         self.set_stroke_color(kwargs.get('fill', 'none'))

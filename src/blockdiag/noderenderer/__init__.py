@@ -110,7 +110,8 @@ class NodeShape(object):
         if not kwargs.get('shadow'):
             drawer.textarea(self.textbox, self.node.label,
                             fill=self.node.textcolor, halign=self.textalign,
-                            line_spacing=self.metrics.line_spacing)
+                            line_spacing=self.metrics.line_spacing,
+                            fontsize=self.node.fontsize)
 
     def render_number_badge(self, drawer, **kwargs):
         if self.node.numbered != None and kwargs.get('shadow') != True:

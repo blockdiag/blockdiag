@@ -47,7 +47,8 @@ def unquote(string):
 class Base(object):
     basecolor = (255, 255, 255)
     textcolor = (0, 0, 0)
-    int_attrs = ['colwidth', 'colheight']
+    fontsize = None
+    int_attrs = ['colwidth', 'colheight', 'fontsize']
 
     @classmethod
     def set_default_color(cls, color):
@@ -87,7 +88,7 @@ class Base(object):
 
 class Element(Base):
     namespace = {}
-    int_attrs = ['width', 'height', 'colwidth', 'colheight']
+    int_attrs = ['width', 'height', 'colwidth', 'colheight', 'fontsize']
 
     @classmethod
     def get(cls, id):

@@ -6,4 +6,5 @@ diagram {
   E [label='"\'single\' quoted"', color = 'red', numbered = "1"];
   F [textcolor = red];
   G [stacked];
+  H [fontsize = 16];
 }

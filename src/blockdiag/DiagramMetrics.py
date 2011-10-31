@@ -190,7 +190,7 @@ class DiagramMetrics(object):
 
         return metrics
 
-    def textsize(self, string, width=65535):
+    def textsize(self, string, width=65535, fontsize=None):
         try:
             if self.format == 'PDF':
                 from utils.PDFTextFolder import PILTextFolder as TextFolder
@@ -199,8 +199,9 @@ class DiagramMetrics(object):
         except ImportError:
             from utils.TextFolder import TextFolder
 
+        fontsize = fontsize or self.fontsize
         lines = TextFolder((0, 0, width, 65535), string,
-                           font=self.font, fontsize=self.fontsize)
+                           font=self.font, fontsize=fontsize)
         textbox = lines.outlinebox
         return XY(textbox.width, textbox.height + self.line_spacing)
 
