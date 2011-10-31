@@ -127,3 +127,15 @@ def test_rhombus_relation_height_diagram():
     positions = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'D': (2, 0),
                  'E': (3, 0), 'F': (3, 1), 'Z': (0, 2)}
     __validate_node_attributes('rhombus_relation_height.diag', xy=positions)
+
+
+def test_define_class_diagram():
+    colors = {'A': (255, 0, 0), 'B': (255, 255, 255), 'C': (255, 255, 255)}
+    styles = {'A': 'dashed', 'B': None, 'C': None}
+
+    edge_colors = {('A', 'B'): (255, 0, 0), ('B', 'C'): (0, 0, 0)}
+    edge_styles = {('A', 'B'): 'dashed', ('B', 'C'): None}
+
+    __validate_node_attributes('define_class.diag',
+                               color=colors, edge_color=edge_colors,
+                               style=styles, edge_style=edge_styles)

@@ -71,7 +71,14 @@ class Base(object):
         name = attr.name
         value = unquote(attr.value)
 
-        if hasattr(self, "set_%s" % name):
+        if name == 'class':
+            if value in Diagram.classes:
+                klass = Diagram.classes[value]
+                self.set_attributes(klass.attrs)
+            else:
+                msg = "Unknown class: %s" % value
+                raise AttributeError(msg)
+        elif hasattr(self, "set_%s" % name):
             getattr(self, "set_%s" % name)(value)
         elif name in self.int_attrs:
             setattr(self, name, int(value))
@@ -477,6 +484,8 @@ class Diagram(NodeGroup):
     _DiagramNode = DiagramNode
     _DiagramEdge = DiagramEdge
     _NodeGroup = NodeGroup
+
+    classes = {}
     linecolor = (0, 0, 0)
     int_attrs = ['colwidth', 'colheight', 'fontsize',
                  'node_width', 'node_height', 'span_width', 'span_height']
@@ -485,6 +494,7 @@ class Diagram(NodeGroup):
     def clear(cls):
         super(NodeGroup, cls).clear()
         cls.linecolor = (0, 0, 0)
+        cls.classes = {}
 
     def __init__(self):
         super(Diagram, self).__init__(None)
