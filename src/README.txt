@@ -113,6 +113,15 @@ Apache License 2.0
 History
 =======
 
+0.9.7 (2011-11-01)
+------------------
+* Add node attribute: fontsize
+* Add edge attributes: thick, fontsize
+* Add group attribute: fontsize
+* Change color of shadow in PDF mode
+* Add class feature (experimental)
+* Add handler-plugin framework (experimental)
+
 0.9.6 (2011-10-22)
 ------------------
 * node.style supports dashed_array format style
