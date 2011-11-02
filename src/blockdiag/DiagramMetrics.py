@@ -231,6 +231,12 @@ class DiagramMetrics(object):
             else:
                 return PortraitEdgeMetrics(edge, self)
 
+    def fontsize_for(self, element):
+        if hasattr(element, 'fontsize') and element.fontsize:
+            return element.fontsize
+        else:
+            return self.fontsize
+
     def pagesize(self, width, height):
         return self.spreadsheet.pagesize(width, height)
 
