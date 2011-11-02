@@ -487,7 +487,7 @@ class Diagram(NodeGroup):
 
     classes = {}
     linecolor = (0, 0, 0)
-    int_attrs = ['colwidth', 'colheight', 'fontsize',
+    int_attrs = ['colwidth', 'colheight', 'default_fontsize',
                  'node_width', 'node_height', 'span_width', 'span_height']
 
     @classmethod
@@ -504,7 +504,7 @@ class Diagram(NodeGroup):
         self.span_width = None
         self.span_height = None
         self.page_padding = None
-        self.fontsize = None
+        self.default_fontsize = None
         self.edge_layout = None
 
     def set_plugins(self, value):
@@ -550,3 +550,8 @@ class Diagram(NodeGroup):
         else:
             msg = "WARNING: unknown edge layout: %s\n" % value
             raise AttributeError(msg)
+
+    def set_fontsize(self, value):
+        msg = "WARNING: fontsize is obsoleted; use default_fontsize\n"
+        sys.stderr.write(msg)
+        self.default_fontsize = int(value)

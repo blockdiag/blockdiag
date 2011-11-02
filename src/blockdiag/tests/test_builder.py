@@ -11,7 +11,7 @@ def test_diagram_attributes():
     eq_(160, diagram.node_height)
     eq_(32, diagram.span_width)
     eq_(32, diagram.span_height)
-    eq_(16, diagram.fontsize)
+    eq_(16, diagram.default_fontsize)
     eq_((128, 128, 128), diagram.linecolor)       # gray
     eq_('diamond', diagram.nodes[0].shape)
     eq_((255, 0, 0), diagram.nodes[0].color)      # red
