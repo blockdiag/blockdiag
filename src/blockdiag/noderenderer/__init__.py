@@ -84,11 +84,12 @@ class NodeShape(object):
             node.label = ""
             node.background = ""
             for i in range(2, 0, -1):
-                r = self.metrics.cellsize / 2 * i
+                # use original_metrics FORCE
+                r = self.metrics.original_metrics.cellsize / 2 * i
                 metrics = self.metrics.shift(r, r)
 
                 self.__class__(node, metrics).render(drawer, format,
-                                                    stacked=True, **kwargs)
+                                                     stacked=True, **kwargs)
 
         if hasattr(self, 'render_vector_shape') and format == 'SVG':
             self.render_vector_shape(drawer, format, **kwargs)
