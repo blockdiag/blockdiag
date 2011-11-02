@@ -139,13 +139,14 @@ class DiagramDraw(object):
 
     def group_label(self, group):
         m = self.metrics.group(group)
+        fontsize = self.metrics.fontsize_for(group)
 
         if group.label and not group.separated:
             self.drawer.textarea(m.grouplabelbox, group.label,
-                                 fill=group.textcolor, fontsize=group.fontsize)
+                                 fill=group.textcolor, fontsize=fontsize)
         elif group.label:
-            self.drawer.textarea(m.corebox, group.label, fill=group.textcolor,
-                                 fontsize=group.fontsize)
+            self.drawer.textarea(m.corebox, group.label,
+                                 fill=group.textcolor, fontsize=fontsize)
 
     def edge(self, edge):
         metrics = self.metrics.edge(edge)
@@ -161,9 +162,10 @@ class DiagramDraw(object):
                 self.drawer.polygon(head, outline=edge.color, fill=edge.color)
 
         if edge.label:
+            fontsize = self.metrics.fontsize_for(edge)
             self.drawer.textarea(metrics.labelbox, edge.label,
                                  fill=edge.textcolor, outline=self.fill,
-                                 fontsize=edge.fontsize)
+                                 fontsize=fontsize)
 
     def save(self, size=None):
         return self.drawer.save(self.filename, size, self.format)
