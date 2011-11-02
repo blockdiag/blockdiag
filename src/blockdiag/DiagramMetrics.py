@@ -151,8 +151,8 @@ class DiagramMetrics(object):
         if fontname is not None:
             self.font = fontname
 
-        if diagram.fontsize is not None:
-            self.fontsize = diagram.fontsize
+        if diagram.default_fontsize is not None:
+            self.fontsize = diagram.default_fontsize
 
         if diagram.page_padding is not None:
             self.page_padding = diagram.page_padding
