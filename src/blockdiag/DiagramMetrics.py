@@ -123,7 +123,7 @@ class DiagramMetrics(object):
     node_padding = 4
     line_spacing = 2
     shadow_offset = XY(3, 6)
-    font = 11
+    font = None
     fontsize = 11
     page_margin = XY(0, 0)
     page_padding = [0, 0, 0, 0]
@@ -192,8 +192,10 @@ class DiagramMetrics(object):
 
     def textsize(self, string, width=65535, fontsize=None):
         try:
-            if self.format == 'PDF':
-                from utils.PDFTextFolder import PILTextFolder as TextFolder
+            if self.font is None:
+                from utils.TextFolder import TextFolder
+            elif self.format == 'PDF':
+                from utils.PDFTextFolder import PDFTextFolder as TextFolder
             else:
                 from utils.PILTextFolder import PILTextFolder as TextFolder
         except ImportError:
