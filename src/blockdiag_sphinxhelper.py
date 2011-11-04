@@ -14,3 +14,4 @@
 #  limitations under the License.
 
 from blockdiag import diagparser, builder, DiagramDraw
+from blockdiag.utils.rst.directives import blockdiag, BlockdiagDirective
