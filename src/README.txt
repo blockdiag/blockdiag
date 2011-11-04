@@ -113,6 +113,16 @@ Apache License 2.0
 History
 =======
 
+1.0.0 (2011-11-04)
+------------------
+* Add node attribute: linecolor
+* Rename diagram attributes:
+   * fontsize -> default_fontsize
+   * default_line_color -> default_linecolor
+   * default_text_color -> default_textcolor
+* Add docutils extention
+* Fix bugs
+
 0.9.7 (2011-11-01)
 ------------------
 * Add node attribute: fontsize
