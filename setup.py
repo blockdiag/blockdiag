@@ -100,6 +100,9 @@ setup(
         textbox = blockdiag.noderenderer.textbox
         dots = blockdiag.noderenderer.dots
         none = blockdiag.noderenderer.none
+
+        [blockdiag_plugins]
+        autoclass = blockdiag.plugins.autoclass
      """,
 )
 
