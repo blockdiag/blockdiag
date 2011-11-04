@@ -130,18 +130,32 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
     def node2image(self, node, diagram):
         filename = self._filename(node)
+        fontpath = self.detectfont()
+        drawer = DiagramDraw(format, diagram, filename,
+                             font=fontpath, antialias=antialias)
+
         if not os.path.isfile(filename):
-            # FIXME: maxwidth parameter is ignored
-            fontpath = self.detectfont()
-            drawer = DiagramDraw(format, diagram, filename,
-                                 font=fontpath, antialias=antialias)
             drawer.draw()
             drawer.save()
 
-        if node['alt']:
-            image = nodes.image(uri=filename, alt=node['alt'])
+        size = drawer.pagesize()
+        options = node['options']
+        if 'maxwidth' in options and options['maxwidth'] < size[0]:
+            ratio = float(options['maxwidth']) / size[0]
+            thumb_size = (options['maxwidth'], size[1] * ratio)
+
+            thumb_filename = self._filename(node, prefix='_thumb')
+            if not os.path.isfile(thumb_filename):
+                drawer.filename = thumb_filename
+                drawer.draw()
+                drawer.save(thumb_size)
+
+            image = nodes.image(uri=thumb_filename, target=filename)
         else:
             image = nodes.image(uri=filename)
+
+        if node['alt']:
+            image['alt'] = node['alt']
 
         return image
 
@@ -156,7 +170,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         return detectfont(options)
 
-    def _filename(self, node, ext='png'):
+    def _filename(self, node, prefix='', ext='png'):
         try:
             from hashlib import sha1 as sha
         except ImportError:
@@ -166,7 +180,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         options.update(font=fontpath, antialias=antialias)
         hashseed = node['code'].encode('utf-8') + str(options)
         hashed = sha(hashseed).hexdigest()
-        return "%s-%s.%s" % (self.name, hashed, format.lower())
+        return "%s%s-%s.%s" % (self.name, prefix, hashed, format.lower())
 
     def description_table(self, diagram):
         descriptions = []
