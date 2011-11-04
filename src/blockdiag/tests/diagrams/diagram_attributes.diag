@@ -7,8 +7,8 @@
   default_shape = diamond
   default_node_color = red
   default_group_color = blue
-  default_line_color = gray
-  default_text_color = green
+  default_linecolor = gray
+  default_textcolor = green
 
   A -> B;
   group {

@@ -529,6 +529,12 @@ class Diagram(NodeGroup):
             raise AttributeError(msg)
 
     def set_default_text_color(self, color):
+        msg = "WARNING: default_text_color is obsoleted; " + \
+              "use default_textcolor\n"
+        sys.stderr.write(msg)
+        self.set_default_textcolor(color)
+
+    def set_default_textcolor(self, color):
         self.textcolor = images.color_to_rgb(color)
         self._DiagramNode.set_default_text_color(self.textcolor)
         self._NodeGroup.set_default_text_color(self.textcolor)
@@ -539,6 +545,12 @@ class Diagram(NodeGroup):
         self._DiagramNode.set_default_color(color)
 
     def set_default_line_color(self, color):
+        msg = "WARNING: default_line_color is obsoleted; " + \
+              "use default_linecolor\n"
+        sys.stderr.write(msg)
+        self.set_default_linecolor(color)
+
+    def set_default_linecolor(self, color):
         self.linecolor = images.color_to_rgb(color)
         self._DiagramNode.set_default_linecolor(self.linecolor)
         self._DiagramEdge.set_default_color(self.linecolor)
