@@ -72,7 +72,8 @@ class Terminator(NodeShape):
                  (XY(box[0] + r, box[3]), XY(box[2] - r, box[3]))]
         for line in lines:
             if not kwargs.get('shadow'):
-                drawer.line(line, fill=outline, style=self.node.style)
+                drawer.line(line, fill=self.node.linecolor,
+                            style=self.node.style)
 
     def render_vector_shape(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')
