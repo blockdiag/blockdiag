@@ -34,7 +34,6 @@ class BeginPoint(NodeShape):
                            XY(self.center.x - self.radius, self.center.y)]
 
     def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         # draw outline
@@ -46,11 +45,11 @@ class BeginPoint(NodeShape):
             drawer.ellipse(box, fill=fill, outline=fill, filter='transp-blur')
         else:
             if self.node.color == self.node.basecolor:
-                color = outline
+                color = self.node.linecolor
             else:
                 color = self.node.color
 
-            drawer.ellipse(box, fill=color, outline=outline,
+            drawer.ellipse(box, fill=color, outline=self.node.linecolor,
                            style=self.node.style)
 
 

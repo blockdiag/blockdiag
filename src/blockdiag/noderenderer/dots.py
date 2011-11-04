@@ -45,7 +45,8 @@ class Dots(NodeShape):
         r = m.cellsize / 2
         for dot in dots:
             box = (dot.x - r, dot.y - r, dot.x + r, dot.y + r)
-            drawer.ellipse(box, fill='black', outline='black')
+            drawer.ellipse(box, fill=self.node.linecolor,
+                           outline=self.node.linecolor)
 
 
 def setup(self):

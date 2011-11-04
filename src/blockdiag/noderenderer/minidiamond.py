@@ -34,7 +34,6 @@ class MiniDiamond(NodeShape):
         self.textalign = 'left'
 
     def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         # draw outline
@@ -44,7 +43,7 @@ class MiniDiamond(NodeShape):
                              filter='transp-blur')
         else:
             drawer.polygon(self.connectors, fill=self.node.color,
-                           outline=outline, style=self.node.style)
+                           outline=self.node.linecolor, style=self.node.style)
 
 
 def setup(self):

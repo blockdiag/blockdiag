@@ -20,7 +20,6 @@ from blockdiag.utils import XY
 
 class Box(NodeShape):
     def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         # draw outline
@@ -33,9 +32,11 @@ class Box(NodeShape):
             drawer.rectangle(box, fill=self.node.color,
                              outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.rectangle(box, outline=outline, style=self.node.style)
+            drawer.rectangle(box, outline=self.node.linecolor,
+                             style=self.node.style)
         else:
-            drawer.rectangle(box, fill=self.node.color, outline=outline,
+            drawer.rectangle(box, fill=self.node.color,
+                             outline=self.node.linecolor,
                              style=self.node.style)
 
 

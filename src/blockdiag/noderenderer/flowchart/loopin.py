@@ -30,7 +30,6 @@ class LoopIn(NodeShape):
                    m.bottomright.x, m.bottomright.y)
 
     def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)
@@ -52,13 +51,13 @@ class LoopIn(NodeShape):
                            filter='transp-blur')
         elif self.node.background:
             drawer.polygon(shape, fill=self.node.color,
-                             outline=self.node.color)
+                           outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.polygon(shape, fill="none", outline=outline,
-                           style=self.node.style)
+            drawer.polygon(shape, fill="none",
+                           outline=self.node.linecolor, style=self.node.style)
         else:
-            drawer.polygon(shape, fill=self.node.color, outline=outline,
-                           style=self.node.style)
+            drawer.polygon(shape, fill=self.node.color,
+                           outline=self.node.linecolor, style=self.node.style)
 
 
 def setup(self):

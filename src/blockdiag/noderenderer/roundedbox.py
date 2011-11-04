@@ -33,7 +33,6 @@ class RoundedBox(NodeShape):
             self.render_shape_outline(drawer, format, **kwargs)
 
     def render_shape_outline(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)
@@ -45,7 +44,7 @@ class RoundedBox(NodeShape):
                  (XY(box[0] + r, box[3]), XY(box[2] - r, box[3])),
                  (XY(box[0], box[1] + r), XY(box[0], box[3] - r))]
         for line in lines:
-            drawer.line(line, fill=outline, style=self.node.style)
+            drawer.line(line, fill=self.node.linecolor, style=self.node.style)
 
         arcs = [((box[0], box[1], box[0] + r * 2, box[1] + r * 2), 180, 270),
                 ((box[2] - r * 2, box[1], box[2], box[1] + r * 2), 270, 360),
@@ -53,7 +52,7 @@ class RoundedBox(NodeShape):
                 ((box[0], box[3] - r * 2, box[0] + r * 2, box[3]), 90, 180)]
         for arc in arcs:
             drawer.arc(arc[0], arc[1], arc[2],
-                       fill=outline, style=self.node.style)
+                       fill=self.node.linecolor, style=self.node.style)
 
     def render_shape_background(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')
@@ -88,7 +87,6 @@ class RoundedBox(NodeShape):
                                  outline=self.node.color)
 
     def render_vector_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         # create pathdata
@@ -115,11 +113,11 @@ class RoundedBox(NodeShape):
         elif self.node.background:
             drawer.path(path, fill=self.node.color, outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.path(path, fill="none", outline=outline,
-                        style=self.node.style)
+            drawer.path(path, fill="none",
+                        outline=self.node.linecolor, style=self.node.style)
         else:
-            drawer.path(path, fill=self.node.color, outline=outline,
-                        style=self.node.style)
+            drawer.path(path, fill=self.node.color,
+                        outline=self.node.linecolor, style=self.node.style)
 
 
 def setup(self):

@@ -117,14 +117,13 @@ class NodeShape(object):
 
     def render_number_badge(self, drawer, **kwargs):
         if self.node.numbered != None and kwargs.get('shadow') != True:
-            outline = kwargs.get('outline')
             badgeFill = kwargs.get('badgeFill')
 
             xy = self.metrics.cell(self.node).topleft
             r = self.metrics.cellsize * 3 / 2
 
             box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
-            drawer.ellipse(box, outline=outline, fill=badgeFill)
+            drawer.ellipse(box, outline=self.node.linecolor, fill=badgeFill)
             drawer.textarea(box, self.node.numbered, fill=self.node.textcolor)
 
     @property

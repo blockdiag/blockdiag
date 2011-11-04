@@ -73,7 +73,6 @@ class Actor(NodeShape):
                 XY(bodyC.x - neckWidth, bodyC.y - r * 2)]
 
     def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         # FIXME: Actor does not support
@@ -86,17 +85,18 @@ class Actor(NodeShape):
             body = self.shift_shadow(body)
             drawer.polygon(body, fill=fill, filter='transp-blur')
         else:
-            drawer.polygon(body, fill=self.node.color, outline=outline,
-                           style=self.node.style)
+            drawer.polygon(body, fill=self.node.color,
+                           outline=self.node.linecolor, style=self.node.style)
 
         # draw head part
         head = self.head_part()
         if kwargs.get('shadow'):
             head = self.shift_shadow(head)
-            drawer.ellipse(head, fill=fill, outline=fill, filter='transp-blur')
+            drawer.ellipse(head, fill=fill, outline=self.node.linecolor,
+                           filter='transp-blur')
         else:
-            drawer.ellipse(head, fill=self.node.color, outline=outline,
-                           style=self.node.style)
+            drawer.ellipse(head, fill=self.node.color,
+                           outline=self.node.linecolor, style=self.node.style)
 
     def render_label(self, drawer, **kwargs):
         pass
