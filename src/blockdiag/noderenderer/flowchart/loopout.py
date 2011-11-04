@@ -30,7 +30,6 @@ class LoopOut(NodeShape):
                         m.bottomright.x, m.bottomright.y - ydiff)
 
     def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)
@@ -54,11 +53,11 @@ class LoopOut(NodeShape):
             drawer.polygon(shape, fill=self.node.color,
                              outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.polygon(shape, fill="none", outline=outline,
-                           style=self.node.style)
+            drawer.polygon(shape, fill="none",
+                           outline=self.node.linecolor, style=self.node.style)
         else:
-            drawer.polygon(shape, fill=self.node.color, outline=outline,
-                           style=self.node.style)
+            drawer.polygon(shape, fill=self.node.color,
+                           outline=self.node.linecolor, style=self.node.style)
 
 
 def setup(self):

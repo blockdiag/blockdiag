@@ -152,15 +152,21 @@ class Element(Base):
 
 class DiagramNode(Element):
     shape = 'box'
+    linecolor = (0, 0, 0)
 
     @classmethod
     def set_default_shape(cls, shape):
         cls.shape = shape
 
     @classmethod
+    def set_default_linecolor(cls, color):
+        cls.linecolor = images.color_to_rgb(color)
+
+    @classmethod
     def clear(cls):
         super(DiagramNode, cls).clear()
         cls.shape = 'box'
+        cls.linecolor = (0, 0, 0)
 
     def __init__(self, id):
         super(DiagramNode, self).__init__(id)
@@ -178,6 +184,9 @@ class DiagramNode(Element):
     def set_attribute(self, attr):
         super(DiagramNode, self).set_attribute(attr)
         plugins.fire_node_event(self, 'attr_changed', attr)
+
+    def set_linecolor(self, color):
+        self.linecolor = images.color_to_rgb(color)
 
     def set_style(self, value):
         if re.search('^(?:solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
@@ -531,6 +540,7 @@ class Diagram(NodeGroup):
 
     def set_default_line_color(self, color):
         self.linecolor = images.color_to_rgb(color)
+        self._DiagramNode.set_default_linecolor(self.linecolor)
         self._DiagramEdge.set_default_color(self.linecolor)
 
     def set_default_group_color(self, color):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from nose.tools import eq_
+from blockdiag.utils.collections import defaultdict
 from utils import __build_diagram, __validate_node_attributes
 
 
@@ -56,23 +57,25 @@ def test_multiple_node_relation_diagram():
 def test_node_attribute():
     labels = {'A': 'B', 'B': 'double quoted', 'C': 'single quoted',
               'D': '\'"double" quoted\'', 'E': '"\'single\' quoted"',
-              'F': 'F', 'G': 'G', 'H': 'H'}
+              'F': 'F', 'G': 'G', 'H': 'H', 'I': 'I'}
     colors = {'A': (255, 0, 0), 'B': (255, 255, 255), 'C': (255, 0, 0),
               'D': (255, 0, 0), 'E': (255, 0, 0), 'F': (255, 255, 255),
-              'G': (255, 255, 255), 'H': (255, 255, 255)}
-    textcolors = {'A': (0, 0, 0), 'B': (0, 0, 0), 'C': (0, 0, 0),
-                  'D': (0, 0, 0), 'E': (0, 0, 0), 'F': (255, 0, 0),
-                  'G': (0, 0, 0), 'H': (0, 0, 0)}
-    numbered = {'A': None, 'B': None, 'C': None, 'D': None,
-                'E': '1', 'F': None, 'G': None, 'H': None}
-    stacked = {'A': False, 'B': False, 'C': False, 'D': False,
-               'E': False, 'F': False, 'G': True, 'H': False}
-    fontsize = {'A': None, 'B': None, 'C': None, 'D': None,
-                'E': None, 'F': None, 'G': None, 'H': 16}
+              'G': (255, 255, 255), 'H': (255, 255, 255), 'I': (255, 255, 255)}
+    textcolors = defaultdict(lambda: (0, 0, 0))
+    textcolors['F'] = (255, 0, 0)
+    numbered = defaultdict(lambda: None)
+    numbered['E'] = '1'
+    stacked = defaultdict(lambda: False)
+    stacked['G'] = True
+    fontsize = defaultdict(lambda: None)
+    fontsize['H'] = 16
+    linecolors = defaultdict(lambda: (0, 0, 0))
+    linecolors['I'] = (255, 0, 0)
+
     __validate_node_attributes('node_attribute.diag', label=labels,
                                color=colors, textcolor=textcolors,
                                numbered=numbered, stacked=stacked,
-                               fontsize=fontsize)
+                               fontsize=fontsize, linecolor=linecolors)
 
 
 def test_node_height_diagram():

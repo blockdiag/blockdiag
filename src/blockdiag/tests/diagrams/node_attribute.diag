@@ -7,4 +7,5 @@ diagram {
   F [textcolor = red];
   G [stacked];
   H [fontsize = 16];
+  I [linecolor = red];
 }

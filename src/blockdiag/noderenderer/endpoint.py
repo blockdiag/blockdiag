@@ -34,7 +34,6 @@ class EndPoint(NodeShape):
                            XY(self.center.x - self.radius, self.center.y)]
 
     def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         # draw outer circle
@@ -45,7 +44,7 @@ class EndPoint(NodeShape):
             box = self.shift_shadow(box)
             drawer.ellipse(box, fill=fill, outline=fill, filter='transp-blur')
         else:
-            drawer.ellipse(box, fill='white', outline=outline,
+            drawer.ellipse(box, fill='white', outline=self.node.linecolor,
                            style=self.node.style)
 
         # draw inner circle
@@ -53,11 +52,11 @@ class EndPoint(NodeShape):
                   self.center.x + r / 2, self.center.y + r / 2)
         if not kwargs.get('shadow'):
             if self.node.color == self.node.basecolor:
-                color = outline
+                color = self.node.linecolor
             else:
                 color = self.node.color
 
-            drawer.ellipse(box, fill=color, outline=outline,
+            drawer.ellipse(box, fill=color, outline=self.node.linecolor,
                            style=self.node.style)
 
 

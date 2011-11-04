@@ -27,7 +27,6 @@ class Ellipse(NodeShape):
         self.textbox = (box[0] + r, box[1] + r, box[2] - r, box[3] - r)
 
     def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         # draw outline
@@ -40,11 +39,11 @@ class Ellipse(NodeShape):
             drawer.ellipse(box, fill=self.node.color,
                            outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.ellipse(box, fill="none", outline=outline,
-                           style=self.node.style)
+            drawer.ellipse(box, fill="none",
+                           outline=self.node.linecolor, style=self.node.style)
         else:
-            drawer.ellipse(box, fill=self.node.color, outline=outline,
-                           style=self.node.style)
+            drawer.ellipse(box, fill=self.node.color,
+                           outline=self.node.linecolor, style=self.node.style)
 
 
 def setup(self):

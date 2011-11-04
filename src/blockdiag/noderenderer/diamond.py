@@ -35,7 +35,6 @@ class Diamond(NodeShape):
                         (self.connectors[1].y + self.connectors[2].y) / 2)
 
     def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         # draw outline
@@ -47,11 +46,11 @@ class Diamond(NodeShape):
             drawer.polygon(self.connectors, fill=self.node.color,
                            outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.polygon(self.connectors, fill="none", outline=outline,
-                           style=self.node.style)
+            drawer.polygon(self.connectors, fill="none",
+                           outline=self.node.linecolor, style=self.node.style)
         else:
             drawer.polygon(self.connectors, fill=self.node.color,
-                           outline=outline, style=self.node.style)
+                           outline=self.node.linecolor, style=self.node.style)
 
 
 def setup(self):

@@ -133,8 +133,7 @@ class DiagramDraw(object):
     def node(self, node, **kwargs):
         r = noderenderer.get(node.shape)
         shape = r(node, self.metrics)
-        shape.render(self.drawer, self.format,
-                     fill=self.fill, outline=self.diagram.linecolor,
+        shape.render(self.drawer, self.format, fill=self.fill,
                      badgeFill=self.badgeFill)
 
     def group_label(self, group):

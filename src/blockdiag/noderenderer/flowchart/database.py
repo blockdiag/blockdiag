@@ -29,7 +29,6 @@ class Database(NodeShape):
                         m.bottomright.x, m.bottomright.y - r / 2)
 
     def render_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         # draw background
@@ -40,7 +39,6 @@ class Database(NodeShape):
             drawer.loadImage(self.node.background, self.textbox)
 
     def render_shape_background(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)
@@ -53,8 +51,8 @@ class Database(NodeShape):
             drawer.ellipse(ellipse, fill=fill, outline=fill,
                            filter='transp-blur')
         else:
-            drawer.ellipse(ellipse, fill=self.node.color, outline=outline,
-                           style=self.node.style)
+            drawer.ellipse(ellipse, fill=self.node.color,
+                           outline=self.node.linecolor, style=self.node.style)
 
         rect = Box(box[0], box[1] + r, box[2], box[3] - r)
         if kwargs.get('shadow'):
@@ -71,18 +69,18 @@ class Database(NodeShape):
             drawer.ellipse(ellipse, fill=fill, outline=fill,
                            filter='transp-blur')
         else:
-            drawer.ellipse(ellipse, fill=self.node.color, outline=outline,
-                           style=self.node.style)
+            drawer.ellipse(ellipse, fill=self.node.color,
+                           outline=self.node.linecolor, style=self.node.style)
 
         # line both side
         lines = [(XY(box[0], box[1] + r), XY(box[0], box[3] - r)),
                  (XY(box[2], box[1] + r), XY(box[2], box[3] - r))]
         for line in lines:
             if not kwargs.get('shadow'):
-                drawer.line(line, fill=outline, style=self.node.style)
+                drawer.line(line, fill=self.node.linecolor,
+                            style=self.node.style)
 
     def render_vector_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)
@@ -107,18 +105,18 @@ class Database(NodeShape):
             drawer.path(path, fill=self.node.color,
                         outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.path(path, fill="none", outline=outline,
-                        style=self.node.style)
+            drawer.path(path, fill="none",
+                        outline=self.node.linecolor, style=self.node.style)
         else:
-            drawer.path(path, fill=self.node.color, outline=outline,
-                        style=self.node.style)
+            drawer.path(path, fill=self.node.color,
+                        outline=self.node.linecolor, style=self.node.style)
 
         # draw cap of cylinder
         if not kwargs.get('shadow'):
             path = pathdata(box[2], box[1] + r)
             path.ellarc(width / 2, r, 0, 0, 1, box[0], box[1] + r)
-            drawer.path(path, fill=self.node.color, outline=outline,
-                        style=self.node.style)
+            drawer.path(path, fill=self.node.color,
+                        outline=self.node.linecolor, style=self.node.style)
 
 
 def setup(self):

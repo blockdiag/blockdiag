@@ -42,12 +42,10 @@ class Cloud(NodeShape):
         # draw background
         self.render_shape_background(drawer, format, **kwargs)
 
-        # draw outline
         if not kwargs.get('shadow') and self.node.background:
             drawer.loadImage(self.node.background, self.textbox)
 
     def render_shape_background(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)
@@ -78,7 +76,8 @@ class Cloud(NodeShape):
                 drawer.ellipse(e, fill=fill, outline=fill,
                                filter='transp-blur')
             else:
-                drawer.ellipse(e, fill=self.node.color, outline=outline,
+                drawer.ellipse(e, fill=self.node.color,
+                               outline=self.node.linecolor,
                                style=self.node.style)
 
         rects = [Box(pt.x + rx * 2, pt.y + ry * 2,
@@ -95,7 +94,6 @@ class Cloud(NodeShape):
                                  outline=self.node.color)
 
     def render_vector_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         # create pathdata
@@ -124,11 +122,11 @@ class Cloud(NodeShape):
         elif self.node.background:
             drawer.path(path, fill=self.node.color, outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.path(path, fill="none", outline=outline,
+            drawer.path(path, fill="none", outline=self.node.linecolor,
                         style=self.node.style)
         else:
-            drawer.path(path, fill=self.node.color, outline=outline,
-                        style=self.node.style)
+            drawer.path(path, fill=self.node.color,
+                        outline=self.node.linecolor, style=self.node.style)
 
 
 def setup(self):

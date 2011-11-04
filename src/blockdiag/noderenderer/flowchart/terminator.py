@@ -40,7 +40,6 @@ class Terminator(NodeShape):
             drawer.loadImage(self.node.background, self.textbox)
 
     def render_shape_background(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)
@@ -56,7 +55,8 @@ class Terminator(NodeShape):
                 drawer.ellipse(e, fill=fill, outline=fill,
                                filter='transp-blur')
             else:
-                drawer.ellipse(e, fill=self.node.color, outline=outline,
+                drawer.ellipse(e, fill=self.node.color,
+                               outline=self.node.linecolor,
                                style=self.node.style)
 
         rect = Box(box[0] + r, box[1], box[2] - r, box[3])
@@ -75,7 +75,6 @@ class Terminator(NodeShape):
                 drawer.line(line, fill=outline, style=self.node.style)
 
     def render_vector_shape(self, drawer, format, **kwargs):
-        outline = kwargs.get('outline')
         fill = kwargs.get('fill')
 
         # create pathdata
@@ -101,11 +100,11 @@ class Terminator(NodeShape):
         elif self.node.background:
             drawer.path(path, fill=self.node.color, outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
-            drawer.path(path, fill="none", outline=outline,
-                        style=self.node.style)
+            drawer.path(path, fill="none",
+                        outline=self.node.linecolor, style=self.node.style)
         else:
-            drawer.path(path, fill=self.node.color, outline=outline,
-                        style=self.node.style)
+            drawer.path(path, fill=self.node.color,
+                        outline=self.node.linecolor, style=self.node.style)
 
 
 def setup(self):
