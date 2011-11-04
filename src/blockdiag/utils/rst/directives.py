@@ -59,6 +59,9 @@ class blockdiag(nodes.General, nodes.Element):
 
 class BlockdiagDirectiveBase(rst.Directive):
     """ Directive to insert arbitrary dot markup. """
+    name = "blockdiag"
+    node_class = blockdiag
+
     has_content = True
     required_arguments = 0
     optional_arguments = 1
@@ -73,9 +76,9 @@ class BlockdiagDirectiveBase(rst.Directive):
         if self.arguments:
             document = self.state.document
             if self.content:
-                return [document.reporter.warning(
-                    'blockdiag directive cannot have both content and '
-                    'a filename argument', line=self.lineno)]
+                msg = ('%s directive cannot have both content and '
+                       'a filename argument' % self.name)
+                return [document.reporter.warning(msg, line=self.lineno)]
 
             env = self.state.document.settings.env
             rel_filename, filename = relfn2path(env, self.arguments[0])
@@ -87,19 +90,19 @@ class BlockdiagDirectiveBase(rst.Directive):
                 finally:
                     fp.close()
             except (IOError, OSError):
-                return [document.reporter.warning(
-                    'External blockdiag file %r not found or reading '
-                    'it failed' % filename, line=self.lineno)]
+                msg = 'External %s file %r not found or reading it failed' % \
+                      (self.name, filename)
+                return [document.reporter.warning(msg, line=self.lineno)]
         else:
             dotcode = '\n'.join(self.content)
             if not dotcode.strip():
-                return [self.state_machine.reporter.warning(
-                    'Ignoring "blockdiag" directive without content.',
-                    line=self.lineno)]
+                msg = 'Ignoring "%s" directive without content.' % self.name
+                return [self.state_machine.reporter.warning(msg,
+                                                            line=self.lineno)]
 
-        node = blockdiag()
+        node = self.node_class()
         node['code'] = dotcode
-        node['alt'] = self.options['alt']
+        node['alt'] = self.options.get('alt')
         node['options'] = {}
         if 'maxwidth' in self.options:
             node['options']['maxwidth'] = self.options['maxwidth']
@@ -121,6 +124,11 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             del node['options']['desctable']
             results.append(self.description_table(diagram))
 
+        results[0] = self.node2image(node, diagram)
+
+        return results
+
+    def node2image(self, node, diagram):
         filename = self._filename(node)
         if not os.path.isfile(filename):
             # FIXME: maxwidth parameter is ignored
@@ -130,12 +138,12 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             drawer.draw()
             drawer.save()
 
-        if 'alt' in node:
-            results[0] = nodes.image(uri=filename, alt=node['alt'])
+        if node['alt']:
+            image = nodes.image(uri=filename, alt=node['alt'])
         else:
-            results[0] = nodes.image(uri=filename)
+            image = nodes.image(uri=filename)
 
-        return results
+        return image
 
     def detectfont(self):
         Options = namedtuple('Options', 'font')
@@ -156,8 +164,9 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         options = dict(node['options'])
         options.update(font=fontpath, antialias=antialias)
-        hashed = node['code'].encode('utf-8') + str(options)
-        return "blockdiag-%s.%s" % (sha(hashed).hexdigest(), format.lower())
+        hashseed = node['code'].encode('utf-8') + str(options)
+        hashed = sha(hashseed).hexdigest()
+        return "%s-%s.%s" % (self.name, hashed, format.lower())
 
     def description_table(self, diagram):
         descriptions = []
@@ -169,15 +178,15 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         if any(desc[0] for desc in descriptions):
             widths = [20, 40, 40]
-            labels = ['No', 'Name', 'Description']
+            headers = ['No', 'Name', 'Description']
         else:
             widths = [50, 50]
             descriptions = [desc[1:] for desc in descriptions]
-            labels = ['Name', 'Description']
+            headers = ['Name', 'Description']
 
-        return self._description_table(descriptions, widths, labels)
+        return self._description_table(descriptions, widths, headers)
 
-    def _description_table(self, descriptions, widths, labels):
+    def _description_table(self, descriptions, widths, headers):
         # generate table-root
         tgroup = nodes.tgroup(cols=len(widths))
         for width in widths:
@@ -188,9 +197,9 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         # generate table-header
         thead = nodes.thead()
         row = nodes.row()
-        for label in labels:
+        for header in headers:
             entry = nodes.entry()
-            entry += nodes.paragraph(text=label)
+            entry += nodes.paragraph(text=header)
             row += entry
         thead += row
         tgroup += thead
