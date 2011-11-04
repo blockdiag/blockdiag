@@ -26,8 +26,8 @@ class AutoClass(plugins.NodeHandler):
             pattern = "_%s$" % re.escape(name)
 
             if re.search(pattern, node.id):
-                node.set_attributes(klass.attrs)
                 node.label = re.sub(pattern, '', node.id)
+                node.set_attributes(klass.attrs)
 
 
 def setup(self, diagram):
