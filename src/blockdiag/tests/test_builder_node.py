@@ -105,3 +105,13 @@ def test_twin_multiple_parent_node_diagram():
 def test_flowable_node_diagram():
     positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'Z': (0, 1)}
     __validate_node_attributes('flowable_node.diag', xy=positions)
+
+
+def test_plugin_autoclass_diagram():
+    positions = {'A_emphasis': (0, 0), 'B_emphasis': (1, 0), 'C': (1, 1)}
+    styles = {'A_emphasis': 'dashed', 'B_emphasis': 'dashed', 'C': None}
+    colors = {'A_emphasis': (255, 0, 0), 'B_emphasis': (255, 0, 0),
+              'C': (255, 255, 255)}
+
+    __validate_node_attributes('plugin_autoclass.diag', xy=positions,
+                                style=styles, color=colors)
