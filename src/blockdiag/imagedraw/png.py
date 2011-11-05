@@ -82,15 +82,18 @@ def dashize_line(line, length):
             yield (p1, p2)
 
 
-def style2cycle(style):
+def style2cycle(style, thick):
+    if thick is None:
+        thick = 1
+
     if style == 'dotted':
-        length = [2, 2]
+        length = [2 * thick, 2 * thick]
     elif style == 'dashed':
-        length = [4, 4]
+        length = [4 * thick, 4 * thick]
     elif style == 'none':
-        length = [0, 65535]
+        length = [0, 65535 * thick]
     elif re.search('^\d+(,\d+)*$', style or ""):
-        length = [int(n) for n in style.split(',')]
+        length = [int(n) * thick for n in style.split(',')]
     else:
         length = None
 
@@ -141,7 +144,7 @@ class ImageDrawEx(object):
             while start > end:
                 end += 360
 
-            cycle = style2cycle(style)
+            cycle = style2cycle(style, kwargs.get('width'))
             for pt in ellipse.dots(box, cycle, start, end):
                 self.draw.line([pt, pt], fill=kwargs['fill'])
         else:
@@ -166,7 +169,7 @@ class ImageDrawEx(object):
                 kwargs['fill'] = kwargs['outline']
                 del kwargs['outline']
 
-            cycle = style2cycle(style)
+            cycle = style2cycle(style, kwargs.get('width'))
             for pt in ellipse.dots(box, cycle):
                 self.draw.line([pt, pt], fill=kwargs['fill'])
         else:
@@ -199,7 +202,7 @@ class ImageDrawEx(object):
         style = kwargs.get('style')
         del kwargs['style']
 
-        cycle = style2cycle(style)
+        cycle = style2cycle(style, kwargs.get('width'))
         for line in line_segments(xy):
             for subline in dashize_line(line, cycle):
                 self.line(subline, **kwargs)
