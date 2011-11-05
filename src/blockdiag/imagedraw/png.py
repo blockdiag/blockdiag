@@ -87,6 +87,8 @@ def style2cycle(style):
         length = [2, 2]
     elif style == 'dashed':
         length = [4, 4]
+    elif style == 'none':
+        length = [0, 65535]
     elif re.search('^\d+(,\d+)*$', style or ""):
         length = [int(n) for n in style.split(',')]
     else:
@@ -184,7 +186,7 @@ class ImageDrawEx(object):
         style = kwargs.get('style')
         if kwargs.get('fill') == 'none':
             pass
-        elif style in ('dotted', 'dashed') or \
+        elif style in ('dotted', 'dashed', 'none') or \
              re.search('^\d+(,\d+)*$', style or ""):
             self.dashed_line(xy, **kwargs)
         else:
@@ -203,7 +205,7 @@ class ImageDrawEx(object):
                 self.line(subline, **kwargs)
 
     def rectangle(self, box, **kwargs):
-        thick = kwargs.get('width', self.scale_ratio)
+        thick = kwargs.get('thick', self.scale_ratio)
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
         style = kwargs.get('style')

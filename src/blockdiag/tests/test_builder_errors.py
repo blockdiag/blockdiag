@@ -50,6 +50,11 @@ def test_unknown_edge_hstyle_diagram():
     diagram = __build_diagram('errors/unknown_edge_hstyle.diag')
 
 
+@raises(AttributeError)
+def test_unknown_group_shape_diagram():
+    diagram = __build_diagram('errors/unknown_group_shape.diag')
+
+
 @raises(RuntimeError)
 def test_belongs_to_two_groups_diagram():
     diagram = __build_diagram('errors/belongs_to_two_groups.diag')

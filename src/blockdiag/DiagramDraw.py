@@ -108,8 +108,9 @@ class DiagramDraw(object):
     def _draw_background(self):
         # Draw node groups.
         for group in self.groups:
-            box = self.metrics.group(group).marginbox
-            self.drawer.rectangle(box, fill=group.color, filter='blur')
+            if group.shape == 'box':
+                box = self.metrics.group(group).marginbox
+                self.drawer.rectangle(box, fill=group.color, filter='blur')
 
         # Drop node shadows.
         for node in self.nodes:
@@ -129,6 +130,12 @@ class DiagramDraw(object):
 
         for edge in self.edges:
             self.edge(edge)
+
+        for group in self.groups:
+            if group.shape == 'line':
+                box = self.metrics.group(group).marginbox
+                self.drawer.rectangle(box, fill='none', outline=group.color,
+                                      style=group.style, thick=group.thick)
 
     def node(self, node, **kwargs):
         r = noderenderer.get(node.shape)

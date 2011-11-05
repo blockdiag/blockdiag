@@ -70,6 +70,8 @@ class PDFImageDraw(object):
             self.canvas.setDash([2, 2])
         elif style == 'dashed':
             self.canvas.setDash([4, 4])
+        elif style == 'none':
+            self.canvas.setDash([0, 65535])
         elif re.search('^\d+(,\d+)*$', style or ""):
             self.canvas.setDash([int(n) for n in style.split(',')])
         else:

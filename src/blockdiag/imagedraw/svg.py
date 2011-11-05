@@ -57,6 +57,8 @@ class SVGImageDrawElement(object):
             length = 2
         elif name == 'dashed':
             length = 4
+        elif name == 'none':
+            length = "0 65535"
         elif re.search('^\d+(,\d+)*$', name or ""):
             length = re.sub(',', ' ', name)
         else:
@@ -76,7 +78,7 @@ class SVGImageDrawElement(object):
         self.svg.addElement(p)
 
     def rectangle(self, box, **kwargs):
-        thick = kwargs.get('width')
+        thick = kwargs.get('thick')
         fill = kwargs.get('fill', 'none')
         outline = kwargs.get('outline')
         style = kwargs.get('style')
