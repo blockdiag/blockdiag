@@ -25,15 +25,22 @@ def istep(seq, step=2):
 def stepslice(iterable, steps):
     iterable = iter(iterable)
     step = cycle(steps)
-    yield iterable.next()
 
     while True:
         # skip (1)
-        for i in xrange(step.next() - 1):
-            iterable.next()
-        yield iterable.next()
+        n = step.next()
+        if n == 0:
+            pass
+        elif n == 1:
+            o = iterable.next()
+            yield o
+            yield o
+        else:
+            yield iterable.next()
+            for i in xrange(n - 2):
+                iterable.next()
+            yield iterable.next()
 
         # skip (2)
-        for i in xrange(step.next() - 1):
+        for i in xrange(step.next()):
             iterable.next()
-        yield iterable.next()

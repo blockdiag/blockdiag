@@ -47,6 +47,7 @@ def test_group_attribute():
     for node in (x for x in diagram.nodes if not x.drawable):
         node.color = 'red'
         node.label = 'group label'
+        node.shape = 'line'
 
 
 def test_merge_groups_diagram():

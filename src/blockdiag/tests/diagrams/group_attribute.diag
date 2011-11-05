@@ -2,6 +2,7 @@
   group {
     color = "red";
     label = "group label";
+    shape = "line";
 
     A;
   }

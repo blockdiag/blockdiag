@@ -49,6 +49,7 @@ class Base(object):
     basecolor = (255, 255, 255)
     textcolor = (0, 0, 0)
     fontsize = None
+    style = None
     int_attrs = ['colwidth', 'colheight', 'fontsize']
 
     @classmethod
@@ -92,6 +93,14 @@ class Base(object):
     def set_attributes(self, attrs):
         for attr in attrs:
             self.set_attribute(attr)
+
+    def set_style(self, value):
+        if re.search('^(?:none|solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
+            self.style = value.lower()
+        else:
+            class_name = self.__class__.__name__
+            msg = "WARNING: unknown %s style: %s\n" % (class_name, value)
+            raise AttributeError(msg)
 
 
 class Element(Base):
@@ -172,7 +181,6 @@ class DiagramNode(Element):
         super(DiagramNode, self).__init__(id)
 
         self.label = unquote(id) or ''
-        self.style = None
         self.numbered = None
         self.icon = None
         self.background = None
@@ -187,13 +195,6 @@ class DiagramNode(Element):
 
     def set_linecolor(self, color):
         self.linecolor = images.color_to_rgb(color)
-
-    def set_style(self, value):
-        if re.search('^(?:solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
-            self.style = value.lower()
-        else:
-            msg = "WARNING: unknown node style: %s\n" % value
-            raise AttributeError(msg)
 
     def set_shape(self, value):
         try:
@@ -235,6 +236,7 @@ class NodeGroup(Element):
         self.level = 0
         self.separated = False
         self.shape = 'box'
+        self.thick = 3
         self.nodes = []
         self.edges = []
         self.icon = None
@@ -308,6 +310,14 @@ class NodeGroup(Element):
             self.orientation = value
         else:
             msg = "WARNING: unknown diagram orientation: %s\n" % value
+            raise AttributeError(msg)
+
+    def set_shape(self, value):
+        value = value.lower()
+        if value in ('box', 'line'):
+            self.shape = value
+        else:
+            msg = "WARNING: unknown group shape: %s\n" % value
             raise AttributeError(msg)
 
 
@@ -399,7 +409,6 @@ class DiagramEdge(Base):
         self.label = None
         self.dir = 'forward'
         self.color = self.basecolor
-        self.style = None
         self.hstyle = None
         self.folded = None
         self.thick = None
@@ -434,13 +443,6 @@ class DiagramEdge(Base):
 
     def set_color(self, color):
         self.color = images.color_to_rgb(color)
-
-    def set_style(self, value):
-        if re.search('^(?:none|solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
-            self.style = value.lower()
-        else:
-            msg = "WARNING: unknown edge style: %s\n" % value
-            raise AttributeError(msg)
 
     def set_hstyle(self, value):
         value = value.lower()
