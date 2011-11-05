@@ -52,28 +52,33 @@ class SVGImageDrawElement(object):
 
         return filter
 
-    def style(self, name):
+    def style(self, name, thick):
+        if thick is None:
+            thick = 1
+
         if name == 'dotted':
-            length = 2
+            length = 2 * thick
         elif name == 'dashed':
-            length = 4
+            length = 4 * thick
         elif name == 'none':
-            length = "0 65535"
+            length = "%d %d" % (0, 65535 * thick)
         elif re.search('^\d+(,\d+)*$', name or ""):
-            length = re.sub(',', ' ', name)
+            l = [int(n) * thick for n in name.split(",")]
+            length = " ".join(str(n) for n in l)
         else:
             length = None
 
         return length
 
     def path(self, pd, **kwargs):
+        thick = kwargs.get('thick')
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
         style = kwargs.get('style')
         filter = kwargs.get('filter')
 
         p = path(pd, fill=self.rgb(fill), stroke=self.rgb(outline),
-                 stroke_dasharray=self.style(style),
+                 stroke_dasharray=self.style(style, thick),
                  style=self.filter(filter))
         self.svg.addElement(p)
 
@@ -91,7 +96,7 @@ class SVGImageDrawElement(object):
 
         r = rect(x, y, width, height, fill=self.rgb(fill),
                  stroke=self.rgb(outline), stroke_width=thick,
-                 stroke_dasharray=self.style(style),
+                 stroke_dasharray=self.style(style, thick),
                  style=self.filter(filter))
         self.svg.addElement(r)
 
@@ -130,10 +135,11 @@ class SVGImageDrawElement(object):
             pd.line(pt.x, pt.y)
 
         p = path(pd, fill="none", stroke=self.rgb(fill),
-                 stroke_width=thick, stroke_dasharray=self.style(style))
+                 stroke_width=thick, stroke_dasharray=self.style(style, thick))
         self.svg.addElement(p)
 
     def arc(self, xy, start, end, **kwargs):
+        thick = kwargs.get('thick')
         fill = kwargs.get('fill')
         style = kwargs.get('style')
 
@@ -163,10 +169,11 @@ class SVGImageDrawElement(object):
         pd = pathdata(pt1[0], pt1[1])
         pd.ellarc(w, h, 0, largearc, 1, pt2[0], pt2[1])
         p = path(pd, fill="none", stroke=self.rgb(fill),
-                 stroke_dasharray=self.style(style))
+                 stroke_dasharray=self.style(style, thick))
         self.svg.addElement(p)
 
     def ellipse(self, xy, **kwargs):
+        thick = kwargs.get('thick')
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
         style = kwargs.get('style')
@@ -178,18 +185,19 @@ class SVGImageDrawElement(object):
 
         e = ellipse(pt.x, pt.y, w, h, fill=self.rgb(fill),
                     stroke=self.rgb(outline),
-                    stroke_dasharray=self.style(style),
+                    stroke_dasharray=self.style(style, thick),
                     style=self.filter(filter))
         self.svg.addElement(e)
 
     def polygon(self, xy, **kwargs):
+        thick = kwargs.get('thick')
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
         style = kwargs.get('style')
         filter = kwargs.get('filter')
 
         pg = polygon(xy, fill=self.rgb(fill), stroke=self.rgb(outline),
-                     stroke_dasharray=self.style(style),
+                     stroke_dasharray=self.style(style, thick),
                      style=self.filter(filter))
         self.svg.addElement(pg)
 

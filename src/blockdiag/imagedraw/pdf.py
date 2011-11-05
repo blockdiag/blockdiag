@@ -50,7 +50,7 @@ class PDFImageDraw(object):
     def set_render_params(self, **kwargs):
         self.set_stroke_color(kwargs.get('outline'))
         self.set_fill_color(kwargs.get('fill', 'none'))
-        self.set_style(kwargs.get('style'))
+        self.set_style(kwargs.get('style'), kwargs.get('thick'))
 
         params = {}
         if kwargs.get('fill', 'none') == 'none':
@@ -65,15 +65,18 @@ class PDFImageDraw(object):
 
         return params
 
-    def set_style(self, style):
+    def set_style(self, style, thick):
+        if thick is None:
+            thick = 1
+
         if style == 'dotted':
-            self.canvas.setDash([2, 2])
+            self.canvas.setDash([2 * thick, 2 * thick])
         elif style == 'dashed':
-            self.canvas.setDash([4, 4])
+            self.canvas.setDash([4 * thick, 4 * thick])
         elif style == 'none':
-            self.canvas.setDash([0, 65535])
+            self.canvas.setDash([0, 65535 * thick])
         elif re.search('^\d+(,\d+)*$', style or ""):
-            self.canvas.setDash([int(n) for n in style.split(',')])
+            self.canvas.setDash([int(n) * thick for n in style.split(',')])
         else:
             self.canvas.setDash()
 
@@ -106,8 +109,14 @@ class PDFImageDraw(object):
         width = box[2] - box[0]
         height = box[3] - box[1]
 
+        if 'thick' in kwargs and kwargs['thick'] is not None:
+            self.canvas.setLineWidth(kwargs['thick'])
+
         params = self.set_render_params(**kwargs)
         self.canvas.rect(x, y, width, height, **params)
+
+        if 'thick' in kwargs:
+            self.canvas.setLineWidth(1)
 
     def text(self, xy, string, **kwargs):
         fontsize = kwargs.get('fontsize') or self.fontsize
@@ -137,7 +146,7 @@ class PDFImageDraw(object):
 
     def line(self, xy, **kwargs):
         self.set_stroke_color(kwargs.get('fill', 'none'))
-        self.set_style(kwargs.get('style'))
+        self.set_style(kwargs.get('style'), kwargs.get('thick'))
 
         if 'thick' in kwargs and kwargs['thick'] is not None:
             self.canvas.setLineWidth(kwargs['thick'])
