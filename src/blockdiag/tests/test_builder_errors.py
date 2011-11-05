@@ -36,6 +36,11 @@ def test_unknown_node_style_diagram():
 
 
 @raises(AttributeError)
+def test_unknown_node_class_diagram():
+    diagram = __build_diagram('errors/unknown_node_class.diag')
+
+
+@raises(AttributeError)
 def test_unknown_edge_dir_diagram():
     diagram = __build_diagram('errors/unknown_edge_dir.diag')
 
@@ -51,8 +56,23 @@ def test_unknown_edge_hstyle_diagram():
 
 
 @raises(AttributeError)
+def test_unknown_edge_class_diagram():
+    diagram = __build_diagram('errors/unknown_edge_class.diag')
+
+
+@raises(AttributeError)
 def test_unknown_group_shape_diagram():
     diagram = __build_diagram('errors/unknown_group_shape.diag')
+
+
+@raises(AttributeError)
+def test_unknown_group_class_diagram():
+    diagram = __build_diagram('errors/unknown_group_class.diag')
+
+
+@raises(AttributeError)
+def test_unknown_group_orientation_diagram():
+    diagram = __build_diagram('errors/unknown_group_orientation.diag')
 
 
 @raises(RuntimeError)
