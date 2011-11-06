@@ -94,8 +94,8 @@ class BlockdiagDirectiveBase(rst.Directive):
                       (self.name, filename)
                 return [document.reporter.warning(msg, line=self.lineno)]
         else:
-            dotcode = '\n'.join(self.content)
-            if not dotcode.strip():
+            dotcode = '\n'.join(self.content).strip()
+            if not dotcode:
                 msg = 'Ignoring "%s" directive without content.' % self.name
                 return [self.state_machine.reporter.warning(msg,
                                                             line=self.lineno)]
@@ -117,6 +117,9 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         results = super(BlockdiagDirective, self).run()
 
         node = results[0]
+        if not isinstance(node, self.node_class):
+            return results
+
         diagram = self.node2diagram(node)
 
         if 'desctable' in node['options']:
