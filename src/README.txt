@@ -113,6 +113,11 @@ Apache License 2.0
 History
 =======
 
+1.0.1 (2011-11-06)
+------------------
+* Add group attribute: shape
+* Fix bugs
+
 1.0.0 (2011-11-04)
 ------------------
 * Add node attribute: linecolor
