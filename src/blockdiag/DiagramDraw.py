@@ -125,9 +125,6 @@ class DiagramDraw(object):
         for node in self.nodes:
             self.node(node, **kwargs)
 
-        for node in self.groups:
-            self.group_label(node, **kwargs)
-
         for edge in self.edges:
             self.edge(edge)
 
@@ -136,6 +133,9 @@ class DiagramDraw(object):
                 box = self.metrics.group(group).marginbox
                 self.drawer.rectangle(box, fill='none', outline=group.color,
                                       style=group.style, thick=group.thick)
+
+        for node in self.groups:
+            self.group_label(node, **kwargs)
 
     def node(self, node, **kwargs):
         r = noderenderer.get(node.shape)
