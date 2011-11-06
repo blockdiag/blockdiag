@@ -332,8 +332,8 @@ class SpreadSheetMetrics(object):
         dummy = DiagramNode(None)
         dummy.xy = XY(width - 1, height - 1)
         x, y = self._node_bottomright(dummy, use_padding=False)
-        x_span = self.span_width[width + 1]
-        y_span = self.span_height[height + 1]
+        x_span = self.span_width[width]
+        y_span = self.span_height[height]
         return XY(x + margin.x + padding[1] + x_span,
                   y + margin.y + padding[2] + y_span)
 
