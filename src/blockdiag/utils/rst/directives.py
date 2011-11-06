@@ -33,10 +33,10 @@ def relfn2path(env, filename):
     if filename.startswith('/') or filename.startswith(os.sep):
         relfn = filename[1:]
     else:
-        path = env.doct2path(env.docname, base=None)
+        path = env.doc2path(env.docname, base=None)
         relfn = os.path.join(os.path.dirname(path), filename)
 
-    return relfn, os.path.join(env.srtdir, relfn)
+    return relfn, os.path.join(env.srcdir, relfn)
 
 
 def cmp_node_number(a, b):
