@@ -117,8 +117,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         results = super(BlockdiagDirective, self).run()
 
         node = results[0]
-        tree = diagparser.parse_string(node['code'])
-        diagram = ScreenNodeBuilder.build(tree)
+        diagram = self.node2diagram(node)
 
         if 'desctable' in node['options']:
             del node['options']['desctable']
@@ -127,6 +126,10 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         results[0] = self.node2image(node, diagram)
 
         return results
+
+    def node2diagram(self, node):
+        tree = diagparser.parse_string(node['code'])
+        return ScreenNodeBuilder.build(tree)
 
     def node2image(self, node, diagram):
         filename = self._filename(node)
