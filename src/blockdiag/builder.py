@@ -409,7 +409,7 @@ class DiagramLayoutManager:
                 if prev_child and grandchild > 1 and \
                    not self.is_rhombus(prev_child, child):
                     coord = [p.y for p in self.coordinates if p.x > child.xy.x]
-                    if coord:
+                    if coord and max(coord) >= node.xy.y:
                         height = max(coord) + 1
 
                 while True:
