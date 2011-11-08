@@ -291,7 +291,12 @@ class SpreadSheetMetrics(object):
 
         if use_padding:
             xdiff = (self.node_width[x] - (node.width or m.node_width)) / 2
+            if xdiff < 0:
+                xdiff = 0
+
             ydiff = (self.node_height[y] - (node.height or m.node_height)) / 2
+            if ydiff < 0:
+                ydiff = 0
         else:
             xdiff = 0
             ydiff = 0
@@ -315,7 +320,12 @@ class SpreadSheetMetrics(object):
 
         if use_padding:
             xdiff = (self.node_width[x] - (node.width or m.node_width)) / 2
+            if xdiff < 0:
+                xdiff = 0
+
             ydiff = (self.node_height[y] - (node.height or m.node_height)) / 2
+            if ydiff < 0:
+                ydiff = 0
         else:
             xdiff = 0
             ydiff = 0
