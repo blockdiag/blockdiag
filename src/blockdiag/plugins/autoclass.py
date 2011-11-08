@@ -30,5 +30,5 @@ class AutoClass(plugins.NodeHandler):
                 node.set_attributes(klass.attrs)
 
 
-def setup(self, diagram):
-    plugins.install_node_handler(AutoClass(diagram))
+def setup(self, diagram, **kwargs):
+    plugins.install_node_handler(AutoClass(diagram, **kwargs))

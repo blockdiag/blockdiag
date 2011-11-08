@@ -518,6 +518,14 @@ class Diagram(NodeGroup):
         self.default_fontsize = None
         self.edge_layout = None
 
+    def set_plugin(self, name, attrs):
+        try:
+            kwargs = dict([attr.name, unquote(attr.value)] for attr in attrs)
+            plugins.load([name], diagram=self, **kwargs)
+        except:
+            msg = "WARNING: fail to load plugin: %s\n" % name
+            raise AttributeError(msg)
+
     def set_plugins(self, value):
         modules = [name.strip() for name in value.split(',')]
         plugins.load(modules, diagram=self)

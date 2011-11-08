@@ -22,13 +22,14 @@ from utils import XY
 
 class DiagramTreeBuilder:
     def build(self, tree):
-        diagram = self.instantiate(Diagram(), tree)
-        for subgroup in diagram.traverse_groups():
+        self.diagram = Diagram()
+        self.instantiate(self.diagram, tree)
+        for subgroup in self.diagram.traverse_groups():
             if len(subgroup.nodes) == 0:
                 subgroup.group.nodes.remove(subgroup)
 
-        self.bind_edges(diagram)
-        return diagram
+        self.bind_edges(self.diagram)
+        return self.diagram
 
     def is_related_group(self, group1, group2):
         if group1.is_parent(group2) or group2.is_parent(group1):
@@ -118,6 +119,9 @@ class DiagramTreeBuilder:
             elif isinstance(stmt, diagparser.AttrClass):
                 name = unquote(stmt.name)
                 Diagram.classes[name] = stmt
+
+            elif isinstance(stmt, diagparser.AttrPlugin):
+                self.diagram.set_plugin(stmt.name, stmt.attrs)
 
         group.update_order()
         return group
