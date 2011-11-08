@@ -19,12 +19,12 @@ from blockdiag.utils import images, Box, XY
 node_handlers = []
 
 
-def load(plugins, diagram):
+def load(plugins, diagram, **kwargs):
     for name in plugins:
         for ep in iter_entry_points('blockdiag_plugins', name):
             module = ep.load()
             if hasattr(module, 'setup'):
-                module.setup(module, diagram)
+                module.setup(module, diagram, **kwargs)
             break
         else:
             msg = "WARNING: unknown plugin: %s\n" % name
@@ -43,7 +43,7 @@ def fire_node_event(node, name, *args):
 
 
 class NodeHandler(object):
-    def __init__(self, diagram):
+    def __init__(self, diagram, **kwargs):
         self.diagram = diagram
 
     def on_created(self, node):
