@@ -15,7 +15,6 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
 
 
 class Ellipse(NodeShape):

@@ -13,8 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-import re
 from elements import *
 import diagparser
 from utils import XY
@@ -175,7 +173,6 @@ class DiagramLayoutManager:
         self.adjust_node_order()
 
         height = 0
-        toplevel_nodes = [x for x in self.diagram.nodes if x.xy.x == 0]
         for node in self.diagram.nodes:
             if node.xy.x == 0:
                 self.set_node_height(node, height)

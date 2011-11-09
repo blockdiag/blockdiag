@@ -29,13 +29,10 @@ class Terminator(NodeShape):
                         m.bottomright.x - r, m.bottomright.y)
 
     def render_shape(self, drawer, format, **kwargs):
-        fill = kwargs.get('fill')
-
         # draw background
         self.render_shape_background(drawer, format, **kwargs)
 
         # draw outline
-        box = self.metrics.cell(self.node).box
         if not kwargs.get('shadow') and self.node.background:
             drawer.loadImage(self.node.background, self.textbox)
 

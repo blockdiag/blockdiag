@@ -13,9 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-import math
-from utils import XY
 import noderenderer
 import imagedraw
 from DiagramMetrics import AutoScaler

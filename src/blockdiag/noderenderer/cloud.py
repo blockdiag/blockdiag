@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY, Box
+from blockdiag.utils import Box
 from blockdiag.imagedraw.simplesvg import pathdata
 
 
@@ -23,7 +23,6 @@ class Cloud(NodeShape):
     def __init__(self, node, metrics=None):
         super(Cloud, self).__init__(node, metrics)
 
-        r = metrics.cellsize
         pt = metrics.cell(node).topleft
         rx = (self.node.width or self.metrics.node_width) / 12
         ry = (self.node.height or self.metrics.node_height) / 5
@@ -31,14 +30,6 @@ class Cloud(NodeShape):
                         pt.x + rx * 11, pt.y + ry * 4)
 
     def render_shape(self, drawer, format, **kwargs):
-        fill = kwargs.get('fill')
-
-        m = self.metrics.cell(self.node)
-        pt = m.topleft
-        rx = (self.node.width or self.metrics.node_width) / 12
-        ry = (self.node.height or self.metrics.node_height) / 5
-        textbox = (pt.x + rx * 3, pt.y + ry, pt.x + rx * 10, pt.y + ry * 4)
-
         # draw background
         self.render_shape_background(drawer, format, **kwargs)
 

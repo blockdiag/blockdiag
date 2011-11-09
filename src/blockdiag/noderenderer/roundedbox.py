@@ -33,8 +33,6 @@ class RoundedBox(NodeShape):
             self.render_shape_outline(drawer, format, **kwargs)
 
     def render_shape_outline(self, drawer, format, **kwargs):
-        fill = kwargs.get('fill')
-
         m = self.metrics.cell(self.node)
         r = self.metrics.cellsize
         box = m.box

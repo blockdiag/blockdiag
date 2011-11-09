@@ -29,8 +29,6 @@ class Database(NodeShape):
                         m.bottomright.x, m.bottomright.y - r / 2)
 
     def render_shape(self, drawer, format, **kwargs):
-        fill = kwargs.get('fill')
-
         # draw background
         self.render_shape_background(drawer, format, **kwargs)
 

@@ -25,8 +25,8 @@ class Input(NodeShape):
         m = self.metrics.cell(self.node)
         r = self.metrics.cellsize * 3
 
-        textbox = (m.topleft.x + r, m.topleft.y,
-                   m.bottomright.x - r, m.bottomright.y)
+        self.textbox = (m.topleft.x + r, m.topleft.y,
+                        m.bottomright.x - r, m.bottomright.y)
 
     def render_shape(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')
