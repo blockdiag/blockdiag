@@ -17,10 +17,8 @@ import re
 import sys
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.lib.units import inch
-from blockdiag.utils import urlutil, XY
+from blockdiag.utils import urlutil
 from blockdiag.utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 

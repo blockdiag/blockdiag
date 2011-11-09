@@ -23,7 +23,6 @@ class LoopOut(NodeShape):
         super(LoopOut, self).__init__(node, metrics)
 
         m = self.metrics.cell(self.node)
-        xdiff = self.metrics.node_width / 4
         ydiff = self.metrics.node_height / 4
 
         self.textbox = (m.topleft.x, m.topleft.y,

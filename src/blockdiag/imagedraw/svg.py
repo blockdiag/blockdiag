@@ -14,11 +14,9 @@
 #  limitations under the License.
 
 import re
-import sys
 import base64
 from blockdiag.utils import urlutil, XY
 from simplesvg import *
-import xml.sax.saxutils
 
 try:
     from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder

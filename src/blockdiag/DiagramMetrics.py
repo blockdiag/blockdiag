@@ -17,7 +17,7 @@ import copy
 from elements import DiagramNode
 import noderenderer
 from utils import Box, Size, XY
-from utils.collections import defaultdict, namedtuple
+from utils.collections import defaultdict
 
 cellsize = 8
 

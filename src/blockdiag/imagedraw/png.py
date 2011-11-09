@@ -15,8 +15,8 @@
 
 import re
 import math
-from itertools import islice, izip, tee
-from blockdiag.utils import ellipse, urlutil, XY
+from itertools import izip, tee
+from blockdiag.utils import ellipse, urlutil
 from blockdiag.utils.myitertools import istep, stepslice
 from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
 try:
@@ -123,7 +123,6 @@ class ImageDrawEx(object):
         self.fontsize = fontsize
 
     def resizeCanvas(self, size):
-        image = self.image.resize(size, Image.ANTIALIAS)
         self.image = self.image.resize(size, Image.ANTIALIAS)
         self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 

@@ -23,11 +23,10 @@ class LoopIn(NodeShape):
         super(LoopIn, self).__init__(node, metrics)
 
         m = self.metrics.cell(self.node)
-        xdiff = self.metrics.node_width / 4
         ydiff = self.metrics.node_height / 4
 
-        textbox = (m.topleft.x, m.topleft.y + ydiff,
-                   m.bottomright.x, m.bottomright.y)
+        self.textbox = (m.topleft.x, m.topleft.y + ydiff,
+                        m.bottomright.x, m.bottomright.y)
 
     def render_shape(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')
