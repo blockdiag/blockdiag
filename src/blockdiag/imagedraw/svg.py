@@ -15,7 +15,7 @@
 
 import re
 import base64
-from blockdiag.utils import urlutil, XY
+from blockdiag.utils import urlutil, Box, XY
 from simplesvg import *
 
 try:
@@ -27,8 +27,13 @@ feGaussianBlur = svgclass('feGaussianBlur')
 
 
 class SVGImageDrawElement(object):
-    def __init__(self, svg):
+    self_generative_methods = ['group']
+
+    def __init__(self, svg, parent=None):
         self.svg = svg
+
+        if parent:
+            self.set_default_font(parent.fontpath, parent.fontsize)
 
     def set_default_font(self, fontpath, fontsize):
         self.fontpath = fontpath
@@ -107,6 +112,30 @@ class SVGImageDrawElement(object):
         self.svg.addElement(t)
 
     def textarea(self, box, string, **kwargs):
+        if 'rotate' in kwargs and kwargs['rotate'] != 0:
+            angle = int(kwargs['rotate'])
+            if angle in (90, 270):
+                _box = Box(box[0], box[1],
+                           box[0] + box.height, box[1] + box.width)
+                if angle == 90:
+                    _box = _box.shift(x=box.width)
+                elif angle == 270:
+                    _box = _box.shift(y=box.height)
+            elif angle == 180:
+                _box = Box(box[2], box[3],
+                           box[2] + box.width, box[3] + box.height)
+            else:
+                _box = Box(box[0], box[1],
+                           box[0] + box.width, box[1] + box.height)
+
+            rotate = "rotate(%d,%d,%d)" % (angle, _box[0], _box[1])
+            group = g(transform="%s" % rotate)
+            self.svg.addElement(group)
+
+            del kwargs['rotate']
+            SVGImageDrawElement(group, self).textarea(_box, string, **kwargs)
+            return
+
         if 'fontsize' in kwargs:
             fontsize = kwargs.get('fontsize') or self.fontsize
             del kwargs['fontsize']
@@ -213,6 +242,12 @@ class SVGImageDrawElement(object):
 
         im = image(url, x, y, w, h)
         self.svg.addElement(im)
+
+    def group(self):
+        group = g()
+        self.svg.addElement(group)
+
+        return SVGImageDrawElement(group)
 
 
 class SVGImageDraw(SVGImageDrawElement):

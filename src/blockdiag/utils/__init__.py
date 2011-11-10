@@ -53,6 +53,10 @@ class Box(list):
                  "%(width)dx%(height)d at 0x%(addr)08x>"
         return format % locals()
 
+    def shift(self, x=0, y=0):
+        return self.__class__(self.x1 + x, self.y1 + y,
+                              self.x2 + x, self.y2 + y)
+
     @property
     def size(self):
         return Size(self.width, self.height)

@@ -101,6 +101,8 @@ def style2cycle(style, thick):
 
 
 class ImageDrawEx(object):
+    self_generative_methods = []
+
     def __init__(self, filename, size, **kwargs):
         if kwargs.get('im'):
             self.image = kwargs.get('im')

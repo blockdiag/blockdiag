@@ -155,3 +155,5 @@ def main():
     except UnicodeEncodeError, e:
         msg = "ERROR: UnicodeEncodeError caught (check your font settings)\n"
         sys.stderr.write(msg)
+    except Exception, e:
+        sys.stderr.write("ERROR: %s\n" % e)
