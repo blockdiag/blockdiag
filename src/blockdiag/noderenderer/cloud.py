@@ -26,8 +26,8 @@ class Cloud(NodeShape):
         pt = metrics.cell(node).topleft
         rx = (self.node.width or self.metrics.node_width) / 12
         ry = (self.node.height or self.metrics.node_height) / 5
-        self.textbox = (pt.x + rx * 2, pt.y + ry,
-                        pt.x + rx * 11, pt.y + ry * 4)
+        self.textbox = Box(pt.x + rx * 2, pt.y + ry,
+                           pt.x + rx * 11, pt.y + ry * 4)
 
     def render_shape(self, drawer, format, **kwargs):
         # draw background
