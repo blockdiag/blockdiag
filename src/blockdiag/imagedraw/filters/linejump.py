@@ -29,8 +29,14 @@ class LazyReciever(object):
         method = self._find_method(name)
 
         def _(*args, **kwargs):
-            self.calls.append((method, args, kwargs))
-            return self
+            if name in self.target.self_generative_methods:
+                ret = method(self.target, *args, **kwargs)
+                reciever = LazyReciever(ret)
+                self.nested.append(reciever)
+                return reciever
+            else:
+                self.calls.append((method, args, kwargs))
+                return self
 
         return _
 
