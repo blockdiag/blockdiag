@@ -15,6 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
+from blockdiag.utils import Box
 
 
 class Ellipse(NodeShape):
@@ -23,7 +24,7 @@ class Ellipse(NodeShape):
 
         r = metrics.cellsize
         box = metrics.cell(node).box
-        self.textbox = (box[0] + r, box[1] + r, box[2] - r, box[3] - r)
+        self.textbox = Box(box[0] + r, box[1] + r, box[2] - r, box[3] - r)
 
     def render_shape(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')

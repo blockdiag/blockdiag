@@ -70,13 +70,13 @@ class NodeShape(object):
                 iconsize = images.calc_image_size(image_size, boundedbox)
 
             vmargin = (metrics.node_height - iconsize[1]) / 2
-            self.iconbox = (m.topleft.x,
-                            m.topleft.y + vmargin,
-                            m.topleft.x + iconsize[0],
-                            m.topleft.y + vmargin + iconsize[1])
+            self.iconbox = Box(m.topleft.x,
+                               m.topleft.y + vmargin,
+                               m.topleft.x + iconsize[0],
+                               m.topleft.y + vmargin + iconsize[1])
 
-            self.textbox = (self.iconbox[2], m.top.y,
-                            m.bottomright.x, m.bottomright.y)
+            self.textbox = Box(self.iconbox[2], m.top.y,
+                               m.bottomright.x, m.bottomright.y)
 
     def render(self, drawer, format, **kwargs):
         if self.node.stacked and not kwargs.get('stacked'):

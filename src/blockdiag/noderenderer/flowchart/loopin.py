@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
+from blockdiag.utils import Box, XY
 
 
 class LoopIn(NodeShape):
@@ -25,8 +25,8 @@ class LoopIn(NodeShape):
         m = self.metrics.cell(self.node)
         ydiff = self.metrics.node_height / 4
 
-        self.textbox = (m.topleft.x, m.topleft.y + ydiff,
-                        m.bottomright.x, m.bottomright.y)
+        self.textbox = Box(m.topleft.x, m.topleft.y + ydiff,
+                           m.bottomright.x, m.bottomright.y)
 
     def render_shape(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')

@@ -25,8 +25,8 @@ class Terminator(NodeShape):
 
         m = self.metrics.cell(self.node)
         r = self.metrics.cellsize * 2
-        self.textbox = (m.topleft.x + r, m.topleft.y,
-                        m.bottomright.x - r, m.bottomright.y)
+        self.textbox = Box(m.topleft.x + r, m.topleft.y,
+                           m.bottomright.x - r, m.bottomright.y)
 
     def render_shape(self, drawer, format, **kwargs):
         # draw background

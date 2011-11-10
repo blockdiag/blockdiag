@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
+from blockdiag.utils import Box, XY
 
 
 class Mail(NodeShape):
@@ -24,8 +24,8 @@ class Mail(NodeShape):
 
         m = self.metrics.cell(self.node)
         r = self.metrics.cellsize * 2
-        self.textbox = (m.topleft.x, m.topleft.y + r,
-                        m.bottomright.x, m.bottomright.y)
+        self.textbox = Box(m.topleft.x, m.topleft.y + r,
+                           m.bottomright.x, m.bottomright.y)
 
     def render_shape(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')

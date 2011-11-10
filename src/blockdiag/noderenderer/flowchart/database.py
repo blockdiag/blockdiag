@@ -25,8 +25,8 @@ class Database(NodeShape):
 
         m = self.metrics.cell(self.node)
         r = self.metrics.cellsize
-        self.textbox = (m.topleft.x, m.topleft.y + r * 3 / 2,
-                        m.bottomright.x, m.bottomright.y - r / 2)
+        self.textbox = Box(m.topleft.x, m.topleft.y + r * 3 / 2,
+                           m.bottomright.x, m.bottomright.y - r / 2)
 
     def render_shape(self, drawer, format, **kwargs):
         # draw background

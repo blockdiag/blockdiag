@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
+from blockdiag.utils import Box, XY
 
 
 class MiniDiamond(NodeShape):
@@ -30,7 +30,7 @@ class MiniDiamond(NodeShape):
                            XY(c.x, c.y + r),
                            XY(c.x - r, c.y),
                            XY(c.x, c.y - r))
-        self.textbox = (m.top.x, m.top.y, m.right.x, m.right.y)
+        self.textbox = Box(m.top.x, m.top.y, m.right.x, m.right.y)
         self.textalign = 'left'
 
     def render_shape(self, drawer, format, **kwargs):
