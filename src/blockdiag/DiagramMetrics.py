@@ -900,7 +900,7 @@ class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
                 box = Box(cell1.bottom.x, cell2.left.y - span.y / 2,
                           cell1.bottom.x, cell2.left.y)
         else:
-            box = super(FlowchartLandscapeEdgeMetrics, self).labelbox()
+            box = super(FlowchartLandscapeEdgeMetrics, self).labelbox
 
         return box
 
@@ -972,6 +972,6 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
                 box = Box(cell1.bottom.x, cell2.left.y - span.y / 2,
                           cell1.bottom.x, cell2.left.y)
         else:
-            box = super(FlowchartPortraitEdgeMetrics, self).labelbox()
+            box = super(FlowchartPortraitEdgeMetrics, self).labelbox
 
         return box
