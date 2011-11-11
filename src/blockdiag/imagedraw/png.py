@@ -16,7 +16,7 @@
 import re
 import math
 from itertools import izip, tee
-from blockdiag.utils import ellipse, urlutil
+from blockdiag.utils import ellipse, urlutil, Box
 from blockdiag.utils.myitertools import istep, stepslice
 from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
 try:
@@ -119,6 +119,11 @@ class ImageDrawEx(object):
         self.draw = ImageDraw.ImageDraw(self.image, self.mode)
         self.fontpath = None
         self.fontsize = None
+
+        if 'parent' in kwargs:
+            parent = kwargs['parent']
+            self.scale_ratio = parent.scale_ratio
+            self.set_default_font(parent.fontpath, parent.fontsize)
 
     def set_default_font(self, fontpath, fontsize):
         self.fontpath = fontpath
@@ -287,6 +292,23 @@ class ImageDrawEx(object):
             self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def textarea(self, box, string, **kwargs):
+        if 'rotate' in kwargs and kwargs['rotate'] != 0:
+            angle = 360 - kwargs['rotate']
+            del kwargs['rotate']
+
+            if angle in (90, 270):
+                _box = Box(0, 0, box.height, box.width)
+            else:
+                _box = box
+
+            text = ImageDrawEx(None, _box.size, parent=self, mode=self.mode)
+            text.textarea((0, 0, _box.width, _box.height), string, **kwargs)
+
+            filter = Image.new('RGB', box.size, kwargs.get('fill'))
+            self.image.paste(filter, box.topleft, text.image.rotate(angle))
+            self.draw = ImageDraw.ImageDraw(self.image, self.mode)
+            return
+
         if 'fontsize' in kwargs:
             fontsize = kwargs.get('fontsize') or self.fontsize
             del kwargs['fontsize']
