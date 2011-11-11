@@ -18,7 +18,7 @@ import sys
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from blockdiag.utils import urlutil
+from blockdiag.utils import urlutil, Box
 from blockdiag.utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 
@@ -126,11 +126,26 @@ class PDFImageDraw(object):
         self.canvas.drawString(xy[0], self.size[1] - xy[1], string)
 
     def textarea(self, box, string, **kwargs):
+        self.canvas.saveState()
         if 'fontsize' in kwargs:
             fontsize = kwargs.get('fontsize') or self.fontsize
             del kwargs['fontsize']
         else:
             fontsize = self.fontsize
+
+        if 'rotate' in kwargs and kwargs['rotate'] != 0:
+            angle = 360 - int(kwargs['rotate'])
+            self.canvas.rotate(angle)
+
+            if angle == 90:
+                box = Box(-box.y2, box.x1, -box.y1, box.x1 + box.width)
+                box = box.shift(x=self.size.y, y=self.size.y)
+            elif angle == 180:
+                box = Box(-box.x2, -box.y2, -box.x1, -box.y2 + box.height)
+                box = box.shift(y=self.size.y * 2)
+            elif angle == 270:
+                box = Box(box.y1, -box.x2, box.y2, -box.x1)
+                box = box.shift(x=-self.size.y, y=self.size.y)
 
         self.set_font(self.fontpath, fontsize)
         lines = TextFolder(box, string, adjustBaseline=True,
@@ -143,6 +158,7 @@ class PDFImageDraw(object):
 
         for string, xy in lines.lines:
             self.text(xy, string, fontsize=fontsize, **kwargs)
+        self.canvas.restoreState()
 
     def line(self, xy, **kwargs):
         self.set_stroke_color(kwargs.get('fill', 'none'))
