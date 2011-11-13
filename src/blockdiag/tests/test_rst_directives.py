@@ -121,9 +121,9 @@ class TestRstDirectives(unittest.TestCase):
         text = ".. blockdiag::\n\n   { A -> B }"
         doctree = publish_doctree(text)
         self.assertEqual(type(doctree[0]), nodes.image)
-        self.assertFalse('alt' in doctree[0]) 
+        self.assertFalse('alt' in doctree[0])
         self.assertEqual(0, doctree[0]['uri'].index(path))
-        self.assertFalse('target' in doctree[0]) 
+        self.assertFalse('target' in doctree[0])
 
     @use_tmpdir
     def test_rst_directives_with_block_alt(self, path):
@@ -133,7 +133,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(type(doctree[0]), nodes.image)
         self.assertEqual('hello world', doctree[0]['alt'])
         self.assertEqual(0, doctree[0]['uri'].index(path))
-        self.assertFalse('target' in doctree[0]) 
+        self.assertFalse('target' in doctree[0])
 
     @raises(RuntimeError)
     @use_tmpdir
@@ -155,6 +155,6 @@ class TestRstDirectives(unittest.TestCase):
         text = ".. blockdiag::\n   :maxwidth: 100\n\n   { A -> B }"
         doctree = publish_doctree(text)
         self.assertEqual(type(doctree[0]), nodes.image)
-        self.assertFalse('alt' in doctree[0]) 
+        self.assertFalse('alt' in doctree[0])
         self.assertEqual(0, doctree[0]['uri'].index(path))
-        self.assertFalse(0, doctree[0]['target'].index(path)) 
+        self.assertFalse(0, doctree[0]['target'].index(path))
