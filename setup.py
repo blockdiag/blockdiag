@@ -72,6 +72,9 @@ setup(
          pdf=[
              'reportlab',
          ],
+         rst=[
+             'docutils',
+         ],
      ),
      dependency_links=deplinks,
      test_suite='nose.collector',
