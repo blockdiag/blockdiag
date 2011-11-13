@@ -162,6 +162,8 @@ class Element(Base):
 class DiagramNode(Element):
     shape = 'box'
     linecolor = (0, 0, 0)
+    desctable = []
+    attrname = {}
 
     @classmethod
     def set_default_shape(cls, shape):
@@ -176,6 +178,9 @@ class DiagramNode(Element):
         super(DiagramNode, cls).clear()
         cls.shape = 'box'
         cls.linecolor = (0, 0, 0)
+        cls.desctable = ['numbered', 'label', 'description']
+        cls.attrname = dict(numbered='No', label='Name',
+                            description='Description')
 
     def __init__(self, id):
         super(DiagramNode, self).__init__(id)
@@ -220,6 +225,17 @@ class DiagramNode(Element):
 
     def set_stacked(self, value):
         self.stacked = True
+
+    def to_desctable(self):
+        attrs = []
+        for name in self.desctable:
+            value = getattr(self, name)
+            if value is None:
+                attrs.append(u"")
+            else:
+                attrs.append(getattr(self, name))
+
+        return attrs
 
 
 class NodeGroup(Element):
