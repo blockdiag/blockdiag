@@ -81,10 +81,8 @@ class BlockdiagDirectiveBase(rst.Directive):
                        'a filename argument' % self.name)
                 return [document.reporter.warning(msg, line=self.lineno)]
 
-            env = self.state.document.settings.env
-            rel_filename, filename = relfn2path(env, self.arguments[0])
-            env.note_dependency(rel_filename)
             try:
+                filename = self.source_filename(self.arguments[0])
                 fp = codecs.open(filename, 'r', 'utf-8')
                 try:
                     dotcode = fp.read()
@@ -112,6 +110,14 @@ class BlockdiagDirectiveBase(rst.Directive):
 
         return [node]
 
+    def source_filename(self, filename):
+        if hasattr(self.state.document.settings, 'env'):
+            env = self.state.document.settings.env
+            rel_filename, filename = relfn2path(env, self.arguments[0])
+            env.note_dependency(rel_filename)
+
+        return filename
+
 
 class BlockdiagDirective(BlockdiagDirectiveBase):
     def run(self):
@@ -136,7 +142,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         return ScreenNodeBuilder.build(tree)
 
     def node2image(self, node, diagram):
-        filename = self._filename(node)
+        filename = self.image_filename(node)
         fontpath = self.detectfont()
         drawer = DiagramDraw(format, diagram, filename,
                              font=fontpath, antialias=antialias)
@@ -151,7 +157,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             ratio = float(options['maxwidth']) / size[0]
             thumb_size = (options['maxwidth'], size[1] * ratio)
 
-            thumb_filename = self._filename(node, prefix='_thumb')
+            thumb_filename = self.image_filename(node, prefix='_thumb')
             if not os.path.isfile(thumb_filename):
                 drawer.filename = thumb_filename
                 drawer.draw()
@@ -177,7 +183,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         return detectfont(options)
 
-    def _filename(self, node, prefix='', ext='png'):
+    def image_filename(self, node, prefix='', ext='png'):
         try:
             from hashlib import sha1 as sha
         except ImportError:
