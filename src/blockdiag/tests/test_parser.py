@@ -61,9 +61,12 @@ def test_diagparser_diagram_includes_nodes():
     tree = parse_string(str)
     assert isinstance(tree, Graph)
     assert len(tree.stmts) == 3
-    assert isinstance(tree.stmts[0], Node)
-    assert isinstance(tree.stmts[1], Node)
-    assert isinstance(tree.stmts[2], Node)
+    assert isinstance(tree.stmts[0], Statements)
+    assert isinstance(tree.stmts[0].stmts[0], Node)
+    assert isinstance(tree.stmts[1], Statements)
+    assert isinstance(tree.stmts[1].stmts[0], Node)
+    assert isinstance(tree.stmts[2], Statements)
+    assert isinstance(tree.stmts[2].stmts[0], Node)
 
 
 def test_diagparser_diagram_includes_edges():
@@ -109,8 +112,10 @@ def test_diagparser_diagram_includes_groups():
 
     assert isinstance(tree.stmts[0], SubGraph)
     assert len(tree.stmts[0].stmts) == 2
-    assert isinstance(tree.stmts[0].stmts[0], Node)
-    assert isinstance(tree.stmts[0].stmts[1], Node)
+    assert isinstance(tree.stmts[0].stmts[0], Statements)
+    assert isinstance(tree.stmts[0].stmts[0].stmts[0], Node)
+    assert isinstance(tree.stmts[0].stmts[1], Statements)
+    assert isinstance(tree.stmts[0].stmts[1].stmts[0], Node)
 
     assert isinstance(tree.stmts[1], SubGraph)
     assert len(tree.stmts[1].stmts) == 1

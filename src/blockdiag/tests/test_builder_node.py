@@ -48,6 +48,13 @@ def test_node_id_includes_dot_diagram():
     __validate_node_attributes('node_id_includes_dot.diag', xy=positions)
 
 
+def test_multiple_nodes_definition_diagram():
+    positions = {'A': (0, 0), 'B': (0, 1), 'Z': (0, 2)}
+    colors = {'A': (255, 0, 0), 'B': (255, 0, 0), 'Z': (255, 255, 255)}
+    __validate_node_attributes('multiple_nodes_definition.diag', xy=positions,
+                               color=colors)
+
+
 def test_multiple_node_relation_diagram():
     positions = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1),
                  'D': (2, 0), 'Z': (0, 2)}
