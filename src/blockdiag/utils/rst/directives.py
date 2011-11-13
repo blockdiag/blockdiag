@@ -42,12 +42,12 @@ def relfn2path(env, filename):
 def cmp_node_number(a, b):
     try:
         n1 = int(a[0])
-    except TypeError:
+    except (TypeError, ValueError):
         n1 = 65535
 
     try:
         n2 = int(a[0])
-    except TypeError:
+    except (TypeError, ValueError):
         n2 = 65535
 
     return cmp(n1, n2)
@@ -189,20 +189,23 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         return "%s%s-%s.%s" % (self.name, prefix, hashed, format.lower())
 
     def description_table(self, diagram):
-        descriptions = []
-        for n in diagram.traverse_nodes():
-            if hasattr(n, 'description') and n.description:
-                label = n.label or n.id
-                descriptions.append((n.numbered, label, n.description))
+        nodes = diagram.traverse_nodes
+        klass = diagram._DiagramNode
+
+        widths = [25] + [50] * (len(klass.desctable) - 1)
+        headers = [klass.attrname[n] for n in klass.desctable]
+
+        descriptions = [n.to_desctable() for n in nodes()]
         descriptions.sort(cmp_node_number)
 
-        if any(desc[0] for desc in descriptions):
-            widths = [20, 40, 40]
-            headers = ['No', 'Name', 'Description']
-        else:
-            widths = [50, 50]
-            descriptions = [desc[1:] for desc in descriptions]
-            headers = ['Name', 'Description']
+        for i in range(len(headers) - 1, -1, -1):
+            if any(desc[i] for desc in descriptions):
+                pass
+            else:
+                widths.pop(i)
+                headers.pop(i)
+                for desc in descriptions:
+                    desc.pop(i)
 
         return self._description_table(descriptions, widths, headers)
 
