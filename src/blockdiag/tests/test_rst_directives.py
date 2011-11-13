@@ -88,17 +88,30 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.system_message, type(doctree[0]))
 
-    # FIXME
-    #@setup_directive_base
-    #def test_rst_directives_base_with_filename(self):
-    #    text = ".. blockdiag:: diagrams/node_attributes.diag"
-    #    doctree = publish_doctree(text)
-    #    self.assertEqual(nodes.system_message, type(doctree[0]))
+    @setup_directive_base
+    def test_rst_directives_base_with_filename(self):
+        dirname = os.path.dirname(__file__)
+        filename = os.path.join(dirname, 'diagrams/node_attribute.diag')
+        text = ".. blockdiag:: %s" % filename
+        doctree = publish_doctree(text)
+
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(directives.blockdiag, type(doctree[0]))
+        self.assertEqual(open(filename).read(), doctree[0]['code'])
+        self.assertEqual(None, doctree[0]['alt'])
+        self.assertEqual({}, doctree[0]['options'])
+
+    @stderr_wrapper
+    @setup_directive_base
+    def test_rst_directives_base_with_filename_not_exists(self):
+        text = ".. blockdiag:: unknown.diag"
+        doctree = publish_doctree(text)
+        self.assertEqual(nodes.system_message, type(doctree[0]))
 
     @stderr_wrapper
     @setup_directive_base
     def test_rst_directives_base_with_block_and_filename(self):
-        text = ".. blockdiag:: diagrams/node_attributes.diag\n\n   { A -> B }"
+        text = ".. blockdiag:: unknown.diag\n\n   { A -> B }"
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.system_message, type(doctree[0]))
