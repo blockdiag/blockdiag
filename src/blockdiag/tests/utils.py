@@ -15,6 +15,7 @@ def argv_wrapper(func, argv=[]):
         finally:
             sys.argv = argv
 
+    wrap.__name__ = func.__name__
     return wrap
 
 
@@ -33,6 +34,7 @@ def stderr_wrapper(func):
 
             sys.stderr = stderr
 
+    wrap.__name__ = func.__name__
     return wrap
 
 
