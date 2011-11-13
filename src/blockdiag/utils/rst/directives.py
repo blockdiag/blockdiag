@@ -47,7 +47,7 @@ def cmp_node_number(a, b):
         n1 = 65535
 
     try:
-        n2 = int(a[0])
+        n2 = int(b[0])
     except (TypeError, ValueError):
         n2 = 65535
 
@@ -204,7 +204,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         descriptions = [n.to_desctable() for n in nodes()]
         descriptions.sort(cmp_node_number)
 
-        for i in range(len(headers) - 1, -1, -1):
+        for i in range(len(headers) - 2, -1, -1):
             if any(desc[i] for desc in descriptions):
                 pass
             else:
