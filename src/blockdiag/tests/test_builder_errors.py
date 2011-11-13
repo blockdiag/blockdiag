@@ -80,6 +80,11 @@ def test_belongs_to_two_groups_diagram():
     diagram = __build_diagram('errors/belongs_to_two_groups.diag')
 
 
+@raises(AttributeError)
+def test_unknown_plugin_diagram():
+    diagram = __build_diagram('errors/unknown_plugin.diag')
+
+
 @raises(ParseException)
 def test_node_follows_group_diagram():
     diagram = __build_diagram('errors/node_follows_group.diag')
