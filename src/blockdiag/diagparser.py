@@ -53,6 +53,7 @@ Edge = namedtuple('Edge', 'nodes attrs')
 DefAttrs = namedtuple('DefAttrs', 'object attrs')
 AttrPlugin = namedtuple('AttrPlugin', 'name attrs')
 AttrClass = namedtuple('AttrClass', 'name attrs')
+Statements = namedtuple('Statements', 'stmts')
 
 
 class ParseException(Exception):
@@ -88,6 +89,7 @@ def parse(seq):
     op_ = lambda s: skip(op(s))
     id = some(lambda t:
         t.type in ['Name', 'Number', 'String']).named('id') >> tokval
+    make_nodes = lambda args: Statements([Node(n, args[-1]) for n in args[0]])
     make_graph_attr = lambda args: DefAttrs(u'graph', [Attr(*args)])
     make_edge = lambda x, x2, xs, attrs: Edge([x, x2] + xs, attrs)
 
@@ -105,7 +107,7 @@ def parse(seq):
         many(op_('[') + many(a_list) + op_(']'))
         >> flatten)
     graph_attr = id + op_('=') + id >> make_graph_attr
-    node_stmt = node_id + attr_list >> unarg(Node)
+    multi_node_stmt = node_list + attr_list >> make_nodes
     # We use a forward_decl becaue of circular definitions like (stmt_list ->
     # stmt -> group -> stmt_list)
     group = forward_decl()
@@ -132,7 +134,7 @@ def parse(seq):
         | plugin_stmt
         | group
         | graph_attr
-        | node_stmt
+        | multi_node_stmt
     )
     stmt_list = many(stmt + skip(maybe(op(';'))))
     group.define(

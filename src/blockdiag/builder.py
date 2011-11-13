@@ -121,6 +121,9 @@ class DiagramTreeBuilder:
             elif isinstance(stmt, diagparser.AttrPlugin):
                 self.diagram.set_plugin(stmt.name, stmt.attrs)
 
+            elif isinstance(stmt, diagparser.Statements):
+                self.instantiate(group, stmt)
+
         group.update_order()
         return group
 
