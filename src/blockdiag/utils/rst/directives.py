@@ -27,7 +27,6 @@ from blockdiag.utils.collections import namedtuple
 format = 'PNG'
 antialias = False
 fontpath = None
-outputdir = None
 
 
 def relfn2path(env, filename):
@@ -187,12 +186,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         options.update(font=fontpath, antialias=antialias)
         hashseed = node['code'].encode('utf-8') + str(options)
         hashed = sha(hashseed).hexdigest()
-
-        filename = "%s%s-%s.%s" % (self.name, prefix, hashed, format.lower())
-        if outputdir:
-            filename = os.path.join(outputdir, filename)
-
-        return filename
+        return "%s%s-%s.%s" % (self.name, prefix, hashed, format.lower())
 
     def description_table(self, diagram):
         nodes = diagram.traverse_nodes
@@ -248,10 +242,9 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
 
 def setup(**kwargs):
-    global format, antialias, fontpath, outputdir
+    global format, antialias, fontpath
     format = kwargs.get('format', 'PNG')
     antialias = kwargs.get('antialias', False)
     fontpath = kwargs.get('fontpath', None)
-    outputdir = kwargs.get('outputdir', None)
 
     rst.directives.register_directive("blockdiag", BlockdiagDirective)
