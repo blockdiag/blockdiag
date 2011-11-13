@@ -102,6 +102,7 @@ setup(
         none = blockdiag.noderenderer.none
 
         [blockdiag_plugins]
+        attributes = blockdiag.plugins.attributes
         autoclass = blockdiag.plugins.autoclass
      """,
 )

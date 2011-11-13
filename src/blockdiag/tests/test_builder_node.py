@@ -115,3 +115,12 @@ def test_plugin_autoclass_diagram():
 
     __validate_node_attributes('plugin_autoclass.diag', xy=positions,
                                 style=styles, color=colors)
+
+
+def test_plugin_attributes_diagram():
+    attr1 = {'A': "1", 'B': None}
+    attr2 = {'A': "2", 'B': None}
+    attr3 = {'A': "3", 'B': None}
+
+    __validate_node_attributes('plugin_attributes.diag', test_attr1=attr1,
+                               test_attr2=attr2, test_attr3=attr3)
