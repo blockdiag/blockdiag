@@ -113,6 +113,12 @@ Apache License 2.0
 History
 =======
 
+1.0.3 (2011-11-13)
+------------------
+* Add plugin: attributes
+* Change plugin syntax; (cf. plugin attributes [attr = value, attr, value])
+* Fix bugs
+
 1.0.2 (2011-11-07)
 ------------------
 * Fix bugs
