@@ -211,7 +211,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         descriptions.sort(cmp_node_number)
 
         for i in range(len(headers) - 2, -1, -1):
-            if any(desc[i] for desc in descriptions):
+            if [desc[i] for desc in descriptions  if desc[i]]:
                 pass
             else:
                 widths.pop(i)
