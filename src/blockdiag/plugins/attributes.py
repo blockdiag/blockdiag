@@ -28,7 +28,8 @@ class NodeAttributes(plugins.NodeHandler):
                 node_klass.desctable.insert(-1, name)
 
             node_klass.attrname[name] = label
-            setattr(node_klass, name, None)
+            if not hasattr(node_klass, name):
+                setattr(node_klass, name, None)
 
 
 def setup(self, diagram, **kwargs):
