@@ -84,13 +84,12 @@ def string_width(string):
 
 
 class TextFolder(object):
-    def __init__(self, box, string, **kwargs):
+    def __init__(self, box, string, font, **kwargs):
         self.box = box
         self.string = string
         self.scale = 1
         self.halign = kwargs.get('halign', 'center')
         self.valign = kwargs.get('valign', 'center')
-        self.fontsize = kwargs.get('fontsize', 11)
         self.padding = kwargs.get('padding', 12)
         self.line_spacing = kwargs.get('line_spacing', 2)
 
@@ -119,9 +118,9 @@ class TextFolder(object):
         >>> TextFolder(box, "", fontsize=18).textsize(u"あいう")
         (54, 18)
         """
-        width = zenkaku_len(string) * self.fontsize + \
-                hankaku_len(string) * self.fontsize * 0.55
-        return (int(math.ceil(width)), self.fontsize)
+        width = zenkaku_len(string) * self.font.size + \
+                hankaku_len(string) * self.font.size * 0.55
+        return (int(math.ceil(width)), self.font.size)
 
     def height(self):
         u"""

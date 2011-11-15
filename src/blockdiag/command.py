@@ -137,8 +137,7 @@ def main():
             for i, group in enumerate(SeparateDiagramBuilder.build(tree)):
                 outfile2 = re.sub('.svg$', '', outfile) + ('_%d.svg' % (i + 1))
                 draw = DiagramDraw.DiagramDraw(options.type, group, outfile2,
-                                               font=fontpath,
-                                               #basediagram=diagram,
+                                               fontpath=fontpath,
                                                antialias=options.antialias,
                                                nodoctype=options.nodoctype)
                 draw.draw()
@@ -147,7 +146,7 @@ def main():
             diagram = ScreenNodeBuilder.build(tree)
 
             draw = DiagramDraw.DiagramDraw(options.type, diagram, outfile,
-                                           font=fontpath,
+                                           fontpath=fontpath,
                                            antialias=options.antialias,
                                            nodoctype=options.nodoctype)
             draw.draw()
