@@ -16,6 +16,7 @@
 import re
 import math
 import unicodedata
+from blockdiag.DiagramMetrics import FontInfo
 from blockdiag.utils import Box, XY
 
 
@@ -87,6 +88,8 @@ class TextFolder(object):
     def __init__(self, box, string, font, **kwargs):
         self.box = box
         self.string = string
+        self.font = font
+        self.scale = 1
         self.scale = 1
         self.halign = kwargs.get('halign', 'center')
         self.valign = kwargs.get('valign', 'center')
@@ -107,15 +110,18 @@ class TextFolder(object):
         Because this method does not use fonts to measure size.
 
         >>> box = [0, 0, 100, 50]
-        >>> TextFolder(box, "").textsize(u"abc")
+        >>> _font = FontInfo(None, 11)
+        >>> TextFolder(box, "", _font).textsize(u"abc")
         (19, 11)
-        >>> TextFolder(box, "").textsize(u"あいう")
+        >>> TextFolder(box, "", _font).textsize(u"あいう")
         (33, 11)
-        >>> TextFolder(box, "").textsize(u"あいc")
+        >>> TextFolder(box, "", _font).textsize(u"あいc")
         (29, 11)
-        >>> TextFolder(box, "", fontsize=24).textsize(u"abc")
+        >>> font = FontInfo(None, 24)
+        >>> TextFolder(box, "", font).textsize(u"abc")
         (40, 24)
-        >>> TextFolder(box, "", fontsize=18).textsize(u"あいう")
+        >>> font = FontInfo(None, 18)
+        >>> TextFolder(box, "", font).textsize(u"あいう")
         (54, 18)
         """
         width = zenkaku_len(string) * self.font.size + \
@@ -130,21 +136,24 @@ class TextFolder(object):
         jut out lines will be cut off.
 
         >>> box = [0, 0, 100, 50]
-        >>> TextFolder(box, u"abc").height()
+        >>> _font = FontInfo(None, 11)
+        >>> TextFolder(box, u"abc", _font).height()
         11
-        >>> TextFolder(box, u"abc\\ndef").height()
+        >>> TextFolder(box, u"abc\\ndef", _font).height()
         24
-        >>> TextFolder(box, u"abc\\n\\ndef").height()
+        >>> TextFolder(box, u"abc\\n\\ndef", _font).height()
         37
-        >>> TextFolder(box, u"abc\\ndef\\nghi\\njkl").height()
+        >>> TextFolder(box, u"abc\\ndef\\nghi\\njkl", _font).height()
         50
-        >>> TextFolder(box, u"abc\\ndef\\nghi\\njkl\\nmno").height()
+        >>> TextFolder(box, u"abc\\ndef\\nghi\\njkl\\nmno", _font).height()
         50
-        >>> TextFolder(box, u"abc", fontsize=24).height()
+        >>> font = FontInfo(None, 24)
+        >>> TextFolder(box, u"abc", font).height()
         24
-        >>> TextFolder(box, u"abc\\ndef", line_spacing=8).height()
+        >>> TextFolder(box, u"abc\\ndef", _font, line_spacing=8).height()
         30
-        >>> TextFolder(box, u"abc\\ndef", fontsize=15, line_spacing=8).height()
+        >>> font = FontInfo(None, 15)
+        >>> TextFolder(box, u"abc\\ndef", font, line_spacing=8).height()
         38
         """
         height = 0
@@ -223,21 +232,22 @@ class TextFolder(object):
         If text includes characters "\n", treat as line separator.
 
         >>> box = [0, 0, 100, 50]
-        >>> [l for l in TextFolder(box, u"abc")._splitlines()]
+        >>> ft = FontInfo(None, 11)
+        >>> [l for l in TextFolder(box, u"abc", ft)._splitlines()]
         [u'abc']
-        >>> [l for l in TextFolder(box, u"abc\\ndef")._splitlines()]
+        >>> [l for l in TextFolder(box, u"abc\\ndef", ft)._splitlines()]
         [u'abc', u'def']
-        >>> [l for l in TextFolder(box, u"abc\\\\ndef")._splitlines()]
+        >>> [l for l in TextFolder(box, u"abc\\\\ndef", ft)._splitlines()]
         [u'abc', u'def']
-        >>> [l for l in TextFolder(box, u" abc \\n def ")._splitlines()]
+        >>> [l for l in TextFolder(box, u" abc \\n def ", ft)._splitlines()]
         [u'abc', u'def']
-        >>> [l for l in TextFolder(box, u" \\nabc\\\\ndef")._splitlines()]
+        >>> [l for l in TextFolder(box, u" \\nabc\\\\ndef", ft)._splitlines()]
         [u'abc', u'def']
-        >>> [l for l in TextFolder(box, u" \\\\nabc \\\\ndef")._splitlines()]
-        [u'', u'abc', u'def']
-        >>> [l for l in TextFolder(box, u"abc\\\\\\\\ndef")._splitlines()]
+        >>> [l for l in TextFolder(box, u" \\\\nab \\\\ncd", ft)._splitlines()]
+        [u'', u'ab', u'cd']
+        >>> [l for l in TextFolder(box, u"abc\\\\\\\\ndef", ft)._splitlines()]
         [u'abc\\\\ndef']
-        >>> [l for l in TextFolder(box, u"abc\xa5\\\\ndef")._splitlines()]
+        >>> [l for l in TextFolder(box, u"abc\xa5\\\\ndef", ft)._splitlines()]
         [u'abc\\\\ndef']
         """
         string = re.sub('^\s*(.*?)\s*$', '\\1', self.string)
