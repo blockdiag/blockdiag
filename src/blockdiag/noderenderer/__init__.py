@@ -109,11 +109,10 @@ class NodeShape(object):
 
     def render_label(self, drawer, **kwargs):
         if not kwargs.get('shadow'):
-            fontsize = self.metrics.fontsize_for(self.node)
-            drawer.textarea(self.textbox, self.node.label,
+            font = self.metrics.font_for(self.node)
+            drawer.textarea(self.textbox, self.node.label, font,
                             fill=self.node.textcolor, halign=self.textalign,
-                            line_spacing=self.metrics.line_spacing,
-                            fontsize=fontsize)
+                            line_spacing=self.metrics.line_spacing)
 
     def render_number_badge(self, drawer, **kwargs):
         if self.node.numbered != None and kwargs.get('shadow') != True:
@@ -123,8 +122,10 @@ class NodeShape(object):
             r = self.metrics.cellsize * 3 / 2
 
             box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
+            font = self.metrics.font_for(self.node)
             drawer.ellipse(box, outline=self.node.linecolor, fill=badgeFill)
-            drawer.textarea(box, self.node.numbered, fill=self.node.textcolor)
+            drawer.textarea(box, self.node.numbered, font,
+                            fill=self.node.textcolor)
 
     @property
     def top(self):

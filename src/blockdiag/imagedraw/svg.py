@@ -32,13 +32,6 @@ class SVGImageDrawElement(object):
     def __init__(self, svg, parent=None):
         self.svg = svg
 
-        if parent:
-            self.set_default_font(parent.fontpath, parent.fontsize)
-
-    def set_default_font(self, fontpath, fontsize):
-        self.fontpath = fontpath
-        self.fontsize = fontsize
-
     def rgb(self, color):
         if isinstance(color, tuple):
             color = 'rgb(%d,%d,%d)' % color
@@ -103,17 +96,18 @@ class SVGImageDrawElement(object):
                  style=self.filter(filter))
         self.svg.addElement(r)
 
-    def text(self, xy, string, **kwargs):
+    def text(self, xy, string, font, **kwargs):
         fill = kwargs.get('fill')
-        fontsize = kwargs.get('fontsize') or self.fontsize
 
         t = text(xy[0], xy[1], string,
-                 font_size=fontsize, fill=self.rgb(fill))
+                 font_size=font.size, fill=self.rgb(fill))
         self.svg.addElement(t)
 
-    def textarea(self, box, string, **kwargs):
+    def textarea(self, box, string, font, **kwargs):
         if 'rotate' in kwargs and kwargs['rotate'] != 0:
             angle = int(kwargs['rotate'])
+            del kwargs['rotate']
+
             if angle in (90, 270):
                 _box = Box(box[0], box[1],
                            box[0] + box.height, box[1] + box.width)
@@ -132,25 +126,18 @@ class SVGImageDrawElement(object):
             group = g(transform="%s" % rotate)
             self.svg.addElement(group)
 
-            del kwargs['rotate']
-            SVGImageDrawElement(group, self).textarea(_box, string, **kwargs)
+            elem = SVGImageDrawElement(group, self)
+            elem.textarea(_box, string, font, **kwargs)
             return
 
-        if 'fontsize' in kwargs:
-            fontsize = kwargs.get('fontsize') or self.fontsize
-            del kwargs['fontsize']
-        else:
-            fontsize = self.fontsize
-
-        lines = TextFolder(box, string, adjustBaseline=True,
-                           font=self.fontpath, fontsize=fontsize, **kwargs)
+        lines = TextFolder(box, string, font, adjustBaseline=True, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')
             self.rectangle(lines.outlinebox, fill='white', outline=outline)
 
         for string, xy in lines.lines:
-            self.text(xy, string, fontsize=fontsize, **kwargs)
+            self.text(xy, string, font, **kwargs)
 
     def line(self, xy, **kwargs):
         fill = kwargs.get('fill')

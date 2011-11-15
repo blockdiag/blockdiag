@@ -47,12 +47,10 @@ class DiagramDraw(object):
         else:
             self.shadow = kwargs.get('shadow', (0, 0, 0))
 
-        kwargs = dict(font=kwargs.get('font'),
-                      nodoctype=kwargs.get('nodoctype'),
+        kwargs = dict(nodoctype=kwargs.get('nodoctype'),
                       scale_ratio=self.scale_ratio)
         drawer = imagedraw.create(self.format, self.filename,
                                   self.pagesize(), **kwargs)
-        drawer.set_default_font(self.metrics.font, self.metrics.fontsize)
         self.drawer = LineJumpDrawFilter(drawer, self.metrics.cellsize / 2)
 
     @property
@@ -142,14 +140,14 @@ class DiagramDraw(object):
 
     def group_label(self, group):
         m = self.metrics.group(group)
-        fontsize = self.metrics.fontsize_for(group)
+        font = self.metrics.font_for(group)
 
         if group.label and not group.separated:
-            self.drawer.textarea(m.grouplabelbox, group.label,
-                                 fill=group.textcolor, fontsize=fontsize)
+            self.drawer.textarea(m.grouplabelbox, group.label, font=font,
+                                 fill=group.textcolor)
         elif group.label:
-            self.drawer.textarea(m.corebox, group.label,
-                                 fill=group.textcolor, fontsize=fontsize)
+            self.drawer.textarea(m.corebox, group.label, font=font,
+                                 fill=group.textcolor)
 
     def edge(self, edge):
         metrics = self.metrics.edge(edge)
@@ -165,10 +163,9 @@ class DiagramDraw(object):
                 self.drawer.polygon(head, outline=edge.color, fill=edge.color)
 
         if edge.label:
-            fontsize = self.metrics.fontsize_for(edge)
-            self.drawer.textarea(metrics.labelbox, edge.label,
-                                 fill=edge.textcolor, outline=self.fill,
-                                 fontsize=fontsize)
+            font = self.metrics.font_for(edge)
+            self.drawer.textarea(metrics.labelbox, edge.label, font=font,
+                                 fill=edge.textcolor, outline=self.fill)
 
     def save(self, size=None):
         return self.drawer.save(self.filename, size, self.format)

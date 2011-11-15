@@ -25,18 +25,16 @@ from TextFolder import TextFolder
 
 
 class PILTextFolder(TextFolder):
-    def __init__(self, box, string, **kwargs):
-        font = kwargs.get('font')
-        if font:
-            fontsize = kwargs.get('fontsize', 11)
-            self.ttfont = ImageFont.truetype(font, fontsize)
+    def __init__(self, box, string, font, **kwargs):
+        if font.path:
+            self.ttfont = ImageFont.truetype(font.path, font.size)
         else:
             self.ttfont = None
 
         image = Image.new('1', (1, 1))
         self.draw = ImageDraw.Draw(image)
 
-        super(PILTextFolder, self).__init__(box, string, **kwargs)
+        super(PILTextFolder, self).__init__(box, string, font, **kwargs)
 
     def textsize(self, string):
         return self.draw.textsize(string, font=self.ttfont)

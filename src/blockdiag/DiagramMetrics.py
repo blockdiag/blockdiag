@@ -17,9 +17,10 @@ import copy
 from elements import DiagramNode
 import noderenderer
 from utils import Box, Size, XY
-from utils.collections import defaultdict
+from utils.collections import defaultdict, namedtuple
 
 cellsize = 8
+FontInfo = namedtuple('FontInfo', 'path size')
 
 
 class EdgeLines(object):
@@ -147,9 +148,8 @@ class DiagramMetrics(object):
         if diagram.span_height is not None:
             self.span_height = diagram.span_height
 
-        fontname = kwargs.get('font')
-        if fontname is not None:
-            self.font = fontname
+        fontpath = kwargs.get('fontpath')
+        self.fontmap = defaultdict(lambda: fontpath)
 
         if diagram.default_fontsize is not None:
             self.fontsize = diagram.default_fontsize
@@ -190,7 +190,7 @@ class DiagramMetrics(object):
 
         return metrics
 
-    def textsize(self, string, width=65535, fontsize=None):
+    def textsize(self, string, width=65535, font=None):
         try:
             if self.font is None:
                 from utils.TextFolder import TextFolder
@@ -201,9 +201,8 @@ class DiagramMetrics(object):
         except ImportError:
             from utils.TextFolder import TextFolder
 
-        fontsize = fontsize or self.fontsize
-        lines = TextFolder((0, 0, width, 65535), string,
-                           font=self.font, fontsize=fontsize)
+        font = font or self.font
+        lines = TextFolder((0, 0, width, 65535), string, font)
         textbox = lines.outlinebox
         return XY(textbox.width, textbox.height + self.line_spacing)
 
@@ -233,11 +232,12 @@ class DiagramMetrics(object):
             else:
                 return PortraitEdgeMetrics(edge, self)
 
-    def fontsize_for(self, element):
-        if hasattr(element, 'fontsize') and element.fontsize:
-            return element.fontsize
-        else:
-            return self.fontsize
+    def font_for(self, element):
+        name = getattr(element, 'fontname', None)
+        fontpath = self.fontmap[name]
+        fontsize = getattr(element, 'fontsize', None) or self.fontsize
+
+        return FontInfo(fontpath, fontsize)
 
     def pagesize(self, width, height):
         return self.spreadsheet.pagesize(width, height)

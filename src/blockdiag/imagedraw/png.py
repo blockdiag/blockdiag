@@ -117,17 +117,10 @@ class ImageDrawEx(object):
         self.scale_ratio = kwargs.get('scale_ratio', 1)
         self.mode = kwargs.get('mode')
         self.draw = ImageDraw.ImageDraw(self.image, self.mode)
-        self.fontpath = None
-        self.fontsize = None
 
         if 'parent' in kwargs:
             parent = kwargs['parent']
             self.scale_ratio = parent.scale_ratio
-            self.set_default_font(parent.fontpath, parent.fontsize)
-
-    def set_default_font(self, fontpath, fontsize):
-        self.fontpath = fontpath
-        self.fontsize = fontsize
 
     def resizeCanvas(self, size):
         self.image = self.image.resize(size, Image.ANTIALIAS)
@@ -253,12 +246,11 @@ class ImageDrawEx(object):
             del kwargs['outline']
             self.line(xy, **kwargs)
 
-    def text(self, xy, string, **kwargs):
+    def text(self, xy, string, font, **kwargs):
         fill = kwargs.get('fill')
 
-        if self.fontpath:
-            fontsize = kwargs.get('fontsize') or self.fontsize
-            ttfont = ImageFont.truetype(self.fontpath, fontsize)
+        if font.path:
+            ttfont = ImageFont.truetype(font.path, font.size)
         else:
             ttfont = None
 
@@ -291,7 +283,7 @@ class ImageDrawEx(object):
 
             self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
-    def textarea(self, box, string, **kwargs):
+    def textarea(self, box, string, font, **kwargs):
         if 'rotate' in kwargs and kwargs['rotate'] != 0:
             angle = 360 - kwargs['rotate']
             del kwargs['rotate']
@@ -309,21 +301,14 @@ class ImageDrawEx(object):
             self.draw = ImageDraw.ImageDraw(self.image, self.mode)
             return
 
-        if 'fontsize' in kwargs:
-            fontsize = kwargs.get('fontsize') or self.fontsize
-            del kwargs['fontsize']
-        else:
-            fontsize = self.fontsize
-
-        lines = TextFolder(box, string, scale=self.scale_ratio,
-                           font=self.fontpath, fontsize=fontsize, **kwargs)
+        lines = TextFolder(box, string, font, scale=self.scale_ratio, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')
             self.rectangle(lines.outlinebox, fill='white', outline=outline)
 
         for string, xy in lines.lines:
-            self.text(xy, string, fontsize=fontsize, **kwargs)
+            self.text(xy, string, font, **kwargs)
 
     def loadImage(self, filename, box):
         box_width = box[2] - box[0]

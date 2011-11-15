@@ -30,22 +30,18 @@ class PDFImageDraw(object):
         self.size = size
         self.fonts = {}
 
-        if kwargs.get('font') is None:
+    def set_font(self, font):
+        if font.path is None:
             msg = "Could not detect fonts, use --font opiton\n"
             raise RuntimeError(msg)
 
-    def set_default_font(self, fontpath, fontsize):
-        self.fontpath = fontpath
-        self.fontsize = fontsize
-
-    def set_font(self, fontpath, fontsize):
-        if fontpath not in self.fonts:
-            ttfont = TTFont(fontpath, fontpath)
+        if font.path not in self.fonts:
+            ttfont = TTFont(font.path, font.path)
             pdfmetrics.registerFont(ttfont)
 
-            self.fonts[fontpath] = ttfont
+            self.fonts[font.path] = ttfont
 
-        self.canvas.setFont(fontpath, fontsize)
+        self.canvas.setFont(font.path, font.size)
 
     def set_render_params(self, **kwargs):
         self.set_stroke_color(kwargs.get('outline'))
@@ -118,20 +114,13 @@ class PDFImageDraw(object):
         if 'thick' in kwargs:
             self.canvas.setLineWidth(1)
 
-    def text(self, xy, string, **kwargs):
-        fontsize = kwargs.get('fontsize') or self.fontsize
-
-        self.set_font(self.fontpath, fontsize)
+    def text(self, xy, string, font, **kwargs):
+        self.set_font(font)
         self.set_fill_color(kwargs.get('fill'))
         self.canvas.drawString(xy[0], self.size[1] - xy[1], string)
 
-    def textarea(self, box, string, **kwargs):
+    def textarea(self, box, string, font, **kwargs):
         self.canvas.saveState()
-        if 'fontsize' in kwargs:
-            fontsize = kwargs.get('fontsize') or self.fontsize
-            del kwargs['fontsize']
-        else:
-            fontsize = self.fontsize
 
         if 'rotate' in kwargs and kwargs['rotate'] != 0:
             angle = 360 - int(kwargs['rotate'])
@@ -147,17 +136,16 @@ class PDFImageDraw(object):
                 box = Box(box.y1, -box.x2, box.y2, -box.x1)
                 box = box.shift(x=-self.size.y, y=self.size.y)
 
-        self.set_font(self.fontpath, fontsize)
-        lines = TextFolder(box, string, adjustBaseline=True,
-                           canvas=self.canvas, font=self.fontpath,
-                           fontsize=fontsize, **kwargs)
+        self.set_font(font)
+        lines = TextFolder(box, string, font, adjustBaseline=True,
+                           canvas=self.canvas, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')
             self.rectangle(lines.outlinebox, fill='white', outline=outline)
 
         for string, xy in lines.lines:
-            self.text(xy, string, fontsize=fontsize, **kwargs)
+            self.text(xy, string, font, **kwargs)
         self.canvas.restoreState()
 
     def line(self, xy, **kwargs):
