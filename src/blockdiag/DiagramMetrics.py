@@ -232,7 +232,7 @@ class DiagramMetrics(object):
                 return PortraitEdgeMetrics(edge, self)
 
     def font_for(self, element):
-        name = getattr(element, 'fontname', None)
+        name = getattr(element, 'fontname', None) or 'serif'
         fontpath = self.fontmap[name]
         fontsize = getattr(element, 'fontsize', None) or self.fontsize
 
