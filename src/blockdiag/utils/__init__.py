@@ -104,3 +104,30 @@ class Box(list):
     @property
     def center(self):
         return XY(self.x1 + self.width / 2, self.y1 + self.height / 2)
+
+
+class FontInfo(object):
+    def __init__(self, family, path, size):
+        self.family = family
+        self.path = path
+        self.size = size
+
+    @property
+    def generic_family(self):
+        return self.family.split('-')[1]
+
+    @property
+    def font_weight(self):
+        style = self.family.split('-')[2]
+        if style == 'bold':
+            return style
+        else:
+            return 'normal'
+
+    @property
+    def font_style(self):
+        style = self.family.split('-')[2]
+        if style in ('italic', 'oblique'):
+            return style
+        else:
+            return 'normal'

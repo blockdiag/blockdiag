@@ -16,11 +16,10 @@
 import copy
 from elements import DiagramNode
 import noderenderer
-from utils import Box, Size, XY
+from utils import Box, Size, XY, FontInfo
 from utils.collections import defaultdict, namedtuple
 
 cellsize = 8
-FontInfo = namedtuple('FontInfo', 'path size')
 
 
 class EdgeLines(object):
@@ -237,7 +236,7 @@ class DiagramMetrics(object):
         fontpath = self.fontmap[name]
         fontsize = getattr(element, 'fontsize', None) or self.fontsize
 
-        return FontInfo(fontpath, fontsize)
+        return FontInfo(name, fontpath, fontsize)
 
     def pagesize(self, width, height):
         return self.spreadsheet.pagesize(width, height)
