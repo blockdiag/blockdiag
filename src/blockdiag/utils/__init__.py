@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
 from namedtuple import namedtuple
 
 
@@ -108,26 +109,49 @@ class Box(list):
 
 class FontInfo(object):
     def __init__(self, family, path, size):
-        self.family = family
         self.path = path
         self.size = size
 
-    @property
-    def generic_family(self):
-        return self.family.split('-')[1]
+        family = self._parse(family)
+        self.name = family[0]
+        self.generic_family = family[1]
+        self.font_weight = family[2]
+        self.font_style = family[3]
 
     @property
-    def font_weight(self):
-        style = self.family.split('-')[2]
+    def familyname(self):
+        if self.name:
+            name = self.name + "-"
+        else:
+            name = ''
+
+        if self.font_weight == 'bold':
+            return "%s%s-%s" % (name, self.generic_family, font_weight)
+        else:
+            return "%s%s-%s" % (name, self.generic_family, font_style)
+
+    def _parse(self, familyname):
+        pattern = '^(?:(.*)-)?' + \
+                  '(serif|sansserif|monospace|fantasy|cursive)' + \
+                  '(?:-(normal|bold|italic|oblique))?$'
+
+        match = re.search(pattern, familyname or '')
+        if match is None:
+            msg = 'Unknown font family: %s' % familyname
+            raise AttributeError(msg)
+
+        name = match.group(0) or ''
+        generic_family = match.group(1)
+        style = match.group(2) or ''
+
         if style == 'bold':
-            return style
+            font_weight = 'bold'
+            font_style = 'normal'
+        elif style in ('italic', 'oblique'):
+            font_weight = 'normal'
+            font_style = style
         else:
-            return 'normal'
+            font_weight = 'normal'
+            font_style = 'normal'
 
-    @property
-    def font_style(self):
-        style = self.family.split('-')[2]
-        if style in ('italic', 'oblique'):
-            return style
-        else:
-            return 'normal'
+        return [name, generic_family, font_weight, font_style]

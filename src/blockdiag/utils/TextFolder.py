@@ -110,17 +110,17 @@ class TextFolder(object):
         Because this method does not use fonts to measure size.
 
         >>> box = [0, 0, 100, 50]
-        >>> _font = FontInfo('', None, 11)
+        >>> _font = FontInfo('serif', None, 11)
         >>> TextFolder(box, "", _font).textsize(u"abc")
         (19, 11)
         >>> TextFolder(box, "", _font).textsize(u"あいう")
         (33, 11)
         >>> TextFolder(box, "", _font).textsize(u"あいc")
         (29, 11)
-        >>> font = FontInfo('', None, 24)
+        >>> font = FontInfo('serif', None, 24)
         >>> TextFolder(box, "", font).textsize(u"abc")
         (40, 24)
-        >>> font = FontInfo('', None, 18)
+        >>> font = FontInfo('serif', None, 18)
         >>> TextFolder(box, "", font).textsize(u"あいう")
         (54, 18)
         """
@@ -136,7 +136,7 @@ class TextFolder(object):
         jut out lines will be cut off.
 
         >>> box = [0, 0, 100, 50]
-        >>> _font = FontInfo('', None, 11)
+        >>> _font = FontInfo('serif', None, 11)
         >>> TextFolder(box, u"abc", _font).height()
         11
         >>> TextFolder(box, u"abc\\ndef", _font).height()
@@ -147,12 +147,12 @@ class TextFolder(object):
         50
         >>> TextFolder(box, u"abc\\ndef\\nghi\\njkl\\nmno", _font).height()
         50
-        >>> font = FontInfo('', None, 24)
+        >>> font = FontInfo('serif', None, 24)
         >>> TextFolder(box, u"abc", font).height()
         24
         >>> TextFolder(box, u"abc\\ndef", _font, line_spacing=8).height()
         30
-        >>> font = FontInfo('', None, 15)
+        >>> font = FontInfo('serif', None, 15)
         >>> TextFolder(box, u"abc\\ndef", font, line_spacing=8).height()
         38
         """
@@ -232,7 +232,7 @@ class TextFolder(object):
         If text includes characters "\n", treat as line separator.
 
         >>> box = [0, 0, 100, 50]
-        >>> ft = FontInfo('', None, 11)
+        >>> ft = FontInfo('serif', None, 11)
         >>> [l for l in TextFolder(box, u"abc", ft)._splitlines()]
         [u'abc']
         >>> [l for l in TextFolder(box, u"abc\\ndef", ft)._splitlines()]
