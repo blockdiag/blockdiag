@@ -217,6 +217,10 @@ class g(base):
     pass
 
 
+class a(base):
+    pass
+
+
 class filter(element):
     def __init__(self, x, y, width, height, **kwargs):
         super(filter, self).__init__(x, y, width, height, **kwargs)

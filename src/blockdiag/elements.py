@@ -202,6 +202,7 @@ class DiagramNode(Element):
         self.background = None
         self.description = None
         self.drawable = True
+        self.link = None
 
         plugins.fire_node_event(self, 'created')
 
@@ -237,6 +238,9 @@ class DiagramNode(Element):
     def set_stacked(self, value):
         self.stacked = True
 
+    def set_link(self, value):
+        self.link = value
+
     def to_desctable(self):
         attrs = []
         for name in self.desctable:
@@ -268,6 +272,7 @@ class NodeGroup(Element):
         self.edges = []
         self.icon = None
         self.orientation = 'landscape'
+        self.link = None
 
     def duplicate(self):
         copied = super(NodeGroup, self).duplicate()
@@ -338,6 +343,9 @@ class NodeGroup(Element):
         else:
             msg = "WARNING: unknown diagram orientation: %s\n" % value
             raise AttributeError(msg)
+
+    def set_link(self, value):
+        self.link = value
 
     def set_shape(self, value):
         value = value.lower()
