@@ -22,6 +22,7 @@ import blockdiag
 import DiagramDraw
 import diagparser
 from builder import ScreenNodeBuilder
+from blockdiag.utils.fontmap import FontMap
 
 
 def parse_option():
@@ -36,6 +37,8 @@ def parse_option():
                  help='write diagram to FILE', metavar='FILE')
     p.add_option('-f', '--font', default=[], action='append',
                  help='use FONT to draw diagram', metavar='FONT')
+    p.add_option('--fontmap',
+                 help='use FONTMAP file to draw diagram', metavar='FONT')
     p.add_option('-s', '--separate', action='store_true',
                  help='Separate diagram images for each group (SVG only)')
     p.add_option('-T', dest='type', default='PNG',
@@ -77,6 +80,17 @@ def parse_option():
             fontpath = config.get('blockdiag', 'fontpath')
             options.font.append(fontpath)
 
+        if config.has_option('blockdiag', 'fontmap'):
+            if options.fontmap is None:
+                fontmap = config.get('blockdiag', 'fontmap')
+
+        if options.fontmap is None:
+            options.fontmap = configpath
+
+    if options.fontmap and not os.path.isfile(options.fontmap):
+        msg = "fontmap file is not found: %s" % options.fontmap
+        raise RuntimeError(msg)
+
     return options, args
 
 
@@ -106,6 +120,15 @@ def detectfont(options):
     return fontpath
 
 
+def create_fontmap(options):
+    fontmap = FontMap(options.fontmap)
+    if fontmap.find().path is None or options.font:
+        fontpath = detectfont(options)
+        fontmap.set_default_font(fontpath)
+
+    return fontmap
+
+
 def main():
     try:
         options, args = parse_option()
@@ -121,8 +144,6 @@ def main():
     else:
         outfile = re.sub('\..*', '', infile) + '.' + options.type.lower()
 
-    fontpath = detectfont(options)
-
     try:
         if infile == '-':
             import codecs
@@ -131,13 +152,14 @@ def main():
         else:
             tree = diagparser.parse_file(infile)
 
+        fontmap = create_fontmap(options)
         if options.separate:
             from builder import SeparateDiagramBuilder
 
             for i, group in enumerate(SeparateDiagramBuilder.build(tree)):
                 outfile2 = re.sub('.svg$', '', outfile) + ('_%d.svg' % (i + 1))
                 draw = DiagramDraw.DiagramDraw(options.type, group, outfile2,
-                                               fontpath=fontpath,
+                                               fontmap=fontmap,
                                                antialias=options.antialias,
                                                nodoctype=options.nodoctype)
                 draw.draw()
@@ -146,7 +168,7 @@ def main():
             diagram = ScreenNodeBuilder.build(tree)
 
             draw = DiagramDraw.DiagramDraw(options.type, diagram, outfile,
-                                           fontpath=fontpath,
+                                           fontmap=fontmap,
                                            antialias=options.antialias,
                                            nodoctype=options.nodoctype)
             draw.draw()

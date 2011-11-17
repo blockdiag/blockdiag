@@ -99,8 +99,9 @@ class SVGImageDrawElement(object):
     def text(self, xy, string, font, **kwargs):
         fill = kwargs.get('fill')
 
-        t = text(xy[0], xy[1], string,
-                 font_size=font.size, fill=self.rgb(fill))
+        t = text(xy[0], xy[1], string, fill=self.rgb(fill),
+                 font_family=font.generic_family, font_size=font.size,
+                 font_weight=font.weight, font_style=font.style)
         self.svg.addElement(t)
 
     def textarea(self, box, string, font, **kwargs):

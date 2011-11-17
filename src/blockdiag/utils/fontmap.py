@@ -20,6 +20,7 @@ import copy
 import codecs
 from ordereddict import OrderedDict
 from ConfigParser import SafeConfigParser
+from blockdiag.utils.collections import namedtuple
 
 
 class FontInfo(object):
@@ -79,9 +80,11 @@ class FontMap(object):
     fontsize = 11
     default_fontfamily = 'sansserif'
 
-    def __init__(self, filename):
+    def __init__(self, filename=None):
         self.fonts = {}
-        self._parse_config(filename)
+
+        if filename:
+            self._parse_config(filename)
         self.set_default_font(None)
 
     def set_default_fontfamily(self, fontfamily):
@@ -130,9 +133,10 @@ class FontMap(object):
             font = self.fonts[name].duplicate()
             font.size = fontsize
         elif element is not None:
-            msg = "Unknown fontfamily: %s\n" % fontfamily
-            sys.stderr.write(msg)
-            font = self.find()
+            msg = "Unknown fontfamily: %s" % fontfamily
+            sys.stderr.write("WARNING: %s\n" % msg)
+            elem = namedtuple('Font', 'fontsize')(fontsize)
+            font = self.find(elem)
         else:
             font = None
 
