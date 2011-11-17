@@ -3,11 +3,22 @@
 import os
 import sys
 import unittest
+from utils import stderr_wrapper
 from nose.tools import raises
-from blockdiag.utils.fontmap import FontInfo
+from cStringIO import StringIO
+from blockdiag.utils.collections import namedtuple
+from blockdiag.utils.fontmap import FontInfo, FontMap
+
+
+FontElement = namedtuple('FontElement', 'fontfamily fontsize')
 
 
 class TestUtilsFontmap(unittest.TestCase):
+    def setUp(self):
+        fontpath1 = __file__
+        fontpath2 = os.path.join(os.path.dirname(__file__), 'utils.py')
+        self.fontpath = [fontpath1, fontpath2]
+
     def test_fontinfo_new(self):
         FontInfo("serif", None, 11)
         FontInfo("sansserif", None, 11)
@@ -107,3 +118,152 @@ class TestUtilsFontmap(unittest.TestCase):
 
         font = FontInfo("-serif", None, 11)
         self.assertEqual('serif-normal', font.familyname)
+
+    @stderr_wrapper
+    def test_fontmap_empty_config(self):
+        config = StringIO("")
+        fmap = FontMap(config)
+        font1 = fmap.find()
+        self.assertTrue(font1)
+        self.assertEqual('sansserif', font1.generic_family)
+        self.assertEqual(None, font1.path)
+        self.assertEqual(11, font1.size)
+
+        element = FontElement('sansserif', 11)
+        font2 = fmap.find(element)
+        self.assertEqual(font1.familyname, font2.familyname)
+        self.assertEqual(font1.path, font2.path)
+        self.assertEqual(font1.size, font2.size)
+
+        element = FontElement('sansserif-normal', 11)
+        font3 = fmap.find(element)
+        self.assertEqual(font1.familyname, font3.familyname)
+        self.assertEqual(font1.path, font3.path)
+        self.assertEqual(font1.size, font3.size)
+
+        # non-registered familyname
+        element = FontElement('my-sansserif-normal', 11)
+        font4 = fmap.find(element)
+        self.assertEqual(font1.familyname, font4.familyname)
+        self.assertEqual(font1.path, font4.path)
+        self.assertEqual(font1.size, font4.size)
+
+    def test_fontmap_normal_config(self):
+        _config = "[fontmap]\nsansserif: %s\nsansserif-bold: %s\n" % \
+                  (self.fontpath[0], self.fontpath[1])
+
+        config = StringIO(_config)
+        fmap = FontMap(config)
+        font1 = fmap.find()
+        self.assertTrue(font1)
+        self.assertEqual('sansserif', font1.generic_family)
+        self.assertEqual(self.fontpath[0], font1.path)
+        self.assertEqual(11, font1.size)
+
+        element = FontElement('sansserif', 11)
+        font2 = fmap.find(element)
+        self.assertEqual(font1.familyname, font2.familyname)
+        self.assertEqual(font1.path, font2.path)
+        self.assertEqual(font1.size, font2.size)
+
+        element = FontElement('sansserif-normal', 11)
+        font3 = fmap.find(element)
+        self.assertEqual(font1.familyname, font3.familyname)
+        self.assertEqual(font1.path, font3.path)
+        self.assertEqual(font1.size, font3.size)
+
+        element = FontElement('sansserif-bold', 11)
+        font4 = fmap.find(element)
+        self.assertEqual('sansserif-bold', font4.familyname)
+        self.assertEqual(self.fontpath[1], font4.path)
+        self.assertEqual(font1.size, font4.size)
+
+        element = FontElement(None, None)
+        font5 = fmap.find(element)
+        self.assertEqual(font1.familyname, font5.familyname)
+        self.assertEqual(font1.path, font5.path)
+        self.assertEqual(font1.size, font5.size)
+
+        element = object()
+        font6 = fmap.find(element)
+        self.assertEqual(font1.familyname, font6.familyname)
+        self.assertEqual(font1.path, font6.path)
+        self.assertEqual(font1.size, font6.size)
+
+    def test_fontmap_duplicated_fontentry1(self):
+        _config = "[fontmap]\nsansserif: %s\nsansserif: %s\n" % \
+                  (self.fontpath[0], self.fontpath[1])
+
+        config = StringIO(_config)
+        fmap = FontMap(config)
+        font1 = fmap.find()
+        self.assertTrue(font1)
+        self.assertEqual('sansserif', font1.generic_family)
+        self.assertEqual(self.fontpath[1], font1.path)
+        self.assertEqual(11, font1.size)
+
+    def test_fontmap_duplicated_fontentry1(self):
+        _config = "[fontmap]\nsansserif: %s\nsansserif-normal: %s\n" % \
+                  (self.fontpath[0], self.fontpath[1])
+
+        config = StringIO(_config)
+        fmap = FontMap(config)
+        font1 = fmap.find()
+        self.assertTrue(font1)
+        self.assertEqual('sansserif', font1.generic_family)
+        self.assertEqual(self.fontpath[1], font1.path)
+        self.assertEqual(11, font1.size)
+
+    def test_fontmap_with_nodefault_fontentry(self):
+        _config = "[fontmap]\nserif: %s\n" % self.fontpath[0]
+
+        config = StringIO(_config)
+        fmap = FontMap(config)
+        font1 = fmap.find()
+        self.assertTrue(font1)
+        self.assertEqual('sansserif', font1.generic_family)
+        self.assertEqual(None, font1.path)
+        self.assertEqual(11, font1.size)
+
+        element = FontElement('serif', 11)
+        font2 = fmap.find(element)
+        self.assertEqual('serif', font2.generic_family)
+        self.assertEqual(self.fontpath[0], font2.path)
+        self.assertEqual(font1.size, font2.size)
+
+    @stderr_wrapper
+    def test_fontmap_with_nonexistence_fontpath(self):
+        _config = "[fontmap]\nserif: unknown_file\n"
+
+        config = StringIO(_config)
+        fmap = FontMap(config)
+        font1 = fmap.find()
+        self.assertTrue(font1)
+        self.assertEqual('sansserif', font1.generic_family)
+        self.assertEqual(None, font1.path)
+        self.assertEqual(11, font1.size)
+
+    def test_fontmap_switch_defaultfamily(self):
+        _config = "[fontmap]\nserif-bold: %s\n" % self.fontpath[0]
+        config = StringIO(_config)
+        fmap = FontMap(config)
+
+        font1 = fmap.find()
+        self.assertTrue(font1)
+        self.assertEqual('sansserif-normal', font1.familyname)
+        self.assertEqual(None, font1.path)
+        self.assertEqual(11, font1.size)
+
+        fmap.set_default_fontfamily('serif-bold')
+        font2 = fmap.find()
+        self.assertTrue(font1)
+        self.assertEqual('serif-bold', font2.familyname)
+        self.assertEqual(self.fontpath[0], font2.path)
+        self.assertEqual(11, font2.size)
+
+        fmap.set_default_fontfamily('fantasy-italic')
+        font3 = fmap.find()
+        self.assertTrue(font1)
+        self.assertEqual('fantasy-italic', font3.familyname)
+        self.assertEqual(None, font3.path)
+        self.assertEqual(11, font3.size)
