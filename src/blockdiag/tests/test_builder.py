@@ -11,16 +11,18 @@ def test_diagram_attributes():
     eq_(160, diagram.node_height)
     eq_(32, diagram.span_width)
     eq_(32, diagram.span_height)
-    eq_(16, diagram.default_fontsize)
     eq_((128, 128, 128), diagram.linecolor)       # gray
     eq_('diamond', diagram.nodes[0].shape)
     eq_((255, 0, 0), diagram.nodes[0].color)      # red
     eq_((0, 128, 0), diagram.nodes[0].textcolor)  # green
+    eq_(16, diagram.nodes[0].fontsize)
     eq_((0, 0, 255), diagram.nodes[1].color)      # blue
     eq_((0, 128, 0), diagram.nodes[1].textcolor)  # green
+    eq_(16, diagram.nodes[1].fontsize)
 
     eq_((128, 128, 128), diagram.edges[0].color)  # gray
     eq_((0, 128, 0), diagram.edges[0].textcolor)  # green
+    eq_(16, diagram.edges[0].fontsize)
 
 
 def test_circular_ref_to_root_diagram():

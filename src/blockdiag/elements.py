@@ -48,6 +48,7 @@ def unquote(string):
 class Base(object):
     basecolor = (255, 255, 255)
     textcolor = (0, 0, 0)
+    fontfamily = None
     fontsize = None
     style = None
     int_attrs = ['colwidth', 'colheight', 'fontsize']
@@ -61,9 +62,19 @@ class Base(object):
         cls.textcolor = images.color_to_rgb(color)
 
     @classmethod
+    def set_default_fontfamily(cls, fontfamily):
+        cls.fontfamily = fontfamily
+
+    @classmethod
+    def set_default_fontsize(cls, fontsize):
+        cls.fontsize = int(fontsize)
+
+    @classmethod
     def clear(cls):
         cls.basecolor = (255, 255, 255)
         cls.textcolor = (0, 0, 0)
+        cls.fontfamily = None
+        cls.fontsize = None
 
     def duplicate(self):
         return copy.copy(self)
@@ -514,7 +525,7 @@ class Diagram(NodeGroup):
 
     classes = {}
     linecolor = (0, 0, 0)
-    int_attrs = ['colwidth', 'colheight', 'default_fontsize',
+    int_attrs = ['colwidth', 'colheight',
                  'node_width', 'node_height', 'span_width', 'span_height']
 
     @classmethod
@@ -531,7 +542,6 @@ class Diagram(NodeGroup):
         self.span_width = None
         self.span_height = None
         self.page_padding = None
-        self.default_fontsize = None
         self.edge_layout = None
 
     def set_plugin(self, name, attrs):
@@ -589,6 +599,16 @@ class Diagram(NodeGroup):
     def set_shape_namespace(self, value):
         noderenderer.set_default_namespace(value)
 
+    def set_default_fontfamily(self, fontfamily):
+        self._DiagramNode.set_default_fontfamily(fontfamily)
+        self._NodeGroup.set_default_fontfamily(fontfamily)
+        self._DiagramEdge.set_default_fontfamily(fontfamily)
+
+    def set_default_fontsize(self, fontsize):
+        self._DiagramNode.set_default_fontsize(fontsize)
+        self._NodeGroup.set_default_fontsize(fontsize)
+        self._DiagramEdge.set_default_fontsize(fontsize)
+
     def set_edge_layout(self, value):
         value = value.lower()
         if value in ('normal', 'flowchart'):
@@ -603,4 +623,4 @@ class Diagram(NodeGroup):
     def set_fontsize(self, value):
         msg = "WARNING: fontsize is obsoleted; use default_fontsize\n"
         sys.stderr.write(msg)
-        self.default_fontsize = int(value)
+        self.set_default_fontsize(int(value))

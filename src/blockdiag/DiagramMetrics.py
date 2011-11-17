@@ -17,7 +17,7 @@ import copy
 from elements import DiagramNode
 import noderenderer
 from utils import Box, Size, XY
-from utils.fontmap import FontInfo
+from utils.fontmap import FontMap
 from utils.collections import defaultdict, namedtuple
 
 cellsize = 8
@@ -125,7 +125,6 @@ class DiagramMetrics(object):
     line_spacing = 2
     shadow_offset = XY(3, 6)
     font = None
-    fontsize = 11
     page_margin = XY(0, 0)
     page_padding = [0, 0, 0, 0]
     node_width = cellsize * 16
@@ -148,11 +147,11 @@ class DiagramMetrics(object):
         if diagram.span_height is not None:
             self.span_height = diagram.span_height
 
-        fontpath = kwargs.get('fontpath')
-        self.fontmap = defaultdict(lambda: fontpath)
-
-        if diagram.default_fontsize is not None:
-            self.fontsize = diagram.default_fontsize
+        fontmap = kwargs.get('fontmap')
+        if fontmap is not None:
+            self.fontmap = fontmap
+        else:
+            self.fontmap = FontMap()
 
         if diagram.page_padding is not None:
             self.page_padding = diagram.page_padding
@@ -233,11 +232,7 @@ class DiagramMetrics(object):
                 return PortraitEdgeMetrics(edge, self)
 
     def font_for(self, element):
-        name = getattr(element, 'fontname', None) or 'serif'
-        fontpath = self.fontmap[name]
-        fontsize = getattr(element, 'fontsize', None) or self.fontsize
-
-        return FontInfo(name, fontpath, fontsize)
+        return self.fontmap.find(element)
 
     def pagesize(self, width, height):
         return self.spreadsheet.pagesize(width, height)
