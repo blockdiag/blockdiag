@@ -38,9 +38,9 @@ def use_tmpdir(func):
 
 
 class TestRstDirectives(unittest.TestCase):
-    def tearDown():
+    def tearDown(self):
         if 'blockdiag' in docutils._directives:
-            del _directives['blockdiag']
+            del docutils._directives['blockdiag']
 
     def test_rst_directives_setup(self):
         directives.setup()
