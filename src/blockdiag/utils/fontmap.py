@@ -14,6 +14,8 @@
 #  limitations under the License.
 
 import re
+import sys
+import copy
 
 
 class FontInfo(object):
@@ -64,3 +66,74 @@ class FontInfo(object):
             style = 'normal'
 
         return [name, generic_family, weight, style]
+
+    def duplicate(self):
+        return copy.copy(self)
+
+import os
+import codecs
+from ConfigParser import SafeConfigParser
+
+
+class FontMap(object):
+    fontsize = 11
+    default_fontfamily = 'sansserif'
+
+    def __init__(self, filename):
+        self.fonts = {}
+        self._parse_config(filename)
+        self.set_default_font(None)
+
+    def set_default_fontfamily(self, fontfamily):
+        self.default_fontfamily = fontfamily
+        self.set_default_font(None)
+
+    def _parse_config(self, conffile):
+        config = SafeConfigParser()
+        if hasattr(conffile, 'read'):
+            config.readfp(conffile)
+        elif os.path.isfile(conffile):
+            fd = codecs.open(conffile, 'r', 'utf-8')
+            config.readfp(fd)
+        else:
+            msg = "fontmap file is not found: %s" % conffile
+            raise RuntimeError(msg)
+
+        if config.has_section('fontmap'):
+            for name, path in config.items('fontmap'):
+                self.append_font(name, path)
+
+    def set_default_font(self, path):
+        if path is None and self.find() is not None:
+            return
+
+        self.append_font(self.default_fontfamily, path)
+
+    def append_font(self, fontfamily, path):
+        if path is None or os.path.isfile(path):
+            font = FontInfo(fontfamily, path, self.fontsize)
+            self.fonts[font.familyname] = font
+        else:
+            msg = 'fontfile `%s` is not found: %s' % (fontfamily, path)
+            sys.stderr.write("WARNING: %s\n" % msg)
+
+    def _regulate_familyname(self, name):
+        return FontInfo(name, None, 11).familyname
+
+    def find(self, element=None):
+        fontfamily = getattr(element, 'fontfamily', None) or \
+                       self.default_fontfamily
+        fontsize = getattr(element, 'fontsize', None) or self.fontsize
+
+        name = self._regulate_familyname(fontfamily)
+        if name in self.fonts:
+            font = self.fonts[name].duplicate()
+            font.size = fontsize
+        elif element is not None:
+            msg = "Unknown fontfamily: %s\n" % fontfamily
+            sys.stderr.write(msg)
+            font = self.find()
+        else:
+            font = None
+
+        return font
