@@ -31,6 +31,7 @@ classifiers = [
 
 requires = ['setuptools',
             'funcparserlib',
+            'OrderedDict',
             'webcolors']
 deplinks = []
 

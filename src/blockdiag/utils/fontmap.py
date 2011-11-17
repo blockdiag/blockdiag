@@ -14,8 +14,12 @@
 #  limitations under the License.
 
 import re
+import os
 import sys
 import copy
+import codecs
+from ordereddict import OrderedDict
+from ConfigParser import SafeConfigParser
 
 
 class FontInfo(object):
@@ -70,10 +74,6 @@ class FontInfo(object):
     def duplicate(self):
         return copy.copy(self)
 
-import os
-import codecs
-from ConfigParser import SafeConfigParser
-
 
 class FontMap(object):
     fontsize = 11
@@ -89,7 +89,7 @@ class FontMap(object):
         self.set_default_font(None)
 
     def _parse_config(self, conffile):
-        config = SafeConfigParser()
+        config = SafeConfigParser(dict_type=OrderedDict)
         if hasattr(conffile, 'read'):
             config.readfp(conffile)
         elif os.path.isfile(conffile):
