@@ -22,7 +22,8 @@ def test_node_shape_diagram():
               'L': 'flowchart.database', 'M': 'flowchart.input',
               'N': 'flowchart.loopin', 'O': 'flowchart.loopout',
               'P': 'actor', 'Q': 'flowchart.terminator', 'R': 'textbox',
-              'S': 'dots', 'T': 'none', 'Z': 'box'}
+              'S': 'dots', 'T': 'none', 'U': 'square', 'V': 'circle',
+              'Z': 'box'}
     __validate_node_attributes('node_shape.diag', shape=shapes)
 
 
