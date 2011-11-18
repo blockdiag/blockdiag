@@ -60,7 +60,7 @@ def parse_option():
         try:
             import reportlab.pdfgen.canvas
         except ImportError:
-            msg = "colud not output PDF format; Install reportlab."
+            msg = "could not output PDF format; Install reportlab."
             raise RuntimeError(msg)
 
     if options.nodoctype and options.type != 'SVG':
