@@ -145,7 +145,7 @@ def parse(seq):
         op_('}')
         >> unarg(SubGraph))
     graph = (
-        maybe(n('diagram')) +
+        maybe(n('diagram') | n('blockdiag')) +
         maybe(id) +
         op_('{') +
         stmt_list +
