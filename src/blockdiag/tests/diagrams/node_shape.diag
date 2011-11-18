@@ -22,5 +22,8 @@
   S [shape = "dots"];
   T [shape = "none"];
 
+  U [shape = "square"];
+  V [shape = "circle"];
+
   Z;
 }
