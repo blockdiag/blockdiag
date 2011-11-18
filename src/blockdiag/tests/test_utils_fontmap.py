@@ -284,3 +284,16 @@ class TestUtilsFontmap(unittest.TestCase):
         self.assertEqual('fantasy-italic', font4.familyname)
         self.assertEqual(None, font4.path)
         self.assertEqual(20, font4.size)
+
+    @stderr_wrapper
+    def test_fontmap_using_fontalias(self):
+        _config = ("[fontmap]\nserif-bold: %s\n" + \
+                   "[fontalias]\ntest = serif-bold\n") % self.fontpath[0]
+        config = StringIO(_config)
+        fmap = FontMap(config)
+
+        element = FontElement('test', 20)
+        font1 = fmap.find(element)
+        self.assertEqual('serif-bold', font1.familyname)
+        self.assertEqual(self.fontpath[0], font1.path)
+        self.assertEqual(20, font1.size)
