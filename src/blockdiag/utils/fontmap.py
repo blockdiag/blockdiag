@@ -93,7 +93,11 @@ class FontMap(object):
         self.set_default_font(None)
 
     def _parse_config(self, conffile):
-        config = SafeConfigParser(dict_type=OrderedDict)
+        if sys.version_info > (2, 6):
+            config = SafeConfigParser(dict_type=OrderedDict)
+        else:
+            config = SafeConfigParser()
+
         if hasattr(conffile, 'read'):
             config.readfp(conffile)
         elif os.path.isfile(conffile):
