@@ -13,5 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from blockdiag import diagparser, builder, DiagramDraw
+from blockdiag import command, diagparser, builder, DiagramDraw
+from blockdiag.utils import collections
+from blockdiag.utils.fontmap import FontMap
 from blockdiag.utils.rst.directives import blockdiag, BlockdiagDirective
