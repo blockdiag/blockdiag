@@ -113,6 +113,12 @@ Apache License 2.0
 History
 =======
 
+1.1.0 (2011-11-19)
+------------------
+* Add shape: square and circle
+* Add fontfamily attribute for switching fontface
+* Fix bugs
+
 1.0.3 (2011-11-13)
 ------------------
 * Add plugin: attributes
