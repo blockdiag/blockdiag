@@ -17,7 +17,7 @@ import copy
 from elements import DiagramNode
 import noderenderer
 from utils import Box, Size, XY
-from utils.fontmap import FontMap
+from utils.fontmap import FontInfo, FontMap
 from utils.collections import defaultdict, namedtuple
 
 cellsize = 8
@@ -104,6 +104,8 @@ class AutoScaler(object):
         elif klass == EdgeLines:
             ret = EdgeLines()
             ret.polylines = cls.scale(value.polylines, ratio)
+        elif klass == FontInfo:
+            ret = FontInfo(value.familyname, value.path, value.size * ratio)
         elif klass == int:
             ret = value * ratio
         elif klass == str:
