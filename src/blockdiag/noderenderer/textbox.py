@@ -15,11 +15,37 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
+from blockdiag.utils import images, Box, XY
+
+try:
+    from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
+except ImportError:
+    from blockdiag.utils.TextFolder import TextFolder
 
 
 class TextBox(NodeShape):
+    def __init__(self, node, metrics=None):
+        super(TextBox, self).__init__(node, metrics)
+
+        if self.node.background:
+            size = images.get_image_size(self.node.background)
+            size = images.calc_image_size(size, self.textbox)
+
+            pt = self.textbox.center
+            self.textbox = Box(pt.x - size[0] / 2, pt.y - size[1] / 2,
+                               pt.x + size[0] / 2, pt.y + size[1] / 2)
+
+            self.connectors[0] = XY(pt.x, self.textbox[1])
+            self.connectors[1] = XY(self.textbox[2], pt.y)
+            self.connectors[2] = XY(pt.x, self.textbox[3])
+            self.connectors[3] = XY(self.textbox[0], pt.y)
+
+        if self.node.icon:
+            self.connectors[3] = XY(self.iconbox[0], pt.y)
+
     def render_shape(self, drawer, format, **kwargs):
-        pass
+        if not kwargs.get('shadow') and self.node.background:
+            drawer.loadImage(self.node.background, self.textbox)
 
 
 def setup(self):
