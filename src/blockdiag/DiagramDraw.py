@@ -87,9 +87,6 @@ class DiagramDraw(object):
     def draw(self, **kwargs):
         # switch metrics object during draw backgrounds
         temp, self.metrics = self.metrics, self.metrics.original_metrics
-        if self.format == 'SVG':
-            self._set_node_parent()
-
         self._draw_background()
         self.metrics = temp
 
@@ -103,27 +100,17 @@ class DiagramDraw(object):
 
         self._draw_elements(**kwargs)
 
-    def _set_node_parent(self):
-        for group in self.groups:
-            group.drawer = self.drawer.group()
-
-        for node in self.nodes:
-            if node.link:
-                node.drawer = self.drawer.link(node.link)
-            else:
-                node.drawer = self.drawer.group()
-
     def _draw_background(self):
         # Draw node groups.
         for group in self.groups:
             if group.shape == 'box':
                 box = self.metrics.group(group).marginbox
-                if self.format == 'SVG':
-                    group.drawer.rectangle(box, fill=group.color,
-                                           filter='blur')
+                if group.href and self.format == 'SVG':
+                    drawer = self.drawer.anchor(group.href)
                 else:
-                    self.drawer.rectangle(box, fill=group.color,
-                                          filter='blur')
+                    drawer = self.drawer
+
+                drawer.rectangle(box, fill=group.color, filter='blur')
 
         # Drop node shadows.
         for node in self.nodes:
@@ -131,12 +118,13 @@ class DiagramDraw(object):
                 r = noderenderer.get(node.shape)
 
                 shape = r(node, self.metrics)
-                if self.format == 'SVG':
-                    shape.render(node.drawer, self.format,
-                                 fill=self.shadow, shadow=True)
+                if node.href and self.format == 'SVG':
+                    drawer = self.drawer.anchor(node.href)
                 else:
-                    shape.render(self.drawer, self.format,
-                                 fill=self.shadow, shadow=True)
+                    drawer = self.drawer
+
+                shape.render(drawer, self.format,
+                             fill=self.shadow, shadow=True)
 
     def _draw_elements(self, **kwargs):
         for node in self.nodes:
@@ -157,12 +145,13 @@ class DiagramDraw(object):
     def node(self, node, **kwargs):
         r = noderenderer.get(node.shape)
         shape = r(node, self.metrics)
-        if self.format == 'SVG':
-            shape.render(node.drawer, self.format, fill=self.fill,
-                         badgeFill=self.badgeFill)
+        if node.href and self.format == 'SVG':
+            drawer = self.drawer.anchor(node.href)
         else:
-            shape.render(self.drawer, self.format, fill=self.fill,
-                         badgeFill=self.badgeFill)
+            drawer = self.drawer
+
+        shape.render(drawer, self.format, fill=self.fill,
+                     badgeFill=self.badgeFill)
 
     def group_label(self, group):
         m = self.metrics.group(group)

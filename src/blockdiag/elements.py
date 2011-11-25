@@ -116,7 +116,7 @@ class Base(object):
 
 class Element(Base):
     namespace = {}
-    int_attrs = ['width', 'height', 'colwidth', 'colheight', 'fontsize']
+    int_attrs = Base.int_attrs + ['width', 'height']
 
     @classmethod
     def get(cls, id):
@@ -172,6 +172,7 @@ class Element(Base):
 
 class DiagramNode(Element):
     shape = 'box'
+    int_attrs = Element.int_attrs + ['rotate']
     linecolor = (0, 0, 0)
     desctable = []
     attrname = {}
@@ -201,8 +202,9 @@ class DiagramNode(Element):
         self.icon = None
         self.background = None
         self.description = None
+        self.rotate = 0
         self.drawable = True
-        self.link = None
+        self.href = None
 
         plugins.fire_node_event(self, 'created')
 
@@ -238,9 +240,6 @@ class DiagramNode(Element):
     def set_stacked(self, value):
         self.stacked = True
 
-    def set_link(self, value):
-        self.link = value
-
     def to_desctable(self):
         attrs = []
         for name in self.desctable:
@@ -272,7 +271,7 @@ class NodeGroup(Element):
         self.edges = []
         self.icon = None
         self.orientation = 'landscape'
-        self.link = None
+        self.href = None
 
     def duplicate(self):
         copied = super(NodeGroup, self).duplicate()
@@ -343,9 +342,6 @@ class NodeGroup(Element):
         else:
             msg = "WARNING: unknown diagram orientation: %s\n" % value
             raise AttributeError(msg)
-
-    def set_link(self, value):
-        self.link = value
 
     def set_shape(self, value):
         value = value.lower()
@@ -533,8 +529,8 @@ class Diagram(NodeGroup):
 
     classes = {}
     linecolor = (0, 0, 0)
-    int_attrs = ['colwidth', 'colheight',
-                 'node_width', 'node_height', 'span_width', 'span_height']
+    int_attrs = NodeGroup.int_attrs + \
+                ['node_width', 'node_height', 'span_width', 'span_height']
 
     @classmethod
     def clear(cls):
