@@ -113,6 +113,12 @@ def test_group_children_order3_diagram():
     __validate_node_attributes('group_children_order3.diag', xy=positions)
 
 
+def test_group_children_order4_diagram():
+    positions = {'A': (0, 0), 'B': (1, 0), 'C': (1, 1), 'D': (1, 2),
+                 'E': (2, 0), 'Z': (0, 3)}
+    __validate_node_attributes('group_children_order4.diag', xy=positions)
+
+
 def test_node_in_group_follows_outer_node_diagram():
     positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'Z': (0, 1)}
     __validate_node_attributes('node_in_group_follows_outer_node.diag',
