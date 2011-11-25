@@ -285,7 +285,7 @@ class ImageDrawEx(object):
 
     def textarea(self, box, string, font, **kwargs):
         if 'rotate' in kwargs and kwargs['rotate'] != 0:
-            angle = 360 - kwargs['rotate']
+            angle = 360 - int(kwargs['rotate']) % 360
             del kwargs['rotate']
 
             if angle in (90, 270):
@@ -294,7 +294,8 @@ class ImageDrawEx(object):
                 _box = box
 
             text = ImageDrawEx(None, _box.size, parent=self, mode=self.mode)
-            text.textarea((0, 0, _box.width, _box.height), string, **kwargs)
+            textbox = (0, 0, _box.width, _box.height)
+            text.textarea(textbox, string, font, **kwargs)
 
             filter = Image.new('RGB', box.size, kwargs.get('fill'))
             self.image.paste(filter, box.topleft, text.image.rotate(angle))

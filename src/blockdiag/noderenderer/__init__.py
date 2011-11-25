@@ -111,6 +111,7 @@ class NodeShape(object):
         if not kwargs.get('shadow'):
             font = self.metrics.font_for(self.node)
             drawer.textarea(self.textbox, self.node.label, font,
+                            rotate=self.node.rotate,
                             fill=self.node.textcolor, halign=self.textalign,
                             line_spacing=self.metrics.line_spacing)
 
@@ -125,6 +126,7 @@ class NodeShape(object):
             font = self.metrics.font_for(self.node)
             drawer.ellipse(box, outline=self.node.linecolor, fill=badgeFill)
             drawer.textarea(box, self.node.numbered, font,
+                            rotate=self.node.rotate,
                             fill=self.node.textcolor)
 
     @property

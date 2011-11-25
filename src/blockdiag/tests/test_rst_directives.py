@@ -3,10 +3,9 @@
 import re
 import os
 import sys
-import unittest
 import tempfile
+import unittest2
 from utils import stderr_wrapper
-from nose.tools import raises
 from docutils import nodes
 from docutils.core import publish_doctree
 from docutils.parsers.rst import directives as docutils
@@ -37,7 +36,7 @@ def use_tmpdir(func):
     return _
 
 
-class TestRstDirectives(unittest.TestCase):
+class TestRstDirectives(unittest2.TestCase):
     def tearDown(self):
         if 'blockdiag' in docutils._directives:
             del docutils._directives['blockdiag']
@@ -45,7 +44,7 @@ class TestRstDirectives(unittest.TestCase):
     def test_rst_directives_setup(self):
         directives.setup()
 
-        self.assertTrue('blockdiag' in docutils._directives)
+        self.assertIn('blockdiag', docutils._directives)
         self.assertEqual(directives.BlockdiagDirective,
                          docutils._directives['blockdiag'])
         self.assertEqual('PNG', directives.format)
@@ -55,7 +54,7 @@ class TestRstDirectives(unittest.TestCase):
     def test_rst_directives_setup_with_args(self):
         directives.setup(format='SVG', antialias=True, fontpath='/dev/null')
 
-        self.assertTrue('blockdiag' in docutils._directives)
+        self.assertIn('blockdiag', docutils._directives)
         self.assertEqual(directives.BlockdiagDirective,
                          docutils._directives['blockdiag'])
         self.assertEqual('SVG', directives.format)
@@ -150,19 +149,21 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(0, doctree[0]['uri'].index(path))
         self.assertFalse('target' in doctree[0])
 
-    @raises(RuntimeError)
     @use_tmpdir
     def test_rst_directives_with_block_fontpath1(self, path):
-        directives.setup(format='SVG', fontpath=['dummy.ttf'], outputdir=path)
-        text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
-        doctree = publish_doctree(text)
+        with self.assertRaises(RuntimeError):
+            directives.setup(format='SVG', fontpath=['dummy.ttf'],
+                             outputdir=path)
+            text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
+            doctree = publish_doctree(text)
 
-    @raises(RuntimeError)
     @use_tmpdir
     def test_rst_directives_with_block_fontpath2(self, path):
-        directives.setup(format='SVG', fontpath='dummy.ttf', outputdir=path)
-        text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
-        doctree = publish_doctree(text)
+        with self.assertRaises(RuntimeError):
+            directives.setup(format='SVG', fontpath='dummy.ttf',
+                             outputdir=path)
+            text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
+            doctree = publish_doctree(text)
 
     @use_tmpdir
     def test_rst_directives_with_block_maxwidth(self, path):

@@ -69,6 +69,7 @@ setup(
          test=[
              'Nose',
              'pep8',
+             'unittest2',
          ],
          pdf=[
              'reportlab',
@@ -86,12 +87,14 @@ setup(
 
         [blockdiag_noderenderer]
         box = blockdiag.noderenderer.box
+        square = blockdiag.noderenderer.square
         roundedbox = blockdiag.noderenderer.roundedbox
         diamond = blockdiag.noderenderer.diamond
         minidiamond = blockdiag.noderenderer.minidiamond
         mail = blockdiag.noderenderer.mail
         note = blockdiag.noderenderer.note
         cloud = blockdiag.noderenderer.cloud
+        circle = blockdiag.noderenderer.circle
         ellipse = blockdiag.noderenderer.ellipse
         beginpoint = blockdiag.noderenderer.beginpoint
         endpoint = blockdiag.noderenderer.endpoint

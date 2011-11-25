@@ -2,9 +2,8 @@
 
 import os
 import sys
-import unittest
+import unittest2
 from utils import stderr_wrapper
-from nose.tools import raises
 from cStringIO import StringIO
 from blockdiag.utils.collections import namedtuple
 from blockdiag.utils.fontmap import FontInfo, FontMap
@@ -13,7 +12,7 @@ from blockdiag.utils.fontmap import FontInfo, FontMap
 FontElement = namedtuple('FontElement', 'fontfamily fontsize')
 
 
-class TestUtilsFontmap(unittest.TestCase):
+class TestUtilsFontmap(unittest2.TestCase):
     def setUp(self):
         fontpath1 = __file__
         fontpath2 = os.path.join(os.path.dirname(__file__), 'utils.py')
@@ -32,33 +31,33 @@ class TestUtilsFontmap(unittest.TestCase):
         FontInfo("my-cursive", None, 11)
         FontInfo("-fantasy", None, 11)
 
-    @raises(AttributeError)
     def test_fontinfo_invalid_familyname1(self):
-        FontInfo("unknown", None, 11)
+        with self.assertRaises(AttributeError):
+            FontInfo("unknown", None, 11)
 
-    @raises(AttributeError)
     def test_fontinfo_invalid_familyname2(self):
-        FontInfo("sansserif-", None, 11)
+        with self.assertRaises(AttributeError):
+            FontInfo("sansserif-", None, 11)
 
-    @raises(AttributeError)
     def test_fontinfo_invalid_familyname3(self):
-        FontInfo("monospace-unkown", None, 11)
+        with self.assertRaises(AttributeError):
+            FontInfo("monospace-unkown", None, 11)
 
-    @raises(AttributeError)
     def test_fontinfo_invalid_familyname4(self):
-        FontInfo("cursive-bold-bold", None, 11)
+        with self.assertRaises(AttributeError):
+            FontInfo("cursive-bold-bold", None, 11)
 
-    @raises(AttributeError)
     def test_fontinfo_invalid_familyname4(self):
-        FontInfo("SERIF", None, 11)
+        with self.assertRaises(AttributeError):
+            FontInfo("SERIF", None, 11)
 
-    @raises(TypeError)
     def test_fontinfo_invalid_fontsize1(self):
-        FontInfo("serif", None, None)
+        with self.assertRaises(TypeError):
+            FontInfo("serif", None, None)
 
-    @raises(ValueError)
     def test_fontinfo_invalid_fontsize2(self):
-        FontInfo("serif", None, '')
+        with self.assertRaises(ValueError):
+            FontInfo("serif", None, '')
 
     def test_fontinfo_parse(self):
         font = FontInfo("serif", None, 11)
@@ -284,3 +283,16 @@ class TestUtilsFontmap(unittest.TestCase):
         self.assertEqual('fantasy-italic', font4.familyname)
         self.assertEqual(None, font4.path)
         self.assertEqual(20, font4.size)
+
+    @stderr_wrapper
+    def test_fontmap_using_fontalias(self):
+        _config = ("[fontmap]\nserif-bold: %s\n" + \
+                   "[fontalias]\ntest = serif-bold\n") % self.fontpath[0]
+        config = StringIO(_config)
+        fmap = FontMap(config)
+
+        element = FontElement('test', 20)
+        font1 = fmap.find(element)
+        self.assertEqual('serif-bold', font1.familyname)
+        self.assertEqual(self.fontpath[0], font1.path)
+        self.assertEqual(20, font1.size)

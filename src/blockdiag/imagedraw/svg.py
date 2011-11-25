@@ -27,7 +27,7 @@ feGaussianBlur = svgclass('feGaussianBlur')
 
 
 class SVGImageDrawElement(object):
-    self_generative_methods = ['group', 'link']
+    self_generative_methods = ['group', 'anchor']
 
     def __init__(self, svg, parent=None):
         self.svg = svg
@@ -106,7 +106,7 @@ class SVGImageDrawElement(object):
 
     def textarea(self, box, string, font, **kwargs):
         if 'rotate' in kwargs and kwargs['rotate'] != 0:
-            angle = int(kwargs['rotate'])
+            angle = int(kwargs['rotate']) % 360
             del kwargs['rotate']
 
             if angle in (90, 270):
@@ -231,9 +231,9 @@ class SVGImageDrawElement(object):
         im = image(url, x, y, w, h)
         self.svg.addElement(im)
 
-    def link(self, link):
-        a_node = a(link)
-        a_node.add_attribute('xlink:href', link)
+    def anchor(self, url):
+        a_node = a(url)
+        a_node.add_attribute('xlink:href', url)
         self.svg.addElement(a_node)
 
         return SVGImageDrawElement(a_node)

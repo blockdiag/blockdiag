@@ -82,6 +82,7 @@ class FontMap(object):
 
     def __init__(self, filename=None):
         self.fonts = {}
+        self.aliases = {}
 
         if filename:
             self._parse_config(filename)
@@ -92,7 +93,11 @@ class FontMap(object):
         self.set_default_font(None)
 
     def _parse_config(self, conffile):
-        config = SafeConfigParser(dict_type=OrderedDict)
+        if sys.version_info > (2, 6):
+            config = SafeConfigParser(dict_type=OrderedDict)
+        else:
+            config = SafeConfigParser()
+
         if hasattr(conffile, 'read'):
             config.readfp(conffile)
         elif os.path.isfile(conffile):
@@ -105,6 +110,10 @@ class FontMap(object):
         if config.has_section('fontmap'):
             for name, path in config.items('fontmap'):
                 self.append_font(name, path)
+
+        if config.has_section('fontalias'):
+            for name, family in config.items('fontalias'):
+                self.aliases[name] = family
 
     def set_default_font(self, path):
         if path is None and self.find() is not None:
@@ -126,6 +135,7 @@ class FontMap(object):
     def find(self, element=None):
         fontfamily = getattr(element, 'fontfamily', None) or \
                        self.default_fontfamily
+        fontfamily = self.aliases.get(fontfamily, fontfamily)
         fontsize = getattr(element, 'fontsize', None) or self.fontsize
 
         name = self._regulate_familyname(fontfamily)
