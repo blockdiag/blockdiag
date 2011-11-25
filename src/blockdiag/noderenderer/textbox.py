@@ -17,11 +17,6 @@ from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
 from blockdiag.utils import images, Box, XY
 
-try:
-    from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
-except ImportError:
-    from blockdiag.utils.TextFolder import TextFolder
-
 
 class TextBox(NodeShape):
     def __init__(self, node, metrics=None):
