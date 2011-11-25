@@ -116,7 +116,7 @@ class Base(object):
 
 class Element(Base):
     namespace = {}
-    int_attrs = ['width', 'height', 'colwidth', 'colheight', 'fontsize']
+    int_attrs = Base.int_attrs + ['width', 'height']
 
     @classmethod
     def get(cls, id):
@@ -172,6 +172,7 @@ class Element(Base):
 
 class DiagramNode(Element):
     shape = 'box'
+    int_attrs = Element.int_attrs + ['rotate']
     linecolor = (0, 0, 0)
     desctable = []
     attrname = {}
@@ -201,6 +202,7 @@ class DiagramNode(Element):
         self.icon = None
         self.background = None
         self.description = None
+        self.rotate = 0
         self.drawable = True
 
         plugins.fire_node_event(self, 'created')
@@ -525,8 +527,8 @@ class Diagram(NodeGroup):
 
     classes = {}
     linecolor = (0, 0, 0)
-    int_attrs = ['colwidth', 'colheight',
-                 'node_width', 'node_height', 'span_width', 'span_height']
+    int_attrs = NodeGroup.int_attrs + \
+                ['node_width', 'node_height', 'span_width', 'span_height']
 
     @classmethod
     def clear(cls):

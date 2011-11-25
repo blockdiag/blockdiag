@@ -106,7 +106,7 @@ class SVGImageDrawElement(object):
 
     def textarea(self, box, string, font, **kwargs):
         if 'rotate' in kwargs and kwargs['rotate'] != 0:
-            angle = int(kwargs['rotate'])
+            angle = int(kwargs['rotate']) % 360
             del kwargs['rotate']
 
             if angle in (90, 270):

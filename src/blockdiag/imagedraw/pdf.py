@@ -123,7 +123,7 @@ class PDFImageDraw(object):
         self.canvas.saveState()
 
         if 'rotate' in kwargs and kwargs['rotate'] != 0:
-            angle = 360 - int(kwargs['rotate'])
+            angle = 360 - int(kwargs['rotate']) % 360
             self.canvas.rotate(angle)
 
             if angle == 90:
