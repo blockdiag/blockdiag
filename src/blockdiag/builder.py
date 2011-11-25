@@ -345,7 +345,7 @@ class DiagramLayoutManager:
                             ret = self.compare_child_node_order(node,
                                                                 node1, node2)
 
-                            if ret < 0 and idx1 < idx2:
+                            if ret > 0 and idx1 < idx2:
                                 self.diagram.nodes.remove(node1)
                                 self.diagram.nodes.insert(idx2 + 1, node1)
                                 exchange += 1
@@ -370,7 +370,7 @@ class DiagramLayoutManager:
         edges.sort(compare)
         if len(edges) == 0:
             return 0
-        elif edges[0].node2 == node1:
+        elif edges[0].node2 == node2:
             return 1
         else:
             return -1
