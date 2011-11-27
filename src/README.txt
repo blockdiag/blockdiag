@@ -113,6 +113,11 @@ Apache License 2.0
 History
 =======
 
+1.1.1 (2011-11-27)
+------------------
+* Add node attribute: href (thanks to @r_rudi!)
+* Fix bugs
+
 1.1.0 (2011-11-19)
 ------------------
 * Add shape: square and circle
