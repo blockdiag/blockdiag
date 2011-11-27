@@ -64,7 +64,7 @@ def tokenize(str):
     'str -> Sequence(Token)'
     specs = [
         ('Comment', (r'/\*(.|[\r\n])*?\*/', MULTILINE)),
-        ('Comment', (r'//.*',)),
+        ('Comment', (r'(//|#).*',)),
         ('NL',      (r'[\r\n]+',)),
         ('Space',   (r'[ \t\r\n]+',)),
         ('Name',    (ur'[A-Za-z_0-9\u0080-\uffff]'
