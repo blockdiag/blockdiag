@@ -156,9 +156,28 @@ def parse(seq):
     return dotfile.parse(seq)
 
 
+def sort_tree(tree):
+    def weight(node):
+        if isinstance(node, (Attr, DefAttrs, AttrPlugin, AttrClass)):
+            return 1
+        else:
+            return 2
+
+    def compare(a, b):
+        return cmp(weight(a), weight(b))
+
+    if hasattr(tree, 'stmts'):
+        tree.stmts.sort(compare)
+        for stmt in tree.stmts:
+            sort_tree(stmt)
+
+    return tree
+
+
 def parse_string(string):
     try:
-        return parse(tokenize(string))
+        tree = parse(tokenize(string))
+        return sort_tree(tree)
     except LexerError, e:
         message = "Got unexpected token at line %d column %d" % e.place
         raise ParseException(message)
