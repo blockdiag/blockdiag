@@ -25,6 +25,13 @@ def test_diagram_attributes():
     eq_(16, diagram.edges[0].fontsize)
 
 
+def test_diagram_attributes_order_diagram():
+    colors = {'A': (255, 0, 0), 'B': (255, 0, 0)}
+    linecolors = {'A': (255, 0, 0), 'B': (255, 0, 0)}
+    __validate_node_attributes('diagram_attributes_order.diag',
+                               color=colors, linecolor=linecolors)
+
+
 def test_circular_ref_to_root_diagram():
     positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                   'D': (2, 1), 'Z': (0, 2)}
