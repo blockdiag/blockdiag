@@ -103,12 +103,13 @@ def detectfont(options):
              '/System/Library/Fonts/AppleGothic.ttf']  # for MacOS
 
     fontpath = None
-    for path in options.font:
-        if os.path.isfile(path):
-            fontpath = path
-            break
+    if options.font:
+        for path in options.font:
+            if os.path.isfile(path):
+                fontpath = path
+                break
         else:
-            msg = 'fontfile is not found: %s' % path
+            msg = 'fontfile is not found: %s' % options.font
             raise RuntimeError(msg)
 
     if fontpath is None:

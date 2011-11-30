@@ -9,10 +9,14 @@ from utils import *
 from blockdiag.elements import *
 
 
-def extra_case(func):
+def get_fontpath():
     filename = "VL-PGothic-Regular.ttf"
     testdir = os.path.dirname(__file__)
-    pathname = "%s/truetype/%s" % (testdir, filename)
+    return "%s/truetype/%s" % (testdir, filename)
+
+
+def extra_case(func):
+    pathname = get_fontpath()
 
     if os.path.exists(pathname):
         func.__test__ = True
@@ -27,9 +31,7 @@ def extra_case(func):
 def __build_diagram(filename, format, *args):
     testdir = os.path.dirname(__file__)
     diagpath = "%s/diagrams/%s" % (testdir, filename)
-
-    fontfile = "VL-PGothic-Regular.ttf"
-    fontpath = "%s/truetype/%s" % (testdir, fontfile)
+    fontpath = get_fontpath()
 
     try:
         tmpdir = tempfile.mkdtemp()
@@ -93,3 +95,12 @@ def generator_core(format):
 
         if format == 'png':
             yield __build_diagram, diagram, format, '--antialias'
+
+
+@extra_case
+@argv_wrapper
+def not_exist_font_config_option_test():
+    fontpath = get_fontpath()
+    sys.argv = ['', '-f', '/font_is_not_exist', '-f', fontpath, 'input.diag']
+    (options, args) = blockdiag.command.parse_option()
+    blockdiag.command.detectfont(options)
