@@ -118,6 +118,15 @@ def not_exist_font_config_option_test():
     detectfont(options)
 
 
+@raises(RuntimeError)
+@argv_wrapper
+def not_exist_font_config_option2_test():
+    sys.argv = ['', '-f', '/font_is_not_exist',
+                '-f', '/font_is_not_exist2', 'input.diag']
+    (options, args) = parse_option()
+    detectfont(options)
+
+
 @argv_wrapper
 def auto_font_detection_test():
     sys.argv = ['', 'input.diag']
