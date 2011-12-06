@@ -93,7 +93,7 @@ class TextFolder(object):
         self.scale = 1
         self.halign = kwargs.get('halign', 'center')
         self.valign = kwargs.get('valign', 'center')
-        self.padding = kwargs.get('padding', 12)
+        self.padding = kwargs.get('padding', 8)
         self.line_spacing = kwargs.get('line_spacing', 2)
 
         if kwargs.get('adjustBaseline'):
@@ -170,9 +170,9 @@ class TextFolder(object):
         size = XY(self.box[2] - self.box[0], self.box[3] - self.box[1])
 
         if self.valign == 'top':
-            height = 0
+            height = self.line_spacing
         elif self.valign == 'bottom':
-            height = size.y - self.height()
+            height = size.y - self.height() - self.line_spacing
         else:
             height = int(math.ceil((size.y - self.height()) / 2.0))
         base_xy = XY(self.box[0], self.box[1])
@@ -214,12 +214,10 @@ class TextFolder(object):
             corners.append(XY(xy.x + width, xy.y + height))
 
         if corners:
-            x_margin = 4  # MAGIC number
-            y_margin = 2  # MAGIC number
-            box = Box(min(p.x for p in corners) - x_margin,
-                      min(p.y for p in corners) - y_margin,
-                      max(p.x for p in corners) + x_margin,
-                      max(p.y for p in corners) + y_margin)
+            box = Box(min(p.x for p in corners) - self.padding,
+                      min(p.y for p in corners) - self.line_spacing,
+                      max(p.x for p in corners) + self.padding,
+                      max(p.y for p in corners) + self.line_spacing)
         else:
             box = [self.box[0], self.box[1], self.box[0], self.box[1]]
 
