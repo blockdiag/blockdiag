@@ -5,7 +5,7 @@ import os
 import sys
 import tempfile
 import unittest2
-from utils import stderr_wrapper
+from utils import stderr_wrapper, assertRaises
 from docutils import nodes
 from docutils.core import publish_doctree
 from docutils.parsers.rst import directives as docutils
@@ -150,20 +150,20 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertFalse('target' in doctree[0])
 
     @use_tmpdir
+    @assertRaises(RuntimeError)
     def test_rst_directives_with_block_fontpath1(self, path):
-        with self.assertRaises(RuntimeError):
-            directives.setup(format='SVG', fontpath=['dummy.ttf'],
-                             outputdir=path)
-            text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
-            doctree = publish_doctree(text)
+        directives.setup(format='SVG', fontpath=['dummy.ttf'],
+                         outputdir=path)
+        text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
+        doctree = publish_doctree(text)
 
     @use_tmpdir
+    @assertRaises(RuntimeError)
     def test_rst_directives_with_block_fontpath2(self, path):
-        with self.assertRaises(RuntimeError):
-            directives.setup(format='SVG', fontpath='dummy.ttf',
-                             outputdir=path)
-            text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
-            doctree = publish_doctree(text)
+        directives.setup(format='SVG', fontpath='dummy.ttf',
+                         outputdir=path)
+        text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
+        doctree = publish_doctree(text)
 
     @use_tmpdir
     def test_rst_directives_with_block_maxwidth(self, path):
