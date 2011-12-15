@@ -31,7 +31,6 @@ classifiers = [
 
 requires = ['setuptools',
             'funcparserlib',
-            'OrderedDict',
             'webcolors']
 deplinks = []
 
@@ -44,6 +43,11 @@ elif sys.platform == 'win32':
     requires.append('Pillow')
 else:
     requires.append('PIL')
+
+
+# only for Python2.6
+if sys.version_info > (2, 6) and sys.version_info < (2, 7):
+    requires.append('OrderedDict')
 
 
 setup(
