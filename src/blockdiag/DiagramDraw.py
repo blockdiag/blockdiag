@@ -51,6 +51,10 @@ class DiagramDraw(object):
                       scale_ratio=self.scale_ratio)
         drawer = imagedraw.create(self.format, self.filename,
                                   self.pagesize(), **kwargs)
+        if drawer is None:
+            msg = 'failed to load %s image driver' % self.format
+            raise RuntimeError(msg)
+
         self.drawer = LineJumpDrawFilter(drawer, self.metrics.cellsize / 2)
 
     @property

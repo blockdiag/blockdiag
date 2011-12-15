@@ -133,3 +133,11 @@ def auto_font_detection_test():
     (options, args) = parse_option()
     fontpath = detectfont(options)
     ok_(fontpath)
+
+
+@raises(RuntimeError)
+def unknown_image_driver_test():
+    from blockdiag.DiagramDraw import DiagramDraw
+    from blockdiag.elements import Diagram
+
+    DiagramDraw('unknown', Diagram())
