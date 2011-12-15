@@ -16,12 +16,12 @@
 import os
 import re
 import sys
-from ConfigParser import SafeConfigParser
 from optparse import OptionParser
 import blockdiag
 import DiagramDraw
 import diagparser
 from builder import ScreenNodeBuilder
+from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 
 
@@ -73,7 +73,7 @@ def parse_option():
 
     configpath = options.config or "%s/.blockdiagrc" % os.environ.get('HOME')
     if os.path.isfile(configpath):
-        config = SafeConfigParser()
+        config = ConfigParser()
         config.read(configpath)
 
         if config.has_option('blockdiag', 'fontpath'):

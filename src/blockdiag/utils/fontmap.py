@@ -18,8 +18,7 @@ import os
 import sys
 import copy
 import codecs
-from ordereddict import OrderedDict
-from ConfigParser import SafeConfigParser
+from config import ConfigParser
 from blockdiag.utils.collections import namedtuple
 
 
@@ -104,20 +103,12 @@ class FontMap(object):
         self.set_default_font(None)
 
     def _parse_config(self, conffile):
-        if sys.version_info > (2, 6):
-            config = SafeConfigParser(dict_type=OrderedDict)
-        else:
-            config = SafeConfigParser()
+        config = ConfigParser()
 
         if hasattr(conffile, 'read'):
             config.readfp(conffile)
         elif os.path.isfile(conffile):
-            if sys.version_info > (2, 5):
-                fd = codecs.open(conffile, 'r', 'utf-8-sig')
-            else:
-                fd = codecs.open(conffile, 'r', 'utf-8')
-
-            config.readfp(fd)
+            config.read(conffile)
         else:
             msg = "fontmap file is not found: %s" % conffile
             raise RuntimeError(msg)
