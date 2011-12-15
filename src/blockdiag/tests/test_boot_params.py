@@ -75,6 +75,19 @@ def config_option_test():
     os.unlink(tmp[1])
 
 
+@argv_wrapper
+def config_option_with_bom_test():
+    tmp = tempfile.mkstemp()
+    fp = os.fdopen(tmp[0], 'wt')
+    fp.write("\xEF\xBB\xBF[blockdiag]\n")
+    fp.close()
+
+    sys.argv = ['', '-c', tmp[1], 'input.diag']
+    (options, args) = parse_option()
+
+    os.unlink(tmp[1])
+
+
 @raises(RuntimeError)
 @argv_wrapper
 def invalid_config_option_test():
