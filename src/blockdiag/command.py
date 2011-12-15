@@ -22,7 +22,7 @@ import blockdiag
 import DiagramDraw
 import diagparser
 from builder import ScreenNodeBuilder
-from blockdiag.utils.fontmap import FontMap
+from blockdiag.utils.fontmap import parse_fontpath, FontMap
 
 
 def parse_option():
@@ -105,7 +105,8 @@ def detectfont(options):
     fontpath = None
     if options.font:
         for path in options.font:
-            if os.path.isfile(path):
+            _path, index = parse_fontpath(path)
+            if os.path.isfile(_path):
                 fontpath = path
                 break
         else:
@@ -114,7 +115,8 @@ def detectfont(options):
 
     if fontpath is None:
         for path in fonts:
-            if path and os.path.isfile(path):
+            _path, index = parse_fontpath(path)
+            if os.path.isfile(_path):
                 fontpath = path
                 break
 

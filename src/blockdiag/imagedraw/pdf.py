@@ -19,6 +19,7 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from blockdiag.utils import urlutil, Box
+from blockdiag.utils.fontmap import parse_fontpath
 from blockdiag.utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 
@@ -36,7 +37,11 @@ class PDFImageDraw(object):
             raise RuntimeError(msg)
 
         if font.path not in self.fonts:
-            ttfont = TTFont(font.path, font.path)
+            path, index = parse_fontpath(font.path)
+            if index:
+                ttfont = TTFont(font.path, path, subfontIndex=index)
+            else:
+                ttfont = TTFont(font.path, path)
             pdfmetrics.registerFont(ttfont)
 
             self.fonts[font.path] = ttfont
