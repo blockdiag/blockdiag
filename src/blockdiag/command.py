@@ -96,7 +96,8 @@ def parse_option():
 
 def detectfont(options):
     fonts = ['c:/windows/fonts/VL-Gothic-Regular.ttf',  # for Windows
-             'c:/windows/fonts/msmincho.ttf',  # for Windows
+             'c:/windows/fonts/msgothic.ttf',  # for Windows
+             'c:/windows/fonts/msgoth04.ttc',  # for Windows
              '/usr/share/fonts/truetype/ipafont/ipagp.ttf',  # for Debian
              '/usr/local/share/font-ipa/ipagp.otf',  # for FreeBSD
              '/Library/Fonts/Hiragino Sans GB W3.otf',  # for MacOS
