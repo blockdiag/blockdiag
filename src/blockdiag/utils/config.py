@@ -16,13 +16,16 @@
 import re
 import sys
 import codecs
-from ordereddict import OrderedDict
 from ConfigParser import SafeConfigParser
 
 
 class ConfigParser(SafeConfigParser):
     def __init__(self):
-        if sys.version_info > (2, 6):
+        if sys.version_info > (2, 6) and sys.version_info < (2, 7):
+            # only for Python2.6
+            # - dict_type argument is supported py2.6 or later
+            # - SafeConfigParser of py2.7 uses OrderedDict as default
+            from ordereddict import OrderedDict
             SafeConfigParser.__init__(self, dict_type=OrderedDict)
         else:
             SafeConfigParser.__init__(self)
