@@ -2,6 +2,7 @@
 
 import os
 import sys
+import tempfile
 import unittest2
 from utils import stderr_wrapper, assertRaises
 from cStringIO import StringIO
@@ -286,7 +287,6 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(None, font4.path)
         self.assertEqual(20, font4.size)
 
-    @stderr_wrapper
     def test_fontmap_using_fontalias(self):
         _config = ("[fontmap]\nserif-bold: %s\n" + \
                    "[fontalias]\ntest = serif-bold\n") % self.fontpath[0]
@@ -298,3 +298,43 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual('serif-bold', font1.familyname)
         self.assertEqual(self.fontpath[0], font1.path)
         self.assertEqual(20, font1.size)
+
+    def test_fontmap_by_file(self):
+        tmp = tempfile.mkstemp()
+
+        _config = "[fontmap]\nsansserif: %s\nsansserif-bold: %s\n" % \
+                  (self.fontpath[0], self.fontpath[1])
+
+        fp = os.fdopen(tmp[0], 'wt')
+        fp.write(_config)
+        fp.close()
+        fmap = FontMap(tmp[1])
+
+        font1 = fmap.find()
+        self.assertTrue(font1)
+        self.assertEqual('sansserif', font1.generic_family)
+        self.assertEqual(self.fontpath[0], font1.path)
+        self.assertEqual(11, font1.size)
+
+        os.unlink(tmp[1])
+
+    def test_fontmap_including_bom_by_file(self):
+        tmp = tempfile.mkstemp()
+
+        _config = ("\xEF\xBB\xBF[fontmap]\nsansserif: %s\n"
+                   "sansserif-bold: %s\n") % \
+                  (self.fontpath[0], self.fontpath[1])
+
+        try:
+            fp = os.fdopen(tmp[0], 'wt')
+            fp.write(_config)
+            fp.close()
+            fmap = FontMap(tmp[1])
+
+            font1 = fmap.find()
+            self.assertTrue(font1)
+            self.assertEqual('sansserif', font1.generic_family)
+            self.assertEqual(self.fontpath[0], font1.path)
+            self.assertEqual(11, font1.size)
+        finally:
+            os.unlink(tmp[1])

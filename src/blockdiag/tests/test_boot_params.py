@@ -136,6 +136,15 @@ def auto_font_detection_test():
 
 
 @raises(RuntimeError)
+@argv_wrapper
+def not_exist_fontmap_config_test():
+    sys.argv = ['', '--fontmap', '/fontmap_is_not_exist', 'input.diag']
+    (options, args) = parse_option()
+    fontpath = detectfont(options)
+    ok_(fontpath)
+
+
+@raises(RuntimeError)
 def unknown_image_driver_test():
     from blockdiag.DiagramDraw import DiagramDraw
     from blockdiag.elements import Diagram

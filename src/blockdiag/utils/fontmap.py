@@ -112,7 +112,11 @@ class FontMap(object):
         if hasattr(conffile, 'read'):
             config.readfp(conffile)
         elif os.path.isfile(conffile):
-            fd = codecs.open(conffile, 'r', 'utf-8')
+            if sys.version_info > (2, 5):
+                fd = codecs.open(conffile, 'r', 'utf-8-sig')
+            else:
+                fd = codecs.open(conffile, 'r', 'utf-8')
+
             config.readfp(fd)
         else:
             msg = "fontmap file is not found: %s" % conffile
