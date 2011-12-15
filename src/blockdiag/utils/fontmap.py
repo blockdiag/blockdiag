@@ -23,6 +23,17 @@ from ConfigParser import SafeConfigParser
 from blockdiag.utils.collections import namedtuple
 
 
+def parse_fontpath(path):
+    if path is None:
+        return (None, None)
+
+    match = re.search('^(.*):(\d)$', path)
+    if match:
+        return (match.group(1), int(match.group(2)))
+    else:
+        return (path, None)
+
+
 class FontInfo(object):
     def __init__(self, family, path, size):
         self.path = path
@@ -122,7 +133,8 @@ class FontMap(object):
         self.append_font(self.default_fontfamily, path)
 
     def append_font(self, fontfamily, path):
-        if path is None or os.path.isfile(path):
+        _path, index = parse_fontpath(path)
+        if path is None or os.path.isfile(_path):
             font = FontInfo(fontfamily, path, self.fontsize)
             self.fonts[font.familyname] = font
         else:

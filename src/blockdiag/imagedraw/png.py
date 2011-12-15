@@ -17,6 +17,7 @@ import re
 import math
 from itertools import izip, tee
 from blockdiag.utils import ellipse, urlutil, Box
+from blockdiag.utils.fontmap import parse_fontpath
 from blockdiag.utils.myitertools import istep, stepslice
 from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
 try:
@@ -250,7 +251,11 @@ class ImageDrawEx(object):
         fill = kwargs.get('fill')
 
         if font.path:
-            ttfont = ImageFont.truetype(font.path, font.size)
+            path, index = parse_fontpath(font.path)
+            if index:
+                ttfont = ImageFont.truetype(path, font.size, index=index)
+            else:
+                ttfont = ImageFont.truetype(path, font.size)
         else:
             ttfont = None
 

@@ -22,12 +22,17 @@ except ImportError:
     import ImageDraw
     import ImageFont
 from TextFolder import TextFolder
+from fontmap import parse_fontpath
 
 
 class PILTextFolder(TextFolder):
     def __init__(self, box, string, font, **kwargs):
         if font.path:
-            self.ttfont = ImageFont.truetype(font.path, font.size)
+            path, index = parse_fontpath(font.path)
+            if index:
+                self.ttfont = ImageFont.truetype(path, font.size, index=index)
+            else:
+                self.ttfont = ImageFont.truetype(path, font.size)
         else:
             self.ttfont = None
 
