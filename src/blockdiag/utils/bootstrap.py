@@ -21,100 +21,152 @@ from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 
 
-def parse_option(appname, version, option_parser=None):
-    if option_parser is None:
-        option_parser = build_option_parser(appname, version)
+class Application(object):
+    module = None
 
-    options, args = option_parser.parse_args()
-
-    if len(args) == 0:
-        p.print_help()
-        sys.exit(0)
-
-    options.input = args.pop(0)
-    if options.output:
-        pass
-    elif options.output == '-':
-        options.output = 'output.' + options.type.lower()
-    else:
-        ext = '.%s' % options.type.lower()
-        options.output = re.sub('\..*?$', ext, options.input)
-
-    options.type = options.type.upper()
-    if not options.type in ('SVG', 'PNG', 'PDF'):
-        msg = "unknown format: %s" % options.type
-        raise RuntimeError(msg)
-
-    if options.type == 'PDF':
+    def run(self):
         try:
-            import reportlab.pdfgen.canvas
-        except ImportError:
-            msg = "could not output PDF format; Install reportlab."
+            self.parse_options()
+            self.create_fontmap()
+
+            parsed = self.parse_diagram()
+            return self.build_diagram(parsed)
+        except UnicodeEncodeError, e:
+            msg = "ERROR: UnicodeEncodeError caught " + \
+                  "(check your font settings)\n"
+            sys.stderr.write(msg)
+            return -1
+        except Exception, e:
+            sys.stderr.write("ERROR: %s\n" % e)
+            return -1
+
+    def parse_options(self):
+        self.options = Options(self.module).parse()
+
+    def create_fontmap(self):
+        self.fontmap = create_fontmap(self.options)
+
+    def parse_diagram(self):
+        if self.options.input == '-':
+            import codecs
+            stream = codecs.getreader('utf-8')(sys.stdin)
+            tree = self.module.parser.parse_string(stream.read())
+        else:
+            tree = self.module.parser.parse_file(self.options.input)
+
+        return tree
+
+    def build_diagram(self, tree):
+        DiagramDraw = self.module.drawer.DiagramDraw
+
+        diagram = self.module.builder.ScreenNodeBuilder.build(tree)
+
+        drawer = DiagramDraw(self.options.type, diagram,
+                             self.options.output, fontmap=self.fontmap,
+                             antialias=self.options.antialias,
+                             nodoctype=self.options.nodoctype)
+        drawer.draw()
+        drawer.save()
+
+        return 0
+
+
+class Options(object):
+    def __init__(self, module):
+        self.module = module
+        self.build_parser()
+
+    def parse(self):
+        self.options, self.args = self.parser.parse_args()
+        self.validate()
+        self.read_configfile()
+
+        return self.options
+
+    def build_parser(self):
+        version = "%%prog %s" % self.module.__version__
+        usage = "usage: %prog [options] infile"
+        self.parser = p = OptionParser(usage=usage, version=version)
+        p.add_option('-a', '--antialias', action='store_true',
+                     help='Pass diagram image to anti-alias filter')
+        p.add_option('-c', '--config',
+                     help='read configurations from FILE', metavar='FILE')
+        p.add_option('-o', dest='output',
+                     help='write diagram to FILE', metavar='FILE')
+        p.add_option('-f', '--font', default=[], action='append',
+                     help='use FONT to draw diagram', metavar='FONT')
+        p.add_option('--fontmap',
+                     help='use FONTMAP file to draw diagram', metavar='FONT')
+        p.add_option('-T', dest='type', default='PNG',
+                     help='Output diagram as TYPE format')
+        p.add_option('--nodoctype', action='store_true',
+                     help='Do not output doctype definition tags (SVG only)')
+
+        return p
+
+    def validate(self):
+        if len(self.args) == 0:
+            self.parser.print_help()
+            sys.exit(0)
+
+        self.options.input = self.args.pop(0)
+        if self.options.output:
+            pass
+        elif self.options.output == '-':
+            self.options.output = 'output.' + self.options.type.lower()
+        else:
+            ext = '.%s' % self.options.type.lower()
+            self.options.output = re.sub('\..*?$', ext, self.options.input)
+
+        self.options.type = self.options.type.upper()
+        if not self.options.type in ('SVG', 'PNG', 'PDF'):
+            msg = "unknown format: %s" % self.options.type
             raise RuntimeError(msg)
 
-    if options.nodoctype and options.type != 'SVG':
-        msg = "--nodoctype option work in SVG images."
-        raise RuntimeError(msg)
+        if self.options.type == 'PDF':
+            try:
+                import reportlab.pdfgen.canvas
+            except ImportError:
+                msg = "could not output PDF format; Install reportlab."
+                raise RuntimeError(msg)
 
-    if options.config and not os.path.isfile(options.config):
-        msg = "config file is not found: %s" % options.config
-        raise RuntimeError(msg)
+        if self.options.nodoctype and self.options.type != 'SVG':
+            msg = "--nodoctype option work in SVG images."
+            raise RuntimeError(msg)
 
-    if options.fontmap and not os.path.isfile(options.fontmap):
-        msg = "fontmap file is not found: %s" % options.fontmap
-        raise RuntimeError(msg)
+        if self.options.config and not os.path.isfile(self.options.config):
+            msg = "config file is not found: %s" % self.options.config
+            raise RuntimeError(msg)
 
-    parse_config(appname, options)
+        if self.options.fontmap and not os.path.isfile(self.options.fontmap):
+            msg = "fontmap file is not found: %s" % self.options.fontmap
+            raise RuntimeError(msg)
 
-    return options, args
+    def read_configfile(self):
+        if self.options.config:
+            configpath = self.options.config
+        elif os.environ.get('HOME'):
+            configpath = '%s/.blockdiagrc' % os.environ.get('HOME')
+        elif os.environ.get('USERPROFILE'):
+            configpath = '%s/.blockdiagrc' % os.environ.get('USERPROFILE')
+        else:
+            configpath = ''
 
+        appname = self.module.__name__
+        if os.path.isfile(configpath):
+            config = ConfigParser()
+            config.read(configpath)
 
-def build_option_parser(appname, version):
-    version = "%%prog %s" % version
-    usage = "usage: %prog [options] infile"
-    p = OptionParser(usage=usage, version=version)
-    p.add_option('-a', '--antialias', action='store_true',
-                 help='Pass diagram image to anti-alias filter')
-    p.add_option('-c', '--config',
-                 help='read configurations from FILE', metavar='FILE')
-    p.add_option('-o', dest='output',
-                 help='write diagram to FILE', metavar='FILE')
-    p.add_option('-f', '--font', default=[], action='append',
-                 help='use FONT to draw diagram', metavar='FONT')
-    p.add_option('--fontmap',
-                 help='use FONTMAP file to draw diagram', metavar='FONT')
-    p.add_option('-T', dest='type', default='PNG',
-                 help='Output diagram as TYPE format')
-    p.add_option('--nodoctype', action='store_true',
-                 help='Do not output doctype definition tags (SVG only)')
+            if config.has_option(appname, 'fontpath'):
+                fontpath = config.get(appname, 'fontpath')
+                self.options.font.append(fontpath)
 
-    return p
+            if config.has_option(appname, 'fontmap'):
+                if self.options.fontmap is None:
+                    self.options.fontmap = config.get(appname, 'fontmap')
 
-
-def parse_config(appname, options):
-    if options.config:
-        configpath = options.config
-    elif os.environ.get('HOME'):
-        configpath = '%s/.blockdiagrc' % os.environ.get('HOME')
-    elif os.environ.get('USERPROFILE'):
-        configpath = '%s/.blockdiagrc' % os.environ.get('USERPROFILE')
-    else:
-        configpath = ''
-
-    if os.path.isfile(configpath):
-        config = ConfigParser()
-        config.read(configpath)
-
-        if config.has_option(appname, 'fontpath'):
-            fontpath = config.get(appname, 'fontpath')
-            options.font.append(fontpath)
-
-        if config.has_option(appname, 'fontmap'):
-            if options.fontmap is None:
-                fontmap = config.get(appname, 'fontmap')
-
-        if options.fontmap is None:
-            options.fontmap = configpath
+            if self.options.fontmap is None:
+                self.options.fontmap = configpath
 
 
 def detectfont(options):

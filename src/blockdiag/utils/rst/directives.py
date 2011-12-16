@@ -20,7 +20,7 @@ from docutils.parsers import rst
 from blockdiag import parser
 from blockdiag.command import detectfont
 from blockdiag.builder import ScreenNodeBuilder
-from blockdiag.DiagramDraw import DiagramDraw
+from blockdiag.drawer import DiagramDraw
 from blockdiag.utils.collections import namedtuple
 
 

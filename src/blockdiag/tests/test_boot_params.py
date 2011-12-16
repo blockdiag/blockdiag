@@ -3,164 +3,154 @@
 import os
 import sys
 import tempfile
-from utils import argv_wrapper
-from nose.tools import raises, ok_, eq_
-from blockdiag.command import parse_option
+import unittest2
+from utils import argv_wrapper, assertRaises
+import blockdiag
+from blockdiag.command import BlockdiagOptions
 from blockdiag.utils.bootstrap import detectfont
 
 
-@argv_wrapper
-def type_option_test():
-    sys.argv = ['', '-Tsvg', 'input.diag']
-    parse_option('blockdiag', 1.0)
+class TestBootParams(unittest2.TestCase):
+    def setUp(self):
+        self.parser = BlockdiagOptions(blockdiag)
 
-    sys.argv = ['', '-TSVG', 'input.diag']
-    parse_option('blockdiag', 1.0)
+    @argv_wrapper
+    def test_type_option(self):
+        sys.argv = ['', '-Tsvg', 'input.diag']
+        self.parser.parse()
 
-    sys.argv = ['', '-TSvg', 'input.diag']
-    parse_option('blockdiag', 1.0)
+        sys.argv = ['', '-TSVG', 'input.diag']
+        self.parser.parse()
 
-    sys.argv = ['', '-Tpng', 'input.diag']
-    parse_option('blockdiag', 1.0)
+        sys.argv = ['', '-TSvg', 'input.diag']
+        self.parser.parse()
 
-    sys.argv = ['', '-Tpdf', 'input.diag']
-    parse_option('blockdiag', 1.0)
+        sys.argv = ['', '-Tpng', 'input.diag']
+        self.parser.parse()
 
+        sys.argv = ['', '-Tpdf', 'input.diag']
+        self.parser.parse()
 
-@raises(RuntimeError)
-@argv_wrapper
-def invalid_type_option_test():
-    sys.argv = ['', '-Tsvgz', 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_invalid_type_option(self):
+        sys.argv = ['', '-Tsvgz', 'input.diag']
+        self.parser.parse()
 
+    @argv_wrapper
+    def test_separate_option(self):
+        sys.argv = ['', '-Tsvg', '--separate', 'input.diag']
+        self.parser.parse()
 
-@argv_wrapper
-def separate_option_test():
-    sys.argv = ['', '-Tsvg', '--separate', 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
+        sys.argv = ['', '-Tpng', '--separate', 'input.diag']
+        self.parser.parse()
 
-    sys.argv = ['', '-Tpng', '--separate', 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
+        sys.argv = ['', '-Tpdf', '--separate', 'input.diag']
+        self.parser.parse()
 
-    sys.argv = ['', '-Tpdf', '--separate', 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
+    @argv_wrapper
+    def test_svg_nodoctype_option(self):
+        sys.argv = ['', '-Tsvg', '--nodoctype', 'input.diag']
+        self.parser.parse()
 
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_png_nodoctype_option(self):
+        sys.argv = ['', '-Tpng', '--nodoctype', 'input.diag']
+        self.parser.parse()
 
-@argv_wrapper
-def svg_nodoctype_option_test():
-    sys.argv = ['', '-Tsvg', '--nodoctype', 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_pdf_nodoctype_option(self):
+        sys.argv = ['', '-Tpdf', '--nodoctype', 'input.diag']
+        self.parser.parse()
 
+    @argv_wrapper
+    def test_config_option(self):
+        try:
+            tmp = tempfile.mkstemp()
+            sys.argv = ['', '-c', tmp[1], 'input.diag']
+            self.parser.parse()
+        finally:
+            os.close(tmp[0])
+            os.unlink(tmp[1])
 
-@raises(RuntimeError)
-@argv_wrapper
-def png_nodoctype_option_test():
-    sys.argv = ['', '-Tpng', '--nodoctype', 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
+    @argv_wrapper
+    def test_config_option_with_bom(self):
+        try:
+            tmp = tempfile.mkstemp()
+            fp = os.fdopen(tmp[0], 'wt')
+            fp.write("\xEF\xBB\xBF[blockdiag]\n")
+            fp.close()
 
+            sys.argv = ['', '-c', tmp[1], 'input.diag']
+            self.parser.parse()
+        finally:
+            os.unlink(tmp[1])
 
-@raises(RuntimeError)
-@argv_wrapper
-def pdf_nodoctype_option_test():
-    sys.argv = ['', '-Tpdf', '--nodoctype', 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_invalid_config_option(self):
+        sys.argv = ['', '-c', '/unknown_config_file', 'input.diag']
+        self.parser.parse()
 
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_invalid_dir_config_option(self):
+        try:
+            tmp = tempfile.mkdtemp()
 
-@argv_wrapper
-def config_option_test():
-    tmp = tempfile.mkstemp()
-    sys.argv = ['', '-c', tmp[1], 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
+            sys.argv = ['', '-c', tmp, 'input.diag']
+            self.parser.parse()
+        finally:
+            os.rmdir(tmp)
 
-    os.close(tmp[0])
-    os.unlink(tmp[1])
+    @argv_wrapper
+    def test_config_option_fontpath(self):
+        try:
+            tmp = tempfile.mkstemp()
+            config = '[blockdiag]\nfontpath = /path/to/font\n'
+            os.fdopen(tmp[0], 'wt').write(config)
 
+            sys.argv = ['', '-c', tmp[1], 'input.diag']
+            options = self.parser.parse()
+            self.assertEqual(options.font, ['/path/to/font'])
+        finally:
+            os.unlink(tmp[1])
 
-@argv_wrapper
-def config_option_with_bom_test():
-    tmp = tempfile.mkstemp()
-    fp = os.fdopen(tmp[0], 'wt')
-    fp.write("\xEF\xBB\xBF[blockdiag]\n")
-    fp.close()
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_not_exist_font_config_option(self):
+        sys.argv = ['', '-f', '/font_is_not_exist', 'input.diag']
+        options = self.parser.parse()
+        detectfont(options)
 
-    sys.argv = ['', '-c', tmp[1], 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_not_exist_font_config_option2(self):
+        sys.argv = ['', '-f', '/font_is_not_exist',
+                    '-f', '/font_is_not_exist2', 'input.diag']
+        options = self.parser.parse()
+        detectfont(options)
 
-    os.unlink(tmp[1])
+    @argv_wrapper
+    def test_auto_font_detection(self):
+        sys.argv = ['', 'input.diag']
+        options = self.parser.parse()
+        fontpath = detectfont(options)
+        self.assertTrue(fontpath)
 
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_not_exist_fontmap_config(self):
+        sys.argv = ['', '--fontmap', '/fontmap_is_not_exist', 'input.diag']
+        options = self.parser.parse()
+        fontpath = detectfont(options)
+        self.assertTrue(fontpath)
 
-@raises(RuntimeError)
-@argv_wrapper
-def invalid_config_option_test():
-    tmp = tempfile.mkstemp()
-    os.close(tmp[0])
-    os.unlink(tmp[1])
+    @assertRaises(RuntimeError)
+    def test_unknown_image_driver(self):
+        from blockdiag.drawer import DiagramDraw
+        from blockdiag.elements import Diagram
 
-    sys.argv = ['', '-c', tmp[1], 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
-
-
-@raises(RuntimeError)
-@argv_wrapper
-def invalid_dir_config_option_test():
-    try:
-        tmp = tempfile.mkdtemp()
-
-        sys.argv = ['', '-c', tmp, 'input.diag']
-        (options, args) = parse_option('blockdiag', 1.0)
-    finally:
-        os.rmdir(tmp)
-
-
-@argv_wrapper
-def config_option_fontpath_test():
-    tmp = tempfile.mkstemp()
-    os.fdopen(tmp[0], 'wt').write('[blockdiag]\nfontpath = /path/to/font\n')
-
-    sys.argv = ['', '-c', tmp[1], 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
-    eq_(['/path/to/font'], options.font)
-
-    os.unlink(tmp[1])
-
-
-@raises(RuntimeError)
-@argv_wrapper
-def not_exist_font_config_option_test():
-    sys.argv = ['', '-f', '/font_is_not_exist', 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
-    detectfont(options)
-
-
-@raises(RuntimeError)
-@argv_wrapper
-def not_exist_font_config_option2_test():
-    sys.argv = ['', '-f', '/font_is_not_exist',
-                '-f', '/font_is_not_exist2', 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
-    detectfont(options)
-
-
-@argv_wrapper
-def auto_font_detection_test():
-    sys.argv = ['', 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
-    fontpath = detectfont(options)
-    ok_(fontpath)
-
-
-@raises(RuntimeError)
-@argv_wrapper
-def not_exist_fontmap_config_test():
-    sys.argv = ['', '--fontmap', '/fontmap_is_not_exist', 'input.diag']
-    (options, args) = parse_option('blockdiag', 1.0)
-    fontpath = detectfont(options)
-    ok_(fontpath)
-
-
-@raises(RuntimeError)
-def unknown_image_driver_test():
-    from blockdiag.DiagramDraw import DiagramDraw
-    from blockdiag.elements import Diagram
-
-    DiagramDraw('unknown', Diagram())
+        DiagramDraw('unknown', Diagram())
