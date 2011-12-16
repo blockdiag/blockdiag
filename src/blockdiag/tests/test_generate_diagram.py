@@ -102,5 +102,5 @@ def generator_core(format):
 def not_exist_font_config_option_test():
     fontpath = get_fontpath()
     sys.argv = ['', '-f', '/font_is_not_exist', '-f', fontpath, 'input.diag']
-    (options, args) = blockdiag.command.parse_option()
+    (options, args) = blockdiag.command.parse_option('blockdiag', 1)
     blockdiag.command.detectfont(options)
