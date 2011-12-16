@@ -71,7 +71,15 @@ def parse_option():
         msg = "config file is not found: %s" % options.config
         raise RuntimeError(msg)
 
-    configpath = options.config or "%s/.blockdiagrc" % os.environ.get('HOME')
+    if options.config:
+        configpath = options.config
+    elif os.environ.get('HOME'):
+        configpath = '%s/.blockdiagrc' % os.environ.get('HOME')
+    elif os.environ.get('USERPROFILE'):
+        configpath = '%s/.blockdiagrc' % os.environ.get('USERPROFILE')
+    else:
+        configpath = ''
+
     if os.path.isfile(configpath):
         config = ConfigParser()
         config.read(configpath)
