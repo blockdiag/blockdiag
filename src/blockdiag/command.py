@@ -47,12 +47,11 @@ class BlockdiagApp(Application):
             DiagramBuilder = self.module.builder.SeparateDiagramBuilder
             DiagramDraw = self.module.drawer.DiagramDraw
 
-            fontmap = self.create_fontmap()
             basename = re.sub('.svg$', '', self.options.output)
             for i, group in enumerate(DiagramBuilder.build(tree)):
                 outfile = '%s_%d.svg' % (basename, i + 1)
                 draw = DiagramDraw(self.options.type, group, outfile,
-                                   fontmap=fontmap,
+                                   fontmap=self.fontmap,
                                    antialias=self.options.antialias,
                                    nodoctype=self.options.nodoctype)
                 draw.draw()
