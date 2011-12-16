@@ -4,6 +4,7 @@ import os
 import sys
 import re
 import tempfile
+import blockdiag
 import blockdiag.command
 from utils import *
 from blockdiag.elements import *
@@ -102,5 +103,5 @@ def generator_core(format):
 def not_exist_font_config_option_test():
     fontpath = get_fontpath()
     sys.argv = ['', '-f', '/font_is_not_exist', '-f', fontpath, 'input.diag']
-    (options, args) = blockdiag.command.parse_option('blockdiag', 1)
+    options = blockdiag.command.BlockdiagOptions(blockdiag).parse()
     blockdiag.command.detectfont(options)
