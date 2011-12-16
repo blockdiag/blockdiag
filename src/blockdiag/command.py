@@ -16,8 +16,8 @@
 import re
 import sys
 import blockdiag
+import blockdiag.parser
 import DiagramDraw
-import diagparser
 from builder import ScreenNodeBuilder
 from blockdiag.utils import bootstrap
 
@@ -41,9 +41,9 @@ def main():
         if options.input == '-':
             import codecs
             stream = codecs.getreader('utf-8')(sys.stdin)
-            tree = diagparser.parse_string(stream.read())
+            tree = blockdiag.parser.parse_string(stream.read())
         else:
-            tree = diagparser.parse_file(options.input)
+            tree = blockdiag.parser.parse_file(options.input)
 
         fontmap = create_fontmap(options)
         if options.separate:

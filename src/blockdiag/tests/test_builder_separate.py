@@ -3,7 +3,7 @@
 import tempfile
 from blockdiag.builder import *
 from blockdiag.elements import *
-from blockdiag.diagparser import parse_string
+from blockdiag.parser import parse_string
 
 
 def __build_diagram(filename):
