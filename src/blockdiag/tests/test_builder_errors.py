@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from blockdiag.diagparser import *
+from blockdiag.parser import *
 from nose.tools import raises
 from utils import __build_diagram
 

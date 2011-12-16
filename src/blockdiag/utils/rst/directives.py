@@ -17,7 +17,7 @@ import os
 import codecs
 from docutils import nodes
 from docutils.parsers import rst
-from blockdiag import diagparser
+from blockdiag import parser
 from blockdiag.command import detectfont
 from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.DiagramDraw import DiagramDraw
@@ -138,7 +138,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         return results
 
     def node2diagram(self, node):
-        tree = diagparser.parse_string(node['code'])
+        tree = parser.parse_string(node['code'])
         return ScreenNodeBuilder.build(tree)
 
     def node2image(self, node, diagram):

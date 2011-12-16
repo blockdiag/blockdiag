@@ -3,7 +3,7 @@ import re
 from StringIO import StringIO
 from nose.tools import eq_
 from blockdiag.builder import *
-from blockdiag.diagparser import parse_string
+from blockdiag.parser import parse_string
 
 
 def argv_wrapper(func, argv=[]):
