@@ -16,61 +16,50 @@
 import re
 import sys
 import blockdiag
+import blockdiag.builder
+import blockdiag.drawer
 import blockdiag.parser
-import DiagramDraw
-from builder import ScreenNodeBuilder
-from blockdiag.utils import bootstrap
+from blockdiag.utils.bootstrap import Application, Options
 
 # for compatibility
 from blockdiag.utils.bootstrap import create_fontmap, detectfont
 
 
-def parse_option(appname, version):
-    p = bootstrap.build_option_parser(appname, version)
-    p.add_option('-s', '--separate', action='store_true',
-                 help='Separate diagram images for each group (SVG only)')
+class BlockdiagOptions(Options):
+    def build_parser(self):
+        super(BlockdiagOptions, self).build_parser()
+        self.parser.add_option(
+            '-s', '--separate', action='store_true',
+            help='Separate diagram images for each group (SVG only)'
+        )
 
-    return bootstrap.parse_option(appname, version, p)
+
+class BlockdiagApp(Application):
+    module = blockdiag
+
+    def parse_options(self):
+        self.options = BlockdiagOptions(self.module).parse()
+
+    def build_diagram(self, tree):
+        if not self.options.separate:
+            return super(BlockdiagApp, self).build_diagram(tree)
+        else:
+            DiagramBuilder = self.module.builder.SeparateDiagramBuilder
+            DiagramDraw = self.module.drawer.DiagramDraw
+
+            fontmap = self.create_fontmap()
+            basename = re.sub('.svg$', '', self.options.output)
+            for i, group in enumerate(DiagramBuilder.build(tree)):
+                outfile = '%s_%d.svg' % (basename, i + 1)
+                draw = DiagramDraw(self.options.type, group, outfile,
+                                   fontmap=fontmap,
+                                   antialias=self.options.antialias,
+                                   nodoctype=self.options.nodoctype)
+                draw.draw()
+                draw.save()
+
+            return 0
 
 
 def main():
-    try:
-        options, args = parse_option(appname='blockdiag',
-                                     version=blockdiag.__version__)
-
-        if options.input == '-':
-            import codecs
-            stream = codecs.getreader('utf-8')(sys.stdin)
-            tree = blockdiag.parser.parse_string(stream.read())
-        else:
-            tree = blockdiag.parser.parse_file(options.input)
-
-        fontmap = create_fontmap(options)
-        if options.separate:
-            from builder import SeparateDiagramBuilder
-
-            basename = re.sub('.svg$', '', options.output)
-            for i, group in enumerate(SeparateDiagramBuilder.build(tree)):
-                outfile = '%s_%d.svg' % (basename, i + 1)
-                draw = DiagramDraw.DiagramDraw(options.type, group, outfile,
-                                               fontmap=fontmap,
-                                               antialias=options.antialias,
-                                               nodoctype=options.nodoctype)
-                draw.draw()
-                draw.save()
-        else:
-            diagram = ScreenNodeBuilder.build(tree)
-
-            draw = DiagramDraw.DiagramDraw(options.type, diagram,
-                                           options.output, fontmap=fontmap,
-                                           antialias=options.antialias,
-                                           nodoctype=options.nodoctype)
-            draw.draw()
-            draw.save()
-    except UnicodeEncodeError, e:
-        msg = "ERROR: UnicodeEncodeError caught (check your font settings)\n"
-        sys.stderr.write(msg)
-        return -1
-    except Exception, e:
-        sys.stderr.write("ERROR: %s\n" % e)
-        return -1
+    return BlockdiagApp().run()
