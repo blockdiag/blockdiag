@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import os
+import re
 import sys
 from optparse import OptionParser
 from blockdiag.utils.config import ConfigParser
@@ -29,6 +30,15 @@ def parse_option(appname, version, option_parser=None):
     if len(args) == 0:
         p.print_help()
         sys.exit(0)
+
+    options.input = args.pop(0)
+    if options.output:
+        pass
+    elif options.output == '-':
+        options.output = 'output.' + options.type.lower()
+    else:
+        ext = '.%s' % options.type.lower()
+        options.output = re.sub('\..*?$', ext, options.input)
 
     options.type = options.type.upper()
     if not options.type in ('SVG', 'PNG', 'PDF'):
@@ -67,7 +77,7 @@ def build_option_parser(appname, version):
                  help='Pass diagram image to anti-alias filter')
     p.add_option('-c', '--config',
                  help='read configurations from FILE', metavar='FILE')
-    p.add_option('-o', dest='filename',
+    p.add_option('-o', dest='output',
                  help='write diagram to FILE', metavar='FILE')
     p.add_option('-f', '--font', default=[], action='append',
                  help='use FONT to draw diagram', metavar='FONT')

@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
 import re
 import sys
 import blockdiag
@@ -38,33 +37,22 @@ def main():
     try:
         options, args = parse_option(appname='blockdiag',
                                      version=blockdiag.__version__)
-    except RuntimeError, e:
-        sys.stderr.write("ERROR: %s\n" % e)
-        return
 
-    infile = args[0]
-    if options.filename:
-        outfile = options.filename
-    elif infile == '-':
-        outfile = 'output.' + options.type.lower()
-    else:
-        outfile = re.sub('\..*', '', infile) + '.' + options.type.lower()
-
-    try:
-        if infile == '-':
+        if options.input == '-':
             import codecs
             stream = codecs.getreader('utf-8')(sys.stdin)
             tree = diagparser.parse_string(stream.read())
         else:
-            tree = diagparser.parse_file(infile)
+            tree = diagparser.parse_file(options.input)
 
         fontmap = create_fontmap(options)
         if options.separate:
             from builder import SeparateDiagramBuilder
 
+            basename = re.sub('.svg$', '', options.output)
             for i, group in enumerate(SeparateDiagramBuilder.build(tree)):
-                outfile2 = re.sub('.svg$', '', outfile) + ('_%d.svg' % (i + 1))
-                draw = DiagramDraw.DiagramDraw(options.type, group, outfile2,
+                outfile = '%s_%d.svg' % (basename, i + 1)
+                draw = DiagramDraw.DiagramDraw(options.type, group, outfile,
                                                fontmap=fontmap,
                                                antialias=options.antialias,
                                                nodoctype=options.nodoctype)
@@ -73,8 +61,8 @@ def main():
         else:
             diagram = ScreenNodeBuilder.build(tree)
 
-            draw = DiagramDraw.DiagramDraw(options.type, diagram, outfile,
-                                           fontmap=fontmap,
+            draw = DiagramDraw.DiagramDraw(options.type, diagram,
+                                           options.output, fontmap=fontmap,
                                            antialias=options.antialias,
                                            nodoctype=options.nodoctype)
             draw.draw()
@@ -82,5 +70,7 @@ def main():
     except UnicodeEncodeError, e:
         msg = "ERROR: UnicodeEncodeError caught (check your font settings)\n"
         sys.stderr.write(msg)
+        return -1
     except Exception, e:
         sys.stderr.write("ERROR: %s\n" % e)
+        return -1
