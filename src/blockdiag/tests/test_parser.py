@@ -4,7 +4,7 @@ from blockdiag.parser import *
 from nose.tools import raises
 
 
-def test_diagparser_basic():
+def test_parser_basic():
     # basic digram
     str = """
           diagram test {
@@ -16,7 +16,7 @@ def test_diagparser_basic():
     assert isinstance(tree, Graph)
 
 
-def test_diagparser_without_diagram_id():
+def test_parser_without_diagram_id():
     str = """
           diagram {
              A -> B -> C, D;
@@ -34,7 +34,7 @@ def test_diagparser_without_diagram_id():
     assert isinstance(tree, Graph)
 
 
-def test_diagparser_empty_diagram():
+def test_parser_empty_diagram():
     str = """
           diagram {
           }
@@ -50,7 +50,7 @@ def test_diagparser_empty_diagram():
     assert isinstance(tree, Graph)
 
 
-def test_diagparser_diagram_includes_nodes():
+def test_parser_diagram_includes_nodes():
     str = """
           diagram {
             A;
@@ -69,7 +69,7 @@ def test_diagparser_diagram_includes_nodes():
     assert isinstance(tree.stmts[2].stmts[0], Node)
 
 
-def test_diagparser_diagram_includes_edges():
+def test_parser_diagram_includes_edges():
     str = """
           diagram {
             A -> B -> C;
@@ -95,7 +95,7 @@ def test_diagparser_diagram_includes_edges():
     assert isinstance(tree.stmts[1], Edge)
 
 
-def test_diagparser_diagram_includes_groups():
+def test_parser_diagram_includes_groups():
     str = """
           diagram {
             group {
@@ -122,7 +122,7 @@ def test_diagparser_diagram_includes_groups():
     assert isinstance(tree.stmts[1].stmts[0], Edge)
 
 
-def test_diagparser_diagram_includes_diagram_attributes():
+def test_parser_diagram_includes_diagram_attributes():
     str = """
           diagram {
             fontsize = 12;
@@ -135,6 +135,6 @@ def test_diagparser_diagram_includes_diagram_attributes():
 
 
 @raises(ParseException)
-def test_diagparser_parenthesis_ness():
+def test_parser_parenthesis_ness():
     str = ""
     tree = parse_string(str)
