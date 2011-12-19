@@ -24,7 +24,7 @@ class TextBox(NodeShape):
 
         if self.node.background:
             size = images.get_image_size(self.node.background)
-            size = images.calc_image_size(size, self.textbox)
+            size = images.calc_image_size(size, self.textbox.size)
 
             pt = self.textbox.center
             self.textbox = Box(pt.x - size[0] / 2, pt.y - size[1] / 2,
