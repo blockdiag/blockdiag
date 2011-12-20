@@ -17,6 +17,7 @@ import os
 import codecs
 from docutils import nodes
 from docutils.parsers import rst
+from docutils.statemachine import ViewList
 from blockdiag import parser
 from blockdiag.command import detectfont
 from blockdiag.builder import ScreenNodeBuilder
@@ -245,7 +246,8 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             row = nodes.row()
             for attr in desc:
                 entry = nodes.entry()
-                entry += nodes.paragraph(text=attr)
+                self.state.nested_parse(ViewList([attr], source=attr),
+                                        0, entry)
                 row += entry
             tbody += row
         tgroup += tbody
