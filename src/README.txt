@@ -113,6 +113,12 @@ Apache License 2.0
 History
 =======
 
+1.1.2 (2011-12-26)
+------------------
+* Support font-index for TrueType Font Collections (.ttc file)
+* Allow to use reST syntax in descriptions of nodes
+* Fix bugs
+
 1.1.1 (2011-11-27)
 ------------------
 * Add node attribute: href (thanks to @r_rudi!)
