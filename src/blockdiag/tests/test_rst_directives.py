@@ -223,15 +223,13 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(1, len(tbody[0][0]))
         self.assertEqual(1, len(tbody[0][0][0]))
         self.assertEqual('A', tbody[0][0][0][0])
-        self.assertEqual(1, len(tbody[0][1]))
-        self.assertEqual(0, len(tbody[0][1][0]))  # no description
+        self.assertEqual(0, len(tbody[0][1]))
 
         self.assertEqual(2, len(tbody[1]))
         self.assertEqual(1, len(tbody[1][0]))
         self.assertEqual(1, len(tbody[1][0][0]))
         self.assertEqual('B', tbody[1][0][0][0])
-        self.assertEqual(1, len(tbody[1][1]))
-        self.assertEqual(0, len(tbody[1][1][0]))  # no description
+        self.assertEqual(0, len(tbody[1][1]))
 
     @use_tmpdir
     def test_rst_directives_with_block_desctable_with_description(self, path):
@@ -269,6 +267,64 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual('bar', tbody[1][1][0][0])
 
     @use_tmpdir
+    def test_rst_directives_with_block_desctable_with_rest_markups(self, path):
+        directives.setup(format='SVG', outputdir=path)
+        text = ".. blockdiag::\n   :desctable:\n\n" + \
+               "   { A [description = \"foo *bar* **baz**\"]; " + \
+               "     B [description = \"**foo** *bar* baz\"]; }"
+        doctree = publish_doctree(text)
+        self.assertEqual(2, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertEqual(nodes.table, type(doctree[1]))
+
+        # tgroup
+        self.assertEqual(4, len(doctree[1][0]))
+        self.assertEqual(nodes.colspec, type(doctree[1][0][0]))
+        self.assertEqual(nodes.colspec, type(doctree[1][0][1]))
+        self.assertEqual(nodes.thead, type(doctree[1][0][2]))
+        self.assertEqual(nodes.tbody, type(doctree[1][0][3]))
+
+        # colspec
+        self.assertEqual(50, doctree[1][0][0]['colwidth'])
+        self.assertEqual(50, doctree[1][0][1]['colwidth'])
+
+        # thead
+        thead = doctree[1][0][2]
+        self.assertEqual(2, len(thead[0]))
+        self.assertEqual('Name', thead[0][0][0][0])
+        self.assertEqual('Description', thead[0][1][0][0])
+
+        # tbody
+        tbody = doctree[1][0][3]
+        self.assertEqual(2, len(tbody))
+        self.assertEqual('A', tbody[0][0][0][0])
+        self.assertEqual(4, len(tbody[0][1][0]))
+        self.assertEqual(nodes.Text, type(tbody[0][1][0][0]))
+        self.assertEqual('foo ', str(tbody[0][1][0][0]))
+        self.assertEqual(nodes.emphasis, type(tbody[0][1][0][1]))
+        self.assertEqual(nodes.Text, type(tbody[0][1][0][1][0]))
+        self.assertEqual('bar', tbody[0][1][0][1][0])
+        self.assertEqual(nodes.Text, type(tbody[0][1][0][2]))
+        self.assertEqual(' ', str(tbody[0][1][0][2]))
+        self.assertEqual(nodes.strong, type(tbody[0][1][0][3]))
+        self.assertEqual(nodes.Text, type(tbody[0][1][0][3][0]))
+        self.assertEqual('baz', str(tbody[0][1][0][3][0]))
+
+        self.assertEqual('B', tbody[1][0][0][0])
+        self.assertEqual(4, len(tbody[1][1][0]))
+        print tbody[1][1][0]
+        self.assertEqual(nodes.strong, type(tbody[1][1][0][0]))
+        self.assertEqual(nodes.Text, type(tbody[1][1][0][0][0]))
+        self.assertEqual('foo', str(tbody[1][1][0][0][0]))
+        self.assertEqual(nodes.Text, type(tbody[1][1][0][1]))
+        self.assertEqual(' ', str(tbody[1][1][0][1]))
+        self.assertEqual(nodes.emphasis, type(tbody[1][1][0][2]))
+        self.assertEqual(nodes.Text, type(tbody[1][1][0][2][0]))
+        self.assertEqual('bar', str(tbody[1][1][0][2][0]))
+        self.assertEqual(nodes.Text, type(tbody[1][1][0][3]))
+        self.assertEqual(' baz', str(tbody[1][1][0][3]))
+
+    @use_tmpdir
     def test_rst_directives_with_block_desctable_with_numbered(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n" + \
@@ -303,7 +359,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(2, len(tbody))
         self.assertEqual('1', tbody[0][0][0][0])
         self.assertEqual('B', tbody[0][1][0][0])
-        self.assertEqual(0, len(tbody[0][2][0]))
+        self.assertEqual(0, len(tbody[0][2]))
         self.assertEqual('2', tbody[1][0][0][0])
         self.assertEqual('A', tbody[1][1][0][0])
-        self.assertEqual(0, len(tbody[1][2][0]))
+        self.assertEqual(0, len(tbody[1][2]))
