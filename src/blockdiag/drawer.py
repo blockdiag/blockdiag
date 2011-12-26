@@ -15,12 +15,13 @@
 
 import noderenderer
 import imagedraw
-from DiagramMetrics import AutoScaler
+from metrics import AutoScaler
+from metrics import DiagramMetrics
 from imagedraw.filters.linejump import LineJumpDrawFilter
 
 
 class DiagramDraw(object):
-    MetricsClass = None
+    MetricsClass = DiagramMetrics
 
     @classmethod
     def set_metrics_class(cls, MetricsClass):
@@ -188,7 +189,3 @@ class DiagramDraw(object):
 
     def save(self, size=None):
         return self.drawer.save(self.filename, size, self.format)
-
-
-from DiagramMetrics import DiagramMetrics
-DiagramDraw.set_metrics_class(DiagramMetrics)
