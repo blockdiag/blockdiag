@@ -53,6 +53,8 @@ class NodeShape(object):
     def __init__(self, node, metrics=None):
         self.node = node
         self.metrics = metrics
+        self._width = None
+        self._height = None
 
         m = self.metrics.cell(self.node)
         self.textalign = 'center'
@@ -150,6 +152,14 @@ class NodeShape(object):
         if self.node.stacked:
             point = XY(point.x, point.y + self.metrics.cellsize)
         return point
+
+    @property
+    def width(self):
+        return self._width or self.node.width
+
+    @property
+    def height(self):
+        return self._height or self.node.height
 
     def shift_shadow(self, value):
         xdiff = self.metrics.shadow_offset.x
