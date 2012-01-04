@@ -135,6 +135,7 @@ class DiagramMetrics(object):
     span_height = cellsize * 5
 
     def __init__(self, diagram, **kwargs):
+        self._renderer_cache = {}
         self.format = kwargs.get('format')
 
         if diagram.node_width is not None:
@@ -211,7 +212,10 @@ class DiagramMetrics(object):
         renderer = noderenderer.get(node.shape)
 
         if hasattr(renderer, 'render'):
-            return renderer(node, self)
+            if node not in self._renderer_cache:
+                self._renderer_cache[node] = renderer(node, self)
+
+            return self._renderer_cache[node]
         else:
             return self.cell(node)
 
