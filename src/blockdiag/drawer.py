@@ -49,7 +49,8 @@ class DiagramDraw(object):
             self.shadow = kwargs.get('shadow', (0, 0, 0))
 
         kwargs = dict(nodoctype=kwargs.get('nodoctype'),
-                      scale_ratio=self.scale_ratio)
+                      scale_ratio=self.scale_ratio,
+                      transparency=kwargs.get('transparency'))
         drawer = imagedraw.create(self.format, self.filename,
                                   self.pagesize(), **kwargs)
         if drawer is None:

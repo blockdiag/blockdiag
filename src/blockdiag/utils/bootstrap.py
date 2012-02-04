@@ -66,7 +66,8 @@ class Application(object):
         drawer = DiagramDraw(self.options.type, diagram,
                              self.options.output, fontmap=self.fontmap,
                              antialias=self.options.antialias,
-                             nodoctype=self.options.nodoctype)
+                             nodoctype=self.options.nodoctype,
+                             transparency=self.options.transparency)
         drawer.draw()
         drawer.save()
 
@@ -99,6 +100,10 @@ class Options(object):
                      help='use FONT to draw diagram', metavar='FONT')
         p.add_option('--fontmap',
                      help='use FONTMAP file to draw diagram', metavar='FONT')
+        p.add_option('--no-transparency', dest='transparency',
+                     default=True, action='store_false',
+                     help='do not make transparent background of diagram ' +\
+                          '(PNG only)')
         p.add_option('-T', dest='type', default='PNG',
                      help='Output diagram as TYPE format')
         p.add_option('--nodoctype', action='store_true',
@@ -134,6 +139,10 @@ class Options(object):
 
         if self.options.nodoctype and self.options.type != 'SVG':
             msg = "--nodoctype option work in SVG images."
+            raise RuntimeError(msg)
+
+        if self.options.transparency is False and self.options.type != 'PNG':
+            msg = "--no-transparency option work in PNG images."
             raise RuntimeError(msg)
 
         if self.options.config and not os.path.isfile(self.options.config):
