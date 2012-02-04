@@ -65,6 +65,23 @@ class TestBootParams(unittest2.TestCase):
         sys.argv = ['', '-Tpdf', '--nodoctype', 'input.diag']
         self.parser.parse()
 
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_svg_notransparency_option(self):
+        sys.argv = ['', '-Tsvg', '--no-transparency', 'input.diag']
+        self.parser.parse()
+
+    @argv_wrapper
+    def test_png_notransparency_option(self):
+        sys.argv = ['', '-Tpng', '--no-transparency', 'input.diag']
+        self.parser.parse()
+
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_pdf_notransparency_option(self):
+        sys.argv = ['', '-Tpdf', '--no-transparency', 'input.diag']
+        self.parser.parse()
+
     @argv_wrapper
     def test_config_option(self):
         try:

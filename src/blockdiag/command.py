@@ -53,7 +53,8 @@ class BlockdiagApp(Application):
                 draw = DiagramDraw(self.options.type, group, outfile,
                                    fontmap=self.fontmap,
                                    antialias=self.options.antialias,
-                                   nodoctype=self.options.nodoctype)
+                                   nodoctype=self.options.nodoctype,
+                                   transparency=self.options.transparency)
                 draw.draw()
                 draw.save()
 
