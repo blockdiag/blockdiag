@@ -208,7 +208,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         widths = [25] + [50] * (len(klass.desctable) - 1)
         headers = [klass.attrname[n] for n in klass.desctable]
 
-        descriptions = [n.to_desctable() for n in nodes()]
+        descriptions = [n.to_desctable() for n in nodes()  if n.drawable]
         descriptions.sort(cmp_node_number)
 
         for i in range(len(headers) - 2, -1, -1):
