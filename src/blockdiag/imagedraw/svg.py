@@ -137,8 +137,14 @@ class SVGImageDrawElement(object):
             outline = kwargs.get('outline')
             self.rectangle(lines.outlinebox, fill='white', outline=outline)
 
+        rendered = False
         for string, xy in lines.lines:
             self.text(xy, string, font, **kwargs)
+            rendered = True
+
+        if not rendered and font.size > 0:
+            font.size = int(font.size * 0.8)
+            self.textarea(box, string, font, **kwargs)
 
     def line(self, xy, **kwargs):
         fill = kwargs.get('fill')
