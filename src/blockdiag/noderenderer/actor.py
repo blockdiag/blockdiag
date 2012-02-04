@@ -24,18 +24,18 @@ class Actor(NodeShape):
 
         shortside = min(self.node.width or metrics.node_height,
                         self.node.height or metrics.node_height)
-        self.radius = shortside / 8  # radius of actor's head
+        r = self.radius = shortside / 8  # radius of actor's head
         self.center = metrics.cell(node).center
 
-        self.connectors[0] = XY(self.center.x, self.center.y - self.radius * 4)
-        self.connectors[1] = XY(self.center.x + self.radius * 4, self.center.y)
-        self.connectors[2] = XY(self.center.x, self.center.y + self.radius * 4)
-        self.connectors[3] = XY(self.center.x - self.radius * 4, self.center.y)
+        self.connectors[0] = XY(self.center.x, self.center.y - r * 9 / 2)
+        self.connectors[1] = XY(self.center.x + r * 4, self.center.y)
+        self.connectors[2] = XY(self.center.x, self.center.y + r * 4)
+        self.connectors[3] = XY(self.center.x - r * 4, self.center.y)
 
     def head_part(self):
-        r = self.radius
-        pt = self.metrics.cell(self.node).center
-        return Box(pt.x - r, pt.y - r * 4, pt.x + r, pt.y - r * 2)
+        r = self.radius * 3 / 2
+        pt = self.metrics.cell(self.node).center.shift(y=-self.radius * 3)
+        return Box(pt.x - r, pt.y - r, pt.x + r, pt.y + r)
 
     def body_part(self):
         r = self.radius
