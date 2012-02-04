@@ -232,6 +232,61 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(0, len(tbody[1][1]))
 
     @use_tmpdir
+    def test_rst_directives_with_block_desctable_using_node_group(self, path):
+        directives.setup(format='SVG', outputdir=path)
+        text = ".. blockdiag::\n   :desctable:\n\n   { A -> B; group { A } }"
+        doctree = publish_doctree(text)
+        self.assertEqual(2, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertEqual(nodes.table, type(doctree[1]))
+
+        self.assertEqual(1, len(doctree[1]))
+        self.assertEqual(nodes.tgroup, type(doctree[1][0]))
+
+        # tgroup
+        self.assertEqual(4, len(doctree[1][0]))
+        self.assertEqual(nodes.colspec, type(doctree[1][0][0]))
+        self.assertEqual(nodes.colspec, type(doctree[1][0][1]))
+        self.assertEqual(nodes.thead, type(doctree[1][0][2]))
+        self.assertEqual(nodes.tbody, type(doctree[1][0][3]))
+
+        # colspec
+        self.assertEqual(0, len(doctree[1][0][0]))
+        self.assertEqual(50, doctree[1][0][0]['colwidth'])
+
+        self.assertEqual(0, len(doctree[1][0][1]))
+        self.assertEqual(50, doctree[1][0][1]['colwidth'])
+
+        # thead
+        thead = doctree[1][0][2]
+        self.assertEqual(1, len(thead))
+        self.assertEqual(2, len(thead[0]))
+
+        self.assertEqual(1, len(thead[0][0]))
+        self.assertEqual(1, len(thead[0][0][0]))
+        self.assertEqual('Name', thead[0][0][0][0])
+
+        self.assertEqual(1, len(thead[0][1]))
+        self.assertEqual(1, len(thead[0][1][0]))
+        self.assertEqual('Description', thead[0][1][0][0])
+
+        # tbody
+        tbody = doctree[1][0][3]
+        self.assertEqual(2, len(tbody))
+
+        self.assertEqual(2, len(tbody[0]))
+        self.assertEqual(1, len(tbody[0][0]))
+        self.assertEqual(1, len(tbody[0][0][0]))
+        self.assertEqual('A', tbody[0][0][0][0])
+        self.assertEqual(0, len(tbody[0][1]))
+
+        self.assertEqual(2, len(tbody[1]))
+        self.assertEqual(1, len(tbody[1][0]))
+        self.assertEqual(1, len(tbody[1][0][0]))
+        self.assertEqual('B', tbody[1][0][0][0])
+        self.assertEqual(0, len(tbody[1][1]))
+
+    @use_tmpdir
     def test_rst_directives_with_block_desctable_with_description(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n" + \
