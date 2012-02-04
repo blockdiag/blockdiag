@@ -314,8 +314,14 @@ class ImageDrawEx(object):
             outline = kwargs.get('outline')
             self.rectangle(lines.outlinebox, fill='white', outline=outline)
 
+        rendered = False
         for string, xy in lines.lines:
             self.text(xy, string, font, **kwargs)
+            rendered = True
+
+        if not rendered and font.size > 0:
+            font.size = int(font.size * 0.8)
+            self.textarea(box, string, font, **kwargs)
 
     def loadImage(self, filename, box):
         box_width = box[2] - box[0]
