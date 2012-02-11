@@ -69,7 +69,7 @@ def tokenize(str):
         ('Space',   (r'[ \t\r\n]+',)),
         ('Name',    (ur'[A-Za-z_0-9\u0080-\uffff]'
                      ur'[A-Za-z_\-.0-9\u0080-\uffff]*',)),
-        ('Op',      (r'[{};,=\[\]]|(<->)|(<-)|(--)|(->)',)),
+        ('Op',      (r'[{};,=\[\]]|(<->)|(<-)|(--)|(->)|(>-<)|(-<)|(>-)',)),
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),
         ('String',  (r'(?P<quote>"|\').*?(?<!\\)(?P=quote)', DOTALL)),
     ]
@@ -111,7 +111,8 @@ def parse(seq):
     # We use a forward_decl becaue of circular definitions like (stmt_list ->
     # stmt -> group -> stmt_list)
     group = forward_decl()
-    edge_rhs = (op('->') | op('--') | op('<-') | op('<->')) + node_list
+    edge_rhs = (op('->') | op('--') | op('<-') | op('<->') |
+                op('>-') | op('-<') | op('>-<')) + node_list
     edge_stmt = (
         node_list +
         edge_rhs +

@@ -435,6 +435,34 @@ class EdgeMetrics(object):
             head.append(XY(xy.x + cell * 2, xy.y))
             head.append(XY(xy.x + cell, xy.y + cell / 2))
             head.append(XY(xy.x + 1, xy.y))
+        elif direct == 'rup':
+            xy = node.bottom
+            head.append(XY(xy.x, xy.y + cell))
+            head.append(XY(xy.x - cell, xy.y + 1))
+            head.append(XY(xy.x, xy.y + 1 * 2))
+            head.append(XY(xy.x + cell, xy.y + 1))
+            head.append(XY(xy.x, xy.y + cell))
+        elif direct == 'rdown':
+            xy = node.top
+            head.append(XY(xy.x, xy.y - cell))
+            head.append(XY(xy.x - cell, xy.y - 1))
+            head.append(XY(xy.x, xy.y - 1 * 2))
+            head.append(XY(xy.x + cell, xy.y - 1))
+            head.append(XY(xy.x, xy.y - cell))
+        elif direct == 'rright':
+            xy = node.left
+            head.append(XY(xy.x - cell, xy.y))
+            head.append(XY(xy.x - 1, xy.y - cell))
+            head.append(XY(xy.x - 1 * 2, xy.y))
+            head.append(XY(xy.x - 1, xy.y + cell))
+            head.append(XY(xy.x - cell, xy.y))
+        elif direct == 'rleft':
+            xy = node.right
+            head.append(XY(xy.x + cell, xy.y))
+            head.append(XY(xy.x + 1, xy.y - cell))
+            head.append(XY(xy.x + 1 * 2, xy.y))
+            head.append(XY(xy.x + 1, xy.y + cell))
+            head.append(XY(xy.x + cell, xy.y))
 
         if self.edge.hstyle not in ('composition', 'aggregation'):
             head.pop(2)
@@ -457,6 +485,14 @@ class EdgeMetrics(object):
                 lines.polylines[0].insert(0, XY(pt.x + cell, pt.y))
             elif head1 == 'down':
                 lines.polylines[0].insert(0, XY(pt.x, pt.y - cell))
+            elif head1 == 'rup':
+                lines.polylines[0].insert(0, XY(pt.x, pt.y + cell))
+            elif head1 == 'rright':
+                lines.polylines[0].insert(0, XY(pt.x - cell, pt.y))
+            elif head1 == 'rleft':
+                lines.polylines[0].insert(0, XY(pt.x + cell, pt.y))
+            elif head1 == 'rdown':
+                lines.polylines[0].insert(0, XY(pt.x, pt.y - cell))
 
         if head2:
             pt = lines.polylines[-1].pop()
@@ -467,6 +503,14 @@ class EdgeMetrics(object):
             elif head2 == 'left':
                 lines.polylines[-1].append(XY(pt.x + cell, pt.y))
             elif head2 == 'down':
+                lines.polylines[-1].append(XY(pt.x, pt.y - cell))
+            elif head2 == 'rup':
+                lines.polylines[-1].append(XY(pt.x, pt.y + cell))
+            elif head2 == 'rright':
+                lines.polylines[-1].append(XY(pt.x - cell, pt.y))
+            elif head2 == 'rleft':
+                lines.polylines[-1].append(XY(pt.x + cell, pt.y))
+            elif head2 == 'rdown':
                 lines.polylines[-1].append(XY(pt.x, pt.y - cell))
 
         return lines
@@ -496,6 +540,20 @@ class LandscapeEdgeMetrics(EdgeMetrics):
                     heads.append('left')
                 else:
                     heads.append('up')
+        elif self.edge.dir in ('manyone', 'manymany'):
+            if dir in ('left-up', 'left', 'same',
+                       'right-up', 'right', 'right-down'):
+                heads.append('rleft')
+            elif dir == 'up':
+                if self.edge.skipped:
+                    heads.append('rleft')
+                else:
+                    heads.append('rdown')
+            elif dir in ('left-down', 'down'):
+                if self.edge.skipped:
+                    heads.append('rleft')
+                else:
+                    heads.append('rup')
         else:
             heads.append(None)
 
@@ -506,6 +564,13 @@ class LandscapeEdgeMetrics(EdgeMetrics):
                 heads.append('up')
             elif dir in ('left-up', 'left', 'left-down', 'down', 'same'):
                 heads.append('down')
+        elif self.edge.dir in ('onemany', 'manymany'):
+            if dir in ('right-up', 'right', 'right-down'):
+                heads.append('rright')
+            elif dir == 'up':
+                heads.append('rup')
+            elif dir in ('left-up', 'left', 'left-down', 'down', 'same'):
+                heads.append('rdown')
         else:
             heads.append(None)
 
