@@ -299,7 +299,8 @@ class ImageDrawEx(object):
             else:
                 _box = box
 
-            text = ImageDrawEx(None, _box.size, parent=self, mode=self.mode)
+            text = ImageDrawEx(None, _box.size, parent=self, mode=self.mode,
+                               transparency=True)
             textbox = (0, 0, _box.width, _box.height)
             text.textarea(textbox, string, font, **kwargs)
 
