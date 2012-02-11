@@ -458,8 +458,17 @@ class DiagramEdge(Base):
 
     def set_dir(self, value):
         value = value.lower()
-        if value in ('back', 'both', 'none', 'forward'):
+        if value in ('back', 'both', 'none', 'forward',
+                     'onemany', 'manyone', 'manymany'):
             self.dir = value
+        elif value == 'oneone':
+            self.dir = 'none'
+        elif value == '-<':
+            self.dir = 'onemany'
+        elif value == '>-':
+            self.dir = 'manyone'
+        elif value == '>-<':
+            self.dir = 'manymany'
         elif value == '->':
             self.dir = 'forward'
         elif value == '<-':
