@@ -113,6 +113,12 @@ Apache License 2.0
 History
 =======
 
+1.1.3 (2012-02-13)
+------------------
+* Add new edge type for data-models (thanks to David Lang)
+* Add --no-transparency option
+* Fix bugs
+
 1.1.2 (2011-12-26)
 ------------------
 * Support font-index for TrueType Font Collections (.ttc file)
