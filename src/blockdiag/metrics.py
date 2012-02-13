@@ -135,7 +135,7 @@ class DiagramMetrics(object):
     span_height = cellsize * 5
 
     def __init__(self, diagram, **kwargs):
-        self.init_renderer_cache()
+        self._renderer_cache = {}
         self.format = kwargs.get('format')
 
         if diagram.node_width is not None:
@@ -168,23 +168,17 @@ class DiagramMetrics(object):
 
         node_width = self.node_width
         for x in range(diagram.colwidth):
-            widths = [self.node(n).width for n in nodes if n.xy.x == x]
+            widths = [n.width for n in nodes if n.xy.x == x]
             if widths:
                 width = max(n or node_width for n in widths)
                 sheet.set_node_width(x, width)
 
         node_height = self.node_height
         for y in range(diagram.colheight):
-            heights = [self.node(n).height for n in nodes if n.xy.y == y]
+            heights = [n.height for n in nodes if n.xy.y == y]
             if heights:
                 height = max(n or node_height for n in heights)
                 sheet.set_node_height(y, height)
-
-        # force clear cache (to effect size of spreadsheet)
-        self.init_renderer_cache()
-
-    def init_renderer_cache(self):
-        self._renderer_cache = {}
 
     @property
     def original_metrics(self):
