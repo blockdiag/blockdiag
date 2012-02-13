@@ -121,12 +121,14 @@ class DiagramDraw(object):
         # Drop node shadows.
         for node in self.nodes:
             if node.color != 'none':
+                r = noderenderer.get(node.shape)
+
+                shape = r(node, self.metrics)
                 if node.href and self.format == 'SVG':
                     drawer = self.drawer.anchor(node.href)
                 else:
                     drawer = self.drawer
 
-                shape = self.metrics.node(node)
                 shape.render(drawer, self.format,
                              fill=self.shadow, shadow=True)
 
@@ -147,12 +149,13 @@ class DiagramDraw(object):
             self.group_label(node, **kwargs)
 
     def node(self, node, **kwargs):
+        r = noderenderer.get(node.shape)
+        shape = r(node, self.metrics)
         if node.href and self.format == 'SVG':
             drawer = self.drawer.anchor(node.href)
         else:
             drawer = self.drawer
 
-        shape = self.metrics.node(node)
         shape.render(drawer, self.format, fill=self.fill,
                      badgeFill=self.badgeFill)
 
