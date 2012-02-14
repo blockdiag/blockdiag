@@ -458,17 +458,17 @@ class DiagramEdge(Base):
 
     def set_dir(self, value):
         value = value.lower()
-        if value in ('back', 'both', 'none', 'forward',
-                     'onemany', 'manyone', 'manymany'):
+        if value in ('back', 'both', 'none', 'forward'):
             self.dir = value
-        elif value == 'oneone':
-            self.dir = 'none'
         elif value == '-<':
-            self.dir = 'onemany'
+            self.dir = 'forward'
+            self.hstyle = 'onemany'
         elif value == '>-':
-            self.dir = 'manyone'
+            self.dir = 'back'
+            self.hstyle = 'manyone'
         elif value == '>-<':
-            self.dir = 'manymany'
+            self.dir = 'both'
+            self.hstyle = 'manymany'
         elif value == '->':
             self.dir = 'forward'
         elif value == '<-':
@@ -487,6 +487,18 @@ class DiagramEdge(Base):
     def set_hstyle(self, value):
         value = value.lower()
         if value in ('generalization', 'composition', 'aggregation'):
+            self.hstyle = value
+        elif value == 'oneone':
+            self.dir = 'none'
+            self.hstyle = value
+        elif value == 'onemany':
+            self.dir = 'forward'
+            self.hstyle = value
+        elif value == 'manyone':
+            self.dir = 'back'
+            self.hstyle = value
+        elif value == 'manymany':
+            self.dir = 'both'
             self.hstyle = value
         else:
             msg = "WARNING: unknown edge hstyle: %s\n" % value
