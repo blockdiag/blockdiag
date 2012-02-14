@@ -516,7 +516,7 @@ class LandscapeEdgeMetrics(EdgeMetrics):
         heads = []
         dir = self.edge.direction
 
-        if self.edge.dir in ('back', 'both'):
+        if self.edge.dir in ('back', 'both', 'manyone', 'manymany'):
             if dir in ('left-up', 'left', 'same',
                        'right-up', 'right', 'right-down'):
                 heads.append('left')
@@ -530,37 +530,22 @@ class LandscapeEdgeMetrics(EdgeMetrics):
                     heads.append('left')
                 else:
                     heads.append('up')
-        elif self.edge.dir in ('manyone', 'manymany'):
-            if dir in ('left-up', 'left', 'same',
-                       'right-up', 'right', 'right-down'):
-                heads.append('rleft')
-            elif dir == 'up':
-                if self.edge.skipped:
-                    heads.append('rleft')
-                else:
-                    heads.append('rdown')
-            elif dir in ('left-down', 'down'):
-                if self.edge.skipped:
-                    heads.append('rleft')
-                else:
-                    heads.append('rup')
+
+            if self.edge.dir in ('manyone', 'manymany'):
+                heads[-1] = 'r' + heads[-1]
         else:
             heads.append(None)
 
-        if self.edge.dir in ('forward', 'both'):
+        if self.edge.dir in ('forward', 'both', 'onemany', 'manymany'):
             if dir in ('right-up', 'right', 'right-down'):
                 heads.append('right')
             elif dir == 'up':
                 heads.append('up')
             elif dir in ('left-up', 'left', 'left-down', 'down', 'same'):
                 heads.append('down')
-        elif self.edge.dir in ('onemany', 'manymany'):
-            if dir in ('right-up', 'right', 'right-down'):
-                heads.append('rright')
-            elif dir == 'up':
-                heads.append('rup')
-            elif dir in ('left-up', 'left', 'left-down', 'down', 'same'):
-                heads.append('rdown')
+
+            if self.edge.dir in ('onemany', 'manymany'):
+                heads[-1] = 'r' + heads[-1]
         else:
             heads.append(None)
 
@@ -730,7 +715,7 @@ class PortraitEdgeMetrics(EdgeMetrics):
         heads = []
         dir = self.edge.direction
 
-        if self.edge.dir in ('back', 'both'):
+        if self.edge.dir in ('back', 'both', 'manyone', 'manymany'):
             if dir == 'right':
                 if self.edge.skipped:
                     heads.append('up')
@@ -745,10 +730,13 @@ class PortraitEdgeMetrics(EdgeMetrics):
                     heads.append('left')
                 else:
                     heads.append('up')
+
+            if self.edge.dir in ('manyone', 'manymany'):
+                heads[-1] = 'r' + heads[-1]
         else:
             heads.append(None)
 
-        if self.edge.dir in ('forward', 'both'):
+        if self.edge.dir in ('forward', 'both', 'onemany', 'manymany'):
             if dir == 'right':
                 if self.edge.skipped:
                     heads.append('down')
@@ -758,6 +746,9 @@ class PortraitEdgeMetrics(EdgeMetrics):
                 heads.append('down')
             elif dir in ('left-up', 'left', 'left-down', 'down', 'right-down'):
                 heads.append('down')
+
+            if self.edge.dir in ('onemany', 'manymany'):
+                heads[-1] = 'r' + heads[-1]
         else:
             heads.append(None)
 
@@ -906,11 +897,15 @@ class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
         if self.edge.direction == 'right-down':
             if self.edge.dir in ('back', 'both'):
                 heads.append('up')
+            elif self.edge.dir in ('manyone', 'manymany'):
+                heads.append('rup')
             else:
                 heads.append(None)
 
             if self.edge.dir in ('forward', 'both'):
                 heads.append('right')
+            elif self.edge.dir in ('onemany', 'manymany'):
+                heads.append('rright')
             else:
                 heads.append(None)
         else:
@@ -975,11 +970,15 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
         if self.edge.direction == 'right-down':
             if self.edge.dir in ('back', 'both'):
                 heads.append('left')
+            elif self.edge.dir in ('manyone', 'manymany'):
+                heads.append('left')
             else:
                 heads.append(None)
 
             if self.edge.dir in ('forward', 'both'):
                 heads.append('down')
+            elif self.edge.dir in ('onemany', 'manymany'):
+                heads.append('rdown')
             else:
                 heads.append(None)
         else:
