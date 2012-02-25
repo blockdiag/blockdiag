@@ -132,7 +132,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         if 'desctable' in node['options']:
             del node['options']['desctable']
-            results.append(self.description_table(diagram))
+            results += self.description_tables(diagram)
 
         results[0] = self.node2image(node, diagram)
 
@@ -201,14 +201,26 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         return filename
 
-    def description_table(self, diagram):
-        nodes = diagram.traverse_nodes
+    def description_tables(self, diagram):
+        tables = []
+        desctable = self.node_description_table(diagram)
+        if desctable:
+            tables.append(desctable)
+
+        desctable = self.edge_description_table(diagram)
+        if desctable:
+            tables.append(desctable)
+
+        return tables
+
+    def node_description_table(self, diagram):
+        nodes = diagram.traverse_nodes()
         klass = diagram._DiagramNode
 
         widths = [25] + [50] * (len(klass.desctable) - 1)
         headers = [klass.attrname[n] for n in klass.desctable]
 
-        descriptions = [n.to_desctable() for n in nodes()  if n.drawable]
+        descriptions = [n.to_desctable() for n in nodes  if n.drawable]
         descriptions.sort(cmp_node_number)
 
         for i in range(len(headers) - 2, -1, -1):
@@ -221,6 +233,18 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
                     desc.pop(i)
 
         return self._description_table(descriptions, widths, headers)
+
+    def edge_description_table(self, diagram):
+        edges = diagram.traverse_edges()
+
+        widths = [25, 50]
+        headers = ['Name', 'Description']
+        descriptions = [e.to_desctable() for e in edges  if e.style != 'none']
+
+        if any(desc[1] for desc in descriptions):
+            return self._description_table(descriptions, widths, headers)
+        else:
+            return None
 
     def _description_table(self, descriptions, widths, headers):
         # generate table-root

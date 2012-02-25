@@ -367,7 +367,6 @@ class TestRstDirectives(unittest2.TestCase):
 
         self.assertEqual('B', tbody[1][0][0][0])
         self.assertEqual(4, len(tbody[1][1][0]))
-        print tbody[1][1][0]
         self.assertEqual(nodes.strong, type(tbody[1][1][0][0]))
         self.assertEqual(nodes.Text, type(tbody[1][1][0][0][0]))
         self.assertEqual('foo', str(tbody[1][1][0][0][0]))
@@ -418,3 +417,46 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual('2', tbody[1][0][0][0])
         self.assertEqual('A', tbody[1][1][0][0])
         self.assertEqual(0, len(tbody[1][2]))
+
+    @use_tmpdir
+    def test_rst_directives_with_block_desctable_for_edges(self, path):
+        directives.setup(format='SVG', outputdir=path)
+        text = ".. blockdiag::\n   :desctable:\n\n" + \
+               "   { A -> B [description = \"foo\"]; " + \
+               "     C -> D [description = \"bar\"]; " + \
+               "     C [label = \"label_C\"]; " + \
+               "     D [label = \"label_D\"]; }"
+        doctree = publish_doctree(text)
+        self.assertEqual(3, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertEqual(nodes.table, type(doctree[1]))
+        self.assertEqual(nodes.table, type(doctree[2]))
+
+        # tgroup
+        self.assertEqual(4, len(doctree[2][0]))
+        self.assertEqual(nodes.colspec, type(doctree[2][0][0]))
+        self.assertEqual(nodes.colspec, type(doctree[2][0][1]))
+        self.assertEqual(nodes.thead, type(doctree[2][0][2]))
+        self.assertEqual(nodes.tbody, type(doctree[2][0][3]))
+
+        # colspec
+        self.assertEqual(25, doctree[2][0][0]['colwidth'])
+        self.assertEqual(50, doctree[2][0][1]['colwidth'])
+
+        # thead
+        thead = doctree[2][0][2]
+        self.assertEqual(2, len(thead[0]))
+        self.assertEqual('Name', thead[0][0][0][0])
+        self.assertEqual('Description', thead[0][1][0][0])
+
+        # tbody
+        tbody = doctree[2][0][3]
+        self.assertEqual(2, len(tbody))
+        self.assertEqual('A -> B', tbody[0][0][0][0])
+        self.assertEqual(1, len(tbody[0][1][0]))
+        self.assertEqual(nodes.Text, type(tbody[0][1][0][0]))
+        self.assertEqual('foo', str(tbody[0][1][0][0]))
+        self.assertEqual('label_C -> label_D', tbody[1][0][0][0])
+        self.assertEqual(1, len(tbody[1][1][0]))
+        self.assertEqual(nodes.Text, type(tbody[1][1][0][0]))
+        self.assertEqual('bar', str(tbody[1][1][0][0]))
