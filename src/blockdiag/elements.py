@@ -308,6 +308,19 @@ class NodeGroup(Element):
             else:
                 yield node
 
+    def traverse_edges(self, preorder=False):
+        if preorder:
+            for edge in self.edges:
+                yield edge
+
+        for group in self.traverse_groups(preorder):
+            for edge in group.traverse_edges(preorder):
+                yield edge
+
+        if not preorder:
+            for edge in self.edges:
+                yield edge
+
     def traverse_groups(self, preorder=False):
         for node in self.traverse_nodes(preorder=preorder):
             if isinstance(node, NodeGroup):
