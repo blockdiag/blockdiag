@@ -216,10 +216,9 @@ class DiagramNode(Element):
         self.linecolor = images.color_to_rgb(color)
 
     def set_shape(self, value):
-        try:
-            noderenderer.get(value)
+        if noderenderer.get(value):
             self.shape = value
-        except:
+        else:
             msg = "WARNING: unknown node shape: %s\n" % value
             raise AttributeError(msg)
 
@@ -601,10 +600,9 @@ class Diagram(NodeGroup):
         plugins.load(modules, diagram=self)
 
     def set_default_shape(self, value):
-        try:
-            noderenderer.get(value)
+        if noderenderer.get(value):
             DiagramNode.set_default_shape(value)
-        except:
+        else:
             msg = "WARNING: unknown node shape: %s\n" % value
             raise AttributeError(msg)
 

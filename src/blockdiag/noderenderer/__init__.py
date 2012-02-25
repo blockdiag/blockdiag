@@ -46,7 +46,7 @@ def get(shape):
         if name in renderers:
             return renderers[name]
 
-    return renderers[shape]
+    return renderers.get(shape)
 
 
 class NodeShape(object):
