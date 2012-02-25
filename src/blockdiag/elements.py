@@ -451,6 +451,7 @@ class DiagramEdge(Base):
         self.skipped = 0
 
         self.label = None
+        self.description = None
         self.dir = 'forward'
         self.color = self.basecolor
         self.hstyle = None
@@ -554,6 +555,10 @@ class DiagramEdge(Base):
                 dir = 'right-down'
 
         return dir
+
+    def to_desctable(self):
+        label = "%s -> %s" % (self.node1.label, self.node2.label)
+        return [label, self.description]
 
 
 class Diagram(NodeGroup):
