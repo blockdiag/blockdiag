@@ -172,13 +172,13 @@ class DiagramLayoutManager:
     def do_layout(self):
         self.detect_circulars()
 
-        self.set_node_width()
+        self.set_node_xpos()
         self.adjust_node_order()
 
         height = 0
         for node in self.diagram.nodes:
             if node.xy.x == 0:
-                self.set_node_height(node, height)
+                self.set_node_ypos(node, height)
                 height = max(xy.y for xy in self.coordinates) + 1
 
     def get_related_nodes(self, node, parent=False, child=False):
@@ -266,7 +266,7 @@ class DiagramLayoutManager:
 
         return False
 
-    def set_node_width(self, depth=0):
+    def set_node_xpos(self, depth=0):
         for node in self.diagram.nodes:
             if node.xy.x != depth:
                 continue
@@ -283,7 +283,7 @@ class DiagramLayoutManager:
 
         depther_node = [x for x in self.diagram.nodes if x.xy.x > depth]
         if len(depther_node) > 0:
-            self.set_node_width(depth + 1)
+            self.set_node_xpos(depth + 1)
 
     def adjust_node_order(self):
         for node in list(self.diagram.nodes):
@@ -380,7 +380,7 @@ class DiagramLayoutManager:
             for h in range(height):
                 self.coordinates.append(XY(xy.x + w, xy.y + h))
 
-    def set_node_height(self, node, height=0):
+    def set_node_ypos(self, node, height=0):
         for x in range(node.colwidth):
             for y in range(node.colheight):
                 xy = XY(node.xy.x + x, height + y)
@@ -406,7 +406,7 @@ class DiagramLayoutManager:
                 pass
             else:
                 if isinstance(node, NodeGroup):
-                    parent_height = self.get_parent_node_height(node, child)
+                    parent_height = self.get_parent_node_ypos(node, child)
                     if parent_height and parent_height > height:
                         height = parent_height
 
@@ -417,7 +417,7 @@ class DiagramLayoutManager:
                         height = max(coord) + 1
 
                 while True:
-                    if self.set_node_height(child, height):
+                    if self.set_node_ypos(child, height):
                         child.xy = XY(child.xy.x, height)
                         self.mark_xy(child.xy, child.colwidth, child.colheight)
                         self.heightRefs.append(child.id)
@@ -455,7 +455,7 @@ class DiagramLayoutManager:
 
         return ret
 
-    def get_parent_node_height(self, parent, child):
+    def get_parent_node_ypos(self, parent, child):
         heights = []
         for e in DiagramEdge.find(parent, child):
             y = parent.xy.y
