@@ -34,14 +34,20 @@ def test_diagram_attributes_order_diagram():
 
 def test_circular_ref_to_root_diagram():
     positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
-                  'D': (2, 1), 'Z': (0, 2)}
+                 'D': (2, 1), 'Z': (0, 2)}
     __validate_node_attributes('circular_ref_to_root.diag', xy=positions)
 
 
 def test_circular_ref_diagram():
     positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
-                  'D': (2, 1), 'Z': (0, 2)}
+                 'D': (2, 1), 'Z': (0, 2)}
     __validate_node_attributes('circular_ref.diag', xy=positions)
+
+
+def test_circular_ref2_diagram():
+    positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'D': (3, 0),
+                 'E': (3, 1), 'F': (4, 0), 'Z': (0, 2)}
+    __validate_node_attributes('circular_ref2.diag', xy=positions)
 
 
 def test_circular_ref_and_parent_node_diagram():
@@ -59,7 +65,7 @@ def test_labeled_circular_ref_diagram():
 
 def test_twin_forked_diagram():
     positions = {'A': (0, 0), 'B': (1, 0), 'C': (1, 2), 'D': (2, 0),
-                  'E': (3, 0), 'F': (3, 1), 'G': (4, 1), 'Z': (0, 3)}
+                 'E': (3, 0), 'F': (3, 1), 'G': (4, 1), 'Z': (0, 3)}
     __validate_node_attributes('twin_forked.diag', xy=positions)
 
 

@@ -236,7 +236,8 @@ class DiagramLayoutManager:
         for child in self.get_child_nodes(node):
             if child in parents:
                 i = parents.index(child)
-                self.circulars.append(parents[i:])
+                if parents[i:] not in self.circulars:
+                    self.circulars.append(parents[i:])
             else:
                 self.detect_circulars_sub(child, parents + [child])
 
