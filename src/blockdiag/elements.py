@@ -246,7 +246,7 @@ class DiagramNode(Element):
             if value is None:
                 attrs.append(u"")
             else:
-                attrs.append(getattr(self, name))
+                attrs.append(value)
 
         return attrs
 
