@@ -177,117 +177,15 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertFalse(0, doctree[0]['target'].index(path))
 
     @use_tmpdir
-    def test_rst_directives_with_block_desctable(self, path):
+    def test_rst_directives_with_block_desctable_without_description(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n   { A -> B }"
         doctree = publish_doctree(text)
-        self.assertEqual(2, len(doctree))
+        self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
-        self.assertEqual(nodes.table, type(doctree[1]))
-
-        self.assertEqual(1, len(doctree[1]))
-        self.assertEqual(nodes.tgroup, type(doctree[1][0]))
-
-        # tgroup
-        self.assertEqual(4, len(doctree[1][0]))
-        self.assertEqual(nodes.colspec, type(doctree[1][0][0]))
-        self.assertEqual(nodes.colspec, type(doctree[1][0][1]))
-        self.assertEqual(nodes.thead, type(doctree[1][0][2]))
-        self.assertEqual(nodes.tbody, type(doctree[1][0][3]))
-
-        # colspec
-        self.assertEqual(0, len(doctree[1][0][0]))
-        self.assertEqual(50, doctree[1][0][0]['colwidth'])
-
-        self.assertEqual(0, len(doctree[1][0][1]))
-        self.assertEqual(50, doctree[1][0][1]['colwidth'])
-
-        # thead
-        thead = doctree[1][0][2]
-        self.assertEqual(1, len(thead))
-        self.assertEqual(2, len(thead[0]))
-
-        self.assertEqual(1, len(thead[0][0]))
-        self.assertEqual(1, len(thead[0][0][0]))
-        self.assertEqual('Name', thead[0][0][0][0])
-
-        self.assertEqual(1, len(thead[0][1]))
-        self.assertEqual(1, len(thead[0][1][0]))
-        self.assertEqual('Description', thead[0][1][0][0])
-
-        # tbody
-        tbody = doctree[1][0][3]
-        self.assertEqual(2, len(tbody))
-
-        self.assertEqual(2, len(tbody[0]))
-        self.assertEqual(1, len(tbody[0][0]))
-        self.assertEqual(1, len(tbody[0][0][0]))
-        self.assertEqual('A', tbody[0][0][0][0])
-        self.assertEqual(0, len(tbody[0][1]))
-
-        self.assertEqual(2, len(tbody[1]))
-        self.assertEqual(1, len(tbody[1][0]))
-        self.assertEqual(1, len(tbody[1][0][0]))
-        self.assertEqual('B', tbody[1][0][0][0])
-        self.assertEqual(0, len(tbody[1][1]))
 
     @use_tmpdir
-    def test_rst_directives_with_block_desctable_using_node_group(self, path):
-        directives.setup(format='SVG', outputdir=path)
-        text = ".. blockdiag::\n   :desctable:\n\n   { A -> B; group { A } }"
-        doctree = publish_doctree(text)
-        self.assertEqual(2, len(doctree))
-        self.assertEqual(nodes.image, type(doctree[0]))
-        self.assertEqual(nodes.table, type(doctree[1]))
-
-        self.assertEqual(1, len(doctree[1]))
-        self.assertEqual(nodes.tgroup, type(doctree[1][0]))
-
-        # tgroup
-        self.assertEqual(4, len(doctree[1][0]))
-        self.assertEqual(nodes.colspec, type(doctree[1][0][0]))
-        self.assertEqual(nodes.colspec, type(doctree[1][0][1]))
-        self.assertEqual(nodes.thead, type(doctree[1][0][2]))
-        self.assertEqual(nodes.tbody, type(doctree[1][0][3]))
-
-        # colspec
-        self.assertEqual(0, len(doctree[1][0][0]))
-        self.assertEqual(50, doctree[1][0][0]['colwidth'])
-
-        self.assertEqual(0, len(doctree[1][0][1]))
-        self.assertEqual(50, doctree[1][0][1]['colwidth'])
-
-        # thead
-        thead = doctree[1][0][2]
-        self.assertEqual(1, len(thead))
-        self.assertEqual(2, len(thead[0]))
-
-        self.assertEqual(1, len(thead[0][0]))
-        self.assertEqual(1, len(thead[0][0][0]))
-        self.assertEqual('Name', thead[0][0][0][0])
-
-        self.assertEqual(1, len(thead[0][1]))
-        self.assertEqual(1, len(thead[0][1][0]))
-        self.assertEqual('Description', thead[0][1][0][0])
-
-        # tbody
-        tbody = doctree[1][0][3]
-        self.assertEqual(2, len(tbody))
-
-        self.assertEqual(2, len(tbody[0]))
-        self.assertEqual(1, len(tbody[0][0]))
-        self.assertEqual(1, len(tbody[0][0][0]))
-        self.assertEqual('A', tbody[0][0][0][0])
-        self.assertEqual(0, len(tbody[0][1]))
-
-        self.assertEqual(2, len(tbody[1]))
-        self.assertEqual(1, len(tbody[1][0]))
-        self.assertEqual(1, len(tbody[1][0][0]))
-        self.assertEqual('B', tbody[1][0][0][0])
-        self.assertEqual(0, len(tbody[1][1]))
-
-    @use_tmpdir
-    def test_rst_directives_with_block_desctable_with_description(self, path):
+    def test_rst_directives_with_block_desctable(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n" + \
                "   { A [description = foo]; B [description = bar]; }"
@@ -319,6 +217,66 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual('A', tbody[0][0][0][0])
         self.assertEqual('foo', tbody[0][1][0][0])
         self.assertEqual('B', tbody[1][0][0][0])
+        self.assertEqual('bar', tbody[1][1][0][0])
+
+    @use_tmpdir
+    def test_rst_directives_with_block_desctable_using_node_group(self, path):
+        directives.setup(format='SVG', outputdir=path)
+        text = ".. blockdiag::\n   :desctable:\n\n   { A -> B; group { A } }"
+        text = ".. blockdiag::\n   :desctable:\n\n" + \
+               "   { A [description = foo]; B [description = bar]; " + \
+               "     group { A } }"
+        doctree = publish_doctree(text)
+        self.assertEqual(2, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertEqual(nodes.table, type(doctree[1]))
+
+        self.assertEqual(1, len(doctree[1]))
+        self.assertEqual(nodes.tgroup, type(doctree[1][0]))
+
+        # tgroup
+        self.assertEqual(4, len(doctree[1][0]))
+        self.assertEqual(nodes.colspec, type(doctree[1][0][0]))
+        self.assertEqual(nodes.colspec, type(doctree[1][0][1]))
+        self.assertEqual(nodes.thead, type(doctree[1][0][2]))
+        self.assertEqual(nodes.tbody, type(doctree[1][0][3]))
+
+        # colspec
+        self.assertEqual(0, len(doctree[1][0][0]))
+        self.assertEqual(50, doctree[1][0][0]['colwidth'])
+
+        self.assertEqual(0, len(doctree[1][0][1]))
+        self.assertEqual(50, doctree[1][0][1]['colwidth'])
+
+        # thead
+        thead = doctree[1][0][2]
+        self.assertEqual(1, len(thead))
+        self.assertEqual(2, len(thead[0]))
+
+        self.assertEqual(1, len(thead[0][0]))
+        self.assertEqual(1, len(thead[0][0][0]))
+        self.assertEqual('Name', thead[0][0][0][0])
+
+        self.assertEqual(1, len(thead[0][1]))
+        self.assertEqual(1, len(thead[0][1][0]))
+        self.assertEqual('Description', thead[0][1][0][0])
+
+        # tbody
+        tbody = doctree[1][0][3]
+        self.assertEqual(2, len(tbody))
+
+        self.assertEqual(2, len(tbody[0]))
+        self.assertEqual(1, len(tbody[0][0]))
+        self.assertEqual(1, len(tbody[0][0][0]))
+        self.assertEqual('A', tbody[0][0][0][0])
+        self.assertEqual(1, len(tbody[0][1]))
+        self.assertEqual('foo', tbody[0][1][0][0])
+
+        self.assertEqual(2, len(tbody[1]))
+        self.assertEqual(1, len(tbody[1][0]))
+        self.assertEqual(1, len(tbody[1][0][0]))
+        self.assertEqual('B', tbody[1][0][0][0])
+        self.assertEqual(1, len(tbody[1][1]))
         self.assertEqual('bar', tbody[1][1][0][0])
 
     @use_tmpdir
@@ -389,6 +347,42 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(nodes.table, type(doctree[1]))
 
         # tgroup
+        self.assertEqual(4, len(doctree[1][0]))
+        self.assertEqual(nodes.colspec, type(doctree[1][0][0]))
+        self.assertEqual(nodes.colspec, type(doctree[1][0][1]))
+        self.assertEqual(nodes.thead, type(doctree[1][0][2]))
+        self.assertEqual(nodes.tbody, type(doctree[1][0][3]))
+
+        # colspec
+        self.assertEqual(25, doctree[1][0][0]['colwidth'])
+        self.assertEqual(50, doctree[1][0][1]['colwidth'])
+
+        # thead
+        thead = doctree[1][0][2]
+        self.assertEqual(2, len(thead[0]))
+        self.assertEqual('No', thead[0][0][0][0])
+        self.assertEqual('Name', thead[0][1][0][0])
+
+        # tbody
+        tbody = doctree[1][0][3]
+        self.assertEqual(2, len(tbody))
+        self.assertEqual('1', tbody[0][0][0][0])
+        self.assertEqual('B', tbody[0][1][0][0])
+        self.assertEqual('2', tbody[1][0][0][0])
+        self.assertEqual('A', tbody[1][1][0][0])
+
+    @use_tmpdir
+    def test_rst_directives_with_block_desctable_with_numbered_and_description(self, path):
+        directives.setup(format='SVG', outputdir=path)
+        text = ".. blockdiag::\n   :desctable:\n\n" + \
+               "   { A [description = foo, numbered = 2]; " + \
+               "     B [description = bar, numbered = 1]; }"
+        doctree = publish_doctree(text)
+        self.assertEqual(2, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertEqual(nodes.table, type(doctree[1]))
+
+        # tgroup
         self.assertEqual(5, len(doctree[1][0]))
         self.assertEqual(nodes.colspec, type(doctree[1][0][0]))
         self.assertEqual(nodes.colspec, type(doctree[1][0][1]))
@@ -413,10 +407,11 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(2, len(tbody))
         self.assertEqual('1', tbody[0][0][0][0])
         self.assertEqual('B', tbody[0][1][0][0])
-        self.assertEqual(0, len(tbody[0][2]))
+        self.assertEqual(1, len(tbody[0][2]))
+        self.assertEqual('bar', tbody[0][2][0][0])
         self.assertEqual('2', tbody[1][0][0][0])
         self.assertEqual('A', tbody[1][1][0][0])
-        self.assertEqual(0, len(tbody[1][2]))
+        self.assertEqual('foo', tbody[1][2][0][0])
 
     @use_tmpdir
     def test_rst_directives_with_block_desctable_for_edges(self, path):
@@ -425,6 +420,48 @@ class TestRstDirectives(unittest2.TestCase):
                "   { A -> B [description = \"foo\"]; " + \
                "     C -> D [description = \"bar\"]; " + \
                "     C [label = \"label_C\"]; " + \
+               "     D [label = \"label_D\"]; }"
+        doctree = publish_doctree(text)
+        self.assertEqual(2, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertEqual(nodes.table, type(doctree[1]))
+
+        # tgroup
+        self.assertEqual(4, len(doctree[1][0]))
+        self.assertEqual(nodes.colspec, type(doctree[1][0][0]))
+        self.assertEqual(nodes.colspec, type(doctree[1][0][1]))
+        self.assertEqual(nodes.thead, type(doctree[1][0][2]))
+        self.assertEqual(nodes.tbody, type(doctree[1][0][3]))
+
+        # colspec
+        self.assertEqual(25, doctree[1][0][0]['colwidth'])
+        self.assertEqual(50, doctree[1][0][1]['colwidth'])
+
+        # thead
+        thead = doctree[1][0][2]
+        self.assertEqual(2, len(thead[0]))
+        self.assertEqual('Name', thead[0][0][0][0])
+        self.assertEqual('Description', thead[0][1][0][0])
+
+        # tbody
+        tbody = doctree[1][0][3]
+        self.assertEqual(2, len(tbody))
+        self.assertEqual('A -> B', tbody[0][0][0][0])
+        self.assertEqual(1, len(tbody[0][1][0]))
+        self.assertEqual(nodes.Text, type(tbody[0][1][0][0]))
+        self.assertEqual('foo', str(tbody[0][1][0][0]))
+        self.assertEqual('label_C -> label_D', tbody[1][0][0][0])
+        self.assertEqual(1, len(tbody[1][1][0]))
+        self.assertEqual(nodes.Text, type(tbody[1][1][0][0]))
+        self.assertEqual('bar', str(tbody[1][1][0][0]))
+
+    @use_tmpdir
+    def test_rst_directives_with_block_desctable_for_nodes_and_edges(self, path):
+        directives.setup(format='SVG', outputdir=path)
+        text = ".. blockdiag::\n   :desctable:\n\n" + \
+               "   { A -> B [description = \"foo\"]; " + \
+               "     C -> D [description = \"bar\"]; " + \
+               "     C [label = \"label_C\", description = foo]; " + \
                "     D [label = \"label_D\"]; }"
         doctree = publish_doctree(text)
         self.assertEqual(3, len(doctree))

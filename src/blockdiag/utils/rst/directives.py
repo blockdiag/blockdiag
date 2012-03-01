@@ -223,8 +223,8 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         descriptions = [n.to_desctable() for n in nodes  if n.drawable]
         descriptions.sort(cmp_node_number)
 
-        for i in range(len(headers) - 2, -1, -1):
-            if [desc[i] for desc in descriptions  if desc[i]]:
+        for i in reversed(range(len(headers))):
+            if any(desc[i] for desc in descriptions):
                 pass
             else:
                 widths.pop(i)
@@ -232,7 +232,10 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
                 for desc in descriptions:
                     desc.pop(i)
 
-        return self._description_table(descriptions, widths, headers)
+        if len(headers) == 1:
+            return None
+        else:
+            return self._description_table(descriptions, widths, headers)
 
     def edge_description_table(self, diagram):
         edges = diagram.traverse_edges()
