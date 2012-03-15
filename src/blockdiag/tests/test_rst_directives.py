@@ -41,7 +41,7 @@ class TestRstDirectives(unittest2.TestCase):
         if 'blockdiag' in docutils._directives:
             del docutils._directives['blockdiag']
 
-    def test_rst_directives_setup(self):
+    def test_setup(self):
         directives.setup()
 
         self.assertIn('blockdiag', docutils._directives)
@@ -51,7 +51,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(False, directives.antialias)
         self.assertEqual(None, directives.fontpath)
 
-    def test_rst_directives_setup_with_args(self):
+    def test_setup_with_args(self):
         directives.setup(format='SVG', antialias=True, fontpath='/dev/null')
 
         self.assertIn('blockdiag', docutils._directives)
@@ -63,14 +63,14 @@ class TestRstDirectives(unittest2.TestCase):
 
     @stderr_wrapper
     @setup_directive_base
-    def test_rst_directives_base_noargs(self):
+    def test_base_noargs(self):
         text = ".. blockdiag::"
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.system_message, type(doctree[0]))
 
     @setup_directive_base
-    def test_rst_directives_base_with_block(self):
+    def test_base_with_block(self):
         text = ".. blockdiag::\n\n   { A -> B }"
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
@@ -81,14 +81,14 @@ class TestRstDirectives(unittest2.TestCase):
 
     @stderr_wrapper
     @setup_directive_base
-    def test_rst_directives_base_with_emptyblock(self):
+    def test_base_with_emptyblock(self):
         text = ".. blockdiag::\n\n   \n"
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.system_message, type(doctree[0]))
 
     @setup_directive_base
-    def test_rst_directives_base_with_filename(self):
+    def test_base_with_filename(self):
         dirname = os.path.dirname(__file__)
         filename = os.path.join(dirname, 'diagrams/node_attribute.diag')
         text = ".. blockdiag:: %s" % filename
@@ -102,21 +102,21 @@ class TestRstDirectives(unittest2.TestCase):
 
     @stderr_wrapper
     @setup_directive_base
-    def test_rst_directives_base_with_filename_not_exists(self):
+    def test_base_with_filename_not_exists(self):
         text = ".. blockdiag:: unknown.diag"
         doctree = publish_doctree(text)
         self.assertEqual(nodes.system_message, type(doctree[0]))
 
     @stderr_wrapper
     @setup_directive_base
-    def test_rst_directives_base_with_block_and_filename(self):
+    def test_base_with_block_and_filename(self):
         text = ".. blockdiag:: unknown.diag\n\n   { A -> B }"
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.system_message, type(doctree[0]))
 
     @setup_directive_base
-    def test_rst_directives_base_with_options(self):
+    def test_base_with_options(self):
         text = ".. blockdiag::\n   :alt: hello world\n   :desctable:\n" + \
                "   :maxwidth: 100\n\n   { A -> B }"
         doctree = publish_doctree(text)
@@ -128,7 +128,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(100, doctree[0]['options']['maxwidth'])
 
     @use_tmpdir
-    def test_rst_directives_with_block(self, path):
+    def test_block(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n\n   { A -> B }"
         doctree = publish_doctree(text)
@@ -139,7 +139,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertFalse('target' in doctree[0])
 
     @use_tmpdir
-    def test_rst_directives_with_block_alt(self, path):
+    def test_block_alt(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
         doctree = publish_doctree(text)
@@ -151,7 +151,7 @@ class TestRstDirectives(unittest2.TestCase):
 
     @use_tmpdir
     @assertRaises(RuntimeError)
-    def test_rst_directives_with_block_fontpath1(self, path):
+    def test_block_fontpath1(self, path):
         directives.setup(format='SVG', fontpath=['dummy.ttf'],
                          outputdir=path)
         text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
@@ -159,14 +159,14 @@ class TestRstDirectives(unittest2.TestCase):
 
     @use_tmpdir
     @assertRaises(RuntimeError)
-    def test_rst_directives_with_block_fontpath2(self, path):
+    def test_block_fontpath2(self, path):
         directives.setup(format='SVG', fontpath='dummy.ttf',
                          outputdir=path)
         text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
         doctree = publish_doctree(text)
 
     @use_tmpdir
-    def test_rst_directives_with_block_maxwidth(self, path):
+    def test_block_maxwidth(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :maxwidth: 100\n\n   { A -> B }"
         doctree = publish_doctree(text)
@@ -177,7 +177,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertFalse(0, doctree[0]['target'].index(path))
 
     @use_tmpdir
-    def test_rst_directives_with_block_desctable_without_description(self, path):
+    def test_desctable_without_description(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n   { A -> B }"
         doctree = publish_doctree(text)
@@ -185,7 +185,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(nodes.image, type(doctree[0]))
 
     @use_tmpdir
-    def test_rst_directives_with_block_desctable(self, path):
+    def test_desctable(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n" + \
                "   { A [description = foo]; B [description = bar]; }"
@@ -220,7 +220,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual('bar', tbody[1][1][0][0])
 
     @use_tmpdir
-    def test_rst_directives_with_block_desctable_using_node_group(self, path):
+    def test_desctable_using_node_group(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n   { A -> B; group { A } }"
         text = ".. blockdiag::\n   :desctable:\n\n" + \
@@ -280,7 +280,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual('bar', tbody[1][1][0][0])
 
     @use_tmpdir
-    def test_rst_directives_with_block_desctable_with_rest_markups(self, path):
+    def test_desctable_with_rest_markups(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n" + \
                "   { A [description = \"foo *bar* **baz**\"]; " + \
@@ -337,7 +337,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(' baz', str(tbody[1][1][0][3]))
 
     @use_tmpdir
-    def test_rst_directives_with_block_desctable_with_numbered(self, path):
+    def test_desctable_with_numbered(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n" + \
                "   { A [numbered = 2]; B [numbered = 1]; }"
@@ -372,7 +372,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual('A', tbody[1][1][0][0])
 
     @use_tmpdir
-    def test_rst_directives_with_block_desctable_with_numbered_and_description(self, path):
+    def test_desctable_with_numbered_and_description(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n" + \
                "   { A [description = foo, numbered = 2]; " + \
@@ -414,7 +414,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual('foo', tbody[1][2][0][0])
 
     @use_tmpdir
-    def test_rst_directives_with_block_desctable_for_edges(self, path):
+    def test_desctable_for_edges(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n" + \
                "   { A -> B [description = \"foo\"]; " + \
@@ -456,7 +456,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual('bar', str(tbody[1][1][0][0]))
 
     @use_tmpdir
-    def test_rst_directives_with_block_desctable_for_nodes_and_edges(self, path):
+    def test_desctable_for_nodes_and_edges(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :desctable:\n\n" + \
                "   { A -> B [description = \"foo\"]; " + \
