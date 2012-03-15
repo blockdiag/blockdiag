@@ -18,23 +18,35 @@ The script accepts buildout command-line options, so you can
 use the -c option to specify an alternate configuration file.
 """
 
-import os, shutil, sys, tempfile, textwrap, urllib, urllib2
+import os, shutil, sys, tempfile, urllib, urllib2, subprocess
 from optparse import OptionParser
 
 if sys.platform == 'win32':
     def quote(c):
         if ' ' in c:
-            return '"%s"' % c # work around spawn lamosity on windows
+            return '"%s"' % c  # work around spawn lamosity on windows
         else:
             return c
 else:
     quote = str
 
+# See zc.buildout.easy_install._has_broken_dash_S for motivation and comments.
+stdout, stderr = subprocess.Popen(
+    [sys.executable, '-Sc',
+     'try:\n'
+     '    import ConfigParser\n'
+     'except ImportError:\n'
+     '    print 1\n'
+     'else:\n'
+     '    print 0\n'],
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+has_broken_dash_S = bool(int(stdout.strip()))
+
 # In order to be more robust in the face of system Pythons, we want to
 # run without site-packages loaded.  This is somewhat tricky, in
 # particular because Python 2.6's distutils imports site, so starting
 # with the -S flag is not sufficient.  However, we'll start with that:
-if 'site' in sys.modules:
+if not has_broken_dash_S and 'site' in sys.modules:
     # We will restart with python -S.
     args = sys.argv[:]
     args[0:0] = [sys.executable, '-S']
@@ -45,12 +57,13 @@ if 'site' in sys.modules:
 # out any namespace packages from site-packages that might have been
 # loaded by .pth files.
 clean_path = sys.path[:]
-import site
+import site  # imported because of its side effects
 sys.path[:] = clean_path
 for k, v in sys.modules.items():
-    if (hasattr(v, '__path__') and
-        len(v.__path__)==1 and
-        not os.path.exists(os.path.join(v.__path__[0],'__init__.py'))):
+    if k in ('setuptools', 'pkg_resources') or (
+        hasattr(v, '__path__') and
+        len(v.__path__) == 1 and
+        not os.path.exists(os.path.join(v.__path__[0], '__init__.py'))):
         # This is a namespace package.  Remove it.
         sys.modules.pop(k)
 
@@ -59,10 +72,11 @@ is_jython = sys.platform.startswith('java')
 setuptools_source = 'http://peak.telecommunity.com/dist/ez_setup.py'
 distribute_source = 'http://python-distribute.org/distribute_setup.py'
 
+
 # parsing arguments
 def normalize_to_url(option, opt_str, value, parser):
     if value:
-        if '://' not in value: # It doesn't smell like a URL.
+        if '://' not in value:  # It doesn't smell like a URL.
             value = 'file://%s' % (
                 urllib.pathname2url(
                     os.path.abspath(os.path.expanduser(value))),)
@@ -97,7 +111,7 @@ parser.add_option("--setup-source", action="callback", dest="setup_source",
                   help=("Specify a URL or file location for the setup file. "
                         "If you use Setuptools, this will default to " +
                         setuptools_source + "; if you use Distribute, this "
-                        "will default to " + distribute_source +"."))
+                        "will default to " + distribute_source + "."))
 parser.add_option("--download-base", action="callback", dest="download_base",
                   callback=normalize_to_url, nargs=1, type="string",
                   help=("Specify a URL or directory for downloading "
@@ -107,6 +121,15 @@ parser.add_option("--eggs",
                   help=("Specify a directory for storing eggs.  Defaults to "
                         "a temporary directory that is deleted when the "
                         "bootstrap script completes."))
+parser.add_option("-t", "--accept-buildout-test-releases",
+                  dest='accept_buildout_test_releases',
+                  action="store_true", default=False,
+                  help=("Normally, if you do not specify a --version, the "
+                        "bootstrap script and buildout gets the newest "
+                        "*final* versions of zc.buildout and its recipes and "
+                        "extensions for you.  If you use this flag, "
+                        "bootstrap and buildout will get the newest releases "
+                        "even if they are alphas or betas."))
 parser.add_option("-c", None, action="store", dest="config_file",
                    help=("Specify the path to the buildout configuration "
                          "file to be used."))
@@ -128,12 +151,13 @@ if options.setup_source is None:
     else:
         options.setup_source = setuptools_source
 
-args = args + ['bootstrap']
-
+if options.accept_buildout_test_releases:
+    args.append('buildout:accept-buildout-test-releases=true')
+args.append('bootstrap')
 
 try:
     import pkg_resources
-    import setuptools # A flag.  Sometimes pkg_resources is installed alone.
+    import setuptools  # A flag.  Sometimes pkg_resources is installed alone.
     if not hasattr(pkg_resources, '_distribute'):
         raise ImportError
 except ImportError:
@@ -147,7 +171,8 @@ except ImportError:
     if options.use_distribute:
         setup_args['no_fake'] = True
     ez['use_setuptools'](**setup_args)
-    reload(sys.modules['pkg_resources'])
+    if 'pkg_resources' in sys.modules:
+        reload(sys.modules['pkg_resources'])
     import pkg_resources
     # This does not (always?) update the default working set.  We will
     # do it.
@@ -161,28 +186,65 @@ cmd = [quote(sys.executable),
        '-mqNxd',
        quote(eggs_dir)]
 
-if options.download_base:
-    cmd.extend(['-f', quote(options.download_base)])
+if not has_broken_dash_S:
+    cmd.insert(1, '-S')
 
-requirement = 'zc.buildout'
-if options.version:
-    requirement = '=='.join((requirement, options.version))
-cmd.append(requirement)
+find_links = options.download_base
+if not find_links:
+    find_links = os.environ.get('bootstrap-testing-find-links')
+if find_links:
+    cmd.extend(['-f', quote(find_links)])
 
 if options.use_distribute:
     setup_requirement = 'distribute'
 else:
     setup_requirement = 'setuptools'
 ws = pkg_resources.working_set
+setup_requirement_path = ws.find(
+    pkg_resources.Requirement.parse(setup_requirement)).location
 env = dict(
     os.environ,
-    PYTHONPATH=ws.find(
-        pkg_resources.Requirement.parse(setup_requirement)).location)
+    PYTHONPATH=setup_requirement_path)
+
+requirement = 'zc.buildout'
+version = options.version
+if version is None and not options.accept_buildout_test_releases:
+    # Figure out the most recent final version of zc.buildout.
+    import setuptools.package_index
+    _final_parts = '*final-', '*final'
+
+    def _final_version(parsed_version):
+        for part in parsed_version:
+            if (part[:1] == '*') and (part not in _final_parts):
+                return False
+        return True
+    index = setuptools.package_index.PackageIndex(
+        search_path=[setup_requirement_path])
+    if find_links:
+        index.add_find_links((find_links,))
+    req = pkg_resources.Requirement.parse(requirement)
+    if index.obtain(req) is not None:
+        best = []
+        bestv = None
+        for dist in index[req.project_name]:
+            distv = dist.parsed_version
+            if _final_version(distv):
+                if bestv is None or distv > bestv:
+                    best = [dist]
+                    bestv = distv
+                elif distv == bestv:
+                    best.append(dist)
+        if best:
+            best.sort()
+            version = best[-1].version
+if version:
+    requirement = '=='.join((requirement, version))
+cmd.append(requirement)
 
 if is_jython:
     import subprocess
     exitcode = subprocess.Popen(cmd, env=env).wait()
-else: # Windows prefers this, apparently; otherwise we would prefer subprocess
+else:  # Windows prefers this, apparently; otherwise we would prefer subprocess
     exitcode = os.spawnle(*([os.P_WAIT, sys.executable] + cmd + [env]))
 if exitcode != 0:
     sys.stdout.flush()
@@ -196,5 +258,5 @@ ws.add_entry(eggs_dir)
 ws.require(requirement)
 import zc.buildout.buildout
 zc.buildout.buildout.main(args)
-if not options.eggs: # clean up temporary egg directory
+if not options.eggs:  # clean up temporary egg directory
     shutil.rmtree(eggs_dir)
