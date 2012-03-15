@@ -113,6 +113,12 @@ Apache License 2.0
 History
 =======
 
+1.1.4 (2012-03-15)
+------------------
+* Add new edge.hstyles: oneone, onemany, manyone, manymany
+* Add edge attribute: description (for build description-tables)
+* Fix bugs
+
 1.1.3 (2012-02-13)
 ------------------
 * Add new edge type for data-models (thanks to David Lang)
