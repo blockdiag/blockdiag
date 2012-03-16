@@ -126,7 +126,6 @@ class DiagramMetrics(object):
     node_padding = 4
     line_spacing = 2
     shadow_offset = XY(3, 6)
-    font = None
     page_margin = XY(0, 0)
     page_padding = [0, 0, 0, 0]
     node_width = cellsize * 16
@@ -193,7 +192,7 @@ class DiagramMetrics(object):
 
     def textsize(self, string, width=65535, font=None):
         try:
-            if self.font is None:
+            if font is None:
                 from utils.TextFolder import TextFolder
             elif self.format == 'PDF':
                 from utils.PDFTextFolder import PDFTextFolder as TextFolder
@@ -202,7 +201,6 @@ class DiagramMetrics(object):
         except ImportError:
             from utils.TextFolder import TextFolder
 
-        font = font or self.font
         lines = TextFolder((0, 0, width, 65535), string, font)
         textbox = lines.outlinebox
         return XY(textbox.width, textbox.height + self.line_spacing)
