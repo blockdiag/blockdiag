@@ -17,19 +17,28 @@ class TestBootParams(unittest2.TestCase):
     @argv_wrapper
     def test_type_option(self):
         sys.argv = ['', '-Tsvg', 'input.diag']
-        self.parser.parse()
+        options = self.parser.parse()
+        self.assertEqual(options.output, 'input.svg')
 
         sys.argv = ['', '-TSVG', 'input.diag']
-        self.parser.parse()
+        options = self.parser.parse()
+        self.assertEqual(options.output, 'input.svg')
 
         sys.argv = ['', '-TSvg', 'input.diag']
-        self.parser.parse()
+        options = self.parser.parse()
+        self.assertEqual(options.output, 'input.svg')
+
+        sys.argv = ['', '-TSvg', 'input.test.diag']
+        options = self.parser.parse()
+        self.assertEqual(options.output, 'input.test.svg')
 
         sys.argv = ['', '-Tpng', 'input.diag']
-        self.parser.parse()
+        options = self.parser.parse()
+        self.assertEqual(options.output, 'input.png')
 
         sys.argv = ['', '-Tpdf', 'input.diag']
-        self.parser.parse()
+        options = self.parser.parse()
+        self.assertEqual(options.output, 'input.pdf')
 
     @assertRaises(RuntimeError)
     @argv_wrapper

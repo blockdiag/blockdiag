@@ -122,8 +122,9 @@ class Options(object):
         elif self.options.output == '-':
             self.options.output = 'output.' + self.options.type.lower()
         else:
+            basename = os.path.splitext(self.options.input)[0]
             ext = '.%s' % self.options.type.lower()
-            self.options.output = re.sub('\..*?$', ext, self.options.input)
+            self.options.output = basename + ext
 
         self.options.type = self.options.type.upper()
         if not self.options.type in ('SVG', 'PNG', 'PDF'):
