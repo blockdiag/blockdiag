@@ -109,6 +109,11 @@ class title(base):
         super(title, self).__init__(text=_title)
 
 
+class desc(base):
+    def __init__(self, _title):
+        super(desc, self).__init__(text=_title)
+
+
 class text(element):
     def __init__(self, x, y, _text, **kwargs):
         super(text, self).__init__(x, y, text=_text, **kwargs)

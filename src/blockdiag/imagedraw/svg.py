@@ -273,6 +273,7 @@ class SVGImageDraw(SVGImageDrawElement):
         self.svg.addElement(d)
 
         self.svg.addElement(title('blockdiag'))
+        self.svg.addElement(desc(kwargs.get('code')))
 
     def save(self, filename, size, format):
         # Ignore format parameter; compatibility for ImageDrawEx.
