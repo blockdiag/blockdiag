@@ -105,3 +105,41 @@ def not_exist_font_config_option_test():
     sys.argv = ['', '-f', '/font_is_not_exist', '-f', fontpath, 'input.diag']
     options = blockdiag.command.BlockdiagOptions(blockdiag).parse()
     blockdiag.command.detectfont(options)
+
+
+@argv_wrapper
+@stderr_wrapper
+def svg_includes_source_code_tag_test():
+    from xml.etree import ElementTree 
+
+    testdir = os.path.dirname(__file__)
+    diagpath = "%s/diagrams/single_edge.diag" % testdir
+    fontpath = get_fontpath()
+
+    try:
+        tmpdir = tempfile.mkdtemp()
+        tmpfile = tempfile.mkstemp(dir=tmpdir)
+        os.close(tmpfile[0])
+
+        sys.argv = ['blockdiag.py', '-T', 'SVG', '-o', tmpfile[1], diagpath]
+        if os.path.exists(fontpath):
+            sys.argv += ['-f', fontpath]
+
+        blockdiag.command.main()
+
+        if re.search('ERROR', sys.stderr.getvalue()):
+            raise RuntimeError(sys.stderr.getvalue())
+
+        # compare embeded source code
+        source_code = open(diagpath).read()
+        tree = ElementTree.parse(tmpfile[1])
+        desc = tree.find('{http://www.w3.org/2000/svg}desc')
+
+        # strip spaces
+        source_code = re.sub('\s+', ' ', source_code)
+        embeded = re.sub('\s+', ' ', desc.text)
+        assert source_code == embeded
+    finally:
+        for file in os.listdir(tmpdir):
+            os.unlink(tmpdir + "/" + file)
+        os.rmdir(tmpdir)

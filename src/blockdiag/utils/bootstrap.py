@@ -49,14 +49,14 @@ class Application(object):
         self.fontmap = create_fontmap(self.options)
 
     def parse_diagram(self):
+        import codecs
         if self.options.input == '-':
-            import codecs
             stream = codecs.getreader('utf-8')(sys.stdin)
-            tree = self.module.parser.parse_string(stream.read())
+            self.code = stream.read()
         else:
-            tree = self.module.parser.parse_file(self.options.input)
+            self.code = codecs.open(self.options.input, 'r', 'utf-8').read()
 
-        return tree
+        return self.module.parser.parse_string(self.code)
 
     def build_diagram(self, tree):
         DiagramDraw = self.module.drawer.DiagramDraw
@@ -65,7 +65,7 @@ class Application(object):
 
         drawer = DiagramDraw(self.options.type, diagram,
                              self.options.output, fontmap=self.fontmap,
-                             antialias=self.options.antialias,
+                             code=self.code, antialias=self.options.antialias,
                              nodoctype=self.options.nodoctype,
                              transparency=self.options.transparency)
         drawer.draw()
