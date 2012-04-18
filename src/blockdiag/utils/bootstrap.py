@@ -182,13 +182,23 @@ class Options(object):
 
 
 def detectfont(options):
-    fonts = ['c:/windows/fonts/VL-Gothic-Regular.ttf',  # for Windows
-             'c:/windows/fonts/msgothic.ttf',  # for Windows
-             'c:/windows/fonts/msgoth04.ttc',  # for Windows
-             '/usr/share/fonts/truetype/ipafont/ipagp.ttf',  # for Debian
-             '/usr/local/share/font-ipa/ipagp.otf',  # for FreeBSD
-             '/Library/Fonts/Hiragino Sans GB W3.otf',  # for MacOS
-             '/System/Library/Fonts/AppleGothic.ttf']  # for MacOS
+    fonts = [
+        # for Windows
+        'c:/windows/fonts/VL-Gothic-Regular.ttf',
+        'c:/windows/fonts/msgothic.ttf',
+        'c:/windows/fonts/msgoth04.ttc',
+        # for Debian (squeeze)
+        '/usr/share/fonts/truetype/ipafont/ipagp.ttf',
+        '/usr/share/fonts/truetype/vlgothic/VL-PGothic-Regular.ttf',
+        # for Debian (wheezy)
+        '/usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf',
+        '/usr/share/fonts/truetype/vlgothic/VL-PGothic-Regular.ttf',
+        # for MacOS
+        '/Library/Fonts/Hiragino Sans GB W3.otf',  # for MacOS
+        '/System/Library/Fonts/AppleGothic.ttf',  # for MacOS
+        # for FreeBSD
+        '/usr/local/share/font-ipa/ipagp.otf',  # for FreeBSD
+    ]
 
     fontpath = None
     if options.font:
