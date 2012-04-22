@@ -113,6 +113,11 @@ Apache License 2.0
 History
 =======
 
+1.1.5 (2012-04-22)
+------------------
+* Embed source code to SVG document as description
+* Fix bugs
+
 1.1.4 (2012-03-15)
 ------------------
 * Add new edge.hstyles: oneone, onemany, manyone, manymany
