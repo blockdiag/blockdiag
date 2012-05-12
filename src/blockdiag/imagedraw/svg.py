@@ -226,7 +226,7 @@ class SVGImageDrawElement(object):
         if urlutil.isurl(filename):
             url = filename
         else:
-            string = open(filename).read()
+            string = open(filename, 'rb').read()
             url = "data:;base64," + base64.b64encode(string)
 
         x = box[0]
