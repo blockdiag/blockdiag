@@ -34,8 +34,13 @@ requires = ['setuptools',
             'webcolors']
 deplinks = []
 
+# For readthedocs.org
+# http://read-the-docs.readthedocs.org/en/latest/faq.html#how-do-i-change-behavior-for-read-the-docs
 # Find imaging libraries
-if is_installed('PIL'):
+
+if 'READTHEDOCS' in os.environ:
+    requires.append('Pillow')
+elif is_installed('PIL'):
     requires.append('PIL')
 elif is_installed('Pillow'):
     requires.append('Pillow')
