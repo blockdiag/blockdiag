@@ -166,6 +166,20 @@ class TestRstDirectives(unittest2.TestCase):
         doctree = publish_doctree(text)
 
     @use_tmpdir
+    def test_caption(self, path):
+        directives.setup(format='SVG', outputdir=path)
+        text = ".. blockdiag::\n   :caption: hello world\n\n   { A -> B }"
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.figure, type(doctree[0]))
+        self.assertEqual(2, len(doctree[0]))
+        self.assertEqual(nodes.image, type(doctree[0][0]))
+        self.assertEqual(nodes.caption, type(doctree[0][1]))
+        self.assertEqual(1, len(doctree[0][1]))
+        self.assertEqual(nodes.Text, type(doctree[0][1][0]))
+        self.assertEqual('hello world', doctree[0][1][0])
+
+    @use_tmpdir
     def test_block_maxwidth(self, path):
         directives.setup(format='SVG', outputdir=path)
         text = ".. blockdiag::\n   :maxwidth: 100\n\n   { A -> B }"

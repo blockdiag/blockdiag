@@ -70,6 +70,7 @@ class BlockdiagDirectiveBase(rst.Directive):
     final_argument_whitespace = False
     option_spec = {
         'alt': rst.directives.unchanged,
+        'caption': rst.directives.unchanged,
         'desctable': rst.directives.flag,
         'maxwidth': rst.directives.nonnegative_int,
     }
@@ -103,6 +104,9 @@ class BlockdiagDirectiveBase(rst.Directive):
         node = self.node_class()
         node['code'] = dotcode
         node['alt'] = self.options.get('alt')
+        if 'caption' in self.options:
+            node['caption'] = self.options.get('caption')
+
         node['options'] = {}
         if 'maxwidth' in self.options:
             node['options']['maxwidth'] = self.options['maxwidth']
@@ -135,6 +139,12 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             results += self.description_tables(diagram)
 
         results[0] = self.node2image(node, diagram)
+
+        if 'caption' in node:
+            fig = nodes.figure()
+            fig += results[0]
+            fig += nodes.caption(text=node['caption'])
+            results[0] = fig
 
         return results
 
