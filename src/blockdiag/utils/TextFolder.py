@@ -73,15 +73,8 @@ def string_width(string):
     >>> string_width(u"あいc")
     5
     """
-    width = 0
-    for c in string:
-        char_width = unicodedata.east_asian_width(c)
-        if char_width in u"WFA":
-            width += 2
-        else:
-            width += 1
-
-    return width
+    widthmap = {'Na': 1, 'N': 1, 'H': 1, 'W': 2, 'F': 2, 'A': 2}
+    return sum(widthmap[unicodedata.east_asian_width(c)] for c in string)
 
 
 class TextFolder(object):
