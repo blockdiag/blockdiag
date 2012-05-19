@@ -39,7 +39,11 @@ class Application(object):
             sys.stderr.write(msg)
             return -1
         except Exception, e:
-            sys.stderr.write("ERROR: %s\n" % e)
+            if self.options.debug:
+                import traceback
+                traceback.print_exc()
+            else:
+                sys.stderr.write("ERROR: %s\n" % e)
             return -1
 
     def parse_options(self):
@@ -94,6 +98,8 @@ class Options(object):
                      help='Pass diagram image to anti-alias filter')
         p.add_option('-c', '--config',
                      help='read configurations from FILE', metavar='FILE')
+        p.add_option('--debug', action='store_true',
+                     help='Enable debug mode')
         p.add_option('-o', dest='output',
                      help='write diagram to FILE', metavar='FILE')
         p.add_option('-f', '--font', default=[], action='append',
