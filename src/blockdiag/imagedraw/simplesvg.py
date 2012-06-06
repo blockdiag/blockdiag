@@ -203,11 +203,11 @@ class pathdata:
         self.path.append('t%s %s' % (x, y))
 
     def ellarc(self, rx, ry, xrot, laf, sf, x, y):
-        self.path.append('A%s,%s %s %s %s %s %s' % \
+        self.path.append('A%s,%s %s %s %s %s %s' %
                          (rx, ry, xrot, laf, sf, x, y))
 
     def relellarc(self, rx, ry, xrot, laf, sf, x, y):
-        self.path.append('a%s,%s %s %s %s %s %s' % \
+        self.path.append('a%s,%s %s %s %s %s %s' %
                          (rx, ry, xrot, laf, sf, x, y))
 
     def __repr__(self):

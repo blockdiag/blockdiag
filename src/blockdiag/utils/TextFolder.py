@@ -44,7 +44,7 @@ def zenkaku_len(string):
     >>> zenkaku_len(u"あいc")
     2
     """
-    return len([x for x in string  if is_zenkaku(x)])
+    return len([x for x in string if is_zenkaku(x)])
 
 
 def hankaku_len(string):
@@ -58,7 +58,7 @@ def hankaku_len(string):
     >>> hankaku_len(u"あいc")
     1
     """
-    return len([x for x in string  if not is_zenkaku(x)])
+    return len([x for x in string if not is_zenkaku(x)])
 
 
 def string_width(string):

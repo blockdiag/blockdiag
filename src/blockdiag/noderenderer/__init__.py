@@ -101,7 +101,7 @@ class NodeShape(object):
         self.render_number_badge(drawer, **kwargs)
 
     def render_icon(self, drawer, **kwargs):
-        if self.node.icon != None and kwargs.get('shadow') != True:
+        if self.node.icon is not None and kwargs.get('shadow') is False:
             drawer.loadImage(self.node.icon, self.iconbox)
 
     def render_shape(self, drawer, format, **kwargs):
@@ -116,7 +116,7 @@ class NodeShape(object):
                             line_spacing=self.metrics.line_spacing)
 
     def render_number_badge(self, drawer, **kwargs):
-        if self.node.numbered != None and kwargs.get('shadow') != True:
+        if self.node.numbered is not None and kwargs.get('shadow') is False:
             badgeFill = kwargs.get('badgeFill')
 
             xy = self.metrics.cell(self.node).topleft

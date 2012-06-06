@@ -82,11 +82,11 @@ def __validate_node_attributes(filename, **kwargs):
                         found = True
 
                 if not found:
-                    raise RuntimeError('edge (%s -> %s) is not found' % \
+                    raise RuntimeError('edge (%s -> %s) is not found' %
                                        (id1, id2))
         else:
             print "[node.%s]" % name
-            for node in (n for n in diagram.nodes  if n.drawable):
+            for node in (n for n in diagram.nodes if n.drawable):
                 print node
                 value = getattr(node, name)
                 eq_(values[node.id], value)

@@ -24,7 +24,7 @@ def angles(du, a, b, start, end):
     phi = (start / 180.0) * math.pi
     while phi <= (end / 180.0) * math.pi:
         yield phi
-        phi += du / math.sqrt((a * math.sin(phi)) ** 2 + \
+        phi += du / math.sqrt((a * math.sin(phi)) ** 2 +
                               (b * math.cos(phi)) ** 2)
 
 

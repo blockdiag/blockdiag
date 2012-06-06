@@ -288,7 +288,7 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(20, font4.size)
 
     def test_fontmap_using_fontalias(self):
-        _config = ("[fontmap]\nserif-bold: %s\n" + \
+        _config = ("[fontmap]\nserif-bold: %s\n" +
                    "[fontalias]\ntest = serif-bold\n") % self.fontpath[0]
         config = StringIO(_config)
         fmap = FontMap(config)

@@ -588,7 +588,7 @@ class Diagram(NodeGroup):
 
     def set_plugin(self, name, attrs):
         try:
-            kwargs = dict([str(unquote(attr.name)), unquote(attr.value)] \
+            kwargs = dict([str(unquote(attr.name)), unquote(attr.value)]
                           for attr in attrs)
             plugins.load([name], diagram=self, **kwargs)
         except:

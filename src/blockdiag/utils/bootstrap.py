@@ -108,7 +108,7 @@ class Options(object):
                      help='use FONTMAP file to draw diagram', metavar='FONT')
         p.add_option('--no-transparency', dest='transparency',
                      default=True, action='store_false',
-                     help='do not make transparent background of diagram ' +\
+                     help='do not make transparent background of diagram ' +
                           '(PNG only)')
         p.add_option('-T', dest='type', default='PNG',
                      help='Output diagram as TYPE format')
