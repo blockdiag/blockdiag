@@ -87,7 +87,8 @@ class FontInfo(object):
 
 
 class FontMap(object):
-    fontsize = 11
+    BASE_FONTSIZE = 11
+    fontsize = BASE_FONTSIZE
     default_fontfamily = 'sansserif'
 
     def __init__(self, filename=None):
@@ -137,7 +138,7 @@ class FontMap(object):
             sys.stderr.write("WARNING: %s\n" % msg)
 
     def _regulate_familyname(self, name):
-        return FontInfo(name, None, 11).familyname
+        return FontInfo(name, None, self.BASE_FONTSIZE).familyname
 
     def find(self, element=None):
         fontfamily = getattr(element, 'fontfamily', None) or \

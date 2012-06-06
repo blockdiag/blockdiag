@@ -17,7 +17,7 @@ import re
 import math
 from itertools import izip, tee
 from blockdiag.utils import ellipse, urlutil, Box
-from blockdiag.utils.fontmap import parse_fontpath
+from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
 from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
 try:
@@ -261,7 +261,7 @@ class ImageDrawEx(object):
             ttfont = None
 
         if ttfont is None:
-            if self.scale_ratio == 1:
+            if self.scale_ratio == 1 and font.size == FontMap.BASE_FONTSIZE:
                 self.draw.text(xy, string, fill=fill)
             else:
                 size = self.draw.textsize(string)
@@ -270,8 +270,9 @@ class ImageDrawEx(object):
                 draw.text((0, 0), string, fill=fill)
                 del draw
 
-                basesize = (size[0] * self.scale_ratio,
-                            size[1] * self.scale_ratio)
+                font_ratio = font.size * 1.0 / FontMap.BASE_FONTSIZE
+                basesize = (int(size[0] * self.scale_ratio * font_ratio),
+                            int(size[1] * self.scale_ratio * font_ratio))
                 text_image = image.resize(basesize, Image.ANTIALIAS)
 
                 self.image.paste(text_image, xy, text_image)
