@@ -113,6 +113,12 @@ Apache License 2.0
 History
 =======
 
+1.1.6 (2012-06-06)
+------------------
+* Support for readthedocs.org
+* reST directive supports :caption: option
+* Fix bugs
+
 1.1.5 (2012-04-22)
 ------------------
 * Embed source code to SVG document as description
