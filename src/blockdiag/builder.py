@@ -502,11 +502,11 @@ class EdgeLayoutManager(object):
 
     @property
     def edges(self):
-        for edge in (e for e in self.diagram.edges  if e.style != 'none'):
+        for edge in (e for e in self.diagram.edges if e.style != 'none'):
             yield edge
 
         for group in self.groups:
-            for edge in (e for e in group.edges  if e.style != 'none'):
+            for edge in (e for e in group.edges if e.style != 'none'):
                 yield edge
 
     def run(self):

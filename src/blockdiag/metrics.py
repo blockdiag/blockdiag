@@ -42,7 +42,7 @@ class EdgeLines(object):
         else:
             elem = XY(x, y)
 
-        if self.stroking == False:
+        if self.stroking is False:
             self.stroking = True
             polyline = []
             if self.xy:

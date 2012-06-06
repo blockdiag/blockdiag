@@ -46,7 +46,7 @@ def test_edge_attribute():
         if edge.node1.id == 'D':
             assert edge.dir == 'none'
             assert edge.color == (0, 0, 0)
-            assert edge.thick == None
+            assert edge.thick is None
         elif edge.node1.id == 'F':
             assert edge.dir == 'forward'
             assert edge.color == (0, 0, 0)
@@ -54,7 +54,7 @@ def test_edge_attribute():
         else:
             assert edge.dir == 'forward'
             assert edge.color == (255, 0, 0)  # red
-            assert edge.thick == None
+            assert edge.thick is None
 
     positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
                  'D': (0, 1), 'E': (1, 1), 'F': (0, 2), 'G': (1, 2)}

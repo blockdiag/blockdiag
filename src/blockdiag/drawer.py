@@ -75,7 +75,7 @@ class DiagramDraw(object):
     @property
     def edges(self):
         edges = self.diagram.traverse_edges(preorder=True)
-        for edge in (e for e in edges  if e.style != 'none'):
+        for edge in (e for e in edges if e.style != 'none'):
             yield edge
 
     def pagesize(self, scaled=False):
