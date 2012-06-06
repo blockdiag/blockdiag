@@ -22,7 +22,7 @@ except ImportError:
     import ImageDraw
     import ImageFont
 from TextFolder import TextFolder
-from fontmap import parse_fontpath
+from fontmap import parse_fontpath, FontMap
 
 
 class PILTextFolder(TextFolder):
@@ -38,8 +38,17 @@ class PILTextFolder(TextFolder):
 
         image = Image.new('1', (1, 1))
         self.draw = ImageDraw.Draw(image)
+        self.fontsize = font.size
 
         super(PILTextFolder, self).__init__(box, string, font, **kwargs)
 
     def textsize(self, string):
-        return self.draw.textsize(string, font=self.ttfont)
+        if self.ttfont is None:
+            size = self.draw.textsize(string, font=self.ttfont)
+
+            font_ratio = self.fontsize * 1.0 / FontMap.BASE_FONTSIZE
+            size = (int(size[0] * font_ratio), int(size[1] * font_ratio))
+        else:
+            size = self.draw.textsize(string, font=self.ttfont)
+
+        return size
