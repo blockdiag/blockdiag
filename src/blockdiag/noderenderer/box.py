@@ -25,8 +25,11 @@ class Box(NodeShape):
         box = self.metrics.cell(self.node).box
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
-            drawer.rectangle(box, fill=fill, outline=fill,
-                             filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.rectangle(box, fill=fill, outline=fill,
+                                 filter='transp-blur')
+            else:
+                drawer.rectangle(box, fill=fill, outline=fill)
         elif self.node.background:
             drawer.rectangle(box, fill=self.node.color,
                              outline=self.node.color)

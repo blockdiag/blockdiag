@@ -263,14 +263,15 @@ class SVGImageDraw(SVGImageDrawElement):
         self.svg.add_attribute('xmlns:xlink', uri)
 
         # inkspace's Gaussian filter
-        fgb = feGaussianBlur(id='feGaussianBlur3780', stdDeviation=4.2)
-        fgb.add_attribute('inkspace:collect', 'always')
-        f = filter(-0.07875, -0.252, 1.1575, 1.504, id='filter_blur')
-        f.add_attribute('inkspace:collect', 'always')
-        f.addElement(fgb)
-        d = defs(id='defs_block')
-        d.addElement(f)
-        self.svg.addElement(d)
+        if kwargs.get('style') != 'blur':
+            fgb = feGaussianBlur(id='feGaussianBlur3780', stdDeviation=4.2)
+            fgb.add_attribute('inkspace:collect', 'always')
+            f = filter(-0.07875, -0.252, 1.1575, 1.504, id='filter_blur')
+            f.add_attribute('inkspace:collect', 'always')
+            f.addElement(fgb)
+            d = defs(id='defs_block')
+            d.addElement(f)
+            self.svg.addElement(d)
 
         self.svg.addElement(title('blockdiag'))
         self.svg.addElement(desc(kwargs.get('code')))

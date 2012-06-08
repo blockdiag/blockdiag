@@ -83,7 +83,10 @@ class Actor(NodeShape):
         body = self.body_part()
         if kwargs.get('shadow'):
             body = self.shift_shadow(body)
-            drawer.polygon(body, fill=fill, filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.polygon(body, fill=fill, filter='transp-blur')
+            else:
+                drawer.polygon(body, fill=fill)
         else:
             drawer.polygon(body, fill=self.node.color,
                            outline=self.node.linecolor, style=self.node.style)
@@ -92,8 +95,11 @@ class Actor(NodeShape):
         head = self.head_part()
         if kwargs.get('shadow'):
             head = self.shift_shadow(head)
-            drawer.ellipse(head, fill=fill, outline=self.node.linecolor,
-                           filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.ellipse(head, fill=fill, outline=self.node.linecolor,
+                               filter='transp-blur')
+            else:
+                drawer.ellipse(head, fill=fill, outline=self.node.linecolor)
         else:
             drawer.ellipse(head, fill=self.node.color,
                            outline=self.node.linecolor, style=self.node.style)

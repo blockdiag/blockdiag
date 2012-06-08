@@ -42,7 +42,11 @@ class BeginPoint(NodeShape):
                   self.center.x + r, self.center.y + r)
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
-            drawer.ellipse(box, fill=fill, outline=fill, filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.ellipse(box, fill=fill, outline=fill,
+                               filter='transp-blur')
+            else:
+                drawer.ellipse(box, fill=fill, outline=fill)
         else:
             if self.node.color == self.node.basecolor:
                 color = self.node.linecolor

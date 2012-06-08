@@ -52,8 +52,8 @@ class DiagramDraw(object):
                       nodoctype=kwargs.get('nodoctype'),
                       scale_ratio=self.scale_ratio,
                       transparency=kwargs.get('transparency'))
-        drawer = imagedraw.create(self.format, self.filename,
-                                  self.pagesize(), **kwargs)
+        drawer = imagedraw.create(self.format, self.filename, self.pagesize(),
+                                  shadow_style=diagram.shadow_style, **kwargs)
         if drawer is None:
             msg = 'failed to load %s image driver' % self.format
             raise RuntimeError(msg)
@@ -128,7 +128,8 @@ class DiagramDraw(object):
                     drawer = self.drawer
 
                 shape.render(drawer, self.format,
-                             fill=self.shadow, shadow=True)
+                             fill=self.shadow, shadow=True,
+                             style=self.diagram.shadow_style)
 
     def _draw_elements(self, **kwargs):
         for node in self.nodes:

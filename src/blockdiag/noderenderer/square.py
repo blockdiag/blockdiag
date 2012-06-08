@@ -24,8 +24,11 @@ class Square(NodeShape):
         # draw outline
         if kwargs.get('shadow'):
             box = self.shift_shadow(self.textbox)
-            drawer.rectangle(box, fill=fill, outline=fill,
-                             filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.rectangle(box, fill=fill, outline=fill,
+                                 filter='transp-blur')
+            else:
+                drawer.rectangle(box, fill=fill, outline=fill)
         elif self.node.background:
             drawer.rectangle(self.textbox, fill=self.node.color,
                              outline=self.node.color)

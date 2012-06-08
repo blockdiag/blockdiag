@@ -42,7 +42,11 @@ class EndPoint(NodeShape):
                   self.center.x + r, self.center.y + r)
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
-            drawer.ellipse(box, fill=fill, outline=fill, filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.ellipse(box, fill=fill, outline=fill,
+                               filter='transp-blur')
+            else:
+                drawer.ellipse(box, fill=fill, outline=fill)
         else:
             drawer.ellipse(box, fill='white', outline=self.node.linecolor,
                            style=self.node.style)

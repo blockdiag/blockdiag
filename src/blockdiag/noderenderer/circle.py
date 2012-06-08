@@ -23,7 +23,11 @@ class Circle(NodeShape):
         # draw outline
         if kwargs.get('shadow'):
             box = self.shift_shadow(self.textbox)
-            drawer.ellipse(box, fill=fill, outline=fill, filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.ellipse(box, fill=fill, outline=fill,
+                               filter='transp-blur')
+            else:
+                drawer.ellipse(box, fill=fill, outline=fill)
         elif self.node.background:
             drawer.ellipse(self.textbox, fill=self.node.color,
                            outline=self.node.color)

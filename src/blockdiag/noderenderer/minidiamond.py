@@ -39,8 +39,11 @@ class MiniDiamond(NodeShape):
         # draw outline
         if kwargs.get('shadow'):
             diamond = self.shift_shadow(self.connectors)
-            drawer.polygon(diamond, fill=fill, outline=fill,
-                             filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.polygon(diamond, fill=fill, outline=fill,
+                               filter='transp-blur')
+            else:
+                drawer.polygon(diamond, fill=fill, outline=fill)
         else:
             drawer.polygon(self.connectors, fill=self.node.color,
                            outline=self.node.linecolor, style=self.node.style)

@@ -566,6 +566,7 @@ class Diagram(NodeGroup):
     _NodeGroup = NodeGroup
 
     classes = {}
+    shadow_style = 'blur'
     linecolor = (0, 0, 0)
     int_attrs = NodeGroup.int_attrs + \
                 ['node_width', 'node_height', 'span_width', 'span_height']
@@ -573,6 +574,7 @@ class Diagram(NodeGroup):
     @classmethod
     def clear(cls):
         super(NodeGroup, cls).clear()
+        cls.shadow_style = 'blur'
         cls.linecolor = (0, 0, 0)
         cls.classes = {}
 
@@ -649,6 +651,14 @@ class Diagram(NodeGroup):
         self._DiagramNode.set_default_fontsize(fontsize)
         self._NodeGroup.set_default_fontsize(fontsize)
         self._DiagramEdge.set_default_fontsize(fontsize)
+
+    def set_shadow_style(self, value):
+        value = value.lower()
+        if value in ('solid', 'blur'):
+            self.shadow_style = value
+        else:
+            msg = "WARNING: unknown shadow style: %s\n" % value
+            raise AttributeError(msg)
 
     def set_edge_layout(self, value):
         value = value.lower()

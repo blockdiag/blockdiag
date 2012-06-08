@@ -49,8 +49,11 @@ class Terminator(NodeShape):
         for e in ellipses:
             if kwargs.get('shadow'):
                 e = self.shift_shadow(e)
-                drawer.ellipse(e, fill=fill, outline=fill,
-                               filter='transp-blur')
+                if kwargs.get('style') == 'blur':
+                    drawer.ellipse(e, fill=fill, outline=fill,
+                                   filter='transp-blur')
+                else:
+                    drawer.ellipse(e, fill=fill, outline=fill)
             else:
                 drawer.ellipse(e, fill=self.node.color,
                                outline=self.node.linecolor,
@@ -59,8 +62,11 @@ class Terminator(NodeShape):
         rect = Box(box[0] + r, box[1], box[2] - r, box[3])
         if kwargs.get('shadow'):
             rect = self.shift_shadow(rect)
-            drawer.rectangle(rect, fill=fill, outline=fill,
-                             filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.rectangle(rect, fill=fill, outline=fill,
+                                 filter='transp-blur')
+            else:
+                drawer.rectangle(rect, fill=fill, outline=fill)
         else:
             drawer.rectangle(rect, fill=self.node.color,
                              outline=self.node.color)
@@ -93,8 +99,11 @@ class Terminator(NodeShape):
 
         # draw outline
         if kwargs.get('shadow'):
-            drawer.path(path, fill=fill, outline=fill,
-                        filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.path(path, fill=fill, outline=fill,
+                            filter='transp-blur')
+            else:
+                drawer.path(path, fill=fill, outline=fill)
         elif self.node.background:
             drawer.path(path, fill=self.node.color, outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)

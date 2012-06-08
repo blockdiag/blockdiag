@@ -33,8 +33,11 @@ class Note(NodeShape):
         # draw outline
         if kwargs.get('shadow'):
             note = self.shift_shadow(note)
-            drawer.polygon(note, fill=fill, outline=fill,
-                           filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.polygon(note, fill=fill, outline=fill,
+                               filter='transp-blur')
+            else:
+                drawer.polygon(note, fill=fill, outline=fill)
         elif self.node.background:
             drawer.polygon(note, fill=self.node.color,
                            outline=self.node.color)
