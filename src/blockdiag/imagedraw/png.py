@@ -119,6 +119,7 @@ class ImageDrawEx(object):
         self.scale_ratio = kwargs.get('scale_ratio', 1)
         self.mode = kwargs.get('mode')
         self.draw = ImageDraw.ImageDraw(self.image, self.mode)
+        self.shadow_style = kwargs.get('shadow_style')
 
         if 'parent' in kwargs:
             parent = kwargs['parent']
@@ -129,10 +130,11 @@ class ImageDrawEx(object):
         self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def smoothCanvas(self):
-        for i in range(15):
-            self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
+        if self.shadow_style == 'blur':
+            for i in range(15):
+                self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
 
-        self.draw = ImageDraw.ImageDraw(self.image, self.mode)
+            self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def arc(self, box, start, end, **kwargs):
         style = kwargs.get('style')

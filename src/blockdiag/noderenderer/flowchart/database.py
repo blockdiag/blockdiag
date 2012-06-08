@@ -46,8 +46,11 @@ class Database(NodeShape):
         ellipse = Box(box[0], box[3] - r * 2, box[2], box[3])
         if kwargs.get('shadow'):
             ellipse = self.shift_shadow(ellipse)
-            drawer.ellipse(ellipse, fill=fill, outline=fill,
-                           filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.ellipse(ellipse, fill=fill, outline=fill,
+                               filter='transp-blur')
+            else:
+                drawer.ellipse(ellipse, fill=fill, outline=fill)
         else:
             drawer.ellipse(ellipse, fill=self.node.color,
                            outline=self.node.linecolor, style=self.node.style)
@@ -55,8 +58,11 @@ class Database(NodeShape):
         rect = Box(box[0], box[1] + r, box[2], box[3] - r)
         if kwargs.get('shadow'):
             rect = self.shift_shadow(rect)
-            drawer.rectangle(rect, fill=fill, outline=fill,
-                             filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.rectangle(rect, fill=fill, outline=fill,
+                                 filter='transp-blur')
+            else:
+                drawer.rectangle(rect, fill=fill, outline=fill)
         else:
             drawer.rectangle(rect, fill=self.node.color,
                              outline=self.node.color)
@@ -64,8 +70,11 @@ class Database(NodeShape):
         ellipse = Box(box[0], box[1], box[2], box[1] + r * 2)
         if kwargs.get('shadow'):
             ellipse = self.shift_shadow(ellipse)
-            drawer.ellipse(ellipse, fill=fill, outline=fill,
-                           filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.ellipse(ellipse, fill=fill, outline=fill,
+                               filter='transp-blur')
+            else:
+                drawer.ellipse(ellipse, fill=fill, outline=fill)
         else:
             drawer.ellipse(ellipse, fill=self.node.color,
                            outline=self.node.linecolor, style=self.node.style)
@@ -97,8 +106,11 @@ class Database(NodeShape):
 
         # draw outline
         if kwargs.get('shadow'):
-            drawer.path(path, fill=fill, outline=fill,
-                        filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.path(path, fill=fill, outline=fill,
+                            filter='transp-blur')
+            else:
+                drawer.path(path, fill=fill, outline=fill)
         elif self.node.background:
             drawer.path(path, fill=self.node.color,
                         outline=self.node.color)

@@ -40,8 +40,11 @@ class Diamond(NodeShape):
         # draw outline
         if kwargs.get('shadow'):
             diamond = self.shift_shadow(self.connectors)
-            drawer.polygon(diamond, fill=fill, outline=fill,
-                             filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.polygon(diamond, fill=fill, outline=fill,
+                               filter='transp-blur')
+            else:
+                drawer.polygon(diamond, fill=fill, outline=fill)
         elif self.node.background:
             drawer.polygon(self.connectors, fill=self.node.color,
                            outline=self.node.color)

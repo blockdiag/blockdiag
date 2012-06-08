@@ -33,8 +33,11 @@ class Ellipse(NodeShape):
         box = self.metrics.cell(self.node).box
         if kwargs.get('shadow'):
             box = self.shift_shadow(box)
-            drawer.ellipse(box, fill=fill, outline=fill,
-                           filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.ellipse(box, fill=fill, outline=fill,
+                               filter='transp-blur')
+            else:
+                drawer.ellipse(box, fill=fill, outline=fill)
         elif self.node.background:
             drawer.ellipse(box, fill=self.node.color,
                            outline=self.node.color)

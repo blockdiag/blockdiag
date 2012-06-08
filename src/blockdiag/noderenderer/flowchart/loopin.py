@@ -46,8 +46,11 @@ class LoopIn(NodeShape):
         # draw outline
         if kwargs.get('shadow'):
             shape = self.shift_shadow(shape)
-            drawer.polygon(shape, fill=fill, outline=fill,
-                           filter='transp-blur')
+            if kwargs.get('style') == 'blur':
+                drawer.polygon(shape, fill=fill, outline=fill,
+                               filter='transp-blur')
+            else:
+                drawer.polygon(shape, fill=fill, outline=fill)
         elif self.node.background:
             drawer.polygon(shape, fill=self.node.color,
                            outline=self.node.color)
