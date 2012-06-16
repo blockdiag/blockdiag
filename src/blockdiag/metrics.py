@@ -73,19 +73,25 @@ class AutoScaler(object):
 
     def __getattr__(self, name):
         ratio = self.scale_ratio
-        attr = getattr(self.subject, name)
+        return self.scale(getattr(self.subject, name), ratio)
 
-        if not callable(attr):
-            return self.scale(attr, ratio)
+    def __getitem__(self, name):
+        ratio = self.scale_ratio
+        return self.scale(self.subject[name], ratio)
+
+    @classmethod
+    def scale(cls, value, ratio):
+        if not callable(value):
+            return cls._scale(value, ratio)
         else:
             def _(*args, **kwargs):
-                ret = attr(*args, **kwargs)
-                return self.scale(ret, ratio)
+                ret = value(*args, **kwargs)
+                return cls._scale(ret, ratio)
 
             return _
 
     @classmethod
-    def scale(cls, value, ratio):
+    def _scale(cls, value, ratio):
         if ratio == 1:
             return value
 
