@@ -199,11 +199,13 @@ def detectfont(options):
         # for Debian (wheezy)
         '/usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf',
         '/usr/share/fonts/truetype/vlgothic/VL-PGothic-Regular.ttf',
+        # for CentOS (6.2)
+        '/usr/share/fonts/ipa-gothic/ipag.ttf',
         # for MacOS
-        '/Library/Fonts/Hiragino Sans GB W3.otf',  # for MacOS
-        '/System/Library/Fonts/AppleGothic.ttf',  # for MacOS
+        '/Library/Fonts/Hiragino Sans GB W3.otf',
+        '/System/Library/Fonts/AppleGothic.ttf',
         # for FreeBSD
-        '/usr/local/share/font-ipa/ipagp.otf',  # for FreeBSD
+        '/usr/local/share/font-ipa/ipagp.otf',
     ]
 
     fontpath = None
