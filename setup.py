@@ -75,7 +75,7 @@ setup(
      extras_require=dict(
          test=[
              'Nose',
-             'pep8<=1.2',
+             'pep8>=1.3',
              'unittest2',
          ],
          pdf=[
