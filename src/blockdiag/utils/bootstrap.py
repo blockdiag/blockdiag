@@ -183,6 +183,11 @@ class Options(object):
                 if self.options.fontmap is None:
                     self.options.fontmap = config.get(appname, 'fontmap')
 
+            if config.has_option(appname, 'antialias'):
+                antialias = config.get(appname, 'antialias')
+                if antialias.lower() == 'true':
+                    self.options.antialias = True
+
             if self.options.fontmap is None:
                 self.options.fontmap = configpath
 
