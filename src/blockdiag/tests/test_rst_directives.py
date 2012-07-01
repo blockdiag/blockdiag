@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import re
 import os
-import sys
 import tempfile
 import unittest2
 from utils import stderr_wrapper, assertRaises
@@ -155,7 +153,7 @@ class TestRstDirectives(unittest2.TestCase):
         directives.setup(format='SVG', fontpath=['dummy.ttf'],
                          outputdir=path)
         text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
-        doctree = publish_doctree(text)
+        publish_doctree(text)
 
     @use_tmpdir
     @assertRaises(RuntimeError)
@@ -163,7 +161,7 @@ class TestRstDirectives(unittest2.TestCase):
         directives.setup(format='SVG', fontpath='dummy.ttf',
                          outputdir=path)
         text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
-        doctree = publish_doctree(text)
+        publish_doctree(text)
 
     @use_tmpdir
     def test_caption(self, path):

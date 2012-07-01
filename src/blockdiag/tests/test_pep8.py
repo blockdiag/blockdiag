@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import pep8
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -20,7 +21,7 @@ def test_pep8():
     if options.doctest:
         import doctest
         fail_d, done_d = doctest.testmod(report=False, verbose=options.verbose)
-        fail_s, done_s = selftest(options)
+        fail_s, done_s = pep8.selftest(options)
         count_failed = fail_s + fail_d
         if not options.quiet:
             count_passed = done_d + done_s - count_failed
@@ -29,7 +30,7 @@ def test_pep8():
         if count_failed:
             sys.exit(1)
     if options.testsuite:
-        init_tests(pep8style)
+        pep8.init_tests(pep8style)
     report = pep8style.check_files()
     if options.statistics:
         report.print_statistics()

@@ -18,6 +18,7 @@ import math
 import unicodedata
 from blockdiag.utils import Box, XY
 from blockdiag.utils.fontmap import FontInfo
+FontInfo
 
 
 def is_zenkaku(char):

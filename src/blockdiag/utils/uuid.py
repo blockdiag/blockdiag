@@ -14,9 +14,11 @@
 #  limitations under the License.
 
 try:
-    from uuid import uuid1 as uuid
+    from uuid import uuid1
+    uuid = uuid1
 except ImportError:
-    from random import random as uuid
+    from random import random
+    uuid = random
 
 
 def generate():

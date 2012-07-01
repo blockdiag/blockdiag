@@ -19,3 +19,6 @@ from blockdiag import drawer as DiagramDraw
 from blockdiag.utils import collections
 from blockdiag.utils.fontmap import FontMap
 from blockdiag.utils.rst.directives import blockdiag, BlockdiagDirective
+
+(command, parser, builder, drawer, diagparser, DiagramDraw, collections,
+ FontMap, blockdiag, BlockdiagDirective)
