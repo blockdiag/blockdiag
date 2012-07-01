@@ -152,16 +152,10 @@ class Element(Base):
         self.stacked = False
 
     def __repr__(self):
-        class_name = self.__class__.__name__
-        nodeid = self.id
-        xy = str(self.xy)
-        width = self.colwidth
-        height = self.colheight
-        addr = id(self)
-
-        format = "<%(class_name)s '%(nodeid)s' %(xy)s " + \
-                 "%(width)dx%(height)d at 0x%(addr)08x>"
-        return format % locals()
+        format = "<%s '%s' %s %dx%d at 0x%08x>"
+        params = (self.__class__.__name__, self.id, str(self.xy),
+                  self.colwidth, self.colheight, id(self))
+        return format % params
 
     def set_color(self, color):
         self.color = images.color_to_rgb(color)
@@ -458,16 +452,10 @@ class DiagramEdge(Base):
         self.thick = None
 
     def __repr__(self):
-        class_name = self.__class__.__name__
-        node1_id = self.node1.id
-        node1_xy = self.node1.xy
-        node2_id = self.node2.id
-        node2_xy = self.node2.xy
-        addr = id(self)
-
-        format = "<%(class_name)s '%(node1_id)s' %(node1_xy)s - " + \
-                 "'%(node2_id)s' %(node2_xy)s, at 0x%(addr)08x>"
-        return format % locals()
+        format = "<%s '%s' %s - '%s' %s at 0x%08x>"
+        params = (self.__class__.__name__, self.node1.id, self.node1.xy,
+                  self.node2.id, self.node2.xy, id(self))
+        return format % params
 
     def set_dir(self, value):
         value = value.lower()

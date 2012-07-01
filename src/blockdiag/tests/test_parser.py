@@ -137,4 +137,4 @@ def test_parser_diagram_includes_diagram_attributes():
 @raises(ParseException)
 def test_parser_parenthesis_ness():
     str = ""
-    tree = parse_string(str)
+    parse_string(str)

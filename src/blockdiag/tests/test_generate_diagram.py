@@ -80,6 +80,7 @@ def test_generator_png():
 def test_generator_pdf():
     try:
         import reportlab.pdfgen.canvas
+        reportlab.pdfgen.canvas
         for testcase in generator_core('pdf'):
             yield testcase
     except ImportError:

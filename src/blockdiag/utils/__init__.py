@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
 from namedtuple import namedtuple
 
 
@@ -43,16 +42,10 @@ class Box(list):
         return self[self.mapper[name]]
 
     def __repr__(self):
-        class_name = self.__class__.__name__
-        x1 = self.x1
-        y1 = self.y1
-        width = self.width
-        height = self.height
-        addr = id(self)
-
-        format = "<%(class_name)s (%(x1)s, %(y1)s) " + \
-                 "%(width)dx%(height)d at 0x%(addr)08x>"
-        return format % locals()
+        format = "<%s (%s, %s) %dx%d at 0x%08x"
+        params = (self.__class__.__name, self.x1, self.y1,
+                  self.width, self.height, id(self))
+        return format % params
 
     def shift(self, x=0, y=0):
         return self.__class__(self.x1 + x, self.y1 + y,

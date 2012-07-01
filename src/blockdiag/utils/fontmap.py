@@ -17,7 +17,6 @@ import re
 import os
 import sys
 import copy
-import codecs
 from config import ConfigParser
 from blockdiag.utils.collections import namedtuple
 

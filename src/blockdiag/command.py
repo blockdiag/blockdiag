@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 import re
-import sys
 import blockdiag
 import blockdiag.builder
 import blockdiag.drawer
@@ -23,6 +22,8 @@ from blockdiag.utils.bootstrap import Application, Options
 
 # for compatibility
 from blockdiag.utils.bootstrap import create_fontmap, detectfont
+create_fontmap
+detectfont
 
 
 class BlockdiagOptions(Options):

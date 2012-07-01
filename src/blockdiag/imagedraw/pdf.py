@@ -181,7 +181,7 @@ class PDFImageDraw(object):
 
         params = self.set_render_params(**kwargs)
         y = self.size[1]
-        self.canvas.arc(xy[0], y - xy[3], xy[2], y - xy[1], start, r)
+        self.canvas.arc(xy[0], y - xy[3], xy[2], y - xy[1], start, r, **params)
 
     def ellipse(self, xy, **kwargs):
         params = self.set_render_params(**kwargs)

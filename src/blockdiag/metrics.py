@@ -18,7 +18,7 @@ from elements import DiagramNode
 import noderenderer
 from utils import Box, Size, XY
 from utils.fontmap import FontInfo, FontMap
-from utils.collections import defaultdict, namedtuple
+from utils.collections import defaultdict
 
 cellsize = 8
 
@@ -200,10 +200,13 @@ class DiagramMetrics(object):
         try:
             if font is None:
                 from utils.TextFolder import TextFolder
+                TextFolder = TextFolder
             elif self.format == 'PDF':
-                from utils.PDFTextFolder import PDFTextFolder as TextFolder
+                from utils.PDFTextFolder import PDFTextFolder
+                TextFolder = PDFTextFolder
             else:
-                from utils.PILTextFolder import PILTextFolder as TextFolder
+                from utils.PILTextFolder import PILTextFolder
+                TextFolder = PILTextFolder
         except ImportError:
             from utils.TextFolder import TextFolder
 
@@ -950,9 +953,7 @@ class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
         dir = self.edge.direction
         if dir == 'right':
             span = XY(self.metrics.span_width, self.metrics.span_height)
-            node1 = self.metrics.node(self.edge.node1)
             cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
-            node2 = self.metrics.node(self.edge.node2)
             cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
             if self.edge.skipped:
@@ -1024,9 +1025,7 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
     def labelbox(self):
         dir = self.edge.direction
         span = XY(self.metrics.span_width, self.metrics.span_height)
-        node1 = self.metrics.node(self.edge.node1)
         cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
-        node2 = self.metrics.node(self.edge.node2)
         cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
         if dir == 'down':

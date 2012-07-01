@@ -196,9 +196,11 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
     def image_filename(self, node, prefix='', ext='png'):
         try:
-            from hashlib import sha1 as sha
+            from hashlib import sha1
+            sha = sha1
         except ImportError:
             from sha import sha
+            sha = sha
 
         options = dict(node['options'])
         options.update(font=fontpath, antialias=antialias)

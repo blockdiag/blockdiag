@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 import os
-import re
 import sys
 from optparse import OptionParser
 from blockdiag.utils.config import ConfigParser
@@ -140,6 +139,7 @@ class Options(object):
         if self.options.type == 'PDF':
             try:
                 import reportlab.pdfgen.canvas
+                reportlab.pdfgen.canvas
             except ImportError:
                 msg = "could not output PDF format; Install reportlab."
                 raise RuntimeError(msg)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from nose.tools import eq_
 from utils import stderr_wrapper, __build_diagram, __validate_node_attributes
 
 

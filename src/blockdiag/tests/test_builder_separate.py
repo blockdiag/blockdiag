@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import tempfile
 from blockdiag.builder import *
 from blockdiag.elements import *
 from blockdiag.parser import parse_string

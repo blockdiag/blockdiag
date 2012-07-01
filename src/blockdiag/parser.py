@@ -39,7 +39,7 @@ import codecs
 from re import MULTILINE, DOTALL
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
-    oneplus, forward_decl, NoParseError)
+    forward_decl)
 
 from utils.collections import namedtuple
 

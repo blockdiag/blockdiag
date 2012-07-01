@@ -19,9 +19,11 @@ from blockdiag.utils import urlutil, Box, XY
 from simplesvg import *
 
 try:
-    from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
+    from blockdiag.utils.PILTextFolder import PILTextFolder
+    TextFolder = PILTextFolder
 except ImportError:
     from blockdiag.utils.TextFolder import TextFolder
+    TextFolder = TextFolder
 
 feGaussianBlur = svgclass('feGaussianBlur')
 
