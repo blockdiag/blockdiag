@@ -49,7 +49,7 @@ class TestUtilsFontmap(unittest2.TestCase):
         FontInfo("cursive-bold-bold", None, 11)
 
     @assertRaises(AttributeError)
-    def test_fontinfo_invalid_familyname4(self):
+    def test_fontinfo_invalid_familyname5(self):
         FontInfo("SERIF", None, 11)
 
     @assertRaises(TypeError)
@@ -212,7 +212,7 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(self.fontpath[1], font1.path)
         self.assertEqual(11, font1.size)
 
-    def test_fontmap_duplicated_fontentry1(self):
+    def test_fontmap_duplicated_fontentry2(self):
         # this testcase is only for python2.6 or later
         if sys.version_info > (2, 6):
             _config = "[fontmap]\nsansserif: %s\nsansserif-normal: %s\n" % \
