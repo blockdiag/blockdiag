@@ -138,6 +138,9 @@ class DiagramDraw(object):
         for edge in self.edges:
             self.edge(edge)
 
+        for edge in self.edges:
+            self.edge_label(edge)
+
         for group in self.groups:
             if group.shape == 'line':
                 box = self.metrics.group(group).marginbox
@@ -182,7 +185,10 @@ class DiagramDraw(object):
             else:
                 self.drawer.polygon(head, outline=edge.color, fill=edge.color)
 
+    def edge_label(self, edge):
         if edge.label:
+            metrics = self.metrics.edge(edge)
+
             font = self.metrics.font_for(edge)
             self.drawer.textarea(metrics.labelbox, edge.label, font=font,
                                  fill=edge.textcolor, outline=self.fill)
