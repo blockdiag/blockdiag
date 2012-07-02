@@ -193,24 +193,22 @@ class Options(object):
 
 
 def detectfont(options):
-    fonts = [
-        # for Windows
-        'c:/windows/fonts/VL-Gothic-Regular.ttf',
-        'c:/windows/fonts/msgothic.ttf',
-        'c:/windows/fonts/msgoth04.ttc',
-        # for Debian (squeeze)
-        '/usr/share/fonts/truetype/ipafont/ipagp.ttf',
-        '/usr/share/fonts/truetype/vlgothic/VL-PGothic-Regular.ttf',
-        # for Debian (wheezy)
-        '/usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf',
-        '/usr/share/fonts/truetype/vlgothic/VL-PGothic-Regular.ttf',
-        # for CentOS (6.2)
-        '/usr/share/fonts/ipa-gothic/ipag.ttf',
-        # for MacOS
-        '/Library/Fonts/Hiragino Sans GB W3.otf',
-        '/System/Library/Fonts/AppleGothic.ttf',
-        # for FreeBSD
-        '/usr/local/share/font-ipa/ipagp.otf',
+    import glob
+    fontdirs = [
+        '/usr/share/fonts',
+        '/Library/Fonts',
+        '/System/Library/Fonts',
+        'c:/windows/fonts',
+        '/usr/local/share/font-*',
+    ]
+    fontfiles = [
+        'ipagp.ttf',
+        'ipagp.otf',
+        'VL-PGothic-Regular.ttf',
+        'Hiragino Sans GB W3.otf',
+        'AppleGothic.ttf',
+        'msgothic.ttf',
+        'msgoth04.ttf',
     ]
 
     fontpath = None
@@ -224,12 +222,13 @@ def detectfont(options):
             msg = 'fontfile is not found: %s' % options.font
             raise RuntimeError(msg)
 
-    if fontpath is None:
-        for path in fonts:
-            _path, index = parse_fontpath(path)
-            if os.path.isfile(_path):
-                fontpath = path
-                break
+    globber = (glob.glob(d) for d in fontdirs)
+    for fontdir in sum(globber, []):
+        for root, dirs, files in os.walk(fontdir):
+            for font in fontfiles:
+                if font in files:
+                    fontpath = os.path.join(root, font)
+                    break
 
     return fontpath
 
