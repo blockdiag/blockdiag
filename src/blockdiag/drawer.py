@@ -118,7 +118,7 @@ class DiagramDraw(object):
 
         # Drop node shadows.
         for node in self.nodes:
-            if node.color != 'none':
+            if node.color != 'none' and self.diagram.shadow_style != 'none':
                 r = noderenderer.get(node.shape)
 
                 shape = r(node, self.metrics)

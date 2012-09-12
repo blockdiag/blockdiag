@@ -642,7 +642,7 @@ class Diagram(NodeGroup):
 
     def set_shadow_style(self, value):
         value = value.lower()
-        if value in ('solid', 'blur'):
+        if value in ('solid', 'blur', 'none'):
             self.shadow_style = value
         else:
             msg = "WARNING: unknown shadow style: %s\n" % value
