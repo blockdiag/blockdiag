@@ -160,6 +160,36 @@ class TestBootParams(unittest2.TestCase):
         detectfont(options)
 
     @argv_wrapper
+    def test_no_size_option(self):
+        sys.argv = ['', 'input.diag']
+        options = self.parser.parse()
+        self.assertEqual(None, options.size)
+
+    @argv_wrapper
+    def test_size_option(self):
+        sys.argv = ['', '--size', '480x360', 'input.diag']
+        options = self.parser.parse()
+        self.assertEqual([480, 360], options.size)
+
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_invalid_size_option1(self):
+        sys.argv = ['', '--size', '480-360', 'input.diag']
+        options = self.parser.parse()
+
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_invalid_size_option2(self):
+        sys.argv = ['', '--size', '480', 'input.diag']
+        options = self.parser.parse()
+
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_invalid_size_option3(self):
+        sys.argv = ['', '--size', 'foobar', 'input.diag']
+        options = self.parser.parse()
+
+    @argv_wrapper
     def test_auto_font_detection(self):
         sys.argv = ['', 'input.diag']
         options = self.parser.parse()
