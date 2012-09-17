@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import os
+import re
 import sys
 from optparse import OptionParser
 from blockdiag.utils.config import ConfigParser
@@ -73,7 +74,11 @@ class Application(object):
                              nodoctype=self.options.nodoctype,
                              transparency=self.options.transparency)
         drawer.draw()
-        drawer.save()
+
+        if self.options.size:
+            drawer.save(size=self.options.size)
+        else:
+            drawer.save()
 
         return 0
 
@@ -110,6 +115,8 @@ class Options(object):
                      default=True, action='store_false',
                      help='do not make transparent background of diagram ' +
                           '(PNG only)')
+        p.add_option('--size',
+                     help='Size of diagram (ex. 320x240)')
         p.add_option('-T', dest='type', default='PNG',
                      help='Output diagram as TYPE format')
         p.add_option('--nodoctype', action='store_true',
@@ -136,6 +143,14 @@ class Options(object):
         if not self.options.type in ('SVG', 'PNG', 'PDF'):
             msg = "unknown format: %s" % self.options.type
             raise RuntimeError(msg)
+
+        if self.options.size:
+            matched = re.match('^(\d+)x(\d+)$', self.options.size)
+            if matched:
+                self.options.size = [int(n) for n in matched.groups()]
+            else:
+                msg = "--size option must be formatted as WIDTHxHEIGHT."
+                raise RuntimeError(msg)
 
         if self.options.type == 'PDF':
             try:
