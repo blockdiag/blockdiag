@@ -113,6 +113,13 @@ Apache License 2.0
 History
 =======
 
+1.1.7 (2012-09-20)
+------------------
+* Add diagram attribute: shadow_style
+* Add font path for centos 6.2
+* Add a setting 'antialias' in the configuration file
+* Fix bugs
+
 1.1.6 (2012-06-06)
 ------------------
 * Support for readthedocs.org
