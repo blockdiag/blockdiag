@@ -144,6 +144,19 @@ class TestBootParams(unittest2.TestCase):
         finally:
             os.unlink(tmp[1])
 
+    @argv_wrapper
+    def test_exist_font_config_option(self):
+        try:
+            tmp = tempfile.mkstemp()
+
+            sys.argv = ['', '-f', tmp[1], 'input.diag']
+            options = self.parser.parse()
+            self.assertEqual(options.font, [tmp[1]])
+            fontpath = detectfont(options)
+            self.assertEqual(fontpath, tmp[1])
+        finally:
+            os.unlink(tmp[1])
+
     @assertRaises(RuntimeError)
     @argv_wrapper
     def test_not_exist_font_config_option(self):
