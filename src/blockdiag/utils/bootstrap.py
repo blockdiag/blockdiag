@@ -23,7 +23,7 @@ from blockdiag.utils.fontmap import parse_fontpath, FontMap
 
 class Application(object):
     module = None
-    option = None
+    options = None
 
     def run(self):
         try:
@@ -40,7 +40,7 @@ class Application(object):
             sys.stderr.write(msg)
             return -1
         except Exception, e:
-            if self.option and self.options.debug:
+            if self.options and self.options.debug:
                 import traceback
                 traceback.print_exc()
             else:
