@@ -23,10 +23,6 @@ from imagedraw.filters.linejump import LineJumpDrawFilter
 class DiagramDraw(object):
     MetricsClass = DiagramMetrics
 
-    @classmethod
-    def set_metrics_class(cls, MetricsClass):
-        cls.MetricsClass = MetricsClass
-
     def __init__(self, format, diagram, filename=None, **kwargs):
         self.format = format.upper()
         self.diagram = diagram
