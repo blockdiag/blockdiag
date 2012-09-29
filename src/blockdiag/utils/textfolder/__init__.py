@@ -14,12 +14,25 @@
 #  limitations under the License.
 
 
+def gen_factory(klass):
+    def factory(box, string, font, **kwargs):
+        if font is None:
+            from base import TextFolder 
+            return TextFolder(box, string, font, **kwargs)
+        else:
+            return klass(box, string, font, **kwargs)
+
+    return factory
+
+
 def get(*args, **kwargs):
     try:
         if kwargs.get('format') == 'pdf':
-            from pdf import TextFolder
+            import pdf
+            TextFolder = gen_factory(pdf.TextFolder)
         else:
-            from pil import TextFolder
+            import pil
+            TextFolder = gen_factory(pil.TextFolder)
     except ImportError:
         from base import TextFolder
 

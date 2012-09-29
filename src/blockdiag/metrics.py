@@ -16,7 +16,7 @@
 import copy
 from elements import DiagramNode
 import noderenderer
-from utils import Box, Size, XY
+from utils import textfolder, Box, Size, XY
 from utils.fontmap import FontInfo, FontMap
 from utils.collections import defaultdict
 
@@ -197,20 +197,7 @@ class DiagramMetrics(object):
         return metrics
 
     def textsize(self, string, width=65535, font=None):
-        try:
-            if font is None:
-                from utils.TextFolder import TextFolder
-                TextFolder = TextFolder
-            elif self.format == 'PDF':
-                from utils.PDFTextFolder import PDFTextFolder
-                TextFolder = PDFTextFolder
-            else:
-                from utils.PILTextFolder import PILTextFolder
-                TextFolder = PILTextFolder
-        except ImportError:
-            from utils.TextFolder import TextFolder
-
-        lines = TextFolder((0, 0, width, 65535), string, font)
+        lines = textfolder.get((0, 0, width, 65535), string, font, format=self.format.lower())
         textbox = lines.outlinebox
         return XY(textbox.width, textbox.height + self.line_spacing)
 
