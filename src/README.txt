@@ -113,6 +113,11 @@ Apache License 2.0
 History
 =======
 
+1.1.8 (2012-09-28)
+------------------
+* Add --ignore-pil option
+* Fix bugs
+
 1.1.7 (2012-09-20)
 ------------------
 * Add diagram attribute: shadow_style
