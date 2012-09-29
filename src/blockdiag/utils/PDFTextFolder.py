@@ -22,7 +22,7 @@ class PDFTextFolder(TextFolder):
         self.canvas = kwargs.get('canvas')
         self.font = font
 
-        TextFolder.__init__(self, box, string, font, **kwargs)
+        super(PDFTextFolder, self).__init__(box, string, font, **kwargs)
 
     def textsize(self, string):
         width = self.canvas.stringWidth(string, self.font.path, self.font.size)
