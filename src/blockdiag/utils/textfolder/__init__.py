@@ -31,8 +31,11 @@ def get(*args, **kwargs):
             import pdf
             TextFolder = gen_factory(pdf.TextFolder)
         else:
-            import pil
-            TextFolder = gen_factory(pil.TextFolder)
+            if kwargs.get('ignore_pil'):
+                from base import TextFolder
+            else:
+                import pil
+                TextFolder = gen_factory(pil.TextFolder)
     except ImportError:
         from base import TextFolder
 

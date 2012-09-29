@@ -71,6 +71,7 @@ class Application(object):
         drawer = DiagramDraw(self.options.type, diagram,
                              self.options.output, fontmap=self.fontmap,
                              code=self.code, antialias=self.options.antialias,
+                             ignore_pil=self.options.ignore_pil,
                              nodoctype=self.options.nodoctype,
                              transparency=self.options.transparency)
         drawer.draw()
@@ -111,6 +112,9 @@ class Options(object):
                      help='use FONT to draw diagram', metavar='FONT')
         p.add_option('--fontmap',
                      help='use FONTMAP file to draw diagram', metavar='FONT')
+        p.add_option('--ignore-pil', dest='ignore_pil',
+                     default=False, action='store_true',
+                     help='do not use PIL module forcely')
         p.add_option('--no-transparency', dest='transparency',
                      default=True, action='store_false',
                      help='do not make transparent background of diagram ' +

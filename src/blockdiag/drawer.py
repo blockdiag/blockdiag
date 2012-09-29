@@ -45,6 +45,7 @@ class DiagramDraw(object):
             self.shadow = kwargs.get('shadow', (0, 0, 0))
 
         kwargs = dict(code=kwargs.get('code'),
+                      ignore_pil=kwargs.get('ignore_pil'),
                       nodoctype=kwargs.get('nodoctype'),
                       scale_ratio=self.scale_ratio,
                       transparency=kwargs.get('transparency'))

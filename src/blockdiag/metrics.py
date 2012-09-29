@@ -141,6 +141,7 @@ class DiagramMetrics(object):
 
     def __init__(self, diagram, **kwargs):
         self.format = kwargs.get('format')
+        self.ignore_pil = kwargs.get('ignore_pil')
 
         if diagram.node_width is not None:
             self.node_width = diagram.node_width
@@ -197,7 +198,8 @@ class DiagramMetrics(object):
         return metrics
 
     def textsize(self, string, width=65535, font=None):
-        lines = textfolder.get((0, 0, width, 65535), string, font, format=self.format.lower())
+        lines = textfolder.get((0, 0, width, 65535), string, font,
+                               ignore_pil=self.ignore_pil, format=self.format.lower())
         textbox = lines.outlinebox
         return XY(textbox.width, textbox.height + self.line_spacing)
 

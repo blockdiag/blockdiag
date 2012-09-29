@@ -26,6 +26,7 @@ class SVGImageDrawElement(object):
 
     def __init__(self, svg, parent=None):
         self.svg = svg
+        self.ignore_pil = False
 
     def rgb(self, color):
         if isinstance(color, tuple):
@@ -126,7 +127,8 @@ class SVGImageDrawElement(object):
             elem.textarea(_box, string, font, **kwargs)
             return
 
-        lines = textfolder.get(box, string, font, adjustBaseline=True, **kwargs)
+        lines = textfolder.get(box, string, font, adjustBaseline=True,
+                               ignore_pil=self.ignore_pil, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')
@@ -251,6 +253,7 @@ class SVGImageDraw(SVGImageDrawElement):
         self.filename = filename
         super(SVGImageDraw, self).__init__(svg(0, 0, size[0], size[1]))
         self.svg.use_doctype = not kwargs.get('nodoctype')
+        self.ignore_pil = kwargs.get('ignore_pil')
 
         uri = 'http://www.inkscape.org/namespaces/inkscape'
         self.svg.add_attribute('xmlns:inkspace', uri)
