@@ -114,7 +114,7 @@ class Options(object):
                      help='use FONTMAP file to draw diagram', metavar='FONT')
         p.add_option('--ignore-pil', dest='ignore_pil',
                      default=False, action='store_true',
-                     help='do not use PIL module forcely')
+                     help='do not use PIL module forcely (SVG only)')
         p.add_option('--no-transparency', dest='transparency',
                      default=True, action='store_false',
                      help='do not make transparent background of diagram ' +
@@ -163,6 +163,10 @@ class Options(object):
             except ImportError:
                 msg = "could not output PDF format; Install reportlab."
                 raise RuntimeError(msg)
+
+        if self.options.ignore_pil and self.options.type != 'SVG':
+            msg = "--ignore-pil option work in SVG images."
+            raise RuntimeError(msg)
 
         if self.options.nodoctype and self.options.type != 'SVG':
             msg = "--nodoctype option work in SVG images."

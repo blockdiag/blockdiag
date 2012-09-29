@@ -58,6 +58,23 @@ class TestBootParams(unittest2.TestCase):
         self.parser.parse()
 
     @argv_wrapper
+    def test_svg_ignore_pil_option(self):
+        sys.argv = ['', '-Tsvg', '--ignore-pil', 'input.diag']
+        self.parser.parse()
+
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_png_ignore_pil_option(self):
+        sys.argv = ['', '-Tpng', '--ignore-pil', 'input.diag']
+        self.parser.parse()
+
+    @assertRaises(RuntimeError)
+    @argv_wrapper
+    def test_pdf_ignore_pil_option(self):
+        sys.argv = ['', '-Tpdf', '--ignore-pil', 'input.diag']
+        self.parser.parse()
+
+    @argv_wrapper
     def test_svg_nodoctype_option(self):
         sys.argv = ['', '-Tsvg', '--nodoctype', 'input.diag']
         self.parser.parse()
