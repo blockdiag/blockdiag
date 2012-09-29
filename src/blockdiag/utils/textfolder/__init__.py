@@ -17,7 +17,7 @@
 def gen_factory(klass):
     def factory(box, string, font, **kwargs):
         if font is None:
-            from base import TextFolder 
+            from base import TextFolder
             return TextFolder(box, string, font, **kwargs)
         else:
             return klass(box, string, font, **kwargs)
