@@ -32,7 +32,7 @@ class DiagramDraw(object):
         self.scale_ratio = 1
 
         basediagram = kwargs.get('basediagram', diagram)
-        self.metrics = self.MetricsClass(basediagram, **kwargs)
+        self.metrics = self.MetricsClass(basediagram, format=format, **kwargs)
 
         if self.format == 'PNG':
             if kwargs.get('antialias'):
