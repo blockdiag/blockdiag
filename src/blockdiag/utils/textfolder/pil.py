@@ -40,7 +40,7 @@ class TextFolder(base.TextFolder):
         self.draw = ImageDraw.Draw(image)
         self.fontsize = font.size
 
-        super(PILTextFolder, self).__init__(box, string, font, **kwargs)
+        super(TextFolder, self).__init__(box, string, font, **kwargs)
 
     def textsize(self, string):
         if self.ttfont is None:
