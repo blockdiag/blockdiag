@@ -15,15 +15,8 @@
 
 import re
 import base64
-from blockdiag.utils import urlutil, Box, XY
+from blockdiag.utils import textfolder, urlutil, Box, XY
 from simplesvg import *
-
-try:
-    from blockdiag.utils.PILTextFolder import PILTextFolder
-    TextFolder = PILTextFolder
-except ImportError:
-    from blockdiag.utils.TextFolder import TextFolder
-    TextFolder = TextFolder
 
 feGaussianBlur = svgclass('feGaussianBlur')
 
@@ -133,7 +126,7 @@ class SVGImageDrawElement(object):
             elem.textarea(_box, string, font, **kwargs)
             return
 
-        lines = TextFolder(box, string, font, adjustBaseline=True, **kwargs)
+        lines = textfolder.get(box, string, font, adjustBaseline=True, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')

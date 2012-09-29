@@ -18,9 +18,8 @@ import sys
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from blockdiag.utils import urlutil, Box
+from blockdiag.utils import textfolder, urlutil, Box
 from blockdiag.utils.fontmap import parse_fontpath
-from blockdiag.utils.PDFTextFolder import PDFTextFolder as TextFolder
 
 
 class PDFImageDraw(object):
@@ -142,8 +141,8 @@ class PDFImageDraw(object):
                 box = box.shift(x=-self.size.y, y=self.size.y)
 
         self.set_font(font)
-        lines = TextFolder(box, string, font, adjustBaseline=True,
-                           canvas=self.canvas, **kwargs)
+        lines = textfolder.get(box, string, font, format='pdf',
+                               adjustBaseline=True, canvas=self.canvas, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')

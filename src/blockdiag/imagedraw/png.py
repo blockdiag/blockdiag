@@ -16,10 +16,9 @@
 import re
 import math
 from itertools import izip, tee
-from blockdiag.utils import ellipse, urlutil, Box
+from blockdiag.utils import ellipse, textfolder, urlutil, Box
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
-from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
 try:
     from PIL import Image
     from PIL import ImageDraw
@@ -312,7 +311,7 @@ class ImageDrawEx(object):
             self.draw = ImageDraw.ImageDraw(self.image, self.mode)
             return
 
-        lines = TextFolder(box, string, font, scale=self.scale_ratio, **kwargs)
+        lines = textfolder.get(box, string, font, scale=self.scale_ratio, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')
