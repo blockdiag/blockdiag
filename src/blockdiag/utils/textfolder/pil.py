@@ -22,7 +22,7 @@ except ImportError:
     import ImageDraw
     import ImageFont
 import base
-from fontmap import parse_fontpath, FontMap
+from blockdiag.utils.fontmap import parse_fontpath, FontMap
 
 
 class TextFolder(base.TextFolder):
