@@ -13,42 +13,4 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-try:
-    from PIL import Image
-    from PIL import ImageDraw
-    from PIL import ImageFont
-except ImportError:
-    import Image
-    import ImageDraw
-    import ImageFont
-from TextFolder import TextFolder
-from fontmap import parse_fontpath, FontMap
-
-
-class PILTextFolder(TextFolder):
-    def __init__(self, box, string, font, **kwargs):
-        if font.path:
-            path, index = parse_fontpath(font.path)
-            if index:
-                self.ttfont = ImageFont.truetype(path, font.size, index=index)
-            else:
-                self.ttfont = ImageFont.truetype(path, font.size)
-        else:
-            self.ttfont = None
-
-        image = Image.new('1', (1, 1))
-        self.draw = ImageDraw.Draw(image)
-        self.fontsize = font.size
-
-        super(PILTextFolder, self).__init__(box, string, font, **kwargs)
-
-    def textsize(self, string):
-        if self.ttfont is None:
-            size = self.draw.textsize(string, font=self.ttfont)
-
-            font_ratio = self.fontsize * 1.0 / FontMap.BASE_FONTSIZE
-            size = (int(size[0] * font_ratio), int(size[1] * font_ratio))
-        else:
-            size = self.draw.textsize(string, font=self.ttfont)
-
-        return size
+from textfolder.pil import PILTextFolder

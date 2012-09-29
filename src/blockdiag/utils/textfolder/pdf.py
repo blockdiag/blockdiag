@@ -13,14 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import math
+import base
 
-def get(*args, **kwargs):
-    try:
-        if kwargs.get('format') == 'pdf':
-            from pdf import TextFolder
-        else:
-            from pil import TextFolder
-    except ImportError:
-        from base import TextFolder
 
-    return TextFolder(*args, **kwargs)
+class TextFolder(base.TextFolder):
+    def __init__(self, box, string, font, **kwargs):
+        self.canvas = kwargs.get('canvas')
+        self.font = font
+
+        super(PDFTextFolder, self).__init__(box, string, font, **kwargs)
+
+    def textsize(self, string):
+        width = self.canvas.stringWidth(string, self.font.path, self.font.size)
+        return (int(math.ceil(width)), self.font.size)

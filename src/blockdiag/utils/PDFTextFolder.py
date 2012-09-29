@@ -13,17 +13,4 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import math
-from TextFolder import TextFolder
-
-
-class PDFTextFolder(TextFolder):
-    def __init__(self, box, string, font, **kwargs):
-        self.canvas = kwargs.get('canvas')
-        self.font = font
-
-        super(PDFTextFolder, self).__init__(box, string, font, **kwargs)
-
-    def textsize(self, string):
-        width = self.canvas.stringWidth(string, self.font.path, self.font.size)
-        return (int(math.ceil(width)), self.font.size)
+from textfolder.pdf import PDFTextFolder
