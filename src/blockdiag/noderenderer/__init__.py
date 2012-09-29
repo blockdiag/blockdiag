@@ -116,7 +116,7 @@ class NodeShape(object):
                             line_spacing=self.metrics.line_spacing)
 
     def render_number_badge(self, drawer, **kwargs):
-        if self.node.numbered is not None and kwargs.get('shadow') is False:
+        if self.node.numbered is not None and kwargs.get('shadow') is None:
             badgeFill = kwargs.get('badgeFill')
 
             xy = self.metrics.cell(self.node).topleft
