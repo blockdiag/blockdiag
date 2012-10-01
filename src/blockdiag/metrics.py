@@ -140,6 +140,7 @@ class DiagramMetrics(object):
     span_height = cellsize * 5
 
     def __init__(self, diagram, **kwargs):
+        self.drawer = None
         self.format = kwargs.get('format')
         self.ignore_pil = kwargs.get('ignore_pil')
 
@@ -198,7 +199,8 @@ class DiagramMetrics(object):
         return metrics
 
     def textsize(self, string, width=65535, font=None):
-        lines = textfolder.get((0, 0, width, 65535), string, font,
+        canvas = getattr(self.drawer, 'canvas', None)  # for PDF drawer
+        lines = textfolder.get((0, 0, width, 65535), string, font, canvas=canvas,
                                ignore_pil=self.ignore_pil, format=self.format.lower())
         textbox = lines.outlinebox
         return XY(textbox.width, textbox.height + self.line_spacing)

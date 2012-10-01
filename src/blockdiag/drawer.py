@@ -56,6 +56,7 @@ class DiagramDraw(object):
             raise RuntimeError(msg)
 
         self.drawer = LineJumpDrawFilter(drawer, self.metrics.cellsize / 2)
+        self.metrics.drawer = self.drawer
 
     @property
     def nodes(self):

@@ -27,7 +27,7 @@ def gen_factory(klass):
 
 def get(*args, **kwargs):
     try:
-        if kwargs.get('format') == 'pdf':
+        if kwargs.get('format') == 'pdf' and kwargs.get('canvas'):
             import pdf
             TextFolder = gen_factory(pdf.TextFolder)
         else:
