@@ -259,8 +259,7 @@ class SVGImageDrawElement(object):
 class SVGImageDraw(SVGImageDrawElement):
     def __init__(self, filename, size, **kwargs):
         self.filename = filename
-        super(SVGImageDraw, self).__init__(svg(0, 0, size[0], size[1]))
-        self.svg.use_doctype = not kwargs.get('nodoctype')
+        super(SVGImageDraw, self).__init__(svg(0, 0, size[0], size[1], **kwargs))
         self.ignore_pil = kwargs.get('ignore_pil')
 
         uri = 'http://www.inkscape.org/namespaces/inkscape'

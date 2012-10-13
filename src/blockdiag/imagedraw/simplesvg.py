@@ -83,17 +83,20 @@ class element(base):
 
 
 class svg(base):
-    def __init__(self, x, y, width, height):
-        viewbox = "%d %d %d %d" % (x, y, width, height)
-        super(svg, self).__init__(viewBox=viewbox)
+    def __init__(self, x, y, width, height, **kwargs):
+        if kwargs.get('noviewbox'):
+            super(svg, self).__init__(width=(width - x), height=(height - y))
+        else:
+            viewbox = "%d %d %d %d" % (x, y, width, height)
+            super(svg, self).__init__(viewBox=viewbox)
 
-        self.use_doctype = True
+        self.nodoctype = kwargs.get('nodoctype', False)
         self.add_attribute('xmlns', 'http://www.w3.org/2000/svg')
 
     def to_xml(self):
         io = cStringIO.StringIO()
 
-        if self.use_doctype:
+        if not self.nodoctype:
             url = "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"
             io.write("<?xml version='1.0' encoding='UTF-8'?>\n")
             io.write('<!DOCTYPE svg PUBLIC '
