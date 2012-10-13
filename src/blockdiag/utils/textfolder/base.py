@@ -213,7 +213,7 @@ class TextFolder(object):
                       max(p.x for p in corners) + self.padding,
                       max(p.y for p in corners) + self.line_spacing)
         else:
-            box = [self.box[0], self.box[1], self.box[0], self.box[1]]
+            box = Box(self.box[0], self.box[1], self.box[0], self.box[1])
 
         return box
 
