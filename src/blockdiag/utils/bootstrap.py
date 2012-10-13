@@ -53,6 +53,21 @@ class Application(object):
     def create_fontmap(self):
         self.fontmap = create_fontmap(self.options)
 
+        fontpath = self.fontmap.find().path
+        format = self.options.type.lower()
+        if format in ('png', 'svg') and fontpath and self.options.ignore_pil is False:
+            try:
+                try:
+                    from PIL import _imagingft
+                except ImportError:
+                    import _imagingft
+            except:
+                msg = "PIL does not support TrueType fonts, reinstall PIL (and libfreetype2)"
+                if format != 'png':
+                    msg += " or use --ignore-pil option"
+
+                raise RuntimeError(msg)
+
     def parse_diagram(self):
         import codecs
         if self.options.input == '-':
