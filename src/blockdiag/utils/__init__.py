@@ -42,8 +42,8 @@ class Box(list):
         return self[self.mapper[name]]
 
     def __repr__(self):
-        format = "<%s (%s, %s) %dx%d at 0x%08x"
-        params = (self.__class__.__name, self.x1, self.y1,
+        format = "<%s (%s, %s) %dx%d at 0x%08x>"
+        params = (self.__class__.__name__, self.x1, self.y1,
                   self.width, self.height, id(self))
         return format % params
 
