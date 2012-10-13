@@ -29,7 +29,7 @@ def extra_case(func):
 
 @argv_wrapper
 @stderr_wrapper
-def __build_diagram(filename, format, *args):
+def __build_diagram(filename, format, args):
     testdir = os.path.dirname(__file__)
     diagpath = "%s/diagrams/%s" % (testdir, filename)
     fontpath = get_fontpath()
@@ -41,7 +41,10 @@ def __build_diagram(filename, format, *args):
 
         sys.argv = ['blockdiag.py', '-T', format, '-o', tmpfile[1], diagpath]
         if args:
-            sys.argv += args
+            if isinstance(args[0], (list, tuple)):
+                sys.argv += args[0]
+            else:
+                sys.argv += args
         if os.path.exists(fontpath):
             sys.argv += ['-f', fontpath]
 
@@ -66,14 +69,27 @@ def diagram_files():
 
 
 def test_generator_svg():
-    for testcase in generator_core('svg'):
+    args = []
+    try:
+        import _imagingft
+        _imagingft
+    except ImportError:
+        args.append('--ignore-pil')
+
+    for testcase in generator_core('svg', args):
         yield testcase
 
 
 @extra_case
 def test_generator_png():
-    for testcase in generator_core('png'):
-        yield testcase
+    try:
+        import _imagingft
+        _imagingft
+
+        for testcase in generator_core('png'):
+            yield testcase
+    except ImportError:
+        sys.stderr.write("Skip testing about png exporting.\n")
 
 
 @extra_case
@@ -81,22 +97,22 @@ def test_generator_pdf():
     try:
         import reportlab.pdfgen.canvas
         reportlab.pdfgen.canvas
+
         for testcase in generator_core('pdf'):
             yield testcase
     except ImportError:
         sys.stderr.write("Skip testing about pdf exporting.\n")
-        pass
 
 
-def generator_core(format):
+def generator_core(format, *args):
     for diagram in diagram_files():
-        yield __build_diagram, diagram, format
+        yield __build_diagram, diagram, format, args
 
         if re.search('separate', diagram):
-            yield __build_diagram, diagram, format, '--separate'
+            yield __build_diagram, diagram, format, list(args) + ['--separate']
 
         if format == 'png':
-            yield __build_diagram, diagram, format, '--antialias'
+            yield __build_diagram, diagram, format, list(args) + ['--antialias']
 
 
 @extra_case
