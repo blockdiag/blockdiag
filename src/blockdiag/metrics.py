@@ -16,7 +16,7 @@
 import copy
 from elements import DiagramNode
 import noderenderer
-from utils import textfolder, Box, Size, XY
+from utils import Box, Size, XY
 from utils.fontmap import FontInfo, FontMap
 from utils.collections import defaultdict
 
@@ -199,11 +199,7 @@ class DiagramMetrics(object):
         return metrics
 
     def textsize(self, string, width=65535, font=None):
-        canvas = getattr(self.drawer, 'canvas', None)  # for PDF drawer
-        lines = textfolder.get((0, 0, width, 65535), string, font, canvas=canvas,
-                               ignore_pil=self.ignore_pil, format=self.format.lower())
-        textbox = lines.outlinebox
-        return XY(textbox.width, textbox.height + self.line_spacing)
+        return self.drawer.textsize(string, font, maxwidth=width)
 
     def node(self, node):
         renderer = noderenderer.get(node.shape)

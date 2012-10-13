@@ -249,6 +249,14 @@ class ImageDrawEx(object):
             del kwargs['outline']
             self.line(xy, **kwargs)
 
+    def textsize(self, string, font, maxwidth=None, **kwargs):
+        if maxwidth is None:
+            maxwidth = 65535
+
+        box = (0, 0, maxwidth, 65535)
+        textbox = textfolder.get(box, string, font, scale=self.scale_ratio, **kwargs)
+        return textbox.outlinebox.size
+
     def text(self, xy, string, font, **kwargs):
         fill = kwargs.get('fill')
 
