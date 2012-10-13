@@ -118,6 +118,15 @@ class PDFImageDraw(object):
         if 'thick' in kwargs:
             self.canvas.setLineWidth(1)
 
+    def textsize(self, string, font, maxwidth=None, **kwargs):
+        if maxwidth is None:
+            maxwidth = 65535
+
+        box = (0, 0, maxwidth, 65535)
+        textbox = textfolder.get(box, string, font, format='pdf',
+                                 adjustBaseline=True, canvas=self.canvas, **kwargs)
+        return textbox.outlinebox.size
+
     def text(self, xy, string, font, **kwargs):
         self.set_font(font)
         self.set_fill_color(kwargs.get('fill'))

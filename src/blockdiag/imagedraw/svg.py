@@ -92,6 +92,14 @@ class SVGImageDrawElement(object):
                  style=self.filter(filter))
         self.svg.addElement(r)
 
+    def textsize(self, string, font, maxwidth=None, **kwargs):
+        if maxwidth is None:
+            maxwidth = 65535
+
+        box = (0, 0, maxwidth, 65535)
+        textbox = textfolder.get(box, string, font, ignore_pil=self.ignore_pil, **kwargs)
+        return textbox.outlinebox.size
+
     def text(self, xy, string, font, **kwargs):
         fill = kwargs.get('fill')
 
