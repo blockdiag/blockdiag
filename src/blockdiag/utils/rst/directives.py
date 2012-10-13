@@ -29,6 +29,7 @@ format = 'PNG'
 antialias = False
 fontpath = None
 outputdir = None
+nodoctype = False
 
 
 def relfn2path(env, filename):
@@ -156,7 +157,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         filename = self.image_filename(node)
         fontpath = self.detectfont()
         drawer = DiagramDraw(format, diagram, filename,
-                             font=fontpath, antialias=antialias)
+                             font=fontpath, antialias=antialias, nodoctype=nodoctype)
 
         if not os.path.isfile(filename):
             drawer.draw()
@@ -295,10 +296,11 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
 
 def setup(**kwargs):
-    global format, antialias, fontpath, outputdir
+    global format, antialias, fontpath, outputdir, nodoctype
     format = kwargs.get('format', 'PNG')
     antialias = kwargs.get('antialias', False)
     fontpath = kwargs.get('fontpath', None)
     outputdir = kwargs.get('outputdir', None)
+    nodoctype = kwargs.get('nodoctype', False)
 
     rst.directives.register_directive("blockdiag", BlockdiagDirective)

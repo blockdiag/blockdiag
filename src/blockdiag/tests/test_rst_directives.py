@@ -48,9 +48,11 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual('PNG', directives.format)
         self.assertEqual(False, directives.antialias)
         self.assertEqual(None, directives.fontpath)
+        self.assertEqual(False, directives.nodoctype)
 
     def test_setup_with_args(self):
-        directives.setup(format='SVG', antialias=True, fontpath='/dev/null')
+        directives.setup(format='SVG', antialias=True,
+                         fontpath='/dev/null', nodoctype=True)
 
         self.assertIn('blockdiag', docutils._directives)
         self.assertEqual(directives.BlockdiagDirective,
@@ -58,6 +60,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual('SVG', directives.format)
         self.assertEqual(True, directives.antialias)
         self.assertEqual('/dev/null', directives.fontpath)
+        self.assertEqual(True, directives.nodoctype)
 
     @stderr_wrapper
     @setup_directive_base
@@ -187,6 +190,26 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertFalse('alt' in doctree[0])
         self.assertEqual(0, doctree[0]['uri'].index(path))
         self.assertFalse(0, doctree[0]['target'].index(path))
+
+    @use_tmpdir
+    def test_block_nodoctype_false(self, path):
+        directives.setup(format='SVG', outputdir=path, nodoctype=False)
+        text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+        svg = open(doctree[0]['uri']).read()
+        self.assertEqual("<?xml version='1.0' encoding='UTF-8'?>\n<!DOCTYPE ", svg[:49])
+
+    @use_tmpdir
+    def test_block_nodoctype_true(self, path):
+        directives.setup(format='SVG', outputdir=path, nodoctype=True)
+        text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+        svg = open(doctree[0]['uri']).read()
+        self.assertNotEqual("<?xml version='1.0' encoding='UTF-8'?>\n<!DOCTYPE ", svg[:49])
 
     @use_tmpdir
     def test_desctable_without_description(self, path):
