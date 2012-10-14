@@ -25,13 +25,13 @@ from blockdiag.drawer import DiagramDraw
 from blockdiag.utils.collections import namedtuple
 
 
-directive_options = dict(format = 'PNG',
-                         antialias = False,
-                         fontpath = None,
-                         outputdir = None,
-                         nodoctype = False,
-                         noviewbox = False,
-                         inline_svg = False)
+directive_options = dict(format='PNG',
+                         antialias=False,
+                         fontpath=None,
+                         outputdir=None,
+                         nodoctype=False,
+                         noviewbox=False,
+                         inline_svg=False)
 
 
 def relfn2path(env, filename):
