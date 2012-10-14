@@ -36,12 +36,12 @@ class LoopOut(NodeShape):
         ydiff = self.metrics.node_height / 4
 
         shape = [XY(m.topleft.x, m.topleft.y),
-                XY(m.topright.x, m.topright.y),
-                XY(m.bottomright.x, m.bottomright.y - ydiff),
-                XY(m.bottomright.x - xdiff, m.bottomright.y),
-                XY(m.bottomleft.x + xdiff, m.bottomleft.y),
-                XY(m.bottomleft.x, m.bottomleft.y - ydiff),
-                XY(m.topleft.x, m.topleft.y)]
+                 XY(m.topright.x, m.topright.y),
+                 XY(m.bottomright.x, m.bottomright.y - ydiff),
+                 XY(m.bottomright.x - xdiff, m.bottomright.y),
+                 XY(m.bottomleft.x + xdiff, m.bottomleft.y),
+                 XY(m.bottomleft.x, m.bottomleft.y - ydiff),
+                 XY(m.topleft.x, m.topleft.y)]
 
         # draw outline
         if kwargs.get('shadow'):
@@ -53,7 +53,7 @@ class LoopOut(NodeShape):
                 drawer.polygon(shape, fill=fill, outline=fill)
         elif self.node.background:
             drawer.polygon(shape, fill=self.node.color,
-                             outline=self.node.color)
+                           outline=self.node.color)
             drawer.loadImage(self.node.background, self.textbox)
             drawer.polygon(shape, fill="none",
                            outline=self.node.linecolor, style=self.node.style)

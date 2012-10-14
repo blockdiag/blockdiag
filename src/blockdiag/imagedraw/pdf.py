@@ -124,7 +124,8 @@ class PDFImageDraw(object):
 
         box = (0, 0, maxwidth, 65535)
         textbox = textfolder.get(box, string, font, format='pdf',
-                                 adjustBaseline=True, canvas=self.canvas, **kwargs)
+                                 adjustBaseline=True, canvas=self.canvas,
+                                 **kwargs)
         return textbox.outlinebox.size
 
     def text(self, xy, string, font, **kwargs):
@@ -151,7 +152,8 @@ class PDFImageDraw(object):
 
         self.set_font(font)
         lines = textfolder.get(box, string, font, format='pdf',
-                               adjustBaseline=True, canvas=self.canvas, **kwargs)
+                               adjustBaseline=True, canvas=self.canvas,
+                               **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')
@@ -221,7 +223,7 @@ class PDFImageDraw(object):
                 sys.stderr.write(msg)
                 return
         self.canvas.drawImage(filename, x, y, w, h, mask='auto',
-                                  preserveAspectRatio=True)
+                              preserveAspectRatio=True)
 
     def save(self, filename, size, format):
         # Ignore size and format parameter; compatibility for ImageDrawEx.

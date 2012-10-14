@@ -35,7 +35,7 @@ def test_simple_group_diagram():
 
 def test_group_declare_as_node_attribute_diagram():
     positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
-                  'D': (2, 1), 'E': (2, 2), 'Z': (0, 3)}
+                 'D': (2, 1), 'E': (2, 2), 'Z': (0, 3)}
     __validate_node_attributes('group_declare_as_node_attribute.diag',
                                xy=positions)
 

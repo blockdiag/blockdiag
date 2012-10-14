@@ -141,7 +141,7 @@ class FontMap(object):
 
     def find(self, element=None):
         fontfamily = getattr(element, 'fontfamily', None) or \
-                       self.default_fontfamily
+            self.default_fontfamily
         fontfamily = self.aliases.get(fontfamily, fontfamily)
         fontsize = getattr(element, 'fontsize', None) or self.fontsize
 

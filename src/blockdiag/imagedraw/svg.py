@@ -97,7 +97,8 @@ class SVGImageDrawElement(object):
             maxwidth = 65535
 
         box = (0, 0, maxwidth, 65535)
-        textbox = textfolder.get(box, string, font, ignore_pil=self.ignore_pil, **kwargs)
+        textbox = textfolder.get(box, string, font,
+                                 ignore_pil=self.ignore_pil, **kwargs)
         return textbox.outlinebox.size
 
     def text(self, xy, string, font, **kwargs):
@@ -259,7 +260,8 @@ class SVGImageDrawElement(object):
 class SVGImageDraw(SVGImageDrawElement):
     def __init__(self, filename, size, **kwargs):
         self.filename = filename
-        super(SVGImageDraw, self).__init__(svg(0, 0, size[0], size[1], **kwargs))
+        _svg = svg(0, 0, size[0], size[1], **kwargs)
+        super(SVGImageDraw, self).__init__(_svg)
         self.ignore_pil = kwargs.get('ignore_pil')
 
         uri = 'http://www.inkscape.org/namespaces/inkscape'

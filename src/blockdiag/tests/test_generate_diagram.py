@@ -109,10 +109,12 @@ def generator_core(format, *args):
         yield __build_diagram, diagram, format, args
 
         if re.search('separate', diagram):
-            yield __build_diagram, diagram, format, list(args) + ['--separate']
+            _args = list(args) + ['--separate']
+            yield __build_diagram, diagram, format, _args
 
         if format == 'png':
-            yield __build_diagram, diagram, format, list(args) + ['--antialias']
+            _args = list(args) + ['--antialias']
+            yield __build_diagram, diagram, format, _args
 
 
 @extra_case

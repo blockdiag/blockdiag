@@ -556,8 +556,8 @@ class Diagram(NodeGroup):
     classes = {}
     shadow_style = 'blur'
     linecolor = (0, 0, 0)
-    int_attrs = NodeGroup.int_attrs + \
-                ['node_width', 'node_height', 'span_width', 'span_height']
+    int_attrs = (NodeGroup.int_attrs +
+                 ['node_width', 'node_height', 'span_width', 'span_height'])
 
     @classmethod
     def clear(cls):
