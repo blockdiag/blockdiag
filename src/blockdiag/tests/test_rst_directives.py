@@ -51,10 +51,11 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(None, options['fontpath'])
         self.assertEqual(False, options['nodoctype'])
         self.assertEqual(False, options['noviewbox'])
+        self.assertEqual(False, options['inline_svg'])
 
     def test_setup_with_args(self):
-        directives.setup(format='SVG', antialias=True,
-                         fontpath='/dev/null', nodoctype=True, noviewbox=True)
+        directives.setup(format='SVG', antialias=True, fontpath='/dev/null',
+                         nodoctype=True, noviewbox=True, inline_svg=True)
         options = directives.directive_options
 
         self.assertIn('blockdiag', docutils._directives)
@@ -65,6 +66,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual('/dev/null', options['fontpath'])
         self.assertEqual(True, options['nodoctype'])
         self.assertEqual(True, options['noviewbox'])
+        self.assertEqual(True, options['inline_svg'])
 
     @stderr_wrapper
     @setup_directive_base
@@ -236,6 +238,42 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(nodes.image, type(doctree[0]))
         svg = open(doctree[0]['uri']).read()
         self.assertRegexpMatches(svg, '<svg height="\d+" width="\d+" ')
+
+    @use_tmpdir
+    def test_block_inline_svg_false(self, path):
+        directives.setup(format='SVG', outputdir=path, inline_svg=False)
+        text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+
+    @use_tmpdir
+    def test_block_inline_svg_true(self, path):
+        directives.setup(format='SVG', outputdir=path, inline_svg=True)
+        text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.raw, type(doctree[0]))
+        self.assertEqual('html', doctree[0]['format'])
+        self.assertEqual(nodes.Text, type(doctree[0][0]))
+        self.assertEqual("<?xml version='1.0' encoding='UTF-8'?>\n"
+                         "<!DOCTYPE ", doctree[0][0][:49])
+
+    @use_tmpdir
+    def test_block_inline_svg_true_but_nonsvg_format(self, path):
+        directives.setup(format='PNG', outputdir=path, inline_svg=True)
+        text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+
+    @use_tmpdir
+    def test_desctable_without_description(self, path):
+        directives.setup(format='SVG', outputdir=path)
+        text = ".. blockdiag::\n   :desctable:\n\n   { A -> B }"
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
 
     @use_tmpdir
     def test_desctable_without_description(self, path):
