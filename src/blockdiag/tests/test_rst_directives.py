@@ -201,7 +201,8 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
         svg = open(doctree[0]['uri']).read()
-        self.assertEqual("<?xml version='1.0' encoding='UTF-8'?>\n<!DOCTYPE ", svg[:49])
+        self.assertEqual("<?xml version='1.0' encoding='UTF-8'?>\n"
+                         "<!DOCTYPE ", svg[:49])
 
     @use_tmpdir
     def test_block_nodoctype_true(self, path):
@@ -211,7 +212,8 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[-1]))
         svg = open(doctree[0]['uri']).read()
-        self.assertNotEqual("<?xml version='1.0' encoding='UTF-8'?>\n<!DOCTYPE ", svg[:49])
+        self.assertNotEqual("<?xml version='1.0' encoding='UTF-8'?>\n"
+                            "<!DOCTYPE ", svg[:49])
 
     @use_tmpdir
     def test_block_noviewbox_false(self, path):

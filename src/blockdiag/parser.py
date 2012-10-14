@@ -39,7 +39,7 @@ import codecs
 from re import MULTILINE, DOTALL
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
-    forward_decl)
+                                  forward_decl)
 
 from utils.collections import namedtuple
 
@@ -88,7 +88,7 @@ def parse(seq):
     op = lambda s: a(Token('Op', s)) >> tokval
     op_ = lambda s: skip(op(s))
     id = some(lambda t:
-        t.type in ['Name', 'Number', 'String']).named('id') >> tokval
+              t.type in ['Name', 'Number', 'String']).named('id') >> tokval
     make_nodes = lambda args: Statements([Node(n, args[-1]) for n in args[0]])
     make_graph_attr = lambda args: DefAttrs(u'graph', [Attr(*args)])
     make_edge = lambda x, x2, xs, attrs: Edge([x, x2] + xs, attrs)
@@ -130,7 +130,7 @@ def parse(seq):
         attr_list
         >> unarg(AttrPlugin))
     stmt = (
-          edge_stmt
+        edge_stmt
         | class_stmt
         | plugin_stmt
         | group

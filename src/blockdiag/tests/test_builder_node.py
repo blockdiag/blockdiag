@@ -121,7 +121,7 @@ def test_plugin_autoclass_diagram():
               'C': (255, 255, 255)}
 
     __validate_node_attributes('plugin_autoclass.diag', xy=positions,
-                                style=styles, color=colors)
+                               style=styles, color=colors)
 
 
 def test_plugin_attributes_diagram():

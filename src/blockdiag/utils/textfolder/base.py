@@ -119,7 +119,7 @@ class TextFolder(object):
         (54, 18)
         """
         width = zenkaku_len(string) * self.font.size + \
-                hankaku_len(string) * self.font.size * 0.55
+            hankaku_len(string) * self.font.size * 0.55
         return (int(math.ceil(width)), self.font.size)
 
     def height(self):

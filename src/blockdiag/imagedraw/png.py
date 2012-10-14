@@ -191,8 +191,8 @@ class ImageDrawEx(object):
         style = kwargs.get('style')
         if kwargs.get('fill') == 'none':
             pass
-        elif style in ('dotted', 'dashed', 'none') or \
-             re.search('^\d+(,\d+)*$', style or ""):
+        elif (style in ('dotted', 'dashed', 'none') or
+              re.search('^\d+(,\d+)*$', style or "")):
             self.dashed_line(xy, **kwargs)
         else:
             if 'style' in kwargs:
@@ -254,7 +254,8 @@ class ImageDrawEx(object):
             maxwidth = 65535
 
         box = (0, 0, maxwidth, 65535)
-        textbox = textfolder.get(box, string, font, scale=self.scale_ratio, **kwargs)
+        textbox = textfolder.get(box, string, font,
+                                 scale=self.scale_ratio, **kwargs)
         return textbox.outlinebox.size
 
     def text(self, xy, string, font, **kwargs):
@@ -319,7 +320,8 @@ class ImageDrawEx(object):
             self.draw = ImageDraw.ImageDraw(self.image, self.mode)
             return
 
-        lines = textfolder.get(box, string, font, scale=self.scale_ratio, **kwargs)
+        lines = textfolder.get(box, string, font,
+                               scale=self.scale_ratio, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')

@@ -366,8 +366,8 @@ class DiagramLayoutManager:
 
             return cmp(x.node1.order, y.node1.order)
 
-        edges = DiagramEdge.find(parent, node1) + \
-                DiagramEdge.find(parent, node2)
+        edges = (DiagramEdge.find(parent, node1) +
+                 DiagramEdge.find(parent, node2))
         edges.sort(compare)
         if len(edges) == 0:
             return 0
@@ -411,8 +411,8 @@ class DiagramLayoutManager:
                     if parent_height and parent_height > height:
                         height = parent_height
 
-                if prev_child and grandchild > 1 and \
-                   not self.is_rhombus(prev_child, child):
+                if (prev_child and grandchild > 1 and
+                   (not self.is_rhombus(prev_child, child))):
                     coord = [p.y for p in self.coordinates if p.x > child.xy.x]
                     if coord and max(coord) >= node.xy.y:
                         height = max(coord) + 1
@@ -687,8 +687,8 @@ class SeparateDiagramBuilder(ScreenNodeBuilder):
             base.level = group.level - 1
 
             # bind edges on base diagram (outer the group)
-            edges = DiagramEdge.find(None, group) + \
-                    DiagramEdge.find(group, None)
+            edges = (DiagramEdge.find(None, group) +
+                     DiagramEdge.find(group, None))
             base.edges = self._filter_edges(edges, self.diagram, group.level)
 
             # bind edges on target group (inner the group)

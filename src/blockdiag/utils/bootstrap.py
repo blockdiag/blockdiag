@@ -55,14 +55,16 @@ class Application(object):
 
         fontpath = self.fontmap.find().path
         format = self.options.type.lower()
-        if format in ('png', 'svg') and fontpath and self.options.ignore_pil is False:
+        ignore_pil = self.options.ignore_pil
+        if format in ('png', 'svg') and fontpath and ignore_pil is False:
             try:
                 try:
                     from PIL import _imagingft
                 except ImportError:
                     import _imagingft
             except:
-                msg = "PIL does not support TrueType fonts, reinstall PIL (and libfreetype2)"
+                msg = "PIL does not support TrueType fonts, " \
+                      "reinstall PIL (and libfreetype2)"
                 if format != 'png':
                     msg += " or use --ignore-pil option"
 

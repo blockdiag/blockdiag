@@ -243,23 +243,23 @@ class SpreadSheetMetrics(object):
         self.span_height = defaultdict(lambda: metrics.span_height)
 
     def set_node_width(self, x, width):
-        if width is not None and 0 < width and \
-           (x not in self.node_width or self.node_width[x] < width):
+        if (width is not None and 0 < width and
+           (x not in self.node_width or self.node_width[x] < width)):
             self.node_width[x] = width
 
     def set_node_height(self, y, height):
-        if height is not None and 0 < height and \
-           (y not in self.node_height or self.node_height[y] < height):
+        if (height is not None and 0 < height and
+           (y not in self.node_height or self.node_height[y] < height)):
             self.node_height[y] = height
 
     def set_span_width(self, x, width):
-        if width is not None and 0 < width and \
-           (x not in self.span_width or self.span_width[x] < width):
+        if (width is not None and 0 < width and
+           (x not in self.span_width or self.span_width[x] < width)):
             self.span_width[x] = width
 
     def set_span_height(self, y, height):
-        if height is not None and 0 < height and \
-           (y not in self.span_height or self.span_height[y] < height):
+        if (height is not None and 0 < height and
+           (y not in self.span_height or self.span_height[y] < height)):
             self.span_height[y] = height
 
     def node(self, node, use_padding=True):

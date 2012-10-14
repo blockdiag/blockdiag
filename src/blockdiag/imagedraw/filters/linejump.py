@@ -45,8 +45,8 @@ class LazyReciever(object):
             if name in p.__dict__:
                 return p.__dict__[name]
 
-        raise AttributeError("%s instance has no attribute '%s'"
-            % (self.target.__class__.__name__, name))
+        raise AttributeError("%s instance has no attribute '%s'" %
+                             (self.target.__class__.__name__, name))
 
     def _run(self):
         for recv in self.nested:
