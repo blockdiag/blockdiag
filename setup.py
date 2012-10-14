@@ -65,6 +65,7 @@ setup(
      author='Takeshi Komiya',
      author_email='i.tkomiya at gmail.com',
      url='http://blockdiag.com/',
+     download_url='http://pypi.python.org/pypi/blockdiag',
      license='Apache License 2.0',
      py_modules=['blockdiag_sphinxhelper'],
      packages=find_packages('src'),
