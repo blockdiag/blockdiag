@@ -41,28 +41,30 @@ class TestRstDirectives(unittest2.TestCase):
 
     def test_setup(self):
         directives.setup()
+        options = directives.directive_options
 
         self.assertIn('blockdiag', docutils._directives)
         self.assertEqual(directives.BlockdiagDirective,
                          docutils._directives['blockdiag'])
-        self.assertEqual('PNG', directives.format)
-        self.assertEqual(False, directives.antialias)
-        self.assertEqual(None, directives.fontpath)
-        self.assertEqual(False, directives.nodoctype)
-        self.assertEqual(False, directives.noviewbox)
+        self.assertEqual('PNG', options['format'])
+        self.assertEqual(False, options['antialias'])
+        self.assertEqual(None, options['fontpath'])
+        self.assertEqual(False, options['nodoctype'])
+        self.assertEqual(False, options['noviewbox'])
 
     def test_setup_with_args(self):
         directives.setup(format='SVG', antialias=True,
                          fontpath='/dev/null', nodoctype=True, noviewbox=True)
+        options = directives.directive_options
 
         self.assertIn('blockdiag', docutils._directives)
         self.assertEqual(directives.BlockdiagDirective,
                          docutils._directives['blockdiag'])
-        self.assertEqual('SVG', directives.format)
-        self.assertEqual(True, directives.antialias)
-        self.assertEqual('/dev/null', directives.fontpath)
-        self.assertEqual(True, directives.nodoctype)
-        self.assertEqual(True, directives.noviewbox)
+        self.assertEqual('SVG', options['format'])
+        self.assertEqual(True, options['antialias'])
+        self.assertEqual('/dev/null', options['fontpath'])
+        self.assertEqual(True, options['nodoctype'])
+        self.assertEqual(True, options['noviewbox'])
 
     @stderr_wrapper
     @setup_directive_base

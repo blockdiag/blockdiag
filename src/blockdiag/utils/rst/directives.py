@@ -25,12 +25,12 @@ from blockdiag.drawer import DiagramDraw
 from blockdiag.utils.collections import namedtuple
 
 
-format = 'PNG'
-antialias = False
-fontpath = None
-outputdir = None
-nodoctype = False
-noviewbox = False
+directive_options = dict(format = 'PNG',
+                         antialias = False,
+                         fontpath = None,
+                         outputdir = None,
+                         nodoctype = False,
+                         noviewbox = False)
 
 
 def relfn2path(env, filename):
@@ -150,6 +150,10 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         return results
 
+    @property
+    def global_options(self):
+        return directive_options
+
     def node2diagram(self, node):
         tree = parser.parse_string(node['code'])
         return ScreenNodeBuilder.build(tree)
@@ -157,9 +161,11 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
     def node2image(self, node, diagram):
         filename = self.image_filename(node)
         fontpath = self.detectfont()
-        drawer = DiagramDraw(format, diagram, filename,
-                             font=fontpath, antialias=antialias,
-                             nodoctype=nodoctype, noviewbox=noviewbox)
+        format = self.global_options['format']
+
+        kwargs = dict(self.global_options)
+        del kwargs['format']
+        drawer = DiagramDraw(format, diagram, filename, **kwargs)
 
         if not os.path.isfile(filename):
             drawer.draw()
@@ -188,6 +194,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
     def detectfont(self):
         Options = namedtuple('Options', 'font')
+        fontpath = self.global_options['fontpath']
         if isinstance(fontpath, (list, tuple)):
             options = Options(fontpath)
         elif isinstance(fontpath, (str, unicode)):
@@ -206,10 +213,13 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             sha = sha
 
         options = dict(node['options'])
-        options.update(font=fontpath, antialias=antialias)
+        options.update(font=self.global_options['fontpath'],
+                       antialias=self.global_options['antialias'])
         hashseed = node['code'].encode('utf-8') + str(options)
         hashed = sha(hashseed).hexdigest()
 
+        format = self.global_options['format']
+        outputdir = self.global_options['outputdir']
         filename = "%s%s-%s.%s" % (self.name, prefix, hashed, format.lower())
         if outputdir:
             filename = os.path.join(outputdir, filename)
@@ -298,12 +308,13 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
 
 def setup(**kwargs):
-    global format, antialias, fontpath, outputdir, nodoctype, noviewbox
-    format = kwargs.get('format', 'PNG')
-    antialias = kwargs.get('antialias', False)
-    fontpath = kwargs.get('fontpath', None)
-    outputdir = kwargs.get('outputdir', None)
-    nodoctype = kwargs.get('nodoctype', False)
-    noviewbox = kwargs.get('noviewbox', False)
+    global directive_options
+
+    directive_options['format'] = kwargs.get('format', 'PNG')
+    directive_options['antialias'] = kwargs.get('antialias', False)
+    directive_options['fontpath'] = kwargs.get('fontpath', None)
+    directive_options['outputdir'] = kwargs.get('outputdir', None)
+    directive_options['nodoctype'] = kwargs.get('nodoctype', False)
+    directive_options['noviewbox'] = kwargs.get('noviewbox', False)
 
     rst.directives.register_directive("blockdiag", BlockdiagDirective)
