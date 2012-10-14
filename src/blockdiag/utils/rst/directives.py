@@ -30,7 +30,8 @@ directive_options = dict(format = 'PNG',
                          fontpath = None,
                          outputdir = None,
                          nodoctype = False,
-                         noviewbox = False)
+                         noviewbox = False,
+                         inline_svg = False)
 
 
 def relfn2path(env, filename):
@@ -161,7 +162,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
     def node2image(self, node, diagram):
         filename = self.image_filename(node)
         fontpath = self.detectfont()
-        format = self.global_options['format']
+        format = self.global_options['format'].lower()
 
         kwargs = dict(self.global_options)
         del kwargs['format']
@@ -169,7 +170,11 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         if not os.path.isfile(filename):
             drawer.draw()
-            drawer.save()
+            if format == 'svg' and self.global_options['inline_svg'] is True:
+                content = drawer.save(None)
+                return nodes.raw('', content, format='html')
+            else:
+                drawer.save()
 
         size = drawer.pagesize()
         options = node['options']
@@ -316,5 +321,6 @@ def setup(**kwargs):
     directive_options['outputdir'] = kwargs.get('outputdir', None)
     directive_options['nodoctype'] = kwargs.get('nodoctype', False)
     directive_options['noviewbox'] = kwargs.get('noviewbox', False)
+    directive_options['inline_svg'] = kwargs.get('inline_svg', False)
 
     rst.directives.register_directive("blockdiag", BlockdiagDirective)
