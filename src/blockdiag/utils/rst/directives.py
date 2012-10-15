@@ -303,6 +303,8 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             row = nodes.row()
             for attr in desc:
                 entry = nodes.entry()
+                if not isinstance(attr, (str, unicode)):
+                    attr = str(attr)
                 self.state.nested_parse(ViewList([attr], source=attr),
                                         0, entry)
                 row += entry
