@@ -26,7 +26,10 @@ class SVGImageDrawElement(object):
 
     def __init__(self, svg, parent=None):
         self.svg = svg
-        self.ignore_pil = False
+        if parent and parent.ignore_pil:
+            self.ignore_pil = True
+        else:
+            self.ignore_pil = False
 
     def rgb(self, color):
         if isinstance(color, tuple):
