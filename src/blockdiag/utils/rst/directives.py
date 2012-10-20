@@ -31,7 +31,8 @@ directive_options = dict(format='PNG',
                          outputdir=None,
                          nodoctype=False,
                          noviewbox=False,
-                         inline_svg=False)
+                         inline_svg=False,
+                         ignore_pil=False)
 
 
 def relfn2path(env, filename):
@@ -324,5 +325,6 @@ def setup(**kwargs):
     directive_options['nodoctype'] = kwargs.get('nodoctype', False)
     directive_options['noviewbox'] = kwargs.get('noviewbox', False)
     directive_options['inline_svg'] = kwargs.get('inline_svg', False)
+    directive_options['ignore_pil'] = kwargs.get('ignore_pil', False)
 
     rst.directives.register_directive("blockdiag", BlockdiagDirective)
