@@ -16,7 +16,8 @@
 import re
 import math
 from itertools import izip, tee
-from blockdiag.utils import ellipse, textfolder, urlutil, Box
+from functools import wraps
+from blockdiag.utils import ellipse, textfolder, urlutil, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
 try:
@@ -100,14 +101,20 @@ def style2cycle(style, thick):
     return length
 
 
-class ImageDrawEx(object):
+class ImageDrawExBase(object):
     self_generative_methods = []
 
     def __init__(self, filename, size, **kwargs):
+        if kwargs.get('transparency'):
+            self.mode = kwargs.get('mode', 'RGBA')
+        else:
+            self.mode = kwargs.get('mode', 'RGB')
+
         if kwargs.get('im'):
             self.image = kwargs.get('im')
         else:
-            self.image = Image.new('RGB', size, (256, 256, 256))
+            color = kwargs.get('color', (256, 256, 256))
+            self.image = Image.new(self.mode, size, color)
 
             # set transparency to background
             if kwargs.get('transparency'):
@@ -116,7 +123,6 @@ class ImageDrawEx(object):
 
         self.filename = filename
         self.scale_ratio = kwargs.get('scale_ratio', 1)
-        self.mode = kwargs.get('mode')
         self.draw = ImageDraw.ImageDraw(self.image, self.mode)
         self.shadow_style = kwargs.get('shadow_style')
 
@@ -127,13 +133,6 @@ class ImageDrawEx(object):
     def resizeCanvas(self, size):
         self.image = self.image.resize(size, Image.ANTIALIAS)
         self.draw = ImageDraw.ImageDraw(self.image, self.mode)
-
-    def smoothCanvas(self):
-        if self.shadow_style == 'blur':
-            for i in range(15):
-                self.image = self.image.filter(ImageFilter.SMOOTH_MORE)
-
-            self.draw = ImageDraw.ImageDraw(self.image, self.mode)
 
     def arc(self, box, start, end, **kwargs):
         style = kwargs.get('style')
@@ -393,3 +392,65 @@ class ImageDrawEx(object):
             image = tmp.getvalue()
 
         return image
+
+
+def blurred(fn):
+    PADDING = 16
+
+    def get_shape_box(*args):
+        if fn.__name__ == 'polygon':
+            xlist = [pt.x for pt in args[0]]
+            ylist = [pt.y for pt in args[0]]
+            return Box(min(xlist), min(ylist), max(xlist), max(ylist))
+        else:
+            return args[0]
+
+    def get_abs_coordinate(box, *args):
+        dx = box.x1 - PADDING
+        dy = box.y1 - PADDING
+        if fn.__name__ == 'polygon':
+            return [pt.shift(-dx, -dy) for pt in args[0]]
+        else:
+            return box.shift(-dx, -dy)
+
+    def create_shadow(self, size, *args, **kwargs):
+        drawer = ImageDrawExBase(self.filename, size, transparency=True)
+        getattr(drawer, fn.__name__)(*args, **kwargs)
+
+        for i in range(15):
+            drawer.image = drawer.image.filter(ImageFilter.SMOOTH_MORE)
+
+        return drawer.image
+
+    @wraps(fn)
+    def func(self, *args, **kwargs):
+        args = list(args)
+
+        if kwargs.get('filter') not in ('blur', 'transp-blur'):
+            return fn(self, *args, **kwargs)
+        else:
+            box = get_shape_box(*args)
+            args[0] = get_abs_coordinate(box, *args)
+
+            size = Size(box.width + PADDING * 2, box.height + PADDING * 2)
+            shadow = create_shadow(self, size, *args, **kwargs)
+            xy = XY(box.x1 - PADDING, box.y1 - PADDING)
+            self.image.paste(shadow, xy, shadow)
+
+            self.draw = ImageDraw.ImageDraw(self.image, self.mode)
+
+    return func
+
+
+class ImageDrawEx(ImageDrawExBase):
+    @blurred
+    def ellipse(self, box, **kwargs):
+        super(ImageDrawEx, self).ellipse(box, **kwargs)
+
+    @blurred
+    def rectangle(self, box, **kwargs):
+        super(ImageDrawEx, self).rectangle(box, **kwargs)
+
+    @blurred
+    def polygon(self, xy, **kwargs):
+        super(ImageDrawEx, self).polygon(xy, **kwargs)

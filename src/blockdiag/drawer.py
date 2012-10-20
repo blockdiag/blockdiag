@@ -88,10 +88,6 @@ class DiagramDraw(object):
         self._draw_background()
         self.metrics = temp
 
-        # Smoothing background images.
-        if self.format == 'PNG':
-            self.drawer.smoothCanvas()
-
         if self.scale_ratio > 1:
             pagesize = self.pagesize(scaled=True)
             self.drawer.resizeCanvas(pagesize)
