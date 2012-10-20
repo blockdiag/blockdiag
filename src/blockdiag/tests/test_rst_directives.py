@@ -249,6 +249,7 @@ class TestRstDirectives(unittest2.TestCase):
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertEqual(1, len(os.listdir(path)))
 
     @use_tmpdir
     def test_block_inline_svg_true(self, path):
@@ -261,6 +262,7 @@ class TestRstDirectives(unittest2.TestCase):
         self.assertEqual(nodes.Text, type(doctree[0][0]))
         self.assertEqual("<?xml version='1.0' encoding='UTF-8'?>\n"
                          "<!DOCTYPE ", doctree[0][0][:49])
+        self.assertEqual(0, len(os.listdir(path)))
 
     @use_tmpdir
     def test_block_inline_svg_true_but_nonsvg_format(self, path):
