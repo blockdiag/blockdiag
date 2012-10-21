@@ -199,7 +199,12 @@ class DiagramMetrics(object):
         return metrics
 
     def textsize(self, string, width=65535, font=None):
-        return self.drawer.textsize(string, font, maxwidth=width)
+        if self.drawer:
+            return self.drawer.textsize(string, font, maxwidth=width)
+        else:
+            from blockdiag.utils.textfolder.base import TextFolder
+            folder = TextFolder((0, 0, width, 65535), string, font)
+            return folder.outlinebox.size
 
     def node(self, node):
         renderer = noderenderer.get(node.shape)
