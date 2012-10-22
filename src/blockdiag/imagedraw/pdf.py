@@ -24,6 +24,7 @@ from blockdiag.utils.fontmap import parse_fontpath
 
 class PDFImageDraw(object):
     self_generative_methods = []
+    nosideeffect_methods = ['textsize']
 
     def __init__(self, filename, size, **kwargs):
         self.canvas = canvas.Canvas(filename, pagesize=size)

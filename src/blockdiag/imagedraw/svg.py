@@ -23,6 +23,7 @@ feGaussianBlur = svgclass('feGaussianBlur')
 
 class SVGImageDrawElement(object):
     self_generative_methods = ['group', 'anchor']
+    nosideeffect_methods = ['textsize']
 
     def __init__(self, svg, parent=None):
         self.svg = svg
