@@ -198,7 +198,7 @@ class DiagramMetrics(object):
 
         return metrics
 
-    def textsize(self, string, width=65535, font=None):
+    def textsize(self, string, font=None, width=65535):
         if self.drawer:
             return self.drawer.textsize(string, font, maxwidth=width)
         else:
