@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import functools
 from blockdiag.utils import XY
 
 
@@ -38,7 +39,10 @@ class LazyReciever(object):
                 self.calls.append((method, args, kwargs))
                 return self
 
-        return _
+        if method.__name__ in self.target.nosideeffect_methods:
+            return functools.partial(method, self.target)
+        else:
+            return _
 
     def _find_method(self, name):
         for p in self.target.__class__.__mro__:

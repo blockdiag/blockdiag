@@ -103,6 +103,7 @@ def style2cycle(style, thick):
 
 class ImageDrawExBase(object):
     self_generative_methods = []
+    nosideeffect_methods = ['textsize']
 
     def __init__(self, filename, size, **kwargs):
         if kwargs.get('transparency'):
