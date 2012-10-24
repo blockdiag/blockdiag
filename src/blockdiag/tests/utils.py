@@ -6,6 +6,21 @@ from blockdiag.builder import *
 from blockdiag.parser import parse_string
 
 
+def supported_pil():
+    try:
+        import _imagingft
+        return True
+    except:
+        return False
+
+
+def with_pil(fn):
+    if not supported_pil():
+        fn.__test__ = False
+
+    return fn
+
+
 def supported_pdf():
     try:
         import reportlab

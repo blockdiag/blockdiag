@@ -70,38 +70,25 @@ def diagram_files():
 
 def test_generator_svg():
     args = []
-    try:
-        import _imagingft
-        _imagingft
-    except ImportError:
+    if not supported_pil():
         args.append('--ignore-pil')
 
     for testcase in generator_core('svg', args):
         yield testcase
 
 
+@with_pil
 @extra_case
 def test_generator_png():
-    try:
-        import _imagingft
-        _imagingft
-
-        for testcase in generator_core('png'):
-            yield testcase
-    except ImportError:
-        sys.stderr.write("Skip testing about png exporting.\n")
+    for testcase in generator_core('png'):
+        yield testcase
 
 
+@with_pdf
 @extra_case
 def test_generator_pdf():
-    try:
-        import reportlab.pdfgen.canvas
-        reportlab.pdfgen.canvas
-
-        for testcase in generator_core('pdf'):
-            yield testcase
-    except ImportError:
-        sys.stderr.write("Skip testing about pdf exporting.\n")
+    for testcase in generator_core('pdf'):
+        yield testcase
 
 
 def generator_core(format, *args):
@@ -143,6 +130,8 @@ def svg_includes_source_code_tag_test():
         sys.argv = ['blockdiag.py', '-T', 'SVG', '-o', tmpfile[1], diagpath]
         if os.path.exists(fontpath):
             sys.argv += ['-f', fontpath]
+        if not supported_pil():
+            sys.argv += ['--ignore-pil']
 
         blockdiag.command.main()
 
