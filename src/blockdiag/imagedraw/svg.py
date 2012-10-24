@@ -238,12 +238,7 @@ class SVGImageDrawElement(_base.ImageDraw):
             string = open(url, 'rb').read()
             url = "data:;base64," + base64.b64encode(string)
 
-        x = box[0]
-        y = box[1]
-        w = box[2] - box[0]
-        h = box[3] - box[1]
-
-        im = image(url, x, y, w, h)
+        im = image(url, box.x1, box.y1, box.width, box.height)
         self.svg.addElement(im)
 
     def anchor(self, url):
