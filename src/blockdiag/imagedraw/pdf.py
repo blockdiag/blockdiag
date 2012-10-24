@@ -208,11 +208,6 @@ class PDFImageDraw(base.ImageDraw):
         self.canvas.drawPath(pd, **params)
 
     def image(self, box, url):
-        x = box[0]
-        y = self.size[1] - box[3]
-        w = box[2] - box[0]
-        h = box[3] - box[1]
-
         if urlutil.isurl(url):
             from reportlab.lib.utils import ImageReader
             try:
@@ -221,8 +216,10 @@ class PDFImageDraw(base.ImageDraw):
                 msg = "WARNING: Could not retrieve: %s\n" % filename
                 sys.stderr.write(msg)
                 return
-        self.canvas.drawImage(url, x, y, w, h, mask='auto',
-                              preserveAspectRatio=True)
+
+        y = self.size[1] - box[3]
+        self.canvas.drawImage(url, box.x1, y, box.width, box.height,
+                              mask='auto', preserveAspectRatio=True)
 
     def save(self, filename, size, format):
         # Ignore size and format parameter; compatibility for ImageDrawEx.

@@ -335,9 +335,6 @@ class ImageDrawExBase(base.ImageDraw):
             self.textarea(box, string, font, **kwargs)
 
     def image(self, box, url):
-        box_width = box[2] - box[0]
-        box_height = box[3] - box[1]
-
         if urlutil.isurl(url):
             import cStringIO
             import urllib
@@ -351,19 +348,19 @@ class ImageDrawExBase(base.ImageDraw):
         image = Image.open(url)
 
         # resize image.
-        w = min([box_width, image.size[0] * self.scale_ratio])
-        h = min([box_height, image.size[1] * self.scale_ratio])
+        w = min([box.width, image.size[0] * self.scale_ratio])
+        h = min([box.height, image.size[1] * self.scale_ratio])
         image.thumbnail((w, h), Image.ANTIALIAS)
 
         # centering image.
         w, h = image.size
-        if box_width > w:
-            x = box[0] + (box_width - w) / 2
+        if box.width > w:
+            x = box[0] + (box.width - w) / 2
         else:
             x = box[0]
 
-        if box_height > h:
-            y = box[1] + (box_height - h) / 2
+        if box.height > h:
+            y = box[1] + (box.height - h) / 2
         else:
             y = box[1]
 
