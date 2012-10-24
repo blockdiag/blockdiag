@@ -252,13 +252,13 @@ class SVGImageDrawElement(object):
         a_node.add_attribute('xlink:href', url)
         self.svg.addElement(a_node)
 
-        return SVGImageDrawElement(a_node)
+        return SVGImageDrawElement(a_node, self)
 
     def group(self):
         group = g()
         self.svg.addElement(group)
 
-        return SVGImageDrawElement(group)
+        return SVGImageDrawElement(group, self)
 
 
 class SVGImageDraw(SVGImageDrawElement):
