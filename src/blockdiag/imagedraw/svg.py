@@ -15,7 +15,8 @@
 
 import re
 import base64
-from blockdiag.utils import textfolder, urlutil, Box, XY
+from blockdiag.imagedraw import textfolder
+from blockdiag.utils import urlutil, Box, XY
 from simplesvg import *
 
 feGaussianBlur = svgclass('feGaussianBlur')

@@ -17,7 +17,8 @@ import re
 import math
 from itertools import izip, tee
 from functools import wraps
-from blockdiag.utils import ellipse, textfolder, urlutil, Box, Size, XY
+from blockdiag.imagedraw import textfolder
+from blockdiag.utils import ellipse, urlutil, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
 try:
