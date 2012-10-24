@@ -18,15 +18,12 @@ import sys
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from blockdiag.imagedraw import textfolder
+from blockdiag.imagedraw import base, textfolder
 from blockdiag.utils import urlutil, Box
 from blockdiag.utils.fontmap import parse_fontpath
 
 
-class PDFImageDraw(object):
-    self_generative_methods = []
-    nosideeffect_methods = ['textsize']
-
+class PDFImageDraw(base.ImageDraw):
     def __init__(self, filename, size, **kwargs):
         self.canvas = canvas.Canvas(filename, pagesize=size)
         self.size = size
