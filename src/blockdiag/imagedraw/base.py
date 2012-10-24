@@ -43,8 +43,11 @@ class ImageDraw(object):
     def textarea(self, box, string, font, **kwargs):
         pass
 
-    def loadImage(self, filename, box):
+    def image(self, box, url):
         pass
+
+    def loadImage(self, filename, box):  # TODO: obsoleted
+        return self.image(box, filename)
 
     def save(self, filename, size, format):
         pass

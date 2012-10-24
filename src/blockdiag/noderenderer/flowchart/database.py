@@ -34,7 +34,7 @@ class Database(NodeShape):
 
         # draw background image
         if self.node.background:
-            drawer.loadImage(self.node.background, self.textbox)
+            drawer.image(self.textbox, self.node.background)
 
     def render_shape_background(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')
@@ -114,7 +114,7 @@ class Database(NodeShape):
         elif self.node.background:
             drawer.path(path, fill=self.node.color,
                         outline=self.node.color)
-            drawer.loadImage(self.node.background, self.textbox)
+            drawer.image(self.textbox, self.node.background)
             drawer.path(path, fill="none",
                         outline=self.node.linecolor, style=self.node.style)
         else:

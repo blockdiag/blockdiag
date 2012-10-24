@@ -102,7 +102,7 @@ class NodeShape(object):
 
     def render_icon(self, drawer, **kwargs):
         if self.node.icon is not None and kwargs.get('shadow') is False:
-            drawer.loadImage(self.node.icon, self.iconbox)
+            drawer.image(self.iconbox, self.node.icon)
 
     def render_shape(self, drawer, format, **kwargs):
         pass

@@ -41,7 +41,7 @@ class Note(NodeShape):
         elif self.node.background:
             drawer.polygon(note, fill=self.node.color,
                            outline=self.node.color)
-            drawer.loadImage(self.node.background, box)
+            drawer.image(box, self.node.background)
             drawer.polygon(note, fill="none",
                            outline=self.node.linecolor, style=self.node.style)
         else:

@@ -40,7 +40,7 @@ class TextBox(NodeShape):
 
     def render_shape(self, drawer, format, **kwargs):
         if not kwargs.get('shadow') and self.node.background:
-            drawer.loadImage(self.node.background, self.textbox)
+            drawer.image(self.textbox, self.node.background)
 
 
 def setup(self):

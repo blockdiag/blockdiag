@@ -54,7 +54,7 @@ class LoopIn(NodeShape):
         elif self.node.background:
             drawer.polygon(shape, fill=self.node.color,
                            outline=self.node.color)
-            drawer.loadImage(self.node.background, self.textbox)
+            drawer.image(self.textbox, self.node.background)
             drawer.polygon(shape, fill="none",
                            outline=self.node.linecolor, style=self.node.style)
         else:
