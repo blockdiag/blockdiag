@@ -17,7 +17,7 @@ import re
 import math
 from itertools import izip, tee
 from functools import wraps
-from blockdiag.imagedraw import textfolder
+from blockdiag.imagedraw import base, textfolder
 from blockdiag.utils import ellipse, urlutil, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
@@ -102,10 +102,7 @@ def style2cycle(style, thick):
     return length
 
 
-class ImageDrawExBase(object):
-    self_generative_methods = []
-    nosideeffect_methods = ['textsize']
-
+class ImageDrawExBase(base.ImageDraw):
     def __init__(self, filename, size, **kwargs):
         if kwargs.get('transparency'):
             self.mode = kwargs.get('mode', 'RGBA')

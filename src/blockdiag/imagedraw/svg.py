@@ -15,16 +15,16 @@
 
 import re
 import base64
-from blockdiag.imagedraw import textfolder
+from blockdiag.imagedraw import base as _base, textfolder
 from blockdiag.utils import urlutil, Box, XY
 from simplesvg import *
 
 feGaussianBlur = svgclass('feGaussianBlur')
 
 
-class SVGImageDrawElement(object):
+class SVGImageDrawElement(_base.ImageDraw):
     self_generative_methods = ['group', 'anchor']
-    nosideeffect_methods = ['textsize']
+    supported_path = True
 
     def __init__(self, svg, parent=None):
         self.svg = svg
