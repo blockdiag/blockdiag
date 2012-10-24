@@ -6,6 +6,21 @@ from blockdiag.builder import *
 from blockdiag.parser import parse_string
 
 
+def supported_pdf():
+    try:
+        import reportlab
+        return True
+    except:
+        return False
+
+
+def with_pdf(fn):
+    if not supported_pdf():
+        fn.__test__ = False
+
+    return fn
+
+
 def argv_wrapper(func, argv=[]):
     def wrap(*args, **kwargs):
         try:

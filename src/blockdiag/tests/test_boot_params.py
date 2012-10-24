@@ -4,7 +4,7 @@ import os
 import sys
 import tempfile
 import unittest2
-from utils import argv_wrapper, assertRaises
+from utils import argv_wrapper, assertRaises, with_pdf
 import blockdiag
 from blockdiag.command import BlockdiagOptions
 from blockdiag.utils.bootstrap import detectfont
@@ -15,7 +15,7 @@ class TestBootParams(unittest2.TestCase):
         self.parser = BlockdiagOptions(blockdiag)
 
     @argv_wrapper
-    def test_type_option(self):
+    def test_type_option_svg(self):
         sys.argv = ['', '-Tsvg', 'input.diag']
         options = self.parser.parse()
         self.assertEqual(options.output, 'input.svg')
@@ -32,10 +32,15 @@ class TestBootParams(unittest2.TestCase):
         options = self.parser.parse()
         self.assertEqual(options.output, 'input.test.svg')
 
+    @argv_wrapper
+    def test_type_option_png(self):
         sys.argv = ['', '-Tpng', 'input.diag']
         options = self.parser.parse()
         self.assertEqual(options.output, 'input.png')
 
+    @with_pdf
+    @argv_wrapper
+    def test_type_option_pdf(self):
         sys.argv = ['', '-Tpdf', 'input.diag']
         options = self.parser.parse()
         self.assertEqual(options.output, 'input.pdf')
@@ -47,13 +52,18 @@ class TestBootParams(unittest2.TestCase):
         self.parser.parse()
 
     @argv_wrapper
-    def test_separate_option(self):
+    def test_separate_option_svg(self):
         sys.argv = ['', '-Tsvg', '--separate', 'input.diag']
         self.parser.parse()
 
+    @argv_wrapper
+    def test_separate_option_png(self):
         sys.argv = ['', '-Tpng', '--separate', 'input.diag']
         self.parser.parse()
 
+    @with_pdf
+    @argv_wrapper
+    def test_separate_option_pdf(self):
         sys.argv = ['', '-Tpdf', '--separate', 'input.diag']
         self.parser.parse()
 
