@@ -34,7 +34,7 @@ class Cloud(NodeShape):
         self.render_shape_background(drawer, format, **kwargs)
 
         if not kwargs.get('shadow') and self.node.background:
-            drawer.loadImage(self.node.background, self.textbox)
+            drawer.image(self.textbox, self.node.background)
 
     def render_shape_background(self, drawer, format, **kwargs):
         fill = kwargs.get('fill')

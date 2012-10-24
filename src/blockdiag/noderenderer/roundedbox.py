@@ -28,7 +28,7 @@ class RoundedBox(NodeShape):
         box = self.metrics.cell(self.node).box
         if not kwargs.get('shadow'):
             if self.node.background:
-                drawer.loadImage(self.node.background, box)
+                drawer.image(box, self.node.background)
 
             self.render_shape_outline(drawer, format, **kwargs)
 

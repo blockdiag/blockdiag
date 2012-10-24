@@ -334,21 +334,21 @@ class ImageDrawExBase(base.ImageDraw):
             font.size = int(font.size * 0.8)
             self.textarea(box, string, font, **kwargs)
 
-    def loadImage(self, filename, box):
+    def image(self, box, url):
         box_width = box[2] - box[0]
         box_height = box[3] - box[1]
 
-        if urlutil.isurl(filename):
+        if urlutil.isurl(url):
             import cStringIO
             import urllib
             try:
-                filename = cStringIO.StringIO(urllib.urlopen(filename).read())
+                url = cStringIO.StringIO(urllib.urlopen(url).read())
             except:
                 import sys
                 msg = "WARNING: Could not retrieve: %s\n" % filename
                 sys.stderr.write(msg)
                 return
-        image = Image.open(filename)
+        image = Image.open(url)
 
         # resize image.
         w = min([box_width, image.size[0] * self.scale_ratio])

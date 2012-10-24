@@ -45,7 +45,7 @@ class Mail(NodeShape):
         elif self.node.background:
             drawer.rectangle(box, fill=self.node.color,
                              outline=self.node.color)
-            drawer.loadImage(self.node.background, self.textbox)
+            drawer.image(self.textbox, self.node.background)
             drawer.rectangle(box, outline=self.node.linecolor,
                              style=self.node.style)
         else:

@@ -233,11 +233,9 @@ class SVGImageDrawElement(_base.ImageDraw):
                      style=self.filter(filter))
         self.svg.addElement(pg)
 
-    def loadImage(self, filename, box):
-        if urlutil.isurl(filename):
-            url = filename
-        else:
-            string = open(filename, 'rb').read()
+    def image(self, box, url):
+        if not urlutil.isurl(url):
+            string = open(url, 'rb').read()
             url = "data:;base64," + base64.b64encode(string)
 
         x = box[0]
