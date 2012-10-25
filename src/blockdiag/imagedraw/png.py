@@ -102,6 +102,19 @@ def style2cycle(style, thick):
     return length
 
 
+def ttfont_for(font):
+    if font.path:
+        path, index = parse_fontpath(font.path)
+        if index:
+            ttfont = ImageFont.truetype(path, font.size, index=index)
+        else:
+            ttfont = ImageFont.truetype(path, font.size)
+    else:
+        ttfont = None
+
+    return ttfont
+
+
 class ImageDrawExBase(base.ImageDraw):
     def __init__(self, filename, size, **kwargs):
         if kwargs.get('transparency'):
@@ -252,21 +265,26 @@ class ImageDrawExBase(base.ImageDraw):
             maxwidth = 65535
 
         box = (0, 0, maxwidth, 65535)
-        textbox = textfolder.get(box, string, font,
+        textbox = textfolder.get(self, box, string, font,
                                  scale=self.scale_ratio, **kwargs)
         return textbox.outlinebox.size
 
+    def textlinesize(self, string, font):
+        ttfont = ttfont_for(font)
+        if ttfont is None:
+            size = self.draw.textsize(string, font=None)
+
+            font_ratio = font.size * 1.0 / FontMap.BASE_FONTSIZE
+            size = Size(int(size[0] * font_ratio),
+                        int(size[1] * font_ratio))
+        else:
+            size = self.draw.textsize(string, font=ttfont)
+
+        return size
+
     def text(self, xy, string, font, **kwargs):
         fill = kwargs.get('fill')
-
-        if font.path:
-            path, index = parse_fontpath(font.path)
-            if index:
-                ttfont = ImageFont.truetype(path, font.size, index=index)
-            else:
-                ttfont = ImageFont.truetype(path, font.size)
-        else:
-            ttfont = None
+        ttfont = ttfont_for(font)
 
         if ttfont is None:
             if self.scale_ratio == 1 and font.size == FontMap.BASE_FONTSIZE:
@@ -318,7 +336,7 @@ class ImageDrawExBase(base.ImageDraw):
             self.draw = ImageDraw.ImageDraw(self.image, self.mode)
             return
 
-        lines = textfolder.get(box, string, font,
+        lines = textfolder.get(self, box, string, font,
                                scale=self.scale_ratio, **kwargs)
 
         if kwargs.get('outline'):

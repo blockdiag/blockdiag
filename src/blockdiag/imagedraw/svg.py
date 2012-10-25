@@ -102,9 +102,17 @@ class SVGImageDrawElement(_base.ImageDraw):
             maxwidth = 65535
 
         box = (0, 0, maxwidth, 65535)
-        textbox = textfolder.get(box, string, font,
-                                 ignore_pil=self.ignore_pil, **kwargs)
+        textbox = textfolder.get(self, box, string, font,
+                                 adjustBaseline=True, **kwargs)
         return textbox.outlinebox.size
+
+    def textlinesize(self, string, font, **kwargs):
+        if kwargs.get('ignore_pil', self.ignore_pil):
+            from blockdiag.imagedraw.utils import textsize
+            return textsize(string, font)
+        else:
+            import png
+            return png.ImageDrawEx(None, (1, 1)).textlinesize(string, font)
 
     def text(self, xy, string, font, **kwargs):
         fill = kwargs.get('fill')
@@ -141,8 +149,8 @@ class SVGImageDrawElement(_base.ImageDraw):
             elem.textarea(_box, string, font, **kwargs)
             return
 
-        lines = textfolder.get(box, string, font, adjustBaseline=True,
-                               ignore_pil=self.ignore_pil, **kwargs)
+        lines = textfolder.get(self, box, string, font,
+                               adjustBaseline=True, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')

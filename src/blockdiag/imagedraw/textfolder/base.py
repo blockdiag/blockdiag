@@ -22,7 +22,8 @@ FontInfo
 
 
 class TextFolder(object):
-    def __init__(self, box, string, font, **kwargs):
+    def __init__(self, drawer, box, string, font, **kwargs):
+        self.drawer = drawer
         self.box = box
         self.string = string
         self.font = font
@@ -41,7 +42,7 @@ class TextFolder(object):
         self._result = self._lines()
 
     def textsize(self, string):
-        return textsize(string, self.font)
+        return self.drawer.textlinesize(string, self.font)
 
     def height(self):
         u"""

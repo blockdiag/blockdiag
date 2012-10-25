@@ -16,7 +16,7 @@
 
 class ImageDraw(object):
     self_generative_methods = []
-    nosideeffect_methods = ['textsize']
+    nosideeffect_methods = ['textsize', 'textlinesize']
     supported_path = False
 
     def line(self, xy, **kwargs):
@@ -35,6 +35,9 @@ class ImageDraw(object):
         pass
 
     def textsize(self, string, font, maxwidth=None, **kwargs):
+        pass
+
+    def textlinesize(self, string, font, **kwargs):
         pass
 
     def text(self, xy, string, font, **kwargs):
