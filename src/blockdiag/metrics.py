@@ -140,9 +140,7 @@ class DiagramMetrics(object):
     span_height = cellsize * 5
 
     def __init__(self, diagram, **kwargs):
-        self.drawer = None
-        self.format = kwargs.get('format')
-        self.ignore_pil = kwargs.get('ignore_pil')
+        self.drawer = kwargs.get('drawer')
 
         if diagram.node_width is not None:
             self.node_width = diagram.node_width
