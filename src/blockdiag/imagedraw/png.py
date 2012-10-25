@@ -118,15 +118,15 @@ def ttfont_for(font):
 class ImageDrawExBase(base.ImageDraw):
     def __init__(self, filename, size, **kwargs):
         if kwargs.get('transparency'):
-            self.mode = kwargs.get('mode', 'RGBA')
+            mode = 'RGBA'
         else:
-            self.mode = kwargs.get('mode', 'RGB')
+            mode = 'RGB'
 
         if kwargs.get('im'):
             self.image = kwargs.get('im')
         else:
             color = kwargs.get('color', (256, 256, 256))
-            self.image = Image.new(self.mode, size, color)
+            self.image = Image.new(mode, size, color)
 
             # set transparency to background
             if kwargs.get('transparency'):
@@ -135,7 +135,7 @@ class ImageDrawExBase(base.ImageDraw):
 
         self.filename = filename
         self.scale_ratio = kwargs.get('scale_ratio', 1)
-        self.draw = ImageDraw.ImageDraw(self.image, self.mode)
+        self.draw = ImageDraw.Draw(self.image)
         self.shadow_style = kwargs.get('shadow_style')
 
         if 'parent' in kwargs:
@@ -144,7 +144,7 @@ class ImageDrawExBase(base.ImageDraw):
 
     def resizeCanvas(self, size):
         self.image = self.image.resize(size, Image.ANTIALIAS)
-        self.draw = ImageDraw.ImageDraw(self.image, self.mode)
+        self.draw = ImageDraw.Draw(self.image)
 
     def arc(self, box, start, end, **kwargs):
         style = kwargs.get('style')
@@ -314,7 +314,7 @@ class ImageDrawExBase(base.ImageDraw):
             filler = Image.new('RGB', size, fill)
             self.image.paste(filler, xy, mask)
 
-            self.draw = ImageDraw.ImageDraw(self.image, self.mode)
+            self.draw = ImageDraw.Draw(self.image)
 
     def textarea(self, box, string, font, **kwargs):
         if 'rotate' in kwargs and kwargs['rotate'] != 0:
@@ -326,14 +326,13 @@ class ImageDrawExBase(base.ImageDraw):
             else:
                 _box = box
 
-            text = ImageDrawEx(None, _box.size, parent=self, mode=self.mode,
-                               transparency=True)
+            text = ImageDrawEx(None, _box.size, parent=self, transparency=True)
             textbox = (0, 0, _box.width, _box.height)
             text.textarea(textbox, string, font, **kwargs)
 
             filter = Image.new('RGB', box.size, kwargs.get('fill'))
             self.image.paste(filter, box.topleft, text.image.rotate(angle))
-            self.draw = ImageDraw.ImageDraw(self.image, self.mode)
+            self.draw = ImageDraw.Draw(self.image)
             return
 
         lines = textfolder.get(self, box, string, font,
@@ -383,7 +382,7 @@ class ImageDrawExBase(base.ImageDraw):
             y = box[1]
 
         self.image.paste(image, (x, y))
-        self.draw = ImageDraw.ImageDraw(self.image, self.mode)
+        self.draw = ImageDraw.Draw(self.image)
 
     def save(self, filename, size, format):
         if filename:
@@ -451,7 +450,7 @@ def blurred(fn):
             xy = XY(box.x1 - PADDING, box.y1 - PADDING)
             self.image.paste(shadow, xy, shadow)
 
-            self.draw = ImageDraw.ImageDraw(self.image, self.mode)
+            self.draw = ImageDraw.Draw(self.image)
 
     return func
 
