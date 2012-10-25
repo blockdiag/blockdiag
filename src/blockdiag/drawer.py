@@ -44,8 +44,8 @@ class DiagramDraw(object):
                 self.metrics = AutoScaler(self.metrics, scale_ratio=ratio)
 
         kwargs['scale_ratio'] = self.scale_ratio
-        drawer = imagedraw.create(self.format, self.filename, self.pagesize(),
-                                  shadow_style=diagram.shadow_style, **kwargs)
+        drawer = imagedraw.create(self.format, self.filename,
+                                  self.pagesize(), **kwargs)
         if drawer is None:
             msg = 'failed to load %s image driver' % self.format
             raise RuntimeError(msg)

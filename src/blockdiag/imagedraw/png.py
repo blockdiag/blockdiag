@@ -136,7 +136,6 @@ class ImageDrawExBase(base.ImageDraw):
         self.filename = filename
         self.scale_ratio = kwargs.get('scale_ratio', 1)
         self.draw = ImageDraw.Draw(self.image)
-        self.shadow_style = kwargs.get('shadow_style')
 
         if 'parent' in kwargs:
             parent = kwargs['parent']
