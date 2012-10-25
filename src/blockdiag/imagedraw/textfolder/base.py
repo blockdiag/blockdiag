@@ -51,25 +51,30 @@ class TextFolder(object):
         If texts is heighter than bounding box,
         jut out lines will be cut off.
 
+        >>> from blockdiag.imagedraw import svg
+        >>> from functools import partial
+        >>> drawer = svg.SVGImageDraw(None, (1, 1), ignore_pil=True)
+        >>> box = [0, 0, 100, 50]
+        >>> folder = partial(TextFolder, drawer, box)
         >>> box = [0, 0, 100, 50]
         >>> _font = FontInfo('serif', None, 11)
-        >>> TextFolder(box, u"abc", _font).height()
+        >>> folder(u"abc", _font).height()
         11
-        >>> TextFolder(box, u"abc\\ndef", _font).height()
+        >>> folder(u"abc\\ndef", _font).height()
         24
-        >>> TextFolder(box, u"abc\\n\\ndef", _font).height()
+        >>> folder(u"abc\\n\\ndef", _font).height()
         37
-        >>> TextFolder(box, u"abc\\ndef\\nghi\\njkl", _font).height()
+        >>> folder(u"abc\\ndef\\nghi\\njkl", _font).height()
         50
-        >>> TextFolder(box, u"abc\\ndef\\nghi\\njkl\\nmno", _font).height()
+        >>> folder(u"abc\\ndef\\nghi\\njkl\\nmno", _font).height()
         50
         >>> font = FontInfo('serif', None, 24)
-        >>> TextFolder(box, u"abc", font).height()
+        >>> folder(u"abc", font).height()
         24
-        >>> TextFolder(box, u"abc\\ndef", _font, line_spacing=8).height()
+        >>> folder(u"abc\\ndef", _font, line_spacing=8).height()
         30
         >>> font = FontInfo('serif', None, 15)
-        >>> TextFolder(box, u"abc\\ndef", font, line_spacing=8).height()
+        >>> folder(u"abc\\ndef", font, line_spacing=8).height()
         38
         """
         height = 0
@@ -145,23 +150,27 @@ class TextFolder(object):
         Every line will be stripped.
         If text includes characters "\n", treat as line separator.
 
+        >>> from blockdiag.imagedraw import svg
+        >>> from functools import partial
+        >>> drawer = svg.SVGImageDraw(None, (1, 1), ignore_pil=True)
         >>> box = [0, 0, 100, 50]
+        >>> folder = partial(TextFolder, drawer, box)
         >>> ft = FontInfo('serif', None, 11)
-        >>> [l for l in TextFolder(box, u"abc", ft)._splitlines()]
+        >>> [l for l in folder(u"abc", ft)._splitlines()]
         [u'abc']
-        >>> [l for l in TextFolder(box, u"abc\\ndef", ft)._splitlines()]
+        >>> [l for l in folder(u"abc\\ndef", ft)._splitlines()]
         [u'abc', u'def']
-        >>> [l for l in TextFolder(box, u"abc\\\\ndef", ft)._splitlines()]
+        >>> [l for l in folder(u"abc\\\\ndef", ft)._splitlines()]
         [u'abc', u'def']
-        >>> [l for l in TextFolder(box, u" abc \\n def ", ft)._splitlines()]
+        >>> [l for l in folder(u" abc \\n def ", ft)._splitlines()]
         [u'abc', u'def']
-        >>> [l for l in TextFolder(box, u" \\nabc\\\\ndef", ft)._splitlines()]
+        >>> [l for l in folder(u" \\nabc\\\\ndef", ft)._splitlines()]
         [u'abc', u'def']
-        >>> [l for l in TextFolder(box, u" \\\\nab \\\\ncd", ft)._splitlines()]
+        >>> [l for l in folder(u" \\\\nab \\\\ncd", ft)._splitlines()]
         [u'', u'ab', u'cd']
-        >>> [l for l in TextFolder(box, u"abc\\\\\\\\ndef", ft)._splitlines()]
+        >>> [l for l in folder(u"abc\\\\\\\\ndef", ft)._splitlines()]
         [u'abc\\\\ndef']
-        >>> [l for l in TextFolder(box, u"abc\xa5\\\\ndef", ft)._splitlines()]
+        >>> [l for l in folder(u"abc\xa5\\\\ndef", ft)._splitlines()]
         [u'abc\\\\ndef']
         """
         string = re.sub('^\s*(.*?)\s*$', '\\1', self.string)
