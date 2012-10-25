@@ -18,10 +18,14 @@ import imagedraw
 from metrics import AutoScaler
 from metrics import DiagramMetrics
 from imagedraw.filters.linejump import LineJumpDrawFilter
+from utils.collections import defaultdict
 
 
 class DiagramDraw(object):
     MetricsClass = DiagramMetrics
+    shadow_colors = defaultdict(lambda: (0, 0, 0))
+    shadow_colors['PNG'] = (64, 64, 64)
+    shadow_colors['PDF'] = (144, 144, 144)
 
     def __init__(self, format, diagram, filename=None, **kwargs):
         self.format = format.upper()
@@ -38,11 +42,6 @@ class DiagramDraw(object):
             if kwargs.get('antialias'):
                 self.scale_ratio = ratio = 2
                 self.metrics = AutoScaler(self.metrics, scale_ratio=ratio)
-            self.shadow = kwargs.get('shadow', (64, 64, 64))
-        elif self.format == 'PDF':
-            self.shadow = kwargs.get('shadow', (144, 144, 144))
-        else:
-            self.shadow = kwargs.get('shadow', (0, 0, 0))
 
         kwargs['scale_ratio'] = self.scale_ratio
         drawer = imagedraw.create(self.format, self.filename, self.pagesize(),
@@ -53,6 +52,7 @@ class DiagramDraw(object):
 
         self.drawer = LineJumpDrawFilter(drawer, self.metrics.cellsize / 2)
         self.metrics.drawer = self.drawer
+        self.shadow = self.shadow_colors[self.format.upper()]
 
     @property
     def nodes(self):
