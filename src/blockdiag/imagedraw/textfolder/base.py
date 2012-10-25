@@ -15,67 +15,10 @@
 
 import re
 import math
-import unicodedata
+from blockdiag.imagedraw.utils import *
 from blockdiag.utils import Box, XY
 from blockdiag.utils.fontmap import FontInfo
 FontInfo
-
-
-def is_zenkaku(char):
-    u"""
-    Detect given character is Japanese ZENKAKU character
-
-    >>> is_zenkaku(u"A")
-    False
-    >>> is_zenkaku(u"あ")
-    True
-    """
-    char_width = unicodedata.east_asian_width(char)
-    return char_width in u"WFA"
-
-
-def zenkaku_len(string):
-    u"""
-    Count Japanese ZENKAKU characters from string
-
-    >>> zenkaku_len(u"abc")
-    0
-    >>> zenkaku_len(u"あいう")
-    3
-    >>> zenkaku_len(u"あいc")
-    2
-    """
-    return len([x for x in string if is_zenkaku(x)])
-
-
-def hankaku_len(string):
-    u"""
-    Count non Japanese ZENKAKU characters from string
-
-    >>> hankaku_len(u"abc")
-    3
-    >>> hankaku_len(u"あいう")
-    0
-    >>> hankaku_len(u"あいc")
-    1
-    """
-    return len([x for x in string if not is_zenkaku(x)])
-
-
-def string_width(string):
-    u"""
-    Measure rendering width of string.
-    Count ZENKAKU-character as 2-point and non ZENKAKU-character as 1-point
-
-    >>> string_width(u"abc")
-    3
-    >>> string_width(u"あいう")
-    6
-    >>> string_width(u"あいc")
-    5
-    """
-    widthmap = {'Na': 1, 'N': 1, 'H': 1, 'W': 2, 'F': 2, 'A': 2}
-    return sum(widthmap[unicodedata.east_asian_width(c)] for c in string)
 
 
 class TextFolder(object):
@@ -98,29 +41,7 @@ class TextFolder(object):
         self._result = self._lines()
 
     def textsize(self, string):
-        u"""
-        Measure rendering size (width and height) of line.
-        Returned size will not be exactly as rendered text size,
-        Because this method does not use fonts to measure size.
-
-        >>> box = [0, 0, 100, 50]
-        >>> _font = FontInfo('serif', None, 11)
-        >>> TextFolder(box, "", _font).textsize(u"abc")
-        (19, 11)
-        >>> TextFolder(box, "", _font).textsize(u"あいう")
-        (33, 11)
-        >>> TextFolder(box, "", _font).textsize(u"あいc")
-        (29, 11)
-        >>> font = FontInfo('serif', None, 24)
-        >>> TextFolder(box, "", font).textsize(u"abc")
-        (40, 24)
-        >>> font = FontInfo('serif', None, 18)
-        >>> TextFolder(box, "", font).textsize(u"あいう")
-        (54, 18)
-        """
-        width = zenkaku_len(string) * self.font.size + \
-            hankaku_len(string) * self.font.size * 0.55
-        return (int(math.ceil(width)), self.font.size)
+        return textsize(string, self.font)
 
     def height(self):
         u"""
