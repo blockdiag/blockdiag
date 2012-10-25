@@ -116,30 +116,34 @@ def ttfont_for(font):
 
 
 class ImageDrawExBase(base.ImageDraw):
-    def __init__(self, filename, size, **kwargs):
-        if kwargs.get('transparency'):
+    def __init__(self, filename, **kwargs):
+        self.filename = filename
+        self.transparency = kwargs.get('transparency')
+        self.bgcolor = kwargs.get('color', (256, 256, 256))
+        self.image = None
+        self.draw = None
+
+        if kwargs.get('parent'):
+            self.scale_ratio = kwargs.get('parent').scale_ratio
+        else:
+            self.scale_ratio = kwargs.get('scale_ratio', 1)
+
+        self.set_canvas_size(Size(1, 1))  # This line make textsize() workable
+
+    def set_canvas_size(self, size):
+        if self.transparency:
             mode = 'RGBA'
         else:
             mode = 'RGB'
 
-        if kwargs.get('im'):
-            self.image = kwargs.get('im')
-        else:
-            color = kwargs.get('color', (256, 256, 256))
-            self.image = Image.new(mode, size, color)
+        self.image = Image.new(mode, size, self.bgcolor)
 
-            # set transparency to background
-            if kwargs.get('transparency'):
-                alpha = Image.new('L', size, 1)
-                self.image.putalpha(alpha)
+        # set transparency to background
+        if self.transparency:
+            alpha = Image.new('L', size, 1)
+            self.image.putalpha(alpha)
 
-        self.filename = filename
-        self.scale_ratio = kwargs.get('scale_ratio', 1)
         self.draw = ImageDraw.Draw(self.image)
-
-        if 'parent' in kwargs:
-            parent = kwargs['parent']
-            self.scale_ratio = parent.scale_ratio
 
     def resizeCanvas(self, size):
         self.image = self.image.resize(size, Image.ANTIALIAS)
@@ -325,8 +329,9 @@ class ImageDrawExBase(base.ImageDraw):
             else:
                 _box = box
 
-            text = ImageDrawEx(None, _box.size, parent=self, transparency=True)
-            textbox = (0, 0, _box.width, _box.height)
+            text = ImageDrawEx(None, parent=self, transparency=True)
+            text.set_canvas_size(_box.size)
+            textbox = Box(0, 0, _box.width, _box.height)
             text.textarea(textbox, string, font, **kwargs)
 
             filter = Image.new('RGB', box.size, kwargs.get('fill'))
@@ -426,7 +431,8 @@ def blurred(fn):
             return box.shift(-dx, -dy)
 
     def create_shadow(self, size, *args, **kwargs):
-        drawer = ImageDrawExBase(self.filename, size, transparency=True)
+        drawer = ImageDrawExBase(self.filename, transparency=True)
+        drawer.set_canvas_size(size)
         getattr(drawer, fn.__name__)(*args, **kwargs)
 
         for i in range(15):

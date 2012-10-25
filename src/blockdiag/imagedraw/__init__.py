@@ -34,8 +34,17 @@ except ImportError:
     pass
 
 
-def create(format, filename, size, **kwargs):
-    if format.lower() in drawers:
-        return drawers[format.lower()](filename, size, **kwargs)
+def create(format, filename, **kwargs):
+    format = format.lower()
+    if format in drawers:
+        drawer = drawers[format](filename, **kwargs)
     else:
-        return None
+        msg = 'failed to load %s image driver' % format
+        raise RuntimeError(msg)
+
+    if 'linejump' in kwargs.get('filters', []):
+        from filters.linejump import LineJumpDrawFilter
+        jumpsize = kwargs.get('jumpsize', 0)
+        drawer = LineJumpDrawFilter(drawer, jumpsize)
+
+    return drawer

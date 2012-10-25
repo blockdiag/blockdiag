@@ -17,7 +17,6 @@ import noderenderer
 import imagedraw
 from metrics import AutoScaler
 from metrics import DiagramMetrics
-from imagedraw.filters.linejump import LineJumpDrawFilter
 from utils.collections import defaultdict
 
 
@@ -33,26 +32,25 @@ class DiagramDraw(object):
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.badgeFill = kwargs.get('badgeFill', 'pink')
         self.filename = filename
-        self.scale_ratio = 1
-
-        basediagram = kwargs.get('basediagram', diagram)
-        self.metrics = self.MetricsClass(basediagram, format=format, **kwargs)
-
-        if self.format == 'PNG':
-            if kwargs.get('antialias'):
-                self.scale_ratio = ratio = 2
-                self.metrics = AutoScaler(self.metrics, scale_ratio=ratio)
-
-        kwargs['scale_ratio'] = self.scale_ratio
-        drawer = imagedraw.create(self.format, self.filename,
-                                  self.pagesize(), **kwargs)
-        if drawer is None:
-            msg = 'failed to load %s image driver' % self.format
-            raise RuntimeError(msg)
-
-        self.drawer = LineJumpDrawFilter(drawer, self.metrics.cellsize / 2)
-        self.metrics.drawer = self.drawer
         self.shadow = self.shadow_colors[self.format.upper()]
+
+        if self.format == 'PNG' and kwargs.get('antialias'):
+            self.scale_ratio = 2
+        else:
+            self.scale_ratio = 1
+
+        self.drawer = imagedraw.create(self.format, self.filename,
+                                       filters=['linejump'],
+                                       scale_ratio=self.scale_ratio,
+                                       **kwargs)
+
+        self.metrics = self.MetricsClass(kwargs.get('basediagram', diagram),
+                                         drawer=self.drawer, **kwargs)
+        if self.scale_ratio == 2:
+            self.metrics = AutoScaler(self.metrics, scale_ratio=ratio)
+
+        self.drawer.set_canvas_size(self.pagesize())
+        self.drawer.set_jump_radius(self.metrics.cellsize / 2)
 
     @property
     def nodes(self):

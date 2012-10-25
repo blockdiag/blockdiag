@@ -112,7 +112,7 @@ class SVGImageDrawElement(_base.ImageDraw):
             return textsize(string, font)
         else:
             import png
-            return png.ImageDrawEx(None, (1, 1)).textlinesize(string, font)
+            return png.ImageDrawEx(None).textlinesize(string, font)
 
     def text(self, xy, string, font, **kwargs):
         fill = kwargs.get('fill')
@@ -264,19 +264,23 @@ class SVGImageDrawElement(_base.ImageDraw):
 
 
 class SVGImageDraw(SVGImageDrawElement):
-    def __init__(self, filename, size, **kwargs):
-        self.filename = filename
-        _svg = svg(0, 0, size[0], size[1], **kwargs)
-        super(SVGImageDraw, self).__init__(_svg)
-        self.ignore_pil = kwargs.get('ignore_pil')
+    def __init__(self, filename, **kwargs):
+        super(SVGImageDraw, self).__init__(None)
 
+        self.filename = filename
+        self.options = kwargs
+        self.ignore_pil = kwargs.get('ignore_pil')
+        self.set_canvas_size((0, 0))
+
+    def set_canvas_size(self, size):
+        self.svg = svg(0, 0, size[0], size[1], **self.options)
         uri = 'http://www.inkscape.org/namespaces/inkscape'
         self.svg.add_attribute('xmlns:inkspace', uri)
         uri = 'http://www.w3.org/1999/xlink'
         self.svg.add_attribute('xmlns:xlink', uri)
 
         # inkspace's Gaussian filter
-        if kwargs.get('style') != 'blur':
+        if self.options.get('style') != 'blur':
             fgb = feGaussianBlur(id='feGaussianBlur3780', stdDeviation=4.2)
             fgb.add_attribute('inkspace:collect', 'always')
             f = filter(-0.07875, -0.252, 1.1575, 1.504, id='filter_blur')
@@ -287,7 +291,7 @@ class SVGImageDraw(SVGImageDrawElement):
             self.svg.addElement(d)
 
         self.svg.addElement(title('blockdiag'))
-        self.svg.addElement(desc(kwargs.get('code')))
+        self.svg.addElement(desc(self.options.get('code')))
 
     def save(self, filename, size, format):
         # Ignore format parameter; compatibility for ImageDrawEx.
