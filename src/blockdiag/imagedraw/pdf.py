@@ -15,11 +15,12 @@
 
 import re
 import sys
+import math
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from blockdiag.imagedraw import base, textfolder
-from blockdiag.utils import urlutil, Box
+from blockdiag.utils import urlutil, Box, Size
 from blockdiag.utils.fontmap import parse_fontpath
 
 
@@ -122,10 +123,13 @@ class PDFImageDraw(base.ImageDraw):
             maxwidth = 65535
 
         box = (0, 0, maxwidth, 65535)
-        textbox = textfolder.get(box, string, font, format='pdf',
-                                 adjustBaseline=True, canvas=self.canvas,
-                                 **kwargs)
+        textbox = textfolder.get(self, box, string, font,
+                                 adjustBaseline=True, **kwargs)
         return textbox.outlinebox.size
+
+    def textlinesize(self, string, font):
+        width = self.canvas.stringWidth(string, font.path, font.size)
+        return Size(int(math.ceil(width)), self.font.size)
 
     def text(self, xy, string, font, **kwargs):
         self.set_font(font)
@@ -150,9 +154,8 @@ class PDFImageDraw(base.ImageDraw):
                 box = box.shift(x=-self.size.y, y=self.size.y)
 
         self.set_font(font)
-        lines = textfolder.get(box, string, font, format='pdf',
-                               adjustBaseline=True, canvas=self.canvas,
-                               **kwargs)
+        lines = textfolder.get(self, box, string, font,
+                               adjustBaseline=True, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')
