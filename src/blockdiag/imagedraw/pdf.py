@@ -26,10 +26,12 @@ from blockdiag.utils.fontmap import parse_fontpath
 
 class PDFImageDraw(base.ImageDraw):
     def __init__(self, filename, **kwargs):
-        self.canvas = canvas.Canvas(filename, pagesize=size)
+        self.filename = filename
+        self.canvas = None
         self.fonts = {}
 
     def set_canvas_size(self, size):
+        self.canvas = canvas.Canvas(self.filename, pagesize=size)
         self.size = size
 
     def set_font(self, font):
