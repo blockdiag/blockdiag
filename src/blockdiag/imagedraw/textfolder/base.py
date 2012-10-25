@@ -53,7 +53,7 @@ class TextFolder(object):
 
         >>> from blockdiag.imagedraw import svg
         >>> from functools import partial
-        >>> drawer = svg.SVGImageDraw(None, (1, 1), ignore_pil=True)
+        >>> drawer = svg.SVGImageDraw(None, ignore_pil=True)
         >>> box = [0, 0, 100, 50]
         >>> folder = partial(TextFolder, drawer, box)
         >>> box = [0, 0, 100, 50]
@@ -152,7 +152,7 @@ class TextFolder(object):
 
         >>> from blockdiag.imagedraw import svg
         >>> from functools import partial
-        >>> drawer = svg.SVGImageDraw(None, (1, 1), ignore_pil=True)
+        >>> drawer = svg.SVGImageDraw(None, ignore_pil=True)
         >>> box = [0, 0, 100, 50]
         >>> folder = partial(TextFolder, drawer, box)
         >>> ft = FontInfo('serif', None, 11)
