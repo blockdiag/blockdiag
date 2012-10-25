@@ -111,8 +111,11 @@ class SVGImageDrawElement(_base.ImageDraw):
             from blockdiag.imagedraw.utils import textsize
             return textsize(string, font)
         else:
-            import png
-            return png.ImageDrawEx(None).textlinesize(string, font)
+            if not hasattr(self, '_pil_drawer'):
+                import png
+                self._pil_drawer = png.ImageDrawEx(None)
+
+            return self._pil_drawer.textlinesize(string, font)
 
     def text(self, xy, string, font, **kwargs):
         fill = kwargs.get('fill')
