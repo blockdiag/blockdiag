@@ -17,8 +17,37 @@ import re
 import math
 from blockdiag.imagedraw.utils import *
 from blockdiag.utils import Box, XY
-from blockdiag.utils.fontmap import FontInfo
-FontInfo
+
+
+def splitlabel(string):
+    u"""Split text to lines as generator.
+        Every line will be stripped.
+        If text includes characters "\n", treat as line separator.
+
+        >>> splitlabel(u"abc")  # doctest: +ELLIPSIS
+        <generator object splitlabel at 0x...>
+        >>> list(splitlabel(u"abc"))
+        [u'abc']
+        >>> list(splitlabel(u"abc\\ndef"))
+        [u'abc', u'def']
+        >>> list(splitlabel(u"abc\\\\ndef"))
+        [u'abc', u'def']
+        >>> list(splitlabel(u" abc \\n def "))
+        [u'abc', u'def']
+        >>> list(splitlabel(u" \\nabc\\\\ndef"))
+        [u'abc', u'def']
+        >>> list(splitlabel(u" \\\\nab \\\\ncd"))
+        [u'', u'ab', u'cd']
+        >>> list(splitlabel(u"abc\\\\\\\\ndef"))
+        [u'abc\\\\ndef']
+        >>> list(splitlabel(u"abc\xa5\\\\ndef"))
+        [u'abc\\\\ndef']
+    """
+    string = re.sub('^\s*(.*?)\s*$', '\\1', string)
+    string = re.sub('(?:\xa5|\\\\){2}', '\x00', string)
+    string = re.sub('(?:\xa5|\\\\)n', '\n', string)
+    for line in string.splitlines():
+        yield re.sub('\x00', '\\\\', line).strip()
 
 
 class TextFolder(object):
@@ -27,7 +56,6 @@ class TextFolder(object):
         self.box = box
         self.string = string
         self.font = font
-        self.scale = 1
         self.scale = 1
         self.halign = kwargs.get('halign', 'center')
         self.valign = kwargs.get('valign', 'center')
@@ -52,6 +80,7 @@ class TextFolder(object):
         jut out lines will be cut off.
 
         >>> from blockdiag.imagedraw import svg
+        >>> from blockdiag.utils.fontmap import FontInfo
         >>> from functools import partial
         >>> drawer = svg.SVGImageDraw(None, ignore_pil=True)
         >>> box = [0, 0, 100, 50]
@@ -144,48 +173,13 @@ class TextFolder(object):
 
         return box
 
-    def _splitlines(self):
-        u"""
-        Split text to lines as generator.
-        Every line will be stripped.
-        If text includes characters "\n", treat as line separator.
-
-        >>> from blockdiag.imagedraw import svg
-        >>> from functools import partial
-        >>> drawer = svg.SVGImageDraw(None, ignore_pil=True)
-        >>> box = [0, 0, 100, 50]
-        >>> folder = partial(TextFolder, drawer, box)
-        >>> ft = FontInfo('serif', None, 11)
-        >>> [l for l in folder(u"abc", ft)._splitlines()]
-        [u'abc']
-        >>> [l for l in folder(u"abc\\ndef", ft)._splitlines()]
-        [u'abc', u'def']
-        >>> [l for l in folder(u"abc\\\\ndef", ft)._splitlines()]
-        [u'abc', u'def']
-        >>> [l for l in folder(u" abc \\n def ", ft)._splitlines()]
-        [u'abc', u'def']
-        >>> [l for l in folder(u" \\nabc\\\\ndef", ft)._splitlines()]
-        [u'abc', u'def']
-        >>> [l for l in folder(u" \\\\nab \\\\ncd", ft)._splitlines()]
-        [u'', u'ab', u'cd']
-        >>> [l for l in folder(u"abc\\\\\\\\ndef", ft)._splitlines()]
-        [u'abc\\\\ndef']
-        >>> [l for l in folder(u"abc\xa5\\\\ndef", ft)._splitlines()]
-        [u'abc\\\\ndef']
-        """
-        string = re.sub('^\s*(.*?)\s*$', '\\1', self.string)
-        string = re.sub('(?:\xa5|\\\\){2}', '\x00', string)
-        string = re.sub('(?:\xa5|\\\\)n', '\n', string)
-        for line in string.splitlines():
-            yield re.sub('\x00', '\\\\', line).strip()
-
     def _lines(self):
         lines = []
         size = (self.box[2] - self.box[0], self.box[3] - self.box[1])
 
         height = 0
         truncated = 0
-        for line in self._splitlines():
+        for line in splitlabel(self.string):
             while True:
                 string = line.strip()
                 for i in range(0, len(string)):
