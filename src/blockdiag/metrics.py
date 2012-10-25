@@ -202,7 +202,7 @@ class DiagramMetrics(object):
         if self.drawer:
             return self.drawer.textsize(string, font, maxwidth=width)
         else:
-            from blockdiag.utils.textfolder.base import TextFolder
+            from blockdiag.imagedraw.textfolder.base import TextFolder
             folder = TextFolder((0, 0, width, 65535), string, font)
             return folder.outlinebox.size
 
