@@ -129,7 +129,7 @@ class PDFImageDraw(base.ImageDraw):
 
     def textlinesize(self, string, font):
         width = self.canvas.stringWidth(string, font.path, font.size)
-        return Size(int(math.ceil(width)), self.font.size)
+        return Size(int(math.ceil(width)), font.size)
 
     def text(self, xy, string, font, **kwargs):
         self.set_font(font)
