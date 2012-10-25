@@ -47,7 +47,8 @@ class DiagramDraw(object):
         self.metrics = self.MetricsClass(kwargs.get('basediagram', diagram),
                                          drawer=self.drawer, **kwargs)
         if self.scale_ratio == 2:
-            self.metrics = AutoScaler(self.metrics, scale_ratio=ratio)
+            self.metrics = AutoScaler(self.metrics,
+                                      scale_ratio=self.scale_ratio)
 
         self.drawer.set_canvas_size(self.pagesize())
         self.drawer.set_jump_radius(self.metrics.cellsize / 2)
