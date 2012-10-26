@@ -282,6 +282,7 @@ class ImageDrawExBase(base.ImageDraw):
                         int(size[1] * font_ratio))
         else:
             size = self.draw.textsize(string, font=ttfont)
+            size = Size(*size)
 
         return size
 
