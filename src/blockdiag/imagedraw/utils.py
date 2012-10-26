@@ -81,17 +81,17 @@ def textsize(string, font):
         >>> box = [0, 0, 100, 50]
         >>> font = FontInfo('serif', None, 11)
         >>> textsize(u"abc", font)
-        (19, 11)
+        Size(width=19, height=11)
         >>> textsize(u"あいう", font)
-        (33, 11)
+        Size(width=33, height=11)
         >>> textsize(u"あいc", font)
-        (29, 11)
+        Size(width=29, height=11)
         >>> font = FontInfo('serif', None, 24)
         >>> textsize(u"abc", font)
-        (40, 24)
+        Size(width=40, height=24)
         >>> font = FontInfo('serif', None, 18)
         >>> textsize(u"あいう", font)
-        (54, 18)
+        Size(width=54, height=18)
     """
     width = (zenkaku_len(string) * font.size +
              hankaku_len(string) * font.size * 0.55)
