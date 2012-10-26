@@ -82,68 +82,38 @@ class TextFolder(object):
 
         self._result = self._lines()
 
-    def textsize(self, string):
-        return self.drawer.textlinesize(string, self.font)
+    def textsize(self, text):
+        if isinstance(text, (str, unicode)):
+            return self.drawer.textlinesize(text, self.font)
+        else:
+            if text:
+                size = [self.textsize(s) for s in text]
+                width = max(s.width for s in size)
+                height = (sum(s.height for s in size) +
+                          self.line_spacing * (len(text) - 1))
 
-    def height(self):
-        u"""
-        Measure rendering height of text.
-
-        If texts is heighter than bounding box,
-        jut out lines will be cut off.
-
-        >>> from blockdiag.imagedraw import svg
-        >>> from blockdiag.utils.fontmap import FontInfo
-        >>> from functools import partial
-        >>> drawer = svg.SVGImageDraw(None, ignore_pil=True)
-        >>> box = [0, 0, 100, 50]
-        >>> folder = partial(TextFolder, drawer, box)
-        >>> box = [0, 0, 100, 50]
-        >>> _font = FontInfo('serif', None, 11)
-        >>> folder(u"abc", _font).height()
-        11
-        >>> folder(u"abc\\ndef", _font).height()
-        24
-        >>> folder(u"abc\\n\\ndef", _font).height()
-        37
-        >>> folder(u"abc\\ndef\\nghi\\njkl", _font).height()
-        50
-        >>> folder(u"abc\\ndef\\nghi\\njkl\\nmno", _font).height()
-        50
-        >>> font = FontInfo('serif', None, 24)
-        >>> folder(u"abc", font).height()
-        24
-        >>> folder(u"abc\\ndef", _font, line_spacing=8).height()
-        30
-        >>> font = FontInfo('serif', None, 15)
-        >>> folder(u"abc\\ndef", font, line_spacing=8).height()
-        38
-        """
-        height = 0
-        for string in self._result:
-            height += self.textsize(string)[1]
-
-        if len(self._result) > 1:
-            height += (len(self._result) - 1) * self.line_spacing
-
-        return height
+                return Size(width, height)
+            else:
+                return Size(0, 0)
 
     @property
     def lines(self):
-        size = XY(self.box[2] - self.box[0], self.box[3] - self.box[1])
+        size = self.box.size
 
         if self.valign == 'top':
             height = self.line_spacing
         elif self.valign == 'bottom':
-            height = size.y - self.height() - self.line_spacing
+            textsize = self.textsize(self._result)
+            height = size.height - textsize.height - self.line_spacing
         else:
-            height = int(math.ceil((size.y - self.height()) / 2.0))
+            textsize = self.textsize(self._result)
+            height = int(math.ceil((size.height - textsize.height) / 2.0))
         base_xy = XY(self.box[0], self.box[1])
 
         for string in self._result:
             textsize = self.textsize(string)
 
-            halign = size.x - textsize[0] * self.scale
+            halign = size.width - textsize[0] * self.scale
             if self.halign == 'left':
                 x = self.padding
             elif self.halign == 'right':
