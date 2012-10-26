@@ -109,13 +109,14 @@ class TextFolder(object):
         textsize = self.textsize(self._result, scaled=True)
 
         _, dy = self.box.get_padding_for(textsize, valign=self.valign,
-                                         padding=self.line_spacing)
+                                         padding=self.padding)
 
         height = dy
         base_xy = XY(self.box.x1, self.box.y1)
         for string in self._result:
             textsize = self.textsize(string, scaled=True)
-            dx, _ = self.box.get_padding_for(textsize, halign=self.halign)
+            dx, _ = self.box.get_padding_for(textsize, halign=self.halign,
+                                             padding=self.padding)
 
             if self.adjustBaseline:
                 draw_xy = base_xy.shift(dx, height + textsize.height)
