@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import math
 from namedtuple import namedtuple
 
 
@@ -50,6 +51,27 @@ class Box(list):
     def shift(self, x=0, y=0):
         return self.__class__(self.x1 + x, self.y1 + y,
                               self.x2 + x, self.y2 + y)
+
+    def get_padding_for(self, size, **kwargs):
+        valign = kwargs.get('valign', 'center')
+        halign = kwargs.get('halign', 'center')
+        padding = kwargs.get('padding', 0)
+
+        if halign == 'left':
+            dx = padding
+        elif halign == 'right':
+            dx = self.size.width - size.width - padding
+        else:
+            dx = int(math.ceil((self.size.width - size.width) / 2.0))
+
+        if valign == 'top':
+            dy = padding
+        elif valign == 'bottom':
+            dy = self.size.height - size.height - padding
+        else:
+            dy = int(math.ceil((self.size.height - size.height) / 2.0))
+
+        return dx, dy
 
     @property
     def size(self):

@@ -82,9 +82,9 @@ class TextFolder(object):
 
         self._result = self._lines()
 
-    def textsize(self, text):
+    def textsize(self, text, scaled=False):
         if isinstance(text, (str, unicode)):
-            return self.drawer.textlinesize(text, self.font)
+            textsize = self.drawer.textlinesize(text, self.font)
         else:
             if text:
                 size = [self.textsize(s) for s in text]
@@ -92,45 +92,39 @@ class TextFolder(object):
                 height = (sum(s.height for s in size) +
                           self.line_spacing * (len(text) - 1))
 
-                return Size(width, height)
+                textsize = Size(width, height)
             else:
-                return Size(0, 0)
+                textsize = Size(0, 0)
+
+        if scaled:
+            textsize = Size(textsize.width * self.scale,
+                            textsize.height * self.scale)
+
+        return textsize
 
     @property
     def lines(self):
         size = self.box.size
 
-        if self.valign == 'top':
-            height = self.line_spacing
-        elif self.valign == 'bottom':
-            textsize = self.textsize(self._result)
-            height = size.height - textsize.height - self.line_spacing
-        else:
-            textsize = self.textsize(self._result)
-            height = int(math.ceil((size.height - textsize.height) / 2.0))
-        base_xy = XY(self.box[0], self.box[1])
+        textsize = self.textsize(self._result, scaled=True)
 
+        _, dy = self.box.get_padding_for(textsize, valign=self.valign,
+                                         padding=self.line_spacing)
+
+        height = dy
+        base_xy = XY(self.box.x1, self.box.y1)
         for string in self._result:
-            textsize = self.textsize(string)
-
-            halign = size.width - textsize[0] * self.scale
-            if self.halign == 'left':
-                x = self.padding
-            elif self.halign == 'right':
-                x = halign - self.padding
-            else:
-                x = int(math.ceil(halign / 2.0))
+            textsize = self.textsize(string, scaled=True)
+            dx, _ = self.box.get_padding_for(textsize, halign=self.halign)
 
             if self.adjustBaseline:
-                height += textsize[1]
-            draw_xy = XY(base_xy.x + x, base_xy.y + height)
+                draw_xy = base_xy.shift(dx, height + textsize.height)
+            else:
+                draw_xy = base_xy.shift(dx, height)
 
             yield string, draw_xy
 
-            if self.adjustBaseline:
-                height += self.line_spacing
-            else:
-                height += textsize[1] + self.line_spacing
+            height += textsize.height + self.line_spacing
 
     @property
     def outlinebox(self):
