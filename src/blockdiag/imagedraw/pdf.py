@@ -233,3 +233,8 @@ class PDFImageDraw(base.ImageDraw):
 
         self.canvas.showPage()
         self.canvas.save()
+
+
+def setup(self):
+    from blockdiag.imagedraw import install_imagedrawer
+    install_imagedrawer('pdf', PDFImageDraw)

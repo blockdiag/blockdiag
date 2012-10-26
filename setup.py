@@ -119,6 +119,11 @@ setup(
         [blockdiag_plugins]
         attributes = blockdiag.plugins.attributes
         autoclass = blockdiag.plugins.autoclass
+
+        [blockdiag_imagedrawers]
+        imagedraw_png = blockdiag.imagedraw.png
+        imagedraw_svg = blockdiag.imagedraw.svg
+        imagedraw_pdf = blockdiag.imagedraw.pdf
      """,
 )
 
