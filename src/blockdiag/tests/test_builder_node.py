@@ -64,10 +64,11 @@ def test_multiple_node_relation_diagram():
 def test_node_attribute():
     labels = {'A': 'B', 'B': 'double quoted', 'C': 'single quoted',
               'D': '\'"double" quoted\'', 'E': '"\'single\' quoted"',
-              'F': 'F', 'G': 'G', 'H': 'H', 'I': 'I'}
+              'F': 'F', 'G': 'G', 'H': 'H', 'I': 'I', 'J': 'Hello'}
     colors = {'A': (255, 0, 0), 'B': (255, 255, 255), 'C': (255, 0, 0),
               'D': (255, 0, 0), 'E': (255, 0, 0), 'F': (255, 255, 255),
-              'G': (255, 255, 255), 'H': (255, 255, 255), 'I': (255, 255, 255)}
+              'G': (255, 255, 255), 'H': (255, 255, 255), 'I': (255, 255, 255),
+              'J': (255, 255, 255)}
     textcolors = defaultdict(lambda: (0, 0, 0))
     textcolors['F'] = (255, 0, 0)
     numbered = defaultdict(lambda: None)
@@ -78,11 +79,14 @@ def test_node_attribute():
     fontsize['H'] = 16
     linecolors = defaultdict(lambda: (0, 0, 0))
     linecolors['I'] = (255, 0, 0)
+    orientations = defaultdict(lambda: 'horizontal')
+    orientations['J'] = 'vertical'
 
     __validate_node_attributes('node_attribute.diag', label=labels,
                                color=colors, textcolor=textcolors,
                                numbered=numbered, stacked=stacked,
-                               fontsize=fontsize, linecolor=linecolors)
+                               fontsize=fontsize, linecolor=linecolors,
+                               label_orientation=orientations)
 
 
 def test_node_height_diagram():
