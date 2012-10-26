@@ -20,30 +20,12 @@ from blockdiag.utils import Box, XY
 
 
 def splitlabel(string):
-    u"""Split text to lines as generator.
-        Every line will be stripped.
-        If text includes characters "\n", treat as line separator.
-
-        >>> splitlabel(u"abc")  # doctest: +ELLIPSIS
-        <generator object splitlabel at 0x...>
-        >>> list(splitlabel(u"abc"))
-        [u'abc']
-        >>> list(splitlabel(u"abc\\ndef"))
-        [u'abc', u'def']
-        >>> list(splitlabel(u"abc\\\\ndef"))
-        [u'abc', u'def']
-        >>> list(splitlabel(u" abc \\n def "))
-        [u'abc', u'def']
-        >>> list(splitlabel(u" \\nabc\\\\ndef"))
-        [u'abc', u'def']
-        >>> list(splitlabel(u" \\\\nab \\\\ncd"))
-        [u'', u'ab', u'cd']
-        >>> list(splitlabel(u"abc\\\\\\\\ndef"))
-        [u'abc\\\\ndef']
-        >>> list(splitlabel(u"abc\xa5\\\\ndef"))
-        [u'abc\\\\ndef']
+    """Split text to lines as generator.
+       Every line will be stripped.
+       If text includes characters "\n", treat as line separator.
     """
-    string = re.sub('^\s*(.*?)\s*$', '\\1', string)
+    string = re.sub('^\s*', '', string)
+    string = re.sub('\s*$', '', string)
     string = re.sub('(?:\xa5|\\\\){2}', '\x00', string)
     string = re.sub('(?:\xa5|\\\\)n', '\n', string)
     for line in string.splitlines():
