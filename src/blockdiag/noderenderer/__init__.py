@@ -122,7 +122,7 @@ class NodeShape(object):
             xy = self.metrics.cell(self.node).topleft
             r = self.metrics.cellsize * 3 / 2
 
-            box = (xy.x - r, xy.y - r, xy.x + r, xy.y + r)
+            box = Box(xy.x - r, xy.y - r, xy.x + r, xy.y + r)
             font = self.metrics.font_for(self.node)
             drawer.ellipse(box, outline=self.node.linecolor, fill=badgeFill)
             drawer.textarea(box, self.node.numbered, font,
