@@ -312,3 +312,8 @@ class SVGImageDraw(SVGImageDrawElement):
             open(self.filename, 'w').write(svg)
 
         return svg
+
+
+def setup(self):
+    from blockdiag.imagedraw import install_imagedrawer
+    install_imagedrawer('svg', SVGImageDraw)

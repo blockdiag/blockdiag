@@ -473,3 +473,8 @@ class ImageDrawEx(ImageDrawExBase):
     @blurred
     def polygon(self, xy, **kwargs):
         super(ImageDrawEx, self).polygon(xy, **kwargs)
+
+
+def setup(self):
+    from blockdiag.imagedraw import install_imagedrawer
+    install_imagedrawer('png', ImageDrawEx)

@@ -13,28 +13,29 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import pkg_resources
+
 drawers = {}
 
-try:
-    from png import ImageDrawEx
-    drawers['png'] = ImageDrawEx
-except ImportError:
-    pass
 
-try:
-    from svg import SVGImageDraw
-    drawers['svg'] = SVGImageDraw
-except RuntimeError:
-    pass
+def init_imagedrawers():
+    for drawer in pkg_resources.iter_entry_points('blockdiag_imagedrawers'):
+        try:
+            module = drawer.load()
+            if hasattr(module, 'setup'):
+                module.setup(module)
+        except:
+            pass
 
-try:
-    from pdf import PDFImageDraw
-    drawers['pdf'] = PDFImageDraw
-except ImportError:
-    pass
+
+def install_imagedrawer(ext, drawer):
+    drawers[ext] = drawer
 
 
 def create(format, filename, **kwargs):
+    if len(drawers) == 0:
+        init_imagedrawers()
+
     format = format.lower()
     if format in drawers:
         drawer = drawers[format](filename, **kwargs)
