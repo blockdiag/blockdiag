@@ -15,6 +15,7 @@
 
 import math
 import unicodedata
+from blockdiag.utils import Size
 
 
 def is_zenkaku(char):
@@ -95,4 +96,4 @@ def textsize(string, font):
     width = (zenkaku_len(string) * font.size +
              hankaku_len(string) * font.size * 0.55)
 
-    return (int(math.ceil(width)), font.size)
+    return Size(int(math.ceil(width)), font.size)

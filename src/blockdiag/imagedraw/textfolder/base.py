@@ -50,6 +50,33 @@ def splitlabel(string):
         yield re.sub('\x00', '\\\\', line).strip()
 
 
+def splittext(metrics, text, bound, measure='width'):
+    folded = []
+    if text == '':
+        folded.append(text)
+
+    for i in range(len(text), 0, -1):
+        textsize = metrics.textsize(text[0:i])
+
+        if getattr(textsize, measure) <= bound:
+            folded.append(text[0:i])
+            if text[i:]:
+                folded += splittext(metrics, text[i:], bound, measure)
+            break
+
+    return folded
+
+
+def truncate_text(metrics, text, bound, measure='width'):
+    for i in range(len(text), 0, -1):
+        textsize = metrics.textsize(text[0:i] + ' ...')
+
+        if getattr(textsize, measure) <= bound:
+            return text[0:i] + ' ...'
+
+    return text
+
+
 class TextFolder(object):
     def __init__(self, drawer, box, string, font, **kwargs):
         self.drawer = drawer
@@ -175,48 +202,17 @@ class TextFolder(object):
 
     def _lines(self):
         lines = []
-        size = (self.box[2] - self.box[0], self.box[3] - self.box[1])
-
         height = 0
-        truncated = 0
+        maxwidth, maxheight = self.box.size
+
         for line in splitlabel(self.string):
-            while True:
-                string = line.strip()
-                for i in range(0, len(string)):
-                    length = len(string) - i
-                    metrics = self.textsize(string[0:length])
+            for folded in splittext(self, line, maxwidth):
+                textsize = self.textsize(folded)
 
-                    if metrics[0] <= size[0]:
-                        break
-                else:
-                    length = 0
-                    metrics = self.textsize(u" ")
-
-                if size[1] < height + metrics[1]:
-                    truncated = 1
-                    break
-
-                lines.append(string[0:length])
-                height += metrics[1] + self.line_spacing
-
-                line = string[length:]
-                if line == "":
-                    break
-
-        # truncate last line.
-        if len(lines) == 0:
-            pass
-        elif truncated:
-            string = lines.pop()
-            for i in range(0, len(string)):
-                if i == 0:
-                    truncated = string + ' ...'
-                else:
-                    truncated = string[0:-i] + ' ...'
-
-                metrics = self.textsize(truncated)
-                if metrics[0] <= size[0]:
-                    lines.append(truncated)
-                    break
+                if height + textsize.height + self.line_spacing < maxheight:
+                    lines.append(folded)
+                    height += textsize.height + self.line_spacing
+                elif len(lines) > 0:
+                    lines[-1] = truncate_text(self, lines[-1], maxwidth)
 
         return lines
