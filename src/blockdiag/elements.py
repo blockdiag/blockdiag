@@ -168,6 +168,7 @@ class DiagramNode(Element):
     shape = 'box'
     int_attrs = Element.int_attrs + ['rotate']
     linecolor = (0, 0, 0)
+    label_orientation = 'horizontal'
     desctable = []
     attrname = {}
 
@@ -184,6 +185,7 @@ class DiagramNode(Element):
         super(DiagramNode, cls).clear()
         cls.shape = 'box'
         cls.linecolor = (0, 0, 0)
+        cls.label_orientation = 'horizontal'
         cls.desctable = ['numbered', 'label', 'description']
         cls.attrname = dict(numbered='No', label='Name',
                             description='Description')
@@ -232,6 +234,14 @@ class DiagramNode(Element):
 
     def set_stacked(self, value):
         self.stacked = True
+
+    def set_label_orientation(self, value):
+        value = value.lower()
+        if value in ('horizontal', 'vertical'):
+            self.label_orientation = value
+        else:
+            msg = "WARNING: unknown label orientation: %s\n" % value
+            raise AttributeError(msg)
 
     def to_desctable(self):
         attrs = []
@@ -594,6 +604,14 @@ class Diagram(NodeGroup):
             DiagramNode.set_default_shape(value)
         else:
             msg = "WARNING: unknown node shape: %s\n" % value
+            raise AttributeError(msg)
+
+    def set_default_label_orientation(self, value):
+        value = value.lower()
+        if value in ('horizontal', 'vertical'):
+            DiagramNode.label_orientation = value
+        else:
+            msg = "WARNING: unknown label orientation: %s\n" % value
             raise AttributeError(msg)
 
     def set_default_text_color(self, color):

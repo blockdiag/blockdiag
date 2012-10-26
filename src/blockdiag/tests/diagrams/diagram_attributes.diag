@@ -9,6 +9,7 @@ blockdiag {
   default_group_color = blue
   default_linecolor = gray
   default_textcolor = green
+  default_label_orientation = vertical
 
   A -> B;
   group {
