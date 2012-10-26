@@ -59,6 +59,10 @@ def truncate_text(metrics, text, bound, measure='width'):
     return text
 
 
+def get(*args, **kwargs):
+    return TextFolder(*args, **kwargs)
+
+
 class TextFolder(object):
     def __init__(self, drawer, box, string, font, **kwargs):
         self.drawer = drawer

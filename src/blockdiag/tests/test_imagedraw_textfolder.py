@@ -3,9 +3,9 @@
 import os
 import sys
 import unittest2
-from blockdiag.imagedraw.textfolder.base import splitlabel
-from blockdiag.imagedraw.textfolder.base import splittext
-from blockdiag.imagedraw.textfolder.base import truncate_text
+from blockdiag.imagedraw.textfolder import splitlabel
+from blockdiag.imagedraw.textfolder import splittext
+from blockdiag.imagedraw.textfolder import truncate_text
 from blockdiag.utils import Size
 
 
