@@ -81,7 +81,7 @@ class TestTextFolder(unittest2.TestCase):
         # empty text
         text = ""
         ret = splittext(metrics, text, CHAR_WIDTH * 3)
-        self.assertEqual([''], ret)
+        self.assertEqual([' '], ret)
 
     def test_truncate_text(self):
         metrics = Metrics()
