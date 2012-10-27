@@ -17,6 +17,7 @@ import os
 import re
 import sys
 from optparse import OptionParser
+from blockdiag import imagedraw
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 
@@ -161,7 +162,9 @@ class Options(object):
             self.options.output = basename + ext
 
         self.options.type = self.options.type.upper()
-        if not self.options.type in ('SVG', 'PNG', 'PDF'):
+        try:
+            imagedraw.create(self.options.type, None)
+        except:
             msg = "unknown format: %s" % self.options.type
             raise RuntimeError(msg)
 
