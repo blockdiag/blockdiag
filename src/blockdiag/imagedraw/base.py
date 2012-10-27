@@ -19,6 +19,8 @@ class ImageDraw(object):
     nosideeffect_methods = ['textsize', 'textlinesize']
     supported_path = False
 
+    _method_cache = {}
+
     def set_canvas_size(self, size):
         pass
 

@@ -16,6 +16,7 @@
 import re
 import base64
 from blockdiag.imagedraw import base as _base, textfolder
+from blockdiag.imagedraw.utils import cached
 from blockdiag.utils import urlutil, Box, XY
 from simplesvg import *
 
@@ -106,6 +107,7 @@ class SVGImageDrawElement(_base.ImageDraw):
                                  adjustBaseline=True, **kwargs)
         return textbox.outlinebox.size
 
+    @cached
     def textlinesize(self, string, font, **kwargs):
         if kwargs.get('ignore_pil', self.ignore_pil):
             from blockdiag.imagedraw.utils import textsize
