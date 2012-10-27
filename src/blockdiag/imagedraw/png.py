@@ -18,6 +18,7 @@ import math
 from itertools import izip, tee
 from functools import wraps
 from blockdiag.imagedraw import base, textfolder
+from blockdiag.imagedraw.utils import cached
 from blockdiag.utils import ellipse, urlutil, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
@@ -272,6 +273,7 @@ class ImageDrawExBase(base.ImageDraw):
                                  scale=self.scale_ratio, **kwargs)
         return textbox.outlinebox.size
 
+    @cached
     def textlinesize(self, string, font):
         ttfont = ttfont_for(font)
         if ttfont is None:

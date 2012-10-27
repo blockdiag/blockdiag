@@ -20,6 +20,7 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from blockdiag.imagedraw import base, textfolder
+from blockdiag.imagedraw.utils import cached
 from blockdiag.utils import urlutil, Box, Size
 from blockdiag.utils.fontmap import parse_fontpath
 
@@ -131,6 +132,7 @@ class PDFImageDraw(base.ImageDraw):
                                  adjustBaseline=True, **kwargs)
         return textbox.outlinebox.size
 
+    @cached
     def textlinesize(self, string, font):
         width = self.canvas.stringWidth(string, font.path, font.size)
         return Size(int(math.ceil(width)), font.size)
