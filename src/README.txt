@@ -113,6 +113,12 @@ Apache License 2.0
 History
 =======
 
+1.2.1 (2012-10-28)
+------------------
+* Add external imagedraw plugin supports
+* Add node attribute: label_orientation*
+* Fix bugs
+
 1.2.0 (2012-10-22)
 ------------------
 * Optimize algorithm for rendering shadow
