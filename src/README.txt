@@ -113,6 +113,10 @@ Apache License 2.0
 History
 =======
 
+1.2.2 (2012-10-28)
+------------------
+* Fix bugs
+
 1.2.1 (2012-10-28)
 ------------------
 * Add external imagedraw plugin supports
