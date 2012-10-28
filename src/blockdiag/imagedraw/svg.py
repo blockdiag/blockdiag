@@ -102,7 +102,7 @@ class SVGImageDrawElement(_base.ImageDraw):
         if maxwidth is None:
             maxwidth = 65535
 
-        box = (0, 0, maxwidth, 65535)
+        box = Box(0, 0, maxwidth, 65535)
         textbox = textfolder.get(self, box, string, font,
                                  adjustBaseline=True, **kwargs)
         return textbox.outlinebox.size
