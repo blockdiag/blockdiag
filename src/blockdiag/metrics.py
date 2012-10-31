@@ -197,12 +197,7 @@ class DiagramMetrics(object):
         return metrics
 
     def textsize(self, string, font=None, width=65535):
-        if self.drawer:
-            return self.drawer.textsize(string, font, maxwidth=width)
-        else:
-            from blockdiag.imagedraw.textfolder.base import TextFolder
-            folder = TextFolder((0, 0, width, 65535), string, font)
-            return folder.outlinebox.size
+        return self.drawer.textsize(string, font, maxwidth=width)
 
     def node(self, node):
         renderer = noderenderer.get(node.shape)
@@ -375,6 +370,14 @@ class EdgeMetrics(object):
     def __init__(self, edge, metrics):
         self.metrics = metrics
         self.edge = edge
+
+    @property
+    def headshapes(self):
+        pass
+
+    @property
+    def _shaft(self):
+        pass
 
     @property
     def heads(self):
