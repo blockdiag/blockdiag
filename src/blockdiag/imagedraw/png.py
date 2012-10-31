@@ -131,6 +131,10 @@ class ImageDrawExBase(base.ImageDraw):
 
         self.set_canvas_size(Size(1, 1))  # This line make textsize() workable
 
+    def paste(self, image, pt, mask=None):
+        self._image.paste(image, pt, mask)
+        self.draw = ImageDraw.Draw(self._image)
+
     def set_canvas_size(self, size):
         if self.transparency:
             mode = 'RGBA'
@@ -306,8 +310,7 @@ class ImageDrawExBase(base.ImageDraw):
                 basesize = (int(size[0] * self.scale_ratio * font_ratio),
                             int(size[1] * self.scale_ratio * font_ratio))
                 text_image = image.resize(basesize, Image.ANTIALIAS)
-
-                self._image.paste(text_image, xy, text_image)
+                self.paste(text_image, xy, text_image)
         else:
             size = self.draw.textsize(string, font=ttfont)
 
@@ -318,9 +321,7 @@ class ImageDrawExBase(base.ImageDraw):
 
             # Rendering text
             filler = Image.new('RGB', size, fill)
-            self._image.paste(filler, xy, mask)
-
-            self.draw = ImageDraw.Draw(self._image)
+            self.paste(filler, xy, mask)
 
     def textarea(self, box, string, font, **kwargs):
         if 'rotate' in kwargs and kwargs['rotate'] != 0:
@@ -338,8 +339,7 @@ class ImageDrawExBase(base.ImageDraw):
             text.textarea(textbox, string, font, **kwargs)
 
             filter = Image.new('RGB', box.size, kwargs.get('fill'))
-            self._image.paste(filter, box.topleft, text._image.rotate(angle))
-            self.draw = ImageDraw.Draw(self._image)
+            self.paste(filter, box.topleft, text._image.rotate(angle))
             return
 
         lines = textfolder.get(self, box, string, font,
@@ -388,8 +388,7 @@ class ImageDrawExBase(base.ImageDraw):
         else:
             y = box[1]
 
-        self._image.paste(image, (x, y))
-        self.draw = ImageDraw.Draw(self._image)
+        self.paste(image, (x, y))
 
     def save(self, filename, size, format):
         if filename:
@@ -456,9 +455,7 @@ def blurred(fn):
             size = Size(box.width + PADDING * 2, box.height + PADDING * 2)
             shadow = create_shadow(self, size, *args, **kwargs)
             xy = XY(box.x1 - PADDING, box.y1 - PADDING)
-            self._image.paste(shadow, xy, shadow)
-
-            self.draw = ImageDraw.Draw(self._image)
+            self.paste(shadow, xy, shadow)
 
     return func
 
