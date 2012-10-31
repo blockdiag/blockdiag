@@ -571,7 +571,7 @@ class Diagram(NodeGroup):
 
     @classmethod
     def clear(cls):
-        super(NodeGroup, cls).clear()
+        super(Diagram, cls).clear()
         cls.shadow_style = 'blur'
         cls.linecolor = (0, 0, 0)
         cls.classes = {}

@@ -37,7 +37,7 @@ class Box(list):
     mapper = dict(x1=0, y1=1, x2=2, y2=3)
 
     def __init__(self, x1, y1, x2, y2):
-        return super(Box, self).__init__((x1, y1, x2, y2))
+        super(Box, self).__init__((x1, y1, x2, y2))
 
     def __getattr__(self, name):
         return self[self.mapper[name]]

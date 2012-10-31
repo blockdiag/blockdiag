@@ -173,7 +173,7 @@ class pathdata:
         self.path.append('H%s' % (x,))
 
     def relhline(self, x):
-        self.path.append('h%s %s' % (x,))
+        self.path.append('h%s' % (x,))
 
     def vline(self, y):
         self.path.append('V%s' % (y,))
