@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
-import sys
 import unittest2
 from blockdiag.imagedraw.textfolder import splitlabel
 from blockdiag.imagedraw.textfolder import splittext
@@ -21,9 +19,6 @@ class Metrics(object):
 
 class TestTextFolder(unittest2.TestCase):
     def test_splitlabel(self):
-        labels = splitlabel("abc")
-        #self.assertIsInstance(labels, generator)
-
         # single line text
         text = "abc"
         self.assertItemsEqual(['abc'], splitlabel(text))

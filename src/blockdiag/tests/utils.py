@@ -9,6 +9,8 @@ from blockdiag.parser import parse_string
 def supported_pil():
     try:
         import _imagingft
+        _imagingft
+
         return True
     except:
         return False
@@ -24,6 +26,8 @@ def with_pil(fn):
 def supported_pdf():
     try:
         import reportlab
+        reportlab
+
         return True
     except:
         return False

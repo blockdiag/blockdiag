@@ -366,7 +366,7 @@ class ImageDrawExBase(base.ImageDraw):
                 url = cStringIO.StringIO(urllib.urlopen(url).read())
             except:
                 import sys
-                msg = "WARNING: Could not retrieve: %s\n" % filename
+                msg = "WARNING: Could not retrieve: %s\n" % url
                 sys.stderr.write(msg)
                 return
         image = Image.open(url)
