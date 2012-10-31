@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 import re
-import math
 from blockdiag.imagedraw.utils import *
 from blockdiag.utils import Box, XY
 
@@ -112,8 +111,6 @@ class VerticalTextFolder(object):
 
     @property
     def lines(self):
-        size = self.box.size
-
         textsize = self.textsize(self._result, scaled=True)
 
         dx, _ = self.box.get_padding_for(textsize, halign=self.halign,
@@ -231,8 +228,6 @@ class HorizontalTextFolder(object):
 
     @property
     def lines(self):
-        size = self.box.size
-
         textsize = self.textsize(self._result, scaled=True)
 
         _, dy = self.box.get_padding_for(textsize, valign=self.valign,

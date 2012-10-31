@@ -215,19 +215,19 @@ class TestBootParams(unittest2.TestCase):
     @argv_wrapper
     def test_invalid_size_option1(self):
         sys.argv = ['', '--size', '480-360', 'input.diag']
-        options = self.parser.parse()
+        self.parser.parse()
 
     @assertRaises(RuntimeError)
     @argv_wrapper
     def test_invalid_size_option2(self):
         sys.argv = ['', '--size', '480', 'input.diag']
-        options = self.parser.parse()
+        self.parser.parse()
 
     @assertRaises(RuntimeError)
     @argv_wrapper
     def test_invalid_size_option3(self):
         sys.argv = ['', '--size', 'foobar', 'input.diag']
-        options = self.parser.parse()
+        self.parser.parse()
 
     @argv_wrapper
     def test_auto_font_detection(self):

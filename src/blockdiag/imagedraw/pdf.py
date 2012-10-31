@@ -222,7 +222,7 @@ class PDFImageDraw(base.ImageDraw):
             try:
                 url = ImageReader(url)
             except:
-                msg = "WARNING: Could not retrieve: %s\n" % filename
+                msg = "WARNING: Could not retrieve: %s\n" % url
                 sys.stderr.write(msg)
                 return
 
