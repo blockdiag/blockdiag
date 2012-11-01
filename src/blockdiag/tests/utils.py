@@ -3,7 +3,7 @@ import re
 import sys
 from StringIO import StringIO
 from nose.tools import eq_
-from blockdiag.builder import *
+from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.parser import parse_string
 
 
