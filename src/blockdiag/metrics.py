@@ -261,7 +261,6 @@ class SpreadSheetMetrics(object):
             self.span_height[y] = height
 
     def node(self, node, use_padding=True):
-        x, y = node.xy
         x1, y1 = self._node_topleft(node, use_padding)
         x2, y2 = self._node_bottomright(node, use_padding)
 

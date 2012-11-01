@@ -128,7 +128,7 @@ class FontMap(object):
         self.append_font(self.default_fontfamily, path)
 
     def append_font(self, fontfamily, path):
-        _path, index = parse_fontpath(path)
+        _path, _ = parse_fontpath(path)
         if path is None or os.path.isfile(_path):
             font = FontInfo(fontfamily, path, self.fontsize)
             self.fonts[font.familyname] = font

@@ -258,7 +258,7 @@ def detectfont(options):
     fontpath = None
     if options.font:
         for path in options.font:
-            _path, index = parse_fontpath(path)
+            _path, _ = parse_fontpath(path)
             if os.path.isfile(_path):
                 fontpath = path
                 break
@@ -269,7 +269,7 @@ def detectfont(options):
     if fontpath is None:
         globber = (glob.glob(d) for d in fontdirs)
         for fontdir in sum(globber, []):
-            for root, dirs, files in os.walk(fontdir):
+            for root, _, files in os.walk(fontdir):
                 for font in fontfiles:
                     if font in files:
                         fontpath = os.path.join(root, font)
