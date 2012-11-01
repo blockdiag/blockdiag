@@ -44,7 +44,7 @@ def create(_format, filename, **kwargs):
         raise RuntimeError(msg)
 
     if 'linejump' in kwargs.get('filters', []):
-        from filters.linejump import LineJumpDrawFilter
+        from blockdiag.imagedraw.filters.linejump import LineJumpDrawFilter
         jumpsize = kwargs.get('jumpsize', 0)
         drawer = LineJumpDrawFilter(drawer, jumpsize)
 

@@ -4,7 +4,8 @@ import os
 import sys
 import tempfile
 import unittest2
-from utils import argv_wrapper, assertRaises, with_pdf
+from blockdiag.tests.utils import argv_wrapper, assertRaises, with_pdf
+
 import blockdiag
 from blockdiag.command import BlockdiagOptions
 from blockdiag.utils.bootstrap import detectfont

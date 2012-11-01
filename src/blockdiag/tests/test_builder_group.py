@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from utils import __build_diagram, __validate_node_attributes
+from blockdiag.tests.utils import __build_diagram, __validate_node_attributes
 
 
 def test_nested_groups_diagram():

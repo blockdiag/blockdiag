@@ -13,11 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import noderenderer
-import imagedraw
-from metrics import AutoScaler
-from metrics import DiagramMetrics
-from utils.collections import defaultdict
+from blockdiag import imagedraw, noderenderer
+from blockdiag.metrics import AutoScaler, DiagramMetrics
+from blockdiag.utils.collections import defaultdict
 
 
 class DiagramDraw(object):

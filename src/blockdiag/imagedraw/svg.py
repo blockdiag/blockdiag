@@ -16,9 +16,9 @@
 import re
 import base64
 from blockdiag.imagedraw import base as _base, textfolder
+from blockdiag.imagedraw.simplesvg import *
 from blockdiag.imagedraw.utils import cached
 from blockdiag.utils import urlutil, Box, XY
-from simplesvg import *
 
 feGaussianBlur = svgclass('feGaussianBlur')
 
@@ -114,7 +114,7 @@ class SVGImageDrawElement(_base.ImageDraw):
             return textsize(string, font)
         else:
             if not hasattr(self, '_pil_drawer'):
-                import png
+                from blockdiag.imagedraw import png
                 self._pil_drawer = png.ImageDrawEx(None)
 
             return self._pil_drawer.textlinesize(string, font)

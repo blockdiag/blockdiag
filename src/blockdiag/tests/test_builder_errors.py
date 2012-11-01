@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from blockdiag.parser import *
 from nose.tools import raises
-from utils import __build_diagram
+from blockdiag.tests.utils import __build_diagram
+
+from blockdiag.parser import *
 
 
 @raises(AttributeError)

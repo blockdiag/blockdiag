@@ -14,5 +14,5 @@
 #  limitations under the License.
 
 
-from collections import namedtuple
+from blockdiag.utils.collections import namedtuple
 namedtuple

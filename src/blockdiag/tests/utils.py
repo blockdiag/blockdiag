@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import sys
 from StringIO import StringIO
 from nose.tools import eq_
 from blockdiag.builder import *

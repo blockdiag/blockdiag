@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import math
-from namedtuple import namedtuple
+from blockdiag.utils.collections import namedtuple
 
 
 Size = namedtuple('Size', 'width height')

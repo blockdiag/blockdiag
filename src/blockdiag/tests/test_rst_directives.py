@@ -3,7 +3,8 @@
 import os
 import tempfile
 import unittest2
-from utils import stderr_wrapper, assertRaises
+from blockdiag.tests.utils import stderr_wrapper, assertRaises
+
 from docutils import nodes
 from docutils.core import publish_doctree, publish_parts
 from docutils.parsers.rst import directives as docutils

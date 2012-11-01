@@ -13,9 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from elements import *
-import parser
-from utils import XY
+from blockdiag import parser
+from blockdiag.elements import Diagram, DiagramNode, NodeGroup, DiagramEdge
+from blockdiag.elements import unquote
+from blockdiag.utils import XY
 
 
 class DiagramTreeBuilder:

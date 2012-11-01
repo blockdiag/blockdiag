@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from utils import stderr_wrapper, __build_diagram, __validate_node_attributes
+from blockdiag.tests.utils import (stderr_wrapper, __build_diagram,
+                                   __validate_node_attributes)
 
 
 def test_single_edge_diagram():

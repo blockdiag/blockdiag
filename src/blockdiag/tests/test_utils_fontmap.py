@@ -4,7 +4,8 @@ import os
 import sys
 import tempfile
 import unittest2
-from utils import stderr_wrapper, assertRaises
+from blockdiag.tests.utils import stderr_wrapper, assertRaises
+
 from cStringIO import StringIO
 from blockdiag.utils.collections import namedtuple
 from blockdiag.utils.fontmap import FontInfo, FontMap
