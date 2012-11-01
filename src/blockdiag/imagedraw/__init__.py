@@ -32,15 +32,15 @@ def install_imagedrawer(ext, drawer):
     drawers[ext] = drawer
 
 
-def create(format, filename, **kwargs):
+def create(_format, filename, **kwargs):
     if len(drawers) == 0:
         init_imagedrawers()
 
-    format = format.lower()
-    if format in drawers:
-        drawer = drawers[format](filename, **kwargs)
+    _format = _format.lower()
+    if _format in drawers:
+        drawer = drawers[_format](filename, **kwargs)
     else:
-        msg = 'failed to load %s image driver' % format
+        msg = 'failed to load %s image driver' % _format
         raise RuntimeError(msg)
 
     if 'linejump' in kwargs.get('filters', []):

@@ -38,7 +38,7 @@ class TextBox(NodeShape):
         if self.node.icon:
             self.connectors[3] = XY(self.iconbox[0], pt.y)
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         if not kwargs.get('shadow') and self.node.background:
             drawer.image(self.textbox, self.node.background)
 

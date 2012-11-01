@@ -28,15 +28,15 @@ class Terminator(NodeShape):
         self.textbox = Box(m.topleft.x + r, m.topleft.y,
                            m.bottomright.x - r, m.bottomright.y)
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         # draw background
-        self.render_shape_background(drawer, format, **kwargs)
+        self.render_shape_background(drawer, **kwargs)
 
         # draw outline
         if not kwargs.get('shadow') and self.node.background:
             drawer.image(self.textbox, self.node.background)
 
-    def render_shape_background(self, drawer, format, **kwargs):
+    def render_shape_background(self, drawer, **kwargs):
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)
@@ -78,7 +78,7 @@ class Terminator(NodeShape):
                 drawer.line(line, fill=self.node.linecolor,
                             style=self.node.style)
 
-    def render_vector_shape(self, drawer, format, **kwargs):
+    def render_vector_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         # create pathdata

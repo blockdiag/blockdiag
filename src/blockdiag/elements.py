@@ -119,13 +119,13 @@ class Element(Base):
     int_attrs = Base.int_attrs + ['width', 'height']
 
     @classmethod
-    def get(cls, id):
-        if not id:
-            id = uuid.generate()
+    def get(cls, elemid):
+        if not elemid:
+            elemid = uuid.generate()
 
-        unquote_id = unquote(id)
+        unquote_id = unquote(elemid)
         if unquote_id not in cls.namespace:
-            obj = cls(id)
+            obj = cls(elemid)
             cls.namespace[unquote_id] = obj
 
         return cls.namespace[unquote_id]
@@ -137,8 +137,8 @@ class Element(Base):
         cls.basecolor = (255, 255, 255)
         cls.textcolor = (0, 0, 0)
 
-    def __init__(self, id):
-        self.id = unquote(id)
+    def __init__(self, elemid):
+        self.id = unquote(elemid)
         self.label = ''
         self.xy = XY(0, 0)
         self.group = None
@@ -152,10 +152,10 @@ class Element(Base):
         self.stacked = False
 
     def __repr__(self):
-        format = "<%s '%s' %s %dx%d at 0x%08x>"
+        _format = "<%s '%s' %s %dx%d at 0x%08x>"
         params = (self.__class__.__name__, self.id, str(self.xy),
                   self.colwidth, self.colheight, id(self))
-        return format % params
+        return _format % params
 
     def set_color(self, color):
         self.color = images.color_to_rgb(color)
@@ -190,10 +190,10 @@ class DiagramNode(Element):
         cls.attrname = dict(numbered='No', label='Name',
                             description='Description')
 
-    def __init__(self, id):
-        super(DiagramNode, self).__init__(id)
+    def __init__(self, elemid):
+        super(DiagramNode, self).__init__(elemid)
 
-        self.label = unquote(id) or ''
+        self.label = unquote(elemid) or ''
         self.numbered = None
         self.icon = None
         self.background = None
@@ -232,7 +232,7 @@ class DiagramNode(Element):
             msg = "WARNING: background image not found: %s\n" % value
             sys.stderr.write(msg)
 
-    def set_stacked(self, value):
+    def set_stacked(self, _):
         self.stacked = True
 
     def set_label_orientation(self, value):
@@ -263,8 +263,8 @@ class NodeGroup(Element):
         super(NodeGroup, cls).clear()
         cls.basecolor = (243, 152, 0)
 
-    def __init__(self, id):
-        super(NodeGroup, self).__init__(id)
+    def __init__(self, elemid):
+        super(NodeGroup, self).__init__(elemid)
 
         self.level = 0
         self.separated = False
@@ -462,10 +462,10 @@ class DiagramEdge(Base):
         self.thick = None
 
     def __repr__(self):
-        format = "<%s '%s' %s - '%s' %s at 0x%08x>"
+        _format = "<%s '%s' %s - '%s' %s at 0x%08x>"
         params = (self.__class__.__name__, self.node1.id, self.node1.xy,
                   self.node2.id, self.node2.xy, id(self))
-        return format % params
+        return _format % params
 
     def set_dir(self, value):
         value = value.lower()
@@ -515,13 +515,13 @@ class DiagramEdge(Base):
             msg = "WARNING: unknown edge hstyle: %s\n" % value
             raise AttributeError(msg)
 
-    def set_folded(self, value):
+    def set_folded(self, _):
         self.folded = True
 
-    def set_nofolded(self, value):
+    def set_nofolded(self, _):
         self.folded = False
 
-    def set_thick(self, value):
+    def set_thick(self, _):
         self.thick = 3
 
     @property
@@ -531,27 +531,27 @@ class DiagramEdge(Base):
 
         if node1.x > node2.x:
             if node1.y > node2.y:
-                dir = 'left-up'
+                _dir = 'left-up'
             elif node1.y == node2.y:
-                dir = 'left'
+                _dir = 'left'
             else:
-                dir = 'left-down'
+                _dir = 'left-down'
         elif node1.x == node2.x:
             if node1.y > node2.y:
-                dir = 'up'
+                _dir = 'up'
             elif node1.y == node2.y:
-                dir = 'same'
+                _dir = 'same'
             else:
-                dir = 'down'
+                _dir = 'down'
         else:
             if node1.y > node2.y:
-                dir = 'right-up'
+                _dir = 'right-up'
             elif node1.y == node2.y:
-                dir = 'right'
+                _dir = 'right'
             else:
-                dir = 'right-down'
+                _dir = 'right-down'
 
-        return dir
+        return _dir
 
     def to_desctable(self):
         label = "%s -> %s" % (self.node1.label, self.node2.label)

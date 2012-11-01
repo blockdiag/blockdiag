@@ -42,13 +42,13 @@ class SVGImageDrawElement(_base.ImageDraw):
 
     def filter(self, name):
         if name == 'blur':
-            filter = "filter:url(#filter_blur)"
+            _filter = "filter:url(#filter_blur)"
         elif name == 'transp-blur':
-            filter = "filter:url(#filter_blur);opacity:0.7;fill-opacity:1"
+            _filter = "filter:url(#filter_blur);opacity:0.7;fill-opacity:1"
         else:
-            filter = None
+            _filter = None
 
-        return filter
+        return _filter
 
     def style(self, name, thick):
         if thick is None:
@@ -73,11 +73,11 @@ class SVGImageDrawElement(_base.ImageDraw):
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
         style = kwargs.get('style')
-        filter = kwargs.get('filter')
+        _filter = kwargs.get('filter')
 
         p = path(pd, fill=self.rgb(fill), stroke=self.rgb(outline),
                  stroke_dasharray=self.style(style, thick),
-                 style=self.filter(filter))
+                 style=self.filter(_filter))
         self.svg.addElement(p)
 
     def rectangle(self, box, **kwargs):
@@ -85,7 +85,7 @@ class SVGImageDrawElement(_base.ImageDraw):
         fill = kwargs.get('fill', 'none')
         outline = kwargs.get('outline')
         style = kwargs.get('style')
-        filter = kwargs.get('filter')
+        _filter = kwargs.get('filter')
 
         x = box[0]
         y = box[1]
@@ -95,7 +95,7 @@ class SVGImageDrawElement(_base.ImageDraw):
         r = rect(x, y, width, height, fill=self.rgb(fill),
                  stroke=self.rgb(outline), stroke_width=thick,
                  stroke_dasharray=self.style(style, thick),
-                 style=self.filter(filter))
+                 style=self.filter(_filter))
         self.svg.addElement(r)
 
     def textsize(self, string, font, maxwidth=None, **kwargs):
@@ -222,7 +222,7 @@ class SVGImageDrawElement(_base.ImageDraw):
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
         style = kwargs.get('style')
-        filter = kwargs.get('filter')
+        _filter = kwargs.get('filter')
 
         w = (xy[2] - xy[0]) / 2
         h = (xy[3] - xy[1]) / 2
@@ -231,7 +231,7 @@ class SVGImageDrawElement(_base.ImageDraw):
         e = ellipse(pt.x, pt.y, w, h, fill=self.rgb(fill),
                     stroke=self.rgb(outline),
                     stroke_dasharray=self.style(style, thick),
-                    style=self.filter(filter))
+                    style=self.filter(_filter))
         self.svg.addElement(e)
 
     def polygon(self, xy, **kwargs):
@@ -239,11 +239,11 @@ class SVGImageDrawElement(_base.ImageDraw):
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
         style = kwargs.get('style')
-        filter = kwargs.get('filter')
+        _filter = kwargs.get('filter')
 
         pg = polygon(xy, fill=self.rgb(fill), stroke=self.rgb(outline),
                      stroke_dasharray=self.style(style, thick),
-                     style=self.filter(filter))
+                     style=self.filter(_filter))
         self.svg.addElement(pg)
 
     def image(self, box, url):
@@ -298,7 +298,7 @@ class SVGImageDraw(SVGImageDrawElement):
         self.svg.addElement(title('blockdiag'))
         self.svg.addElement(desc(self.options.get('code')))
 
-    def save(self, filename, size, format):
+    def save(self, filename, size, _format):
         # Ignore format parameter; compatibility for ImageDrawEx.
 
         if filename:
@@ -308,12 +308,12 @@ class SVGImageDraw(SVGImageDrawElement):
             self.svg.attributes['width'] = size[0]
             self.svg.attributes['height'] = size[1]
 
-        svg = self.svg.to_xml()
+        image = self.svg.to_xml()
 
         if self.filename:
-            open(self.filename, 'w').write(svg)
+            open(self.filename, 'w').write(image)
 
-        return svg
+        return image
 
 
 def setup(self):

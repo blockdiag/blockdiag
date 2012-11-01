@@ -26,7 +26,7 @@ class Ellipse(NodeShape):
         box = metrics.cell(node).box
         self.textbox = Box(box[0] + r, box[1] + r, box[2] - r, box[3] - r)
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         # draw outline

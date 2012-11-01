@@ -95,8 +95,8 @@ def __build_diagram(filename):
     testdir = os.path.dirname(__file__)
     pathname = "%s/diagrams/%s" % (testdir, filename)
 
-    str = open(pathname).read()
-    tree = parse_string(str)
+    code = open(pathname).read()
+    tree = parse_string(code)
     return ScreenNodeBuilder.build(tree)
 
 

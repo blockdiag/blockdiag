@@ -34,7 +34,7 @@ class Diamond(NodeShape):
                            (self.connectors[1].x + self.connectors[2].x) / 2,
                            (self.connectors[1].y + self.connectors[2].y) / 2)
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         # draw outline

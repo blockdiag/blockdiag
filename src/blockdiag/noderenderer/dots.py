@@ -22,7 +22,7 @@ class Dots(NodeShape):
     def render_label(self, drawer, **kwargs):
         pass
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         if kwargs.get('shadow'):
             return
 

@@ -19,7 +19,7 @@ from blockdiag.utils import XY
 
 
 class Note(NodeShape):
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)

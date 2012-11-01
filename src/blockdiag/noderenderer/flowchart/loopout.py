@@ -28,7 +28,7 @@ class LoopOut(NodeShape):
         self.textbox = Box(m.topleft.x, m.topleft.y,
                            m.bottomright.x, m.bottomright.y - ydiff)
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)

@@ -20,9 +20,9 @@ from blockdiag.imagedraw.simplesvg import pathdata
 
 
 class RoundedBox(NodeShape):
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         # draw background
-        self.render_shape_background(drawer, format, **kwargs)
+        self.render_shape_background(drawer, **kwargs)
 
         # draw outline
         box = self.metrics.cell(self.node).box
@@ -30,9 +30,9 @@ class RoundedBox(NodeShape):
             if self.node.background:
                 drawer.image(box, self.node.background)
 
-            self.render_shape_outline(drawer, format, **kwargs)
+            self.render_shape_outline(drawer, **kwargs)
 
-    def render_shape_outline(self, drawer, format, **kwargs):
+    def render_shape_outline(self, drawer, **kwargs):
         m = self.metrics.cell(self.node)
         r = self.metrics.cellsize
         box = m.box
@@ -52,7 +52,7 @@ class RoundedBox(NodeShape):
             drawer.arc(arc[0], arc[1], arc[2],
                        fill=self.node.linecolor, style=self.node.style)
 
-    def render_shape_background(self, drawer, format, **kwargs):
+    def render_shape_background(self, drawer, **kwargs):
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)
@@ -90,7 +90,7 @@ class RoundedBox(NodeShape):
                 drawer.rectangle(rect, fill=self.node.color,
                                  outline=self.node.color)
 
-    def render_vector_shape(self, drawer, format, **kwargs):
+    def render_vector_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         # create pathdata

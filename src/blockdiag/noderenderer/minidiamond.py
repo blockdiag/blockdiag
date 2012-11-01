@@ -33,7 +33,7 @@ class MiniDiamond(NodeShape):
         self.textbox = Box(m.top.x, m.top.y, m.right.x, m.right.y)
         self.textalign = 'left'
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         # draw outline

@@ -30,9 +30,9 @@ class StreamReader(object):
         return (ord(byte1) << 8) + ord(byte2)
 
     def read_bytes(self, n):
-        bytes = self.stream[self.pos:self.pos + n]
+        _bytes = self.stream[self.pos:self.pos + n]
         self.pos += n
-        return bytes
+        return _bytes
 
 
 class JpegHeaderReader(StreamReader):

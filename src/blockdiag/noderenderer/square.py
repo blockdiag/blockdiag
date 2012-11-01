@@ -17,7 +17,7 @@ class Square(NodeShape):
                            XY(pt.x - r, pt.y)]  # left
         self.textbox = Box(pt.x - r, pt.y - r, pt.x + r, pt.y + r)
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         # draw outline

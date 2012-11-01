@@ -78,7 +78,7 @@ class NodeShape(object):
             self.textbox = Box(self.iconbox[2], m.top.y,
                                m.bottomright.x, m.bottomright.y)
 
-    def render(self, drawer, format, **kwargs):
+    def render(self, drawer, _format, **kwargs):
         if self.node.stacked and not kwargs.get('stacked'):
             node = self.node.duplicate()
             node.label = ""
@@ -88,13 +88,13 @@ class NodeShape(object):
                 r = self.metrics.original_metrics.cellsize / 2 * i
                 metrics = self.metrics.shift(r, r)
 
-                self.__class__(node, metrics).render(drawer, format,
+                self.__class__(node, metrics).render(drawer, _format,
                                                      stacked=True, **kwargs)
 
-        if hasattr(self, 'render_vector_shape') and format == 'SVG':
-            self.render_vector_shape(drawer, format, **kwargs)
+        if hasattr(self, 'render_vector_shape') and _format == 'SVG':
+            self.render_vector_shape(drawer, _format, **kwargs)
         else:
-            self.render_shape(drawer, format, **kwargs)
+            self.render_shape(drawer, _format, **kwargs)
 
         self.render_icon(drawer, **kwargs)
         self.render_label(drawer, **kwargs)
@@ -104,7 +104,7 @@ class NodeShape(object):
         if self.node.icon is not None and kwargs.get('shadow') is False:
             drawer.image(self.iconbox, self.node.icon)
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         pass
 
     def render_label(self, drawer, **kwargs):

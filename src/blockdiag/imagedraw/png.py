@@ -338,8 +338,8 @@ class ImageDrawExBase(base.ImageDraw):
             textbox = Box(0, 0, _box.width, _box.height)
             text.textarea(textbox, string, font, **kwargs)
 
-            filter = Image.new('RGB', box.size, kwargs.get('fill'))
-            self.paste(filter, box.topleft, text._image.rotate(angle))
+            filler = Image.new('RGB', box.size, kwargs.get('fill'))
+            self.paste(filler, box.topleft, text._image.rotate(angle))
             return
 
         lines = textfolder.get(self, box, string, font,
@@ -390,7 +390,7 @@ class ImageDrawExBase(base.ImageDraw):
 
         self.paste(image, (x, y))
 
-    def save(self, filename, size, format):
+    def save(self, filename, size, _format):
         if filename:
             self.filename = filename
 
@@ -402,12 +402,12 @@ class ImageDrawExBase(base.ImageDraw):
         self._image.thumbnail(size, Image.ANTIALIAS)
 
         if self.filename:
-            self._image.save(self.filename, format)
+            self._image.save(self.filename, _format)
             image = None
         else:
             import cStringIO
             tmp = cStringIO.StringIO()
-            self._image.save(tmp, format)
+            self._image.save(tmp, _format)
             image = tmp.getvalue()
 
         return image
