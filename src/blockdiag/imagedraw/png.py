@@ -437,7 +437,7 @@ def blurred(fn):
         drawer.set_canvas_size(size)
         getattr(drawer, fn.__name__)(*args, **kwargs)
 
-        for i in range(15):
+        for _ in range(15):
             drawer._image = drawer._image.filter(ImageFilter.SMOOTH_MORE)
 
         return drawer._image
