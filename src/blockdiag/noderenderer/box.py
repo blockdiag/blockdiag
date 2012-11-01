@@ -18,7 +18,7 @@ from blockdiag.noderenderer import install_renderer
 
 
 class Box(NodeShape):
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         # draw outline

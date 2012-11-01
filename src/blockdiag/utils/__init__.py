@@ -43,10 +43,10 @@ class Box(list):
         return self[self.mapper[name]]
 
     def __repr__(self):
-        format = "<%s (%s, %s) %dx%d at 0x%08x>"
+        _format = "<%s (%s, %s) %dx%d at 0x%08x>"
         params = (self.__class__.__name__, self.x1, self.y1,
                   self.width, self.height, id(self))
-        return format % params
+        return _format % params
 
     def shift(self, x=0, y=0):
         return self.__class__(self.x1 + x, self.y1 + y,

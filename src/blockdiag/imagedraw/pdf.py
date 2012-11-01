@@ -230,7 +230,7 @@ class PDFImageDraw(base.ImageDraw):
         self.canvas.drawImage(url, box.x1, y, box.width, box.height,
                               mask='auto', preserveAspectRatio=True)
 
-    def save(self, filename, size, format):
+    def save(self, filename, size, _format):
         # Ignore size and format parameter; compatibility for ImageDrawEx.
 
         self.canvas.showPage()

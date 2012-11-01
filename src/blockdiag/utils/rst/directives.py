@@ -164,20 +164,20 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
     def node2image(self, node, diagram):
         filename = self.image_filename(node)
         fontpath = self.detectfont()
-        format = self.global_options['format'].lower()
+        _format = self.global_options['format'].lower()
 
-        if format == 'svg' and self.global_options['inline_svg'] is True:
+        if _format == 'svg' and self.global_options['inline_svg'] is True:
             filename = None
 
         kwargs = dict(self.global_options)
         del kwargs['format']
-        drawer = DiagramDraw(format, diagram, filename, **kwargs)
+        drawer = DiagramDraw(_format, diagram, filename, **kwargs)
 
         if filename is None or not os.path.isfile(filename):
             drawer.draw()
             content = drawer.save()
 
-            if format == 'svg' and self.global_options['inline_svg'] is True:
+            if _format == 'svg' and self.global_options['inline_svg'] is True:
                 return nodes.raw('', content.decode('utf-8'), format='html')
 
         size = drawer.pagesize()
@@ -227,9 +227,9 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         hashseed = node['code'].encode('utf-8') + str(options)
         hashed = sha(hashseed).hexdigest()
 
-        format = self.global_options['format']
+        _format = self.global_options['format']
         outputdir = self.global_options['outputdir']
-        filename = "%s%s-%s.%s" % (self.name, prefix, hashed, format.lower())
+        filename = "%s%s-%s.%s" % (self.name, prefix, hashed, _format.lower())
         if outputdir:
             filename = os.path.join(outputdir, filename)
 

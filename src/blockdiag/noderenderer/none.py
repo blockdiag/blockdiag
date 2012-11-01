@@ -27,7 +27,7 @@ class NoneShape(NodeShape):
     def render_label(self, drawer, **kwargs):
         pass
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         pass
 
 

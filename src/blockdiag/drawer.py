@@ -26,8 +26,8 @@ class DiagramDraw(object):
     shadow_colors['PNG'] = (64, 64, 64)
     shadow_colors['PDF'] = (144, 144, 144)
 
-    def __init__(self, format, diagram, filename=None, **kwargs):
-        self.format = format.upper()
+    def __init__(self, _format, diagram, filename=None, **kwargs):
+        self.format = _format.upper()
         self.diagram = diagram
         self.fill = kwargs.get('fill', (0, 0, 0))
         self.badgeFill = kwargs.get('badgeFill', 'pink')

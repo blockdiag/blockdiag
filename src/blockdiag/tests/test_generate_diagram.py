@@ -29,7 +29,7 @@ def extra_case(func):
 
 @argv_wrapper
 @stderr_wrapper
-def __build_diagram(filename, format, args):
+def __build_diagram(filename, _format, args):
     testdir = os.path.dirname(__file__)
     diagpath = "%s/diagrams/%s" % (testdir, filename)
     fontpath = get_fontpath()
@@ -39,7 +39,7 @@ def __build_diagram(filename, format, args):
         tmpfile = tempfile.mkstemp(dir=tmpdir)
         os.close(tmpfile[0])
 
-        sys.argv = ['blockdiag.py', '-T', format, '-o', tmpfile[1], diagpath]
+        sys.argv = ['blockdiag.py', '-T', _format, '-o', tmpfile[1], diagpath]
         if args:
             if isinstance(args[0], (list, tuple)):
                 sys.argv += args[0]
@@ -53,8 +53,8 @@ def __build_diagram(filename, format, args):
         if re.search('ERROR', sys.stderr.getvalue()):
             raise RuntimeError(sys.stderr.getvalue())
     finally:
-        for file in os.listdir(tmpdir):
-            os.unlink(tmpdir + "/" + file)
+        for filename in os.listdir(tmpdir):
+            os.unlink(tmpdir + "/" + filename)
         os.rmdir(tmpdir)
 
 
@@ -91,17 +91,17 @@ def test_generator_pdf():
         yield testcase
 
 
-def generator_core(format, *args):
+def generator_core(_format, *args):
     for diagram in diagram_files():
-        yield __build_diagram, diagram, format, args
+        yield __build_diagram, diagram, _format, args
 
         if re.search('separate', diagram):
             _args = list(args) + ['--separate']
-            yield __build_diagram, diagram, format, _args
+            yield __build_diagram, diagram, _format, _args
 
-        if format == 'png':
+        if _format == 'png':
             _args = list(args) + ['--antialias']
-            yield __build_diagram, diagram, format, _args
+            yield __build_diagram, diagram, _format, _args
 
 
 @extra_case
@@ -148,6 +148,6 @@ def svg_includes_source_code_tag_test():
         embeded = re.sub('\s+', ' ', desc.text)
         assert source_code == embeded
     finally:
-        for file in os.listdir(tmpdir):
-            os.unlink(tmpdir + "/" + file)
+        for filename in os.listdir(tmpdir):
+            os.unlink(tmpdir + "/" + filename)
         os.rmdir(tmpdir)

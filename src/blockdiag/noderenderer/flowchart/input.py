@@ -28,7 +28,7 @@ class Input(NodeShape):
         self.textbox = Box(m.topleft.x + r, m.topleft.y,
                            m.bottomright.x - r, m.bottomright.y)
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)

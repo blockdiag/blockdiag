@@ -29,14 +29,14 @@ class Cloud(NodeShape):
         self.textbox = Box(pt.x + rx * 2, pt.y + ry,
                            pt.x + rx * 11, pt.y + ry * 4)
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         # draw background
-        self.render_shape_background(drawer, format, **kwargs)
+        self.render_shape_background(drawer, **kwargs)
 
         if not kwargs.get('shadow') and self.node.background:
             drawer.image(self.textbox, self.node.background)
 
-    def render_shape_background(self, drawer, format, **kwargs):
+    def render_shape_background(self, drawer, **kwargs):
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)
@@ -90,7 +90,7 @@ class Cloud(NodeShape):
                 drawer.rectangle(rect, fill=self.node.color,
                                  outline=self.node.color)
 
-    def render_vector_shape(self, drawer, format, **kwargs):
+    def render_vector_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         # create pathdata

@@ -33,7 +33,7 @@ class BeginPoint(NodeShape):
                            XY(self.center.x, self.center.y + self.radius),
                            XY(self.center.x - self.radius, self.center.y)]
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         # draw outline

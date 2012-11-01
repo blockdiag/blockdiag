@@ -514,18 +514,18 @@ class LandscapeEdgeMetrics(EdgeMetrics):
     @property
     def headshapes(self):
         heads = []
-        dir = self.edge.direction
+        _dir = self.edge.direction
 
         if self.edge.dir in ('back', 'both'):
-            if dir in ('left-up', 'left', 'same',
-                       'right-up', 'right', 'right-down'):
+            if _dir in ('left-up', 'left', 'same',
+                        'right-up', 'right', 'right-down'):
                 heads.append('left')
-            elif dir == 'up':
+            elif _dir == 'up':
                 if self.edge.skipped:
                     heads.append('left')
                 else:
                     heads.append('down')
-            elif dir in ('left-down', 'down'):
+            elif _dir in ('left-down', 'down'):
                 if self.edge.skipped:
                     heads.append('left')
                 else:
@@ -537,11 +537,11 @@ class LandscapeEdgeMetrics(EdgeMetrics):
             heads.append(None)
 
         if self.edge.dir in ('forward', 'both'):
-            if dir in ('right-up', 'right', 'right-down'):
+            if _dir in ('right-up', 'right', 'right-down'):
                 heads.append('right')
-            elif dir == 'up':
+            elif _dir == 'up':
                 heads.append('up')
-            elif dir in ('left-up', 'left', 'left-down', 'down', 'same'):
+            elif _dir in ('left-up', 'left', 'left-down', 'down', 'same'):
                 heads.append('down')
 
             if self.edge.hstyle in ('onemany', 'manymany'):
@@ -554,7 +554,7 @@ class LandscapeEdgeMetrics(EdgeMetrics):
     @property
     def _shaft(self):
         span = XY(self.metrics.span_width, self.metrics.span_height)
-        dir = self.edge.direction
+        _dir = self.edge.direction
 
         node1 = self.metrics.node(self.edge.node1)
         cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
@@ -562,7 +562,7 @@ class LandscapeEdgeMetrics(EdgeMetrics):
         cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
         shaft = EdgeLines()
-        if dir == 'right':
+        if _dir == 'right':
             shaft.moveTo(node1.right)
 
             if self.edge.skipped:
@@ -575,7 +575,7 @@ class LandscapeEdgeMetrics(EdgeMetrics):
 
             shaft.lineTo(node2.left)
 
-        elif dir == 'right-up':
+        elif _dir == 'right-up':
             shaft.moveTo(node1.right)
 
             if self.edge.skipped:
@@ -591,7 +591,7 @@ class LandscapeEdgeMetrics(EdgeMetrics):
 
             shaft.lineTo(node2.left)
 
-        elif dir == 'right-down':
+        elif _dir == 'right-down':
             shaft.moveTo(node1.right)
             shaft.lineTo(cell1.right.x + span.x / 2, cell1.right.y)
 
@@ -606,7 +606,7 @@ class LandscapeEdgeMetrics(EdgeMetrics):
 
             shaft.lineTo(node2.left)
 
-        elif dir == 'up':
+        elif _dir == 'up':
             if self.edge.skipped:
                 shaft.moveTo(node1.right)
                 shaft.lineTo(cell1.right.x + span.x / 4, cell1.right.y)
@@ -618,7 +618,7 @@ class LandscapeEdgeMetrics(EdgeMetrics):
 
             shaft.lineTo(node2.bottom)
 
-        elif dir in ('left-up', 'left', 'same'):
+        elif _dir in ('left-up', 'left', 'same'):
             shaft.moveTo(node1.right)
             shaft.lineTo(cell1.right.x + span.x / 4, cell1.right.y)
             shaft.lineTo(cell1.right.x + span.x / 4,
@@ -627,7 +627,7 @@ class LandscapeEdgeMetrics(EdgeMetrics):
                          cell2.top.y - span.y / 2 + span.y / 8)
             shaft.lineTo(node2.top)
 
-        elif dir == 'left-down':
+        elif _dir == 'left-down':
             if self.edge.skipped:
                 shaft.moveTo(node1.right)
                 shaft.lineTo(cell1.right.x + span.x / 2, cell1.right.y)
@@ -642,7 +642,7 @@ class LandscapeEdgeMetrics(EdgeMetrics):
 
             shaft.lineTo(node2.top)
 
-        elif dir == 'down':
+        elif _dir == 'down':
             if self.edge.skipped:
                 shaft.moveTo(node1.right)
                 shaft.lineTo(cell1.right.x + span.x / 2, cell1.right.y)
@@ -662,11 +662,11 @@ class LandscapeEdgeMetrics(EdgeMetrics):
         span = XY(self.metrics.span_width, self.metrics.span_height)
         node = XY(self.metrics.node_width, self.metrics.node_height)
 
-        dir = self.edge.direction
+        _dir = self.edge.direction
         node1 = self.metrics.cell(self.edge.node1, use_padding=False)
         node2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
-        if dir == 'right':
+        if _dir == 'right':
             if self.edge.skipped:
                 box = Box(node1.bottomright.x + span.x,
                           node1.bottomright.y,
@@ -676,15 +676,15 @@ class LandscapeEdgeMetrics(EdgeMetrics):
                 box = Box(node1.topright.x, node1.topright.y - span.y / 8,
                           node2.left.x, node2.left.y - span.y / 8)
 
-        elif dir == 'right-up':
+        elif _dir == 'right-up':
             box = Box(node2.left.x - span.x, node1.top.y - node.y / 2,
                       node2.bottomleft.x, node1.top.y)
 
-        elif dir == 'right-down':
+        elif _dir == 'right-down':
             box = Box(node1.right.x, node2.topleft.y - span.y / 8,
                       node1.right.x + span.x, node2.left.y - span.y / 8)
 
-        elif dir in ('up', 'left-up', 'left', 'same'):
+        elif _dir in ('up', 'left-up', 'left', 'same'):
             if self.edge.node2.xy.y < self.edge.node1.xy.y:
                 box = Box(node1.topright.x - span.x / 2 + span.x / 4,
                           node1.topright.y - span.y / 2,
@@ -696,7 +696,7 @@ class LandscapeEdgeMetrics(EdgeMetrics):
                           node1.topright.x + span.x / 4,
                           node1.topright.y - span.y / 2)
 
-        elif dir in ('left-down', 'down'):
+        elif _dir in ('left-down', 'down'):
             box = Box(node2.top.x + span.x / 4,
                       node2.top.y - span.y,
                       node2.topright.x + span.x / 4,
@@ -713,19 +713,19 @@ class PortraitEdgeMetrics(EdgeMetrics):
     @property
     def headshapes(self):
         heads = []
-        dir = self.edge.direction
+        _dir = self.edge.direction
 
         if self.edge.dir in ('back', 'both'):
-            if dir == 'right':
+            if _dir == 'right':
                 if self.edge.skipped:
                     heads.append('up')
                 else:
                     heads.append('left')
-            elif dir in ('up', 'right-up', 'same'):
+            elif _dir in ('up', 'right-up', 'same'):
                 heads.append('up')
-            elif dir in ('left-up', 'left'):
+            elif _dir in ('left-up', 'left'):
                 heads.append('left')
-            elif dir in ('left-down', 'down', 'right-down'):
+            elif _dir in ('left-down', 'down', 'right-down'):
                 if self.edge.skipped:
                     heads.append('left')
                 else:
@@ -737,14 +737,15 @@ class PortraitEdgeMetrics(EdgeMetrics):
             heads.append(None)
 
         if self.edge.dir in ('forward', 'both'):
-            if dir == 'right':
+            if _dir == 'right':
                 if self.edge.skipped:
                     heads.append('down')
                 else:
                     heads.append('right')
-            elif dir in ('up', 'right-up', 'same'):
+            elif _dir in ('up', 'right-up', 'same'):
                 heads.append('down')
-            elif dir in ('left-up', 'left', 'left-down', 'down', 'right-down'):
+            elif _dir in ('left-up', 'left',
+                          'left-down', 'down', 'right-down'):
                 heads.append('down')
 
             if self.edge.hstyle in ('onemany', 'manymany'):
@@ -757,7 +758,7 @@ class PortraitEdgeMetrics(EdgeMetrics):
     @property
     def _shaft(self):
         span = XY(self.metrics.span_width, self.metrics.span_height)
-        dir = self.edge.direction
+        _dir = self.edge.direction
 
         node1 = self.metrics.node(self.edge.node1)
         cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
@@ -765,8 +766,8 @@ class PortraitEdgeMetrics(EdgeMetrics):
         cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
         shaft = EdgeLines()
-        if dir in ('up', 'right-up', 'same', 'right'):
-            if dir == 'right' and not self.edge.skipped:
+        if _dir in ('up', 'right-up', 'same', 'right'):
+            if _dir == 'right' and not self.edge.skipped:
                 shaft.moveTo(node1.right)
                 shaft.lineTo(node2.left)
             else:
@@ -780,7 +781,7 @@ class PortraitEdgeMetrics(EdgeMetrics):
                              cell2.top.y - span.y / 2 + span.y / 8)
                 shaft.lineTo(node2.top)
 
-        elif dir == 'right-down':
+        elif _dir == 'right-down':
             shaft.moveTo(node1.bottom)
             shaft.lineTo(cell1.bottom.x, cell1.bottom.y + span.y / 2)
 
@@ -795,7 +796,7 @@ class PortraitEdgeMetrics(EdgeMetrics):
 
             shaft.lineTo(node2.top)
 
-        elif dir in ('left-up', 'left', 'same'):
+        elif _dir in ('left-up', 'left', 'same'):
             shaft.moveTo(node1.right)
             shaft.lineTo(cell1.right.x + span.x / 4, cell1.right.y)
             shaft.lineTo(cell1.right.x + span.x / 4,
@@ -804,7 +805,7 @@ class PortraitEdgeMetrics(EdgeMetrics):
                          cell2.top.y - span.y / 2 + span.y / 8)
             shaft.lineTo(node2.top)
 
-        elif dir == 'left-down':
+        elif _dir == 'left-down':
             shaft.moveTo(node1.bottom)
 
             if self.edge.skipped:
@@ -819,7 +820,7 @@ class PortraitEdgeMetrics(EdgeMetrics):
             shaft.lineTo(cell2.top.x, cell2.top.y - span.y / 2)
             shaft.lineTo(node2.top)
 
-        elif dir == 'down':
+        elif _dir == 'down':
             shaft.moveTo(node1.bottom)
 
             if self.edge.skipped:
@@ -838,11 +839,11 @@ class PortraitEdgeMetrics(EdgeMetrics):
     def labelbox(self):
         span = XY(self.metrics.span_width, self.metrics.span_height)
 
-        dir = self.edge.direction
+        _dir = self.edge.direction
         node1 = self.metrics.cell(self.edge.node1, use_padding=False)
         node2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
-        if dir == 'right':
+        if _dir == 'right':
             if self.edge.skipped:
                 box = Box(node1.bottomright.x + span.x,
                           node1.bottomright.y,
@@ -852,15 +853,15 @@ class PortraitEdgeMetrics(EdgeMetrics):
                 box = Box(node1.topright.x, node1.topright.y - span.y / 8,
                           node2.left.x, node2.left.y - span.y / 8)
 
-        elif dir == 'right-up':
+        elif _dir == 'right-up':
             box = Box(node2.left.x - span.x, node2.left.y,
                       node2.bottomleft.x, node2.bottomleft.y)
 
-        elif dir == 'right-down':
+        elif _dir == 'right-down':
             box = Box(node2.topleft.x, node2.topleft.y - span.y / 2,
                       node2.top.x, node2.top.y)
 
-        elif dir in ('up', 'left-up', 'left', 'same'):
+        elif _dir in ('up', 'left-up', 'left', 'same'):
             if self.edge.node2.xy.y < self.edge.node1.xy.y:
                 box = Box(node1.topright.x - span.x / 2 + span.x / 4,
                           node1.topright.y - span.y / 2,
@@ -872,13 +873,13 @@ class PortraitEdgeMetrics(EdgeMetrics):
                           node1.topright.x + span.x / 4,
                           node1.topright.y - span.y / 2)
 
-        elif dir == 'down':
+        elif _dir == 'down':
             box = Box(node2.top.x + span.x / 4,
                       node2.top.y - span.y / 2,
                       node2.topright.x + span.x / 4,
                       node2.topright.y)
 
-        elif dir == 'left-down':
+        elif _dir == 'left-down':
             box = Box(node1.bottomleft.x, node1.bottomleft.y,
                       node1.bottom.x, node1.bottom.y + span.y / 2)
 
@@ -943,8 +944,8 @@ class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
 
     @property
     def labelbox(self):
-        dir = self.edge.direction
-        if dir == 'right':
+        _dir = self.edge.direction
+        if _dir == 'right':
             span = XY(self.metrics.span_width, self.metrics.span_height)
             cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
             cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
@@ -1016,15 +1017,15 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
 
     @property
     def labelbox(self):
-        dir = self.edge.direction
+        _dir = self.edge.direction
         span = XY(self.metrics.span_width, self.metrics.span_height)
         cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
         cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
 
-        if dir == 'down':
+        if _dir == 'down':
             box = Box(cell2.topleft.x, cell2.top.y - span.y / 2,
                       cell2.top.x, cell2.top.y)
-        elif dir == 'right':
+        elif _dir == 'right':
             if self.edge.skipped:
                 box = Box(cell1.bottom.x, cell1.bottom.y,
                           cell1.bottomright.x,

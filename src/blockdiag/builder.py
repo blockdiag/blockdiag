@@ -511,24 +511,24 @@ class EdgeLayoutManager(object):
 
     def run(self):
         for edge in self.edges:
-            dir = edge.direction
+            _dir = edge.direction
 
             if edge.node1.group.orientation == 'landscape':
-                if dir == 'right':
+                if _dir == 'right':
                     r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
                     for x in r:
                         xy = (x, edge.node1.xy.y)
                         nodes = [x for x in self.nodes if x.xy == xy]
                         if len(nodes) > 0:
                             edge.skipped = 1
-                elif dir == 'right-up':
+                elif _dir == 'right-up':
                     r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
                     for x in r:
                         xy = (x, edge.node1.xy.y)
                         nodes = [x for x in self.nodes if x.xy == xy]
                         if len(nodes) > 0:
                             edge.skipped = 1
-                elif dir == 'right-down':
+                elif _dir == 'right-down':
                     if self.diagram.edge_layout == 'flowchart':
                         r = range(edge.node1.xy.y, edge.node2.xy.y)
                         for y in r:
@@ -543,14 +543,14 @@ class EdgeLayoutManager(object):
                         nodes = [x for x in self.nodes if x.xy == xy]
                         if len(nodes) > 0:
                             edge.skipped = 1
-                elif dir in ('left-down', 'down'):
+                elif _dir in ('left-down', 'down'):
                     r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
                     for y in r:
                         xy = (edge.node1.xy.x, y)
                         nodes = [x for x in self.nodes if x.xy == xy]
                         if len(nodes) > 0:
                             edge.skipped = 1
-                elif dir == 'up':
+                elif _dir == 'up':
                     r = range(edge.node2.xy.y + 1, edge.node1.xy.y)
                     for y in r:
                         xy = (edge.node1.xy.x, y)
@@ -558,21 +558,21 @@ class EdgeLayoutManager(object):
                         if len(nodes) > 0:
                             edge.skipped = 1
             else:
-                if dir == 'right':
+                if _dir == 'right':
                     r = range(edge.node1.xy.x + 1, edge.node2.xy.x)
                     for x in r:
                         xy = (x, edge.node1.xy.y)
                         nodes = [x for x in self.nodes if x.xy == xy]
                         if len(nodes) > 0:
                             edge.skipped = 1
-                elif dir in ('left-down', 'down'):
+                elif _dir in ('left-down', 'down'):
                     r = range(edge.node1.xy.y + 1, edge.node2.xy.y)
                     for y in r:
                         xy = (edge.node1.xy.x, y)
                         nodes = [x for x in self.nodes if x.xy == xy]
                         if len(nodes) > 0:
                             edge.skipped = 1
-                elif dir == 'right-down':
+                elif _dir == 'right-down':
                     if self.diagram.edge_layout == 'flowchart':
                         r = range(edge.node1.xy.x, edge.node2.xy.x)
                         for x in r:

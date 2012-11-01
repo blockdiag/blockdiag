@@ -72,7 +72,7 @@ class Actor(NodeShape):
                 XY(bodyC.x - neckWidth, bodyC.y - armWidth),  # left arm end
                 XY(bodyC.x - neckWidth, bodyC.y - r * 2)]
 
-    def render_shape(self, drawer, format, **kwargs):
+    def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
         # FIXME: Actor does not support

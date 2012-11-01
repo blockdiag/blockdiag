@@ -26,8 +26,8 @@ def use_tmpdir(func):
             tmpdir = tempfile.mkdtemp()
             func(self, tmpdir)
         finally:
-            for file in os.listdir(tmpdir):
-                os.unlink(tmpdir + "/" + file)
+            for filename in os.listdir(tmpdir):
+                os.unlink(tmpdir + "/" + filename)
             os.rmdir(tmpdir)
 
     _.__name__ = func.__name__
