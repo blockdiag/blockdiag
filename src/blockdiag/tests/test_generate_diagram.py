@@ -4,9 +4,10 @@ import os
 import sys
 import re
 import tempfile
+from blockdiag.tests.utils import *
+
 import blockdiag
 import blockdiag.command
-from utils import *
 from blockdiag.elements import *
 
 

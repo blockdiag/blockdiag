@@ -17,7 +17,7 @@ import re
 import os
 import sys
 import copy
-from config import ConfigParser
+from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.collections import namedtuple
 
 

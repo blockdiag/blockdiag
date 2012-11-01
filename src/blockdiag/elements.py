@@ -17,9 +17,8 @@ import os
 import re
 import sys
 import copy
-from utils import images, urlutil, uuid, XY
-import plugins
-import noderenderer
+from blockdiag.utils import images, urlutil, uuid, XY
+from blockdiag import noderenderer, plugins
 
 
 def unquote(string):

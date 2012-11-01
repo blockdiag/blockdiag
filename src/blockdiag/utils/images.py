@@ -14,7 +14,8 @@
 #  limitations under the License.
 
 import re
-import urlutil
+from blockdiag.utils import urlutil
+
 try:
     from PIL import Image
 except ImportError:
@@ -31,7 +32,7 @@ except ImportError:
 
             @property
             def size(self):
-                import jpeg
+                from blockdiag.utils import jpeg
                 import png
 
                 try:

@@ -41,7 +41,7 @@ from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
                                   forward_decl)
 
-from utils.collections import namedtuple
+from blockdiag.utils.collections import namedtuple
 
 ENCODING = 'utf-8'
 
