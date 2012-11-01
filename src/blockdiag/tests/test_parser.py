@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from blockdiag.parser import *
+from blockdiag.parser import parse_string, ParseException
+from blockdiag.parser import Graph, SubGraph, Statements, Node, Edge
 from nose.tools import raises
 
 

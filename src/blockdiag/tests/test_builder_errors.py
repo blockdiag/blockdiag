@@ -3,7 +3,7 @@
 from nose.tools import raises
 from blockdiag.tests.utils import __build_diagram
 
-from blockdiag.parser import *
+from blockdiag.parser import ParseException
 
 
 @raises(AttributeError)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from blockdiag.builder import *
-from blockdiag.elements import *
+from blockdiag.builder import SeparateDiagramBuilder
+from blockdiag.elements import DiagramNode
 from blockdiag.parser import parse_string
 
 
