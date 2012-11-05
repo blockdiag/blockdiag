@@ -16,7 +16,7 @@
 
 class ImageDraw(object):
     self_generative_methods = []
-    nosideeffect_methods = ['textsize', 'textlinesize']
+    nosideeffect_methods = ['set_canvas_size', 'textsize', 'textlinesize']
     supported_path = False
 
     _method_cache = {}
