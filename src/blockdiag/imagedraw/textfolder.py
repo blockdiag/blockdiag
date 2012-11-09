@@ -120,7 +120,7 @@ class VerticalTextFolder(object):
         for string in self._result:
             textsize = self.textsize(string, scaled=True)
             _, dy = self.box.get_padding_for(textsize, valign=self.valign,
-                                             padding=self.padding)
+                                             padding=self.line_spacing)
 
             height = dy
             width -= textsize.width + self.line_spacing
@@ -134,7 +134,7 @@ class VerticalTextFolder(object):
 
                 yield char, draw_xy
 
-                height += charsize.height
+                height += charsize.height + self.line_spacing
 
     @property
     def outlinebox(self):
@@ -230,7 +230,7 @@ class HorizontalTextFolder(object):
         textsize = self.textsize(self._result, scaled=True)
 
         _, dy = self.box.get_padding_for(textsize, valign=self.valign,
-                                         padding=self.padding)
+                                         padding=self.line_spacing)
 
         height = dy
         base_xy = XY(self.box.x1, self.box.y1)
