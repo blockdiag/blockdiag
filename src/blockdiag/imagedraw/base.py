@@ -24,6 +24,9 @@ class ImageDraw(object):
     def set_canvas_size(self, size):
         pass
 
+    def set_options(self, **kwargs):
+        pass
+
     def line(self, xy, **kwargs):
         pass
 

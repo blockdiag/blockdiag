@@ -49,7 +49,7 @@ class DiagramDraw(object):
                                       scale_ratio=self.scale_ratio)
 
         self.drawer.set_canvas_size(self.pagesize())
-        self.drawer.set_jump_radius(self.metrics.cellsize / 2)
+        self.drawer.set_options(jump_radius=self.metrics.cellsize / 2)
 
     @property
     def nodes(self):
