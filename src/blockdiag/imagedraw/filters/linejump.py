@@ -70,8 +70,15 @@ class LineJumpDrawFilter(LazyReciever):
         self.jump_radius = jump_radius
         self.jump_shift = 0
 
-    def set_jump_radius(self, jump_radius):
-        self.jump_radius = jump_radius
+    def set_options(self, **kwargs):
+        if 'jump_forward' in kwargs:
+            self.forward = kwargs['jump_forward']
+
+        if 'jump_radius' in kwargs:
+            self.jump_radius = kwargs['jump_radius']
+
+        if 'jump_shift' in kwargs:
+            self.jump_shift = kwargs['jump_shift']
 
     def _run(self):
         for recv in self.nested:
