@@ -44,10 +44,11 @@ class RoundedBox(NodeShape):
         for line in lines:
             drawer.line(line, fill=self.node.linecolor, style=self.node.style)
 
-        arcs = [((box[0], box[1], box[0] + r * 2, box[1] + r * 2), 180, 270),
-                ((box[2] - r * 2, box[1], box[2], box[1] + r * 2), 270, 360),
-                ((box[2] - r * 2, box[3] - r * 2, box[2], box[3]), 0, 90),
-                ((box[0], box[3] - r * 2, box[0] + r * 2, box[3]), 90, 180)]
+        r2 = r * 2
+        arcs = [(Box(box[0], box[1], box[0] + r2, box[1] + r2), 180, 270),
+                (Box(box[2] - r2, box[1], box[2], box[1] + r2), 270, 360),
+                (Box(box[2] - r2, box[3] - r2, box[2], box[3]), 0, 90),
+                (Box(box[0], box[3] - r2, box[0] + r2, box[3]), 90, 180)]
         for arc in arcs:
             drawer.arc(arc[0], arc[1], arc[2],
                        fill=self.node.linecolor, style=self.node.style)
