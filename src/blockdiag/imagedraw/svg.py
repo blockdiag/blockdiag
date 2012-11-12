@@ -23,6 +23,56 @@ from blockdiag.utils import urlutil, Box, XY
 feGaussianBlur = svgclass('feGaussianBlur')
 
 
+def rgb(color):
+    if isinstance(color, tuple):
+        color = 'rgb(%d,%d,%d)' % color
+
+    return color
+
+
+def style(name):
+    if name == 'blur':
+        value = "filter:url(#filter_blur)"
+    elif name == 'transp-blur':
+        value = "filter:url(#filter_blur);opacity:0.7;fill-opacity:1"
+    else:
+        value = None
+
+    return value
+
+
+def dasharray(pattern, thick):
+    if thick is None:
+        thick = 1
+
+    if pattern == 'dotted':
+        value = 2 * thick
+    elif pattern == 'dashed':
+        value = 4 * thick
+    elif pattern == 'none':
+        value = "%d %d" % (0, 65535 * thick)
+    elif re.search('^\d+(,\d+)*$', pattern or ""):
+        l = [int(n) * thick for n in pattern.split(",")]
+        value = " ".join(str(n) for n in l)
+    else:
+        value = None
+
+    return value
+
+
+def drawing_params(kwargs):
+    params = {}
+
+    if 'style' in kwargs:
+        params['stroke_dasharray'] = dasharray(kwargs.get('style'),
+                                               kwargs.get('thick'))
+
+    if 'filter' in kwargs:
+        params['style'] = style(kwargs.get('filter'))
+
+    return params
+
+
 class SVGImageDrawElement(_base.ImageDraw):
     self_generative_methods = ['group', 'anchor']
     supported_path = True
@@ -34,68 +84,27 @@ class SVGImageDrawElement(_base.ImageDraw):
         else:
             self.ignore_pil = False
 
-    def rgb(self, color):
-        if isinstance(color, tuple):
-            color = 'rgb(%d,%d,%d)' % color
-
-        return color
-
-    def filter(self, name):
-        if name == 'blur':
-            _filter = "filter:url(#filter_blur)"
-        elif name == 'transp-blur':
-            _filter = "filter:url(#filter_blur);opacity:0.7;fill-opacity:1"
-        else:
-            _filter = None
-
-        return _filter
-
-    def style(self, name, thick):
-        if thick is None:
-            thick = 1
-
-        if name == 'dotted':
-            length = 2 * thick
-        elif name == 'dashed':
-            length = 4 * thick
-        elif name == 'none':
-            length = "%d %d" % (0, 65535 * thick)
-        elif re.search('^\d+(,\d+)*$', name or ""):
-            l = [int(n) * thick for n in name.split(",")]
-            length = " ".join(str(n) for n in l)
-        else:
-            length = None
-
-        return length
-
     def path(self, pd, **kwargs):
-        thick = kwargs.get('thick')
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
-        style = kwargs.get('style')
-        _filter = kwargs.get('filter')
 
-        p = path(pd, fill=self.rgb(fill), stroke=self.rgb(outline),
-                 stroke_dasharray=self.style(style, thick),
-                 style=self.filter(_filter))
+        p = path(pd, fill=rgb(fill), stroke=rgb(outline),
+                 **drawing_params(kwargs))
         self.svg.addElement(p)
 
     def rectangle(self, box, **kwargs):
         thick = kwargs.get('thick')
         fill = kwargs.get('fill', 'none')
         outline = kwargs.get('outline')
-        style = kwargs.get('style')
-        _filter = kwargs.get('filter')
 
         x = box[0]
         y = box[1]
         width = box[2] - box[0]
         height = box[3] - box[1]
 
-        r = rect(x, y, width, height, fill=self.rgb(fill),
-                 stroke=self.rgb(outline), stroke_width=thick,
-                 stroke_dasharray=self.style(style, thick),
-                 style=self.filter(_filter))
+        r = rect(x, y, width, height, fill=rgb(fill),
+                 stroke=rgb(outline), stroke_width=thick,
+                 **drawing_params(kwargs))
         self.svg.addElement(r)
 
     def textsize(self, string, font, maxwidth=None, **kwargs):
@@ -122,7 +131,7 @@ class SVGImageDrawElement(_base.ImageDraw):
     def text(self, xy, string, font, **kwargs):
         fill = kwargs.get('fill')
 
-        t = text(xy[0], xy[1], string, fill=self.rgb(fill),
+        t = text(xy[0], xy[1], string, fill=rgb(fill),
                  font_family=font.generic_family, font_size=font.size,
                  font_weight=font.weight, font_style=font.style)
         self.svg.addElement(t)
@@ -172,21 +181,19 @@ class SVGImageDrawElement(_base.ImageDraw):
 
     def line(self, xy, **kwargs):
         fill = kwargs.get('fill')
-        style = kwargs.get('style')
         thick = kwargs.get('thick')
 
         pd = pathdata(xy[0].x, xy[0].y)
         for pt in xy[1:]:
             pd.line(pt.x, pt.y)
 
-        p = path(pd, fill="none", stroke=self.rgb(fill),
-                 stroke_width=thick, stroke_dasharray=self.style(style, thick))
+        p = path(pd, fill="none", stroke=rgb(fill),
+                 stroke_width=thick, **drawing_params(kwargs))
         self.svg.addElement(p)
 
     def arc(self, xy, start, end, **kwargs):
         thick = kwargs.get('thick')
         fill = kwargs.get('fill')
-        style = kwargs.get('style')
 
         w = (xy[2] - xy[0]) / 2
         h = (xy[3] - xy[1]) / 2
@@ -213,37 +220,29 @@ class SVGImageDrawElement(_base.ImageDraw):
 
         pd = pathdata(pt1[0], pt1[1])
         pd.ellarc(w, h, 0, largearc, 1, pt2[0], pt2[1])
-        p = path(pd, fill="none", stroke=self.rgb(fill),
-                 stroke_dasharray=self.style(style, thick))
+        p = path(pd, fill="none", stroke=rgb(fill),
+                 **drawing_params(kwargs))
         self.svg.addElement(p)
 
     def ellipse(self, xy, **kwargs):
-        thick = kwargs.get('thick')
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
-        style = kwargs.get('style')
-        _filter = kwargs.get('filter')
 
         w = (xy[2] - xy[0]) / 2
         h = (xy[3] - xy[1]) / 2
         pt = XY(xy[0] + w, xy[1] + h)
 
-        e = ellipse(pt.x, pt.y, w, h, fill=self.rgb(fill),
-                    stroke=self.rgb(outline),
-                    stroke_dasharray=self.style(style, thick),
-                    style=self.filter(_filter))
+        e = ellipse(pt.x, pt.y, w, h, fill=rgb(fill),
+                    stroke=rgb(outline),
+                    **drawing_params(kwargs))
         self.svg.addElement(e)
 
     def polygon(self, xy, **kwargs):
-        thick = kwargs.get('thick')
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
-        style = kwargs.get('style')
-        _filter = kwargs.get('filter')
 
-        pg = polygon(xy, fill=self.rgb(fill), stroke=self.rgb(outline),
-                     stroke_dasharray=self.style(style, thick),
-                     style=self.filter(_filter))
+        pg = polygon(xy, fill=rgb(fill), stroke=rgb(outline),
+                     **drawing_params(kwargs))
         self.svg.addElement(pg)
 
     def image(self, box, url):
