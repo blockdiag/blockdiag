@@ -97,14 +97,9 @@ class SVGImageDrawElement(_base.ImageDraw):
         fill = kwargs.get('fill', 'none')
         outline = kwargs.get('outline')
 
-        x = box[0]
-        y = box[1]
-        width = box[2] - box[0]
-        height = box[3] - box[1]
-
-        r = rect(x, y, width, height, fill=rgb(fill),
-                 stroke=rgb(outline), stroke_width=thick,
-                 **drawing_params(kwargs))
+        r = rect(box.x, box.y, box.width, box.height,
+                 fill=rgb(fill), stroke=rgb(outline),
+                 stroke_width=thick, **drawing_params(kwargs))
         self.svg.addElement(r)
 
     def textsize(self, string, font, maxwidth=None, **kwargs):
@@ -128,75 +123,77 @@ class SVGImageDrawElement(_base.ImageDraw):
 
             return self._pil_drawer.textlinesize(string, font)
 
-    def text(self, xy, string, font, **kwargs):
+    def text(self, point, string, font, **kwargs):
         fill = kwargs.get('fill')
 
-        t = text(xy[0], xy[1], string, fill=rgb(fill),
+        t = text(point.x, point.y, string, fill=rgb(fill),
                  font_family=font.generic_family, font_size=font.size,
                  font_weight=font.weight, font_style=font.style)
         self.svg.addElement(t)
 
     def textarea(self, box, string, font, **kwargs):
         if 'rotate' in kwargs and kwargs['rotate'] != 0:
-            angle = int(kwargs['rotate']) % 360
-            del kwargs['rotate']
+            self.rotated_textarea(box, string, font, **kwargs)
+        else:
+            lines = textfolder.get(self, box, string, font,
+                                   adjustBaseline=True, **kwargs)
 
-            if angle in (90, 270):
-                _box = Box(box[0], box[1],
-                           box[0] + box.height, box[1] + box.width)
-                if angle == 90:
-                    _box = _box.shift(x=box.width)
-                elif angle == 270:
-                    _box = _box.shift(y=box.height)
-            elif angle == 180:
-                _box = Box(box[2], box[3],
-                           box[2] + box.width, box[3] + box.height)
-            else:
-                _box = Box(box[0], box[1],
-                           box[0] + box.width, box[1] + box.height)
+            if kwargs.get('outline'):
+                outline = kwargs.get('outline')
+                self.rectangle(lines.outlinebox, fill='white', outline=outline)
 
-            rotate = "rotate(%d,%d,%d)" % (angle, _box[0], _box[1])
-            group = g(transform="%s" % rotate)
-            self.svg.addElement(group)
+            rendered = False
+            for string, point in lines.lines:
+                self.text(point, string, font, **kwargs)
+                rendered = True
 
-            elem = SVGImageDrawElement(group, self)
-            elem.textarea(_box, string, font, **kwargs)
-            return
+            if not rendered and font.size > 0:
+                font.size = int(font.size * 0.8)
+                self.textarea(box, string, font, **kwargs)
 
-        lines = textfolder.get(self, box, string, font,
-                               adjustBaseline=True, **kwargs)
+    def rotated_textarea(self, box, string, font, **kwargs):
+        angle = int(kwargs['rotate']) % 360
+        del kwargs['rotate']
 
-        if kwargs.get('outline'):
-            outline = kwargs.get('outline')
-            self.rectangle(lines.outlinebox, fill='white', outline=outline)
+        if angle in (90, 270):
+            _box = Box(box[0], box[1],
+                       box[0] + box.height, box[1] + box.width)
+            if angle == 90:
+                _box = _box.shift(x=box.width)
+            elif angle == 270:
+                _box = _box.shift(y=box.height)
+        elif angle == 180:
+            _box = Box(box[2], box[3],
+                       box[2] + box.width, box[3] + box.height)
+        else:
+            _box = Box(box[0], box[1],
+                       box[0] + box.width, box[1] + box.height)
 
-        rendered = False
-        for string, xy in lines.lines:
-            self.text(xy, string, font, **kwargs)
-            rendered = True
+        rotate = "rotate(%d,%d,%d)" % (angle, _box[0], _box[1])
+        group = g(transform="%s" % rotate)
+        self.svg.addElement(group)
 
-        if not rendered and font.size > 0:
-            font.size = int(font.size * 0.8)
-            self.textarea(box, string, font, **kwargs)
+        elem = SVGImageDrawElement(group, self)
+        elem.textarea(_box, string, font, **kwargs)
 
-    def line(self, xy, **kwargs):
+    def line(self, points, **kwargs):
         fill = kwargs.get('fill')
         thick = kwargs.get('thick')
 
-        pd = pathdata(xy[0].x, xy[0].y)
-        for pt in xy[1:]:
+        pd = pathdata(points[0].x, points[0].y)
+        for pt in points[1:]:
             pd.line(pt.x, pt.y)
 
         p = path(pd, fill="none", stroke=rgb(fill),
                  stroke_width=thick, **drawing_params(kwargs))
         self.svg.addElement(p)
 
-    def arc(self, xy, start, end, **kwargs):
+    def arc(self, box, start, end, **kwargs):
         thick = kwargs.get('thick')
         fill = kwargs.get('fill')
 
-        w = (xy[2] - xy[0]) / 2
-        h = (xy[3] - xy[1]) / 2
+        w = box.width / 2
+        h = box.height / 2
 
         if start > end:
             end += 360
@@ -205,13 +202,13 @@ class SVGImageDrawElement(_base.ImageDraw):
 
         coord = ellipse.coordinate(1, w, h, start, start + 1)
         point = iter(coord).next()
-        pt1 = XY(xy[0] + w + round(point[0], 0),
-                 xy[1] + h + round(point[1], 0))
+        pt1 = XY(box.x + w + round(point[0], 0),
+                 box.y + h + round(point[1], 0))
 
         coord = ellipse.coordinate(1, w, h, end, end + 1)
         point = iter(coord).next()
-        pt2 = XY(xy[0] + w + round(point[0], 0),
-                 xy[1] + h + round(point[1], 0))
+        pt2 = XY(box.x + w + round(point[0], 0),
+                 box.y + h + round(point[1], 0))
 
         if end - start > 180:
             largearc = 1
@@ -224,24 +221,23 @@ class SVGImageDrawElement(_base.ImageDraw):
                  **drawing_params(kwargs))
         self.svg.addElement(p)
 
-    def ellipse(self, xy, **kwargs):
+    def ellipse(self, box, **kwargs):
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
 
-        w = (xy[2] - xy[0]) / 2
-        h = (xy[3] - xy[1]) / 2
-        pt = XY(xy[0] + w, xy[1] + h)
+        w = box.width / 2
+        h = box.height / 2
+        pt = box.center
 
         e = ellipse(pt.x, pt.y, w, h, fill=rgb(fill),
-                    stroke=rgb(outline),
-                    **drawing_params(kwargs))
+                    stroke=rgb(outline), **drawing_params(kwargs))
         self.svg.addElement(e)
 
-    def polygon(self, xy, **kwargs):
+    def polygon(self, points, **kwargs):
         fill = kwargs.get('fill')
         outline = kwargs.get('outline')
 
-        pg = polygon(xy, fill=rgb(fill), stroke=rgb(outline),
+        pg = polygon(points, fill=rgb(fill), stroke=rgb(outline),
                      **drawing_params(kwargs))
         self.svg.addElement(pg)
 

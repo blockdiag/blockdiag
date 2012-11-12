@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import functools
-from blockdiag.utils import XY
+from blockdiag.utils import Box, XY
 
 
 class LazyReciever(object):
@@ -104,7 +104,7 @@ class LineJumpDrawFilter(LazyReciever):
                 r = self.jump_radius
                 line = (XY(x1, y), XY(x - r, y))
                 self.target.line(line, **kwargs)
-                box = (x - r, y - r, x + r, y + r)
+                box = Box(x - r, y - r, x + r, y + r)
                 self.target.arc(box, 180, 0, **arckwargs)
                 x1 = x + r
 
@@ -124,7 +124,7 @@ class LineJumpDrawFilter(LazyReciever):
                 r = self.jump_radius
                 line = (XY(x, y1), XY(x, y - r))
                 self.target.line(line, **kwargs)
-                box = (x - r, y - r, x + r, y + r)
+                box = Box(x - r, y - r, x + r, y + r)
                 self.target.arc(box, 270, 90, **arckwargs)
                 y1 = y + r
 

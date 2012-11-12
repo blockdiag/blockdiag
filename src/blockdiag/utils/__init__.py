@@ -35,7 +35,7 @@ class XY(tuple):
 
 
 class Box(list):
-    mapper = dict(x1=0, y1=1, x2=2, y2=3)
+    mapper = dict(x1=0, y1=1, x2=2, y2=3, x=0, y=1)
 
     def __init__(self, x1, y1, x2, y2):
         super(Box, self).__init__((x1, y1, x2, y2))
