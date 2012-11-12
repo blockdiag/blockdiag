@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
 import math
 from blockdiag.utils.collections import namedtuple
 
@@ -120,3 +121,26 @@ class Box(list):
     @property
     def center(self):
         return XY(self.x1 + self.width / 2, self.y1 + self.height / 2)
+
+
+def unquote(string):
+    """
+    Remove quotas from string
+
+    >>> unquote('"test"')
+    'test'
+    >>> unquote("'test'")
+    'test'
+    >>> unquote("'half quoted")
+    "'half quoted"
+    >>> unquote('"half quoted')
+    '"half quoted'
+    """
+    if string:
+        m = re.match('\A(?P<quote>"|\')((.|\s)*)(?P=quote)\Z', string, re.M)
+        if m:
+            return re.sub("\\\\" + m.group(1), m.group(1), m.group(2))
+        else:
+            return string
+    else:
+        return string

@@ -17,31 +17,8 @@ import os
 import re
 import sys
 import copy
-from blockdiag.utils import images, urlutil, uuid, XY
+from blockdiag.utils import images, unquote, urlutil, uuid, XY
 from blockdiag import noderenderer, plugins
-
-
-def unquote(string):
-    """
-    Remove quotas from string
-
-    >>> unquote('"test"')
-    'test'
-    >>> unquote("'test'")
-    'test'
-    >>> unquote("'half quoted")
-    "'half quoted"
-    >>> unquote('"half quoted')
-    '"half quoted'
-    """
-    if string:
-        m = re.match('\A(?P<quote>"|\')((.|\s)*)(?P=quote)\Z', string, re.M)
-        if m:
-            return re.sub("\\\\" + m.group(1), m.group(1), m.group(2))
-        else:
-            return string
-    else:
-        return string
 
 
 class Base(object):

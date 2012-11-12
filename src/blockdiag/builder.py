@@ -15,8 +15,7 @@
 
 from blockdiag import parser
 from blockdiag.elements import Diagram, DiagramNode, NodeGroup, DiagramEdge
-from blockdiag.elements import unquote
-from blockdiag.utils import XY
+from blockdiag.utils import unquote, XY
 
 
 class DiagramTreeBuilder:
