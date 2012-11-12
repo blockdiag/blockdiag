@@ -18,8 +18,8 @@ import math
 from itertools import izip, tee
 from functools import wraps
 from blockdiag.imagedraw import base, textfolder
-from blockdiag.imagedraw.utils import cached
-from blockdiag.utils import ellipse, urlutil, Box, Size, XY
+from blockdiag.imagedraw.utils import cached, ellipse
+from blockdiag.utils import urlutil, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
 try:

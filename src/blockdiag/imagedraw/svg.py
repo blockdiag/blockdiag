@@ -198,7 +198,7 @@ class SVGImageDrawElement(_base.ImageDraw):
         if start > end:
             end += 360
 
-        from blockdiag.utils import ellipse
+        from blockdiag.imagedraw.utils import ellipse
 
         coord = ellipse.coordinate(1, w, h, start, start + 1)
         point = iter(coord).next()
