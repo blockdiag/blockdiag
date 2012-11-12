@@ -15,7 +15,7 @@
 
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
-from blockdiag.utils import XY
+from blockdiag.utils import Box, XY
 
 
 class Dots(NodeShape):
@@ -44,7 +44,7 @@ class Dots(NodeShape):
 
         r = m.cellsize / 2
         for dot in dots:
-            box = (dot.x - r, dot.y - r, dot.x + r, dot.y + r)
+            box = Box(dot.x - r, dot.y - r, dot.x + r, dot.y + r)
             drawer.ellipse(box, fill=self.node.linecolor,
                            outline=self.node.linecolor)
 
