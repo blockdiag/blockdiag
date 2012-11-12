@@ -20,7 +20,7 @@ DIVISION = 1000.0
 CYCLE = 10
 
 
-def angles(du, a, b, start, end):
+def _angles(du, a, b, start, end):
     phi = (start / 180.0) * math.pi
     while phi <= (end / 180.0) * math.pi:
         yield phi
@@ -28,16 +28,19 @@ def angles(du, a, b, start, end):
                               (b * math.cos(phi)) ** 2)
 
 
-def coordinate(du, a, b, start, end):
-    for angle in angles(du, a, b, start, end):
+def _coordinates(du, a, b, start, end):
+    for angle in _angles(du, a, b, start, end):
         yield (a * math.cos(angle), b * math.sin(angle))
 
 
-def dots(box, cycle, start=0, end=360):
-    width = box[2] - box[0]
-    height = box[3] - box[1]
-    center = XY(box[0] + width / 2, box[1] + height / 2)
+def endpoints(du, a, b, start, end):
+    pt1 = iter(_coordinates(du, a, b, start, start + 1)).next()
+    pt2 = iter(_coordinates(du, a, b, end, end + 1)).next()
 
+    return [XY(*pt1), XY(*pt2)]
+
+
+def dots(box, cycle, start=0, end=360):
     # calcrate rendering pattern from cycle
     base = 0
     rendered = []
@@ -47,11 +50,11 @@ def dots(box, cycle, start=0, end=360):
             rendered.append(n)
         base += i + j
 
-    a = float(width) / 2
-    b = float(height) / 2
+    a = float(box.width) / 2
+    b = float(box.height) / 2
     du = 1
     _max = sum(cycle) * 2
-    for i, coord in enumerate(coordinate(du, a, b, start, end)):
+    center = box.center
+    for i, coord in enumerate(_coordinates(du, a, b, start, end)):
         if i % _max in rendered:
-            dot = XY(center.x + coord[0], center.y + coord[1])
-            yield dot
+            yield XY(center.x + coord[0], center.y + coord[1])

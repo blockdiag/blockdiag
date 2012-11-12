@@ -18,6 +18,7 @@ import base64
 from blockdiag.imagedraw import base as _base, textfolder
 from blockdiag.imagedraw.simplesvg import *
 from blockdiag.imagedraw.utils import cached
+from blockdiag.imagedraw.utils.ellipse import endpoints as ellipse_endpoints
 from blockdiag.utils import urlutil, Box, XY
 
 feGaussianBlur = svgclass('feGaussianBlur')
@@ -198,17 +199,11 @@ class SVGImageDrawElement(_base.ImageDraw):
         if start > end:
             end += 360
 
-        from blockdiag.imagedraw.utils import ellipse
-
-        coord = ellipse.coordinate(1, w, h, start, start + 1)
-        point = iter(coord).next()
-        pt1 = XY(box.x + w + round(point[0], 0),
-                 box.y + h + round(point[1], 0))
-
-        coord = ellipse.coordinate(1, w, h, end, end + 1)
-        point = iter(coord).next()
-        pt2 = XY(box.x + w + round(point[0], 0),
-                 box.y + h + round(point[1], 0))
+        endpoints = ellipse_endpoints(1, w, h, start, end)
+        pt1 = XY(box.x + w + round(endpoints[0].x, 0),
+                 box.y + h + round(endpoints[0].y, 0))
+        pt2 = XY(box.x + w + round(endpoints[1].x, 0),
+                 box.y + h + round(endpoints[1].y, 0))
 
         if end - start > 180:
             largearc = 1
