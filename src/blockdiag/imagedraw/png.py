@@ -19,6 +19,7 @@ from itertools import izip, tee
 from functools import wraps
 from blockdiag.imagedraw import base, textfolder
 from blockdiag.imagedraw.utils import cached, ellipse
+from blockdiag.imagedraw.utils.ellipse import dots as ellipse_dots
 from blockdiag.utils import urlutil, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
@@ -166,7 +167,7 @@ class ImageDrawExBase(base.ImageDraw):
                 end += 360
 
             cycle = style2cycle(style, kwargs.get('width'))
-            for pt in ellipse.dots(box, cycle, start, end):
+            for pt in ellipse_dots(box, cycle, start, end):
                 self.draw.line([pt, pt], fill=kwargs['fill'])
         else:
             self.draw.arc(box, start, end, **kwargs)
@@ -191,7 +192,7 @@ class ImageDrawExBase(base.ImageDraw):
                 del kwargs['outline']
 
             cycle = style2cycle(style, kwargs.get('width'))
-            for pt in ellipse.dots(box, cycle):
+            for pt in ellipse_dots(box, cycle):
                 self.draw.line([pt, pt], fill=kwargs['fill'])
         else:
             if kwargs.get('fill') == 'none':
