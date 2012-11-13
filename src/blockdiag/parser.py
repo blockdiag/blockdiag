@@ -93,6 +93,9 @@ def parse(seq):
     make_graph_attr = lambda args: DefAttrs(u'graph', [Attr(*args)])
     make_edge = lambda x, x2, xs, attrs: Edge([x, x2] + xs, attrs)
 
+    #
+    # parts of syntax
+    #
     node_id = _id  # + maybe(port)
     node_list = (
         node_id +
@@ -107,10 +110,18 @@ def parse(seq):
         many(op_('[') + many(a_list) + op_(']'))
         >> flatten)
     graph_attr = _id + op_('=') + _id >> make_graph_attr
+
+    #  nodes statements::
+    #     A;
+    #     B [attr = value, attr = value];
+    #     C, D [attr = value, attr = value];
+    #
     multi_node_stmt = node_list + attr_list >> make_nodes
-    # We use a forward_decl becaue of circular definitions like (stmt_list ->
-    # stmt -> group -> stmt_list)
-    group = forward_decl()
+
+    #  edge statements::
+    #     A -> B;
+    #     A <- B;
+    #
     edge_rhs = (op('->') | op('--') | op('<-') | op('<->') |
                 op('>-') | op('-<') | op('>-<')) + node_list
     edge_stmt = (
@@ -119,16 +130,31 @@ def parse(seq):
         many(edge_rhs) +
         attr_list
         >> unarg(make_edge))
+
+    #  class statements::
+    #     class red [color = red];
+    #
     class_stmt = (
         skip(n('class')) +
         node_id +
         attr_list
         >> unarg(AttrClass))
+
+    #  plugin statements::
+    #     plugin attributes [name = Name];
+    #
     plugin_stmt = (
         skip(n('plugin')) +
         node_id +
         attr_list
         >> unarg(AttrPlugin))
+
+    #  group statements::
+    #     group {
+    #        A;
+    #     }
+    #
+    group = forward_decl()
     stmt = (
         edge_stmt
         | class_stmt
@@ -145,6 +171,10 @@ def parse(seq):
         stmt_list +
         op_('}')
         >> unarg(SubGraph))
+
+    #
+    # graph
+    #
     graph = (
         maybe(n('diagram') | n('blockdiag')) +
         maybe(_id) +

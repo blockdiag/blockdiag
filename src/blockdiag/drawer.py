@@ -19,7 +19,7 @@ from blockdiag.utils.collections import defaultdict
 
 
 class DiagramDraw(object):
-    MetricsClass = DiagramMetrics
+    MetricsClass = None  # TODO: obsoleted interface
     shadow_colors = defaultdict(lambda: (0, 0, 0))
     shadow_colors['PNG'] = (64, 64, 64)
     shadow_colors['PDF'] = (144, 144, 144)
@@ -42,14 +42,20 @@ class DiagramDraw(object):
                                        scale_ratio=self.scale_ratio,
                                        **kwargs)
 
-        self.metrics = self.MetricsClass(kwargs.get('basediagram', diagram),
-                                         drawer=self.drawer, **kwargs)
+        self.metrics = self.create_metrics(kwargs.get('basediagram', diagram),
+                                           drawer=self.drawer, **kwargs)
         if self.scale_ratio == 2:
             self.metrics = AutoScaler(self.metrics,
                                       scale_ratio=self.scale_ratio)
 
         self.drawer.set_canvas_size(self.pagesize())
         self.drawer.set_options(jump_radius=self.metrics.cellsize / 2)
+
+    def create_metrics(self, *args, **kwargs):
+        if self.MetricsClass:
+            return self.MetricsClass(*args, **kwargs)
+        else:
+            return DiagramMetrics(*args, **kwargs)
 
     @property
     def nodes(self):

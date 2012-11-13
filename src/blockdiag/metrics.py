@@ -232,7 +232,12 @@ class DiagramMetrics(object):
         return self.spreadsheet.pagesize(width, height)
 
 
-class SpreadSheetMetrics(object):
+class SubMetrics(object):
+    def __getattr__(self, name):
+        return getattr(self.metrics, name)
+
+
+class SpreadSheetMetrics(SubMetrics):
     def __init__(self, metrics):
         self.metrics = metrics
         self.node_width = defaultdict(lambda: metrics.node_width)
@@ -267,10 +272,9 @@ class SpreadSheetMetrics(object):
         return NodeMetrics(self.metrics, x1, y1, x2, y2)
 
     def _node_topleft(self, node, use_padding=True):
-        m = self.metrics
         x, y = node.xy
-        margin = m.page_margin
-        padding = m.page_padding
+        margin = self.page_margin
+        padding = self.page_padding
 
         node_width = sum(self.node_width[i] for i in range(x))
         node_height = sum(self.node_height[i] for i in range(y))
@@ -278,11 +282,13 @@ class SpreadSheetMetrics(object):
         span_height = sum(self.span_height[i] for i in range(y + 1))
 
         if use_padding:
-            xdiff = (self.node_width[x] - (node.width or m.node_width)) / 2
+            width = node.width or self.metrics.node_width
+            xdiff = (self.node_width[x] - width) / 2
             if xdiff < 0:
                 xdiff = 0
 
-            ydiff = (self.node_height[y] - (node.height or m.node_height)) / 2
+            height = node.height or self.metrics.node_height
+            ydiff = (self.node_height[y] - height) / 2
             if ydiff < 0:
                 ydiff = 0
         else:
@@ -295,11 +301,10 @@ class SpreadSheetMetrics(object):
         return XY(x1, y1)
 
     def _node_bottomright(self, node, use_padding=True):
-        m = self.metrics
         x = node.xy.x + node.colwidth - 1
         y = node.xy.y + node.colheight - 1
-        margin = m.page_margin
-        padding = m.page_padding
+        margin = self.page_margin
+        padding = self.page_padding
 
         node_width = sum(self.node_width[i] for i in range(x + 1))
         node_height = sum(self.node_height[i] for i in range(y + 1))
@@ -307,11 +312,13 @@ class SpreadSheetMetrics(object):
         span_height = sum(self.span_height[i] for i in range(y + 1))
 
         if use_padding:
-            xdiff = (self.node_width[x] - (node.width or m.node_width)) / 2
+            width = node.width or self.metrics.node_width
+            xdiff = (self.node_width[x] - width) / 2
             if xdiff < 0:
                 xdiff = 0
 
-            ydiff = (self.node_height[y] - (node.height or m.node_height)) / 2
+            height = node.height or self.metrics.node_height
+            ydiff = (self.node_height[y] - height) / 2
             if ydiff < 0:
                 ydiff = 0
         else:
@@ -336,36 +343,42 @@ class SpreadSheetMetrics(object):
                   y + margin.y + padding[2] + y_span)
 
 
-class NodeMetrics(Box):
+class NodeMetrics(SubMetrics):
     def __init__(self, metrics, x1, y1, x2, y2):
         self.metrics = metrics
-        super(NodeMetrics, self).__init__(x1, y1, x2, y2)
+        self._box = Box(x1, y1, x2, y2)
+
+    def __getattr__(self, name):
+        if hasattr(self._box, name):
+            return getattr(self._box, name)
+        else:
+            return getattr(self.metrics, name)
 
     @property
     def box(self):
-        return Box(self.x1, self.y1, self.x2, self.y2)
+        return self._box
 
     @property
     def marginbox(self):
-        return Box(self.x1 - self.metrics.span_width / 8,
-                   self.y1 - self.metrics.span_height / 4,
-                   self.x2 + self.metrics.span_width / 8,
-                   self.y2 + self.metrics.span_height / 4)
+        return Box(self._box.x1 - self.span_width / 8,
+                   self._box.y1 - self.span_height / 4,
+                   self._box.x2 + self.span_width / 8,
+                   self._box.y2 + self.span_height / 4)
 
     @property
     def corebox(self):
-        return Box(self.x1 + self.metrics.node_padding,
-                   self.y1 + self.metrics.node_padding,
-                   self.x2 - self.metrics.node_padding * 2,
-                   self.y2 - self.metrics.node_padding * 2)
+        return Box(self._box.x1 + self.node_padding,
+                   self._box.y1 + self.node_padding,
+                   self._box.x2 - self.node_padding * 2,
+                   self._box.y2 - self.node_padding * 2)
 
     @property
     def grouplabelbox(self):
-        return Box(self.x1, self.y1 - self.metrics.span_height / 2,
-                   self.x2, self.y1)
+        return Box(self._box.x1, self._box.y1 - self.span_height / 2,
+                   self._box.x2, self._box.y1)
 
 
-class EdgeMetrics(object):
+class EdgeMetrics(SubMetrics):
     def __init__(self, edge, metrics):
         self.metrics = metrics
         self.edge = edge
@@ -393,8 +406,8 @@ class EdgeMetrics(object):
 
     def _head(self, node, direct):
         head = []
-        cell = self.metrics.cellsize
-        node = self.metrics.node(node)
+        cell = self.cellsize
+        node = self.node(node)
 
         if direct == 'up':
             xy = node.bottom
@@ -460,7 +473,7 @@ class EdgeMetrics(object):
 
     @property
     def shaft(self):
-        cell = self.metrics.cellsize
+        cell = self.cellsize
         lines = self._shaft
         head1, head2 = self.headshapes
 
@@ -552,13 +565,13 @@ class LandscapeEdgeMetrics(EdgeMetrics):
 
     @property
     def _shaft(self):
-        span = XY(self.metrics.span_width, self.metrics.span_height)
+        span = XY(self.span_width, self.span_height)
         _dir = self.edge.direction
 
-        node1 = self.metrics.node(self.edge.node1)
-        cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
-        node2 = self.metrics.node(self.edge.node2)
-        cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
+        node1 = self.node(self.edge.node1)
+        cell1 = self.cell(self.edge.node1, use_padding=False)
+        node2 = self.node(self.edge.node2)
+        cell2 = self.cell(self.edge.node2, use_padding=False)
 
         shaft = EdgeLines()
         if _dir == 'right':
@@ -658,12 +671,12 @@ class LandscapeEdgeMetrics(EdgeMetrics):
 
     @property
     def labelbox(self):
-        span = XY(self.metrics.span_width, self.metrics.span_height)
-        node = XY(self.metrics.node_width, self.metrics.node_height)
+        span = XY(self.span_width, self.span_height)
+        node = XY(self.node_width, self.node_height)
 
         _dir = self.edge.direction
-        node1 = self.metrics.cell(self.edge.node1, use_padding=False)
-        node2 = self.metrics.cell(self.edge.node2, use_padding=False)
+        node1 = self.cell(self.edge.node1, use_padding=False)
+        node2 = self.cell(self.edge.node2, use_padding=False)
 
         if _dir == 'right':
             if self.edge.skipped:
@@ -756,13 +769,13 @@ class PortraitEdgeMetrics(EdgeMetrics):
 
     @property
     def _shaft(self):
-        span = XY(self.metrics.span_width, self.metrics.span_height)
+        span = XY(self.span_width, self.span_height)
         _dir = self.edge.direction
 
-        node1 = self.metrics.node(self.edge.node1)
-        cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
-        node2 = self.metrics.node(self.edge.node2)
-        cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
+        node1 = self.node(self.edge.node1)
+        cell1 = self.cell(self.edge.node1, use_padding=False)
+        node2 = self.node(self.edge.node2)
+        cell2 = self.cell(self.edge.node2, use_padding=False)
 
         shaft = EdgeLines()
         if _dir in ('up', 'right-up', 'same', 'right'):
@@ -836,11 +849,11 @@ class PortraitEdgeMetrics(EdgeMetrics):
 
     @property
     def labelbox(self):
-        span = XY(self.metrics.span_width, self.metrics.span_height)
+        span = XY(self.span_width, self.span_height)
 
         _dir = self.edge.direction
-        node1 = self.metrics.cell(self.edge.node1, use_padding=False)
-        node2 = self.metrics.cell(self.edge.node2, use_padding=False)
+        node1 = self.cell(self.edge.node1, use_padding=False)
+        node2 = self.cell(self.edge.node2, use_padding=False)
 
         if _dir == 'right':
             if self.edge.skipped:
@@ -918,11 +931,11 @@ class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
     @property
     def _shaft(self):
         if self.edge.direction == 'right-down':
-            span = XY(self.metrics.span_width, self.metrics.span_height)
-            node1 = self.metrics.node(self.edge.node1)
-            cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
-            node2 = self.metrics.node(self.edge.node2)
-            cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
+            span = XY(self.span_width, self.span_height)
+            node1 = self.node(self.edge.node1)
+            cell1 = self.cell(self.edge.node1, use_padding=False)
+            node2 = self.node(self.edge.node2)
+            cell2 = self.cell(self.edge.node2, use_padding=False)
 
             shaft = EdgeLines()
             shaft.moveTo(node1.bottom)
@@ -945,9 +958,9 @@ class FlowchartLandscapeEdgeMetrics(LandscapeEdgeMetrics):
     def labelbox(self):
         _dir = self.edge.direction
         if _dir == 'right':
-            span = XY(self.metrics.span_width, self.metrics.span_height)
-            cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
-            cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
+            span = XY(self.span_width, self.span_height)
+            cell1 = self.cell(self.edge.node1, use_padding=False)
+            cell2 = self.cell(self.edge.node2, use_padding=False)
 
             if self.edge.skipped:
                 box = Box(cell1.bottom.x, cell1.bottom.y,
@@ -991,11 +1004,11 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
     @property
     def _shaft(self):
         if self.edge.direction == 'right-down':
-            span = XY(self.metrics.span_width, self.metrics.span_height)
-            node1 = self.metrics.node(self.edge.node1)
-            cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
-            node2 = self.metrics.node(self.edge.node2)
-            cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
+            span = XY(self.span_width, self.span_height)
+            node1 = self.node(self.edge.node1)
+            cell1 = self.cell(self.edge.node1, use_padding=False)
+            node2 = self.node(self.edge.node2)
+            cell2 = self.cell(self.edge.node2, use_padding=False)
 
             shaft = EdgeLines()
             shaft.moveTo(node1.right)
@@ -1017,9 +1030,9 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
     @property
     def labelbox(self):
         _dir = self.edge.direction
-        span = XY(self.metrics.span_width, self.metrics.span_height)
-        cell1 = self.metrics.cell(self.edge.node1, use_padding=False)
-        cell2 = self.metrics.cell(self.edge.node2, use_padding=False)
+        span = XY(self.span_width, self.span_height)
+        cell1 = self.cell(self.edge.node1, use_padding=False)
+        cell2 = self.cell(self.edge.node2, use_padding=False)
 
         if _dir == 'down':
             box = Box(cell2.topleft.x, cell2.top.y - span.y / 2,
