@@ -137,7 +137,10 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         if not isinstance(node, self.node_class):
             return results
 
-        diagram = self.node2diagram(node)
+        try:
+            diagram = self.node2diagram(node)
+        except Exception, e:
+            raise self.warning(e.message)
 
         if 'desctable' in node['options']:
             del node['options']['desctable']
