@@ -260,10 +260,16 @@ class SpreadSheetMetrics(SubMetrics):
            (x not in self.span_width or self.span_width[x] < width)):
             self.span_width[x] = width
 
+    def add_span_width(self, x, width):
+        self.span_width[x] += width
+
     def set_span_height(self, y, height):
         if (height is not None and 0 < height and
            (y not in self.span_height or self.span_height[y] < height)):
             self.span_height[y] = height
+
+    def add_span_height(self, y, height):
+        self.span_height[y] += height
 
     def node(self, node, use_padding=True):
         x1, y1 = self._node_topleft(node, use_padding)
