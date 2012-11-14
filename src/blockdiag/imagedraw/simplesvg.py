@@ -59,13 +59,19 @@ class base(object):
             if value is not None:
                 io.write(' %s=%s' % (_escape(key), _quote(value)))
 
-        if self.elements == [] and self.text is None:
-            io.write(" />\n")
-        elif self.text is not None:
-            text = _escape(self.text).encode('utf-8')
-            io.write(">%s</%s>\n" % (text, clsname))
+        if self.elements == []:
+            if self.text is not None:
+                text = _escape(self.text).encode('utf-8')
+                io.write(">%s</%s>\n" % (text, clsname))
+            else:
+                io.write(" />\n")
         elif self.elements:
-            io.write(">\n")
+            if self.text is not None:
+                text = _escape(self.text).encode('utf-8')
+                io.write(">%s\n" % (text,))
+            else:
+                io.write(">\n")
+
             for e in self.elements:
                 e.to_xml(io, level + 1)
             io.write('%s</%s>\n' % (indent, clsname))
