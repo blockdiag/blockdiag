@@ -23,6 +23,7 @@ from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.drawer import DiagramDraw
 from blockdiag.utils.bootstrap import detectfont
 from blockdiag.utils.collections import namedtuple
+from blockdiag.utils.rst.nodes import blockdiag
 
 
 directive_options_default = dict(format='PNG',
@@ -58,10 +59,6 @@ def cmp_node_number(a, b):
         n2 = 65535
 
     return cmp(n1, n2)
-
-
-class blockdiag(nodes.General, nodes.Element):
-    pass
 
 
 class BlockdiagDirectiveBase(rst.Directive):
