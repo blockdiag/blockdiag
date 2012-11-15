@@ -20,11 +20,6 @@ import blockdiag.drawer
 import blockdiag.parser
 from blockdiag.utils.bootstrap import Application, Options
 
-# for compatibility
-from blockdiag.utils.bootstrap import create_fontmap, detectfont
-create_fontmap
-detectfont
-
 
 class BlockdiagOptions(Options):
     def build_parser(self):
