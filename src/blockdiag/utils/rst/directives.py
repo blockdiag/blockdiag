@@ -19,9 +19,9 @@ from docutils import nodes
 from docutils.parsers import rst
 from docutils.statemachine import ViewList
 from blockdiag import parser
-from blockdiag.command import detectfont
 from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.drawer import DiagramDraw
+from blockdiag.utils.bootstrap import detectfont
 from blockdiag.utils.collections import namedtuple
 
 

@@ -14,11 +14,9 @@
 #  limitations under the License.
 
 from blockdiag import command, parser, builder, drawer
-from blockdiag import parser as diagparser
-from blockdiag import drawer as DiagramDraw
 from blockdiag.utils import collections
 from blockdiag.utils.fontmap import FontMap
 from blockdiag.utils.rst.directives import blockdiag, BlockdiagDirective
 
-(command, parser, builder, drawer, diagparser, DiagramDraw, collections,
+(command, parser, builder, drawer, collections,
  FontMap, blockdiag, BlockdiagDirective)
