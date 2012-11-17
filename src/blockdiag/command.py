@@ -21,6 +21,11 @@ import blockdiag.parser
 from blockdiag.utils.bootstrap import Application, Options
 
 
+# FIXME: for compatibility
+from blockdiag.utils.bootstrap import detectfont
+detectfont
+
+
 class BlockdiagOptions(Options):
     def build_parser(self):
         super(BlockdiagOptions, self).build_parser()
