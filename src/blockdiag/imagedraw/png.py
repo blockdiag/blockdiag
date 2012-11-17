@@ -307,9 +307,8 @@ class ImageDrawExBase(base.ImageDraw):
                 draw.text((0, 0), string, fill=fill)
                 del draw
 
-                font_ratio = font.size * 1.0 / FontMap.BASE_FONTSIZE
-                basesize = (int(size[0] * self.scale_ratio * font_ratio),
-                            int(size[1] * self.scale_ratio * font_ratio))
+                basesize = (size.x * self.scale_ratio,
+                            size.y * self.scale_ratio)
                 text_image = image.resize(basesize, Image.ANTIALIAS)
                 self.paste(text_image, xy, text_image)
         else:
