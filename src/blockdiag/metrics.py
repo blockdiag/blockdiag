@@ -360,6 +360,9 @@ class NodeMetrics(SubMetrics):
         else:
             return getattr(self.metrics, name)
 
+    def __getitem__(self, key):
+        return self.box[key]
+
     @property
     def box(self):
         return self._box
