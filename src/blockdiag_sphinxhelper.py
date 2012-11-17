@@ -13,6 +13,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import blockdiag.parser
+import blockdiag.builder
+import blockdiag.drawer
+core = blockdiag
+
+import blockdiag.utils.bootstrap
+import blockdiag.utils.collections
+import blockdiag.utils.fontmap
+utils = blockdiag.utils
+
+from blockdiag.utils.rst import nodes
+from blockdiag.utils.rst import directives
+
+# FIXME: obsoleted interface (keep for compatibility)
 from blockdiag import command, parser, builder, drawer
 from blockdiag.utils import collections
 from blockdiag.utils.fontmap import FontMap
