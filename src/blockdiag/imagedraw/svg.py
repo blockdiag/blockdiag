@@ -15,11 +15,12 @@
 
 import re
 import base64
-from blockdiag.imagedraw import base as _base, textfolder
+from blockdiag.imagedraw import base as _base
 from blockdiag.imagedraw.simplesvg import *
 from blockdiag.imagedraw.utils import cached
 from blockdiag.imagedraw.utils.ellipse import endpoints as ellipse_endpoints
 from blockdiag.utils import urlutil, Box, XY
+from blockdiag.utils.functools import partial
 
 feGaussianBlur = svgclass('feGaussianBlur')
 
@@ -77,6 +78,7 @@ def drawing_params(kwargs):
 class SVGImageDrawElement(_base.ImageDraw):
     self_generative_methods = ['group', 'anchor']
     supported_path = True
+    baseline_text_rendering = True
 
     def __init__(self, svg, parent=None):
         self.svg = svg
@@ -103,15 +105,6 @@ class SVGImageDrawElement(_base.ImageDraw):
                  stroke_width=thick, **drawing_params(kwargs))
         self.svg.addElement(r)
 
-    def textsize(self, string, font, maxwidth=None, **kwargs):
-        if maxwidth is None:
-            maxwidth = 65535
-
-        box = Box(0, 0, maxwidth, 65535)
-        textbox = textfolder.get(self, box, string, font,
-                                 adjustBaseline=True, **kwargs)
-        return textbox.outlinebox.size
-
     @cached
     def textlinesize(self, string, font, **kwargs):
         if kwargs.get('ignore_pil', self.ignore_pil):
@@ -136,8 +129,7 @@ class SVGImageDrawElement(_base.ImageDraw):
         if 'rotate' in kwargs and kwargs['rotate'] != 0:
             self.rotated_textarea(box, string, font, **kwargs)
         else:
-            lines = textfolder.get(self, box, string, font,
-                                   adjustBaseline=True, **kwargs)
+            lines = self.textfolder(box, string, font, **kwargs)
 
             if kwargs.get('outline'):
                 outline = kwargs.get('outline')
