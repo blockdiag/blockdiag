@@ -17,12 +17,14 @@ import re
 import math
 from itertools import izip, tee
 from functools import wraps
-from blockdiag.imagedraw import base, textfolder
+from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached, ellipse
 from blockdiag.imagedraw.utils.ellipse import dots as ellipse_dots
 from blockdiag.utils import urlutil, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
+from blockdiag.utils.functools import partial
 from blockdiag.utils.myitertools import istep, stepslice
+
 try:
     from PIL import Image
     from PIL import ImageDraw
@@ -269,14 +271,10 @@ class ImageDrawExBase(base.ImageDraw):
             del kwargs['outline']
             self.line(xy, **kwargs)
 
-    def textsize(self, string, font, maxwidth=None, **kwargs):
-        if maxwidth is None:
-            maxwidth = 65535
-
-        box = Box(0, 0, maxwidth, 65535)
-        textbox = textfolder.get(self, box, string, font,
-                                 scale=self.scale_ratio, **kwargs)
-        return textbox.outlinebox.size
+    @property
+    def textfolder(self):
+        textfolder = super(ImageDrawExBase, self).textfolder
+        return partial(textfolder, scale=self.scale_ratio)
 
     @cached
     def textlinesize(self, string, font):
@@ -342,8 +340,7 @@ class ImageDrawExBase(base.ImageDraw):
             self.paste(filler, box.topleft, text._image.rotate(angle))
             return
 
-        lines = textfolder.get(self, box, string, font,
-                               scale=self.scale_ratio, **kwargs)
+        lines = self.textfolder(box, string, font, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')

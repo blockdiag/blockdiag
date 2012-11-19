@@ -19,13 +19,16 @@ import math
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from blockdiag.imagedraw import base, textfolder
+from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached
 from blockdiag.utils import urlutil, Box, Size
 from blockdiag.utils.fontmap import parse_fontpath
+from blockdiag.utils.functools import partial
 
 
 class PDFImageDraw(base.ImageDraw):
+    baseline_text_rendering = True
+
     def __init__(self, filename, **kwargs):
         self.filename = filename
         self.canvas = None
@@ -123,15 +126,6 @@ class PDFImageDraw(base.ImageDraw):
         if 'thick' in kwargs:
             self.canvas.setLineWidth(1)
 
-    def textsize(self, string, font, maxwidth=None, **kwargs):
-        if maxwidth is None:
-            maxwidth = 65535
-
-        box = Box(0, 0, maxwidth, 65535)
-        textbox = textfolder.get(self, box, string, font,
-                                 adjustBaseline=True, **kwargs)
-        return textbox.outlinebox.size
-
     @cached
     def textlinesize(self, string, font):
         width = self.canvas.stringWidth(string, font.path, font.size)
@@ -160,8 +154,7 @@ class PDFImageDraw(base.ImageDraw):
                 box = box.shift(x=-self.size.y, y=self.size.y)
 
         self.set_font(font)
-        lines = textfolder.get(self, box, string, font,
-                               adjustBaseline=True, **kwargs)
+        lines = self.textfolder(box, string, font, **kwargs)
 
         if kwargs.get('outline'):
             outline = kwargs.get('outline')

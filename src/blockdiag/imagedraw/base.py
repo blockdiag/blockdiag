@@ -13,11 +13,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from blockdiag.imagedraw import textfolder
+from blockdiag.utils.functools import partial
+
 
 class ImageDraw(object):
     self_generative_methods = []
     nosideeffect_methods = ['set_canvas_size', 'textsize', 'textlinesize']
     supported_path = False
+    baseline_text_rendering = False
 
     _method_cache = {}
 
@@ -43,7 +47,17 @@ class ImageDraw(object):
         pass
 
     def textsize(self, string, font, maxwidth=None, **kwargs):
-        pass
+        if maxwidth is None:
+            maxwidth = 65535
+
+        box = Box(0, 0, maxwidth, 65535)
+        textbox = self.textfolder(box, string, font, **kwargs)
+        return textbox.outlinebox.size
+
+    @property
+    def textfolder(self):
+        return partial(textfolder.get, self,
+                       adjustBaseline=self.baseline_text_rendering)
 
     def textlinesize(self, string, font, **kwargs):
         pass
