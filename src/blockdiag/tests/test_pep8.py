@@ -24,7 +24,10 @@ def test_pep8():
         if not options.quiet:
             count_passed = done_d + done_s - count_failed
             print("%d passed and %d failed." % (count_passed, count_failed))
-            print("Test failed." if count_failed else "Test passed.")
+            if count_failed:
+                print("Test failed.")
+            else:
+                print("Test passed.")
         if count_failed:
             sys.exit(1)
     if options.testsuite:
