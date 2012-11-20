@@ -16,13 +16,12 @@
 import re
 import math
 from itertools import izip, tee
-from functools import wraps
 from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached, ellipse
 from blockdiag.imagedraw.utils.ellipse import dots as ellipse_dots
 from blockdiag.utils import urlutil, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
-from blockdiag.utils.functools import partial
+from blockdiag.utils.functools import partial, wraps
 from blockdiag.utils.myitertools import istep, stepslice
 
 try:
