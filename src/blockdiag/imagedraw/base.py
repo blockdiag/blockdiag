@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from blockdiag.imagedraw import textfolder
+from blockdiag.utils import Box
 from blockdiag.utils.functools import partial
 
 
