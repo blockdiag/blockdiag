@@ -21,6 +21,7 @@ from docutils.statemachine import ViewList
 from blockdiag import parser
 from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.drawer import DiagramDraw
+from blockdiag.utils import any
 from blockdiag.utils.bootstrap import detectfont
 from blockdiag.utils.collections import namedtuple
 from blockdiag.utils.rst.nodes import blockdiag
