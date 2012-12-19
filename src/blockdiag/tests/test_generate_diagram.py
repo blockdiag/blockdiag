@@ -117,7 +117,7 @@ def not_exist_font_config_option_test():
 @argv_wrapper
 @stderr_wrapper
 def svg_includes_source_code_tag_test():
-    from xml.etree import ElementTree
+    from etree import ElementTree
 
     testdir = os.path.dirname(__file__)
     diagpath = "%s/diagrams/single_edge.diag" % testdir
