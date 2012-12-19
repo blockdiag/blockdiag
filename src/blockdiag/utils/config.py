@@ -34,6 +34,8 @@ class ConfigParser(SafeConfigParser):
             fd = codecs.open(path, 'r', 'utf-8-sig')
         else:
             fd = codecs.open(path, 'r', 'utf-8')
+            if fd.read(1) != u'\uFEFF':  # skip BOM
+                fd.seek(0)
 
         self.readfp(fd)
         fd.close()
