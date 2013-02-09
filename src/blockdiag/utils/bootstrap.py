@@ -253,6 +253,7 @@ def detectfont(options):
         'AppleGothic.ttf',
         'msgothic.ttf',
         'msgoth04.ttf',
+        'msgothic.ttc',
     ]
 
     fontpath = None
