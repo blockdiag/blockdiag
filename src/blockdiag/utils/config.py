@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import sys
-import codecs
+from blockdiag.utils import codecs
 from ConfigParser import SafeConfigParser
 
 
@@ -30,12 +30,6 @@ class ConfigParser(SafeConfigParser):
             SafeConfigParser.__init__(self)
 
     def read(self, path):
-        if sys.version_info > (2, 5):
-            fd = codecs.open(path, 'r', 'utf-8-sig')
-        else:
-            fd = codecs.open(path, 'r', 'utf-8')
-            if fd.read(1) != u'\uFEFF':  # skip BOM
-                fd.seek(0)
-
+        fd = codecs.open(path, 'r', 'utf-8-sig')
         self.readfp(fd)
         fd.close()

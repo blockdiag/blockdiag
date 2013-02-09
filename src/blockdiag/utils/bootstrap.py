@@ -72,12 +72,13 @@ class Application(object):
                 raise RuntimeError(msg)
 
     def parse_diagram(self):
-        import codecs
+        from blockdiag.utils import codecs
         if self.options.input == '-':
-            stream = codecs.getreader('utf-8')(sys.stdin)
+            stream = codecs.getreader('utf-8-sig')(sys.stdin)
             self.code = stream.read()
         else:
-            self.code = codecs.open(self.options.input, 'r', 'utf-8').read()
+            fp = codecs.open(self.options.input, 'r', 'utf-8-sig')
+            self.code = fp.read()
 
         return self.module.parser.parse_string(self.code)
 
