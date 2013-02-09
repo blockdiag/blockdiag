@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 import os
-import codecs
 from docutils import nodes
 from docutils.parsers import rst
 from docutils.statemachine import ViewList
@@ -22,6 +21,7 @@ from blockdiag import parser
 from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.drawer import DiagramDraw
 from blockdiag.utils import any
+from blockdiag.utils import codecs
 from blockdiag.utils.bootstrap import detectfont
 from blockdiag.utils.collections import namedtuple
 from blockdiag.utils.rst.nodes import blockdiag
@@ -88,7 +88,7 @@ class BlockdiagDirectiveBase(rst.Directive):
 
             try:
                 filename = self.source_filename(self.arguments[0])
-                fp = codecs.open(filename, 'r', 'utf-8')
+                fp = codecs.open(filename, 'r', 'utf-8-sig')
                 try:
                     dotcode = fp.read()
                 finally:

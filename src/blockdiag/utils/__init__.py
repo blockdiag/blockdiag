@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import re
+import sys
 import math
 from blockdiag.utils.collections import namedtuple
 
@@ -152,3 +153,22 @@ def unquote(string):
             return string
     else:
         return string
+
+
+class codecs(object):
+    @staticmethod
+    def getreader(encoding):
+        import codecs
+        return codecs.getreader(encoding)
+
+    @staticmethod
+    def open(filename, mode, encoding):
+        import codecs
+        if sys.version_info <= (2, 5) and encoding == 'utf-8-sig':
+            fd = codecs.open(path, mode, 'utf-8')
+            if fd.read(1) != u'\uFEFF':  # skip BOM
+                fd.seek(0)
+        else:
+            fd = codecs.open(filename, mode, encoding)
+
+        return fd
