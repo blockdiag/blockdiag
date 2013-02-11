@@ -34,6 +34,8 @@ class PDFImageDraw(base.ImageDraw):
         self.canvas = None
         self.fonts = {}
 
+        self.set_canvas_size(Size(1, 1))  # This line make textsize() workable
+
     def set_canvas_size(self, size):
         self.canvas = canvas.Canvas(self.filename, pagesize=size)
         self.size = size
@@ -128,6 +130,7 @@ class PDFImageDraw(base.ImageDraw):
 
     @cached
     def textlinesize(self, string, font):
+        self.set_font(font)
         width = self.canvas.stringWidth(string, font.path, font.size)
         return Size(int(math.ceil(width)), font.size)
 
