@@ -16,7 +16,7 @@
 from blockdiag.utils import functools, Box, XY
 
 
-class LazyReciever(object):
+class LazyReceiver(object):
     def __init__(self, target):
         self.target = target
         self.calls = []
@@ -31,9 +31,9 @@ class LazyReciever(object):
         def _(*args, **kwargs):
             if name in self.target.self_generative_methods:
                 ret = method(self.target, *args, **kwargs)
-                reciever = LazyReciever(ret)
-                self.nested.append(reciever)
-                return reciever
+                receiver = LazyReceiver(ret)
+                self.nested.append(receiver)
+                return receiver
             else:
                 self.calls.append((method, args, kwargs))
                 return self
@@ -59,7 +59,7 @@ class LazyReciever(object):
             method(self.target, *args, **kwargs)
 
 
-class LineJumpDrawFilter(LazyReciever):
+class LineJumpDrawFilter(LazyReceiver):
     def __init__(self, target, jump_radius):
         super(LineJumpDrawFilter, self).__init__(target)
         self.ytree = []
