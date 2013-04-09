@@ -172,3 +172,15 @@ class codecs(object):
             fd = codecs.open(filename, mode, encoding)
 
         return fd
+
+
+def is_PIL_available():
+    try:
+        try:
+            from PIL import _imagingft
+        except ImportError:
+            import _imagingft
+
+        return True
+    except ImportError:
+        return False
