@@ -34,6 +34,9 @@ class XY(tuple):
         except KeyError:
             raise AttributeError(name)
 
+    def __setattr__(self, name, value):
+        raise TypeError("'XY' object does not support item assignment")
+
     def shift(self, x=0, y=0):
         return self.__class__(self.x + x, self.y + y)
 
