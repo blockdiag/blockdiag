@@ -16,6 +16,7 @@
 import re
 import sys
 import math
+from functools import partial
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -23,7 +24,6 @@ from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached
 from blockdiag.utils import urlutil, Box, Size
 from blockdiag.utils.fontmap import parse_fontpath
-from blockdiag.utils.functools import partial
 
 
 class PDFImageDraw(base.ImageDraw):

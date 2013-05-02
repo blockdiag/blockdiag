@@ -27,8 +27,8 @@ from blockdiag.utils.rst import nodes
 from blockdiag.utils.rst import directives
 
 # FIXME: obsoleted interface (keep for compatibility)
+import collections
 from blockdiag import command, parser, builder, drawer
-from blockdiag.utils import collections
 from blockdiag.utils.fontmap import FontMap
 from blockdiag.utils.rst.directives import blockdiag, BlockdiagDirective
 

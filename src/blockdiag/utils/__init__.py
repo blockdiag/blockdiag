@@ -16,7 +16,7 @@
 import re
 import sys
 import math
-from blockdiag.utils.collections import namedtuple
+from collections import namedtuple
 
 
 Size = namedtuple('Size', 'width height')

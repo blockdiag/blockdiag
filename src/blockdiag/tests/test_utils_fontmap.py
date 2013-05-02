@@ -7,7 +7,7 @@ import unittest2
 from blockdiag.tests.utils import stderr_wrapper, assertRaises
 
 from cStringIO import StringIO
-from blockdiag.utils.collections import namedtuple
+from collections import namedtuple
 from blockdiag.utils.fontmap import FontInfo, FontMap
 
 

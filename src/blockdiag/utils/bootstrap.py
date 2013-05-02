@@ -16,6 +16,7 @@
 import os
 import re
 import sys
+import codecs
 from optparse import OptionParser
 from blockdiag import imagedraw
 from blockdiag.utils.config import ConfigParser
@@ -72,7 +73,6 @@ class Application(object):
                 raise RuntimeError(msg)
 
     def parse_diagram(self):
-        from blockdiag.utils import codecs
         if self.options.input == '-':
             stream = codecs.getreader('utf-8-sig')(sys.stdin)
             self.code = stream.read()
