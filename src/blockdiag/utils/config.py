@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import sys
-from blockdiag.utils import codecs
+import codecs
 from ConfigParser import SafeConfigParser
 
 

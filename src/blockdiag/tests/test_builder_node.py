@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from collections import defaultdict
 from blockdiag.tests.utils import __build_diagram, __validate_node_attributes
-
-from blockdiag.utils.collections import defaultdict
 
 
 def test_single_node_diagram():

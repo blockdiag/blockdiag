@@ -14,11 +14,11 @@
 #  limitations under the License.
 
 import copy
+from collections import defaultdict
 from blockdiag import noderenderer
 from blockdiag.elements import DiagramNode
 from blockdiag.utils import Box, Size, XY
 from blockdiag.utils.fontmap import FontInfo, FontMap
-from blockdiag.utils.collections import defaultdict
 
 cellsize = 8
 

@@ -35,13 +35,13 @@ At the moment, the parser builds only a parse tree, not an abstract syntax tree
   [1]: http://www.graphviz.org/doc/info/lang.html
 '''
 
-from blockdiag.utils import codecs
+import codecs
 from re import MULTILINE, DOTALL
+from collections import namedtuple
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
                                   forward_decl)
 
-from blockdiag.utils.collections import namedtuple
 
 ENCODING = 'utf-8'
 

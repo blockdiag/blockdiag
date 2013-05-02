@@ -17,8 +17,8 @@ import re
 import os
 import sys
 import copy
+from collections import namedtuple
 from blockdiag.utils.config import ConfigParser
-from blockdiag.utils.collections import namedtuple
 
 
 def parse_fontpath(path):
