@@ -34,6 +34,10 @@ class Base(object):
         cls.basecolor = images.color_to_rgb(color)
 
     @classmethod
+    def set_default_style(cls, style):
+        cls.style = style
+
+    @classmethod
     def set_default_text_color(cls, color):
         cls.textcolor = images.color_to_rgb(color)
 
@@ -51,6 +55,7 @@ class Base(object):
         cls.textcolor = (0, 0, 0)
         cls.fontfamily = None
         cls.fontsize = None
+        cls.style = None
 
     def duplicate(self):
         return copy.copy(self)
@@ -605,6 +610,13 @@ class Diagram(NodeGroup):
     def set_default_node_color(self, color):
         color = images.color_to_rgb(color)
         self._DiagramNode.set_default_color(color)
+
+    def set_default_node_style(self, value):
+        if re.search('^(?:none|solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
+            self._DiagramNode.set_default_style(value)
+        else:
+            msg = "WARNING: unknown %s style: %s\n" % value
+            raise AttributeError(msg)
 
     def set_default_line_color(self, color):
         msg = "WARNING: default_line_color is obsoleted; " + \
