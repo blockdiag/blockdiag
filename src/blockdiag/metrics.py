@@ -234,6 +234,10 @@ class DiagramMetrics(object):
 
 class SubMetrics(object):
     def __getattr__(self, name):
+        # avoid recursion-error on Python 2.6
+        if 'metrics' not in self.__dict__:
+            raise AttributeError()
+
         return getattr(self.metrics, name)
 
 
