@@ -15,7 +15,10 @@
 
 import sys
 import codecs
-from ConfigParser import SafeConfigParser
+try:
+    from configparser import SafeConfigParser
+except ImportError:
+    from ConfigParser import SafeConfigParser
 
 
 class ConfigParser(SafeConfigParser):
