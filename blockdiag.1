@@ -1,0 +1,78 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH BLOCKDIAG 1 "May  9, 2011"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+blockdiag \- generate block-diagram image file from spec-text file.
+.SH SYNOPSIS
+.B blockdiag
+.RI [ options ] " file"
+.SH DESCRIPTION
+This manual page documents briefly the
+.B blockdiag
+commands.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics,
+.\" respectively.
+\fBblockdiag\fP is a program that generate block-diagram image file from spec-text file.
+.SH OPTIONS
+These programs follow the usual GNU command line syntax, with long
+options starting with two dashes (`-').
+A summary of options is included below.
+For a complete description, see the \fBSEE ALSO\fP.
+.TP
+.B \-\-version
+show program's version number and exit
+.TP
+.B \-h, \-\-help
+Show summary of options
+.TP
+.B \-a, \-\-antialias
+Pass diagram image to anti-alias filter
+.TP
+.B \-c FILE, \-\-config=FILE
+read configurations from FILE
+.TP
+.B \-o FILE
+write diagram to FILE
+.TP
+.B \-f FONT, \-\-font=FONT
+use FONT to draw diagram
+.TP
+.B \-\-fontmap=FONT
+use FONTMAP file to draw diagram
+.TP
+.B \-s, \-\-separate
+Separate diagram images for each group
+.TP
+.B \-T TYPE
+Output diagram as TYPE format
+.TP
+.B \-\-nodoctype
+Do not output doctype definition tags (SVG only)
+.TP
+.B \-\-no-transparency
+do not make transparent background of diagram (PNG only)
+.SH SEE ALSO
+The programs are documented fully by
+.br
+.BR http://tk0miya.bitbucket.org/blockdiag/build/html/index.html
+.SH AUTHOR
+blockdiag was written by Takeshi Komiya <i.tkomiya@gmail.com>
+.PP
+This manual page was written by Kouhei Maeda <mkouhei@palmtb.net>,
+for the Debian project (and may be used by others).
