@@ -209,10 +209,10 @@ def parse_string(string):
     try:
         tree = parse(tokenize(string))
         return sort_tree(tree)
-    except LexerError, e:
+    except LexerError as e:
         message = "Got unexpected token at line %d column %d" % e.place
         raise ParseException(message)
-    except Exception, e:
+    except Exception as e:
         raise ParseException(str(e))
 
 
