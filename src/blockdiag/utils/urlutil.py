@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import urlparse
-
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 def isurl(url):
     o = urlparse.urlparse(url)
