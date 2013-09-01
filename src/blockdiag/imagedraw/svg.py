@@ -292,7 +292,7 @@ class SVGImageDraw(SVGImageDrawElement):
         image = self.svg.to_xml()
 
         if self.filename:
-            open(self.filename, 'w').write(image)
+            open(self.filename, 'wb').write(image.encode('utf-8'))
 
         return image
 
