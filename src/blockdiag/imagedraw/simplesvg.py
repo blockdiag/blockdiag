@@ -14,7 +14,10 @@
 #  limitations under the License.
 
 import re
-from cStringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 
 import sys
 if sys.version_info[0] == 2:

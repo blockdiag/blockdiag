@@ -6,7 +6,10 @@ import tempfile
 import unittest2
 from blockdiag.tests.utils import stderr_wrapper, assertRaises
 
-from cStringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 from collections import namedtuple
 from blockdiag.utils.fontmap import FontInfo, FontMap
 

@@ -61,10 +61,13 @@ def get_image_size(filename):
     if filename not in _image_size_cache:
         uri = filename
         if urlutil.isurl(filename):
-            import cStringIO
+            try:
+                from io import StringIO
+            except ImportError:
+                from cStringIO import StringIO
             import urllib
             try:
-                uri = cStringIO.StringIO(urllib.urlopen(filename).read())
+                uri = StringIO(urllib.urlopen(filename).read())
             except:
                 return None
 
