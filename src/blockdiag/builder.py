@@ -16,7 +16,7 @@
 from blockdiag import parser
 from blockdiag.elements import Diagram, DiagramNode, NodeGroup, DiagramEdge
 from blockdiag.utils import unquote, XY
-
+from functools import cmp_to_key
 
 class DiagramTreeBuilder:
     def build(self, tree):
@@ -201,7 +201,7 @@ class DiagramLayoutManager:
             else:
                 related.append(uniq_node)
 
-        related.sort(lambda x, y: cmp(x.order, y.order))
+        related.sort(key=lambda x: x.order)
         return related
 
     def get_parent_nodes(self, node):
@@ -250,9 +250,7 @@ class DiagramLayoutManager:
                         if not parent in circular:
                             parents.append(parent)
 
-                parents.sort(lambda x, y: cmp(x.order, y.order))
-
-                for parent in parents:
+                for parent in sorted(parents, key=lambda x: x.order):
                     children = self.get_child_nodes(parent)
                     if node1 in children and node2 in children:
                         if circular.index(node1) > circular.index(node2):
@@ -364,11 +362,11 @@ class DiagramLayoutManager:
                 x.node1 = x.node1.group
                 y.node1 = y.node1.group
 
-            return cmp(x.node1.order, y.node1.order)
+            return -1 if x.node1.order < y.node1.order else ( 0 if x.node1.order == y.node1.order else 1)
 
         edges = (DiagramEdge.find(parent, node1) +
                  DiagramEdge.find(parent, node2))
-        edges.sort(compare)
+        edges.sort(key=cmp_to_key(compare))
         if len(edges) == 0:
             return 0
         elif edges[0].node2 == node2:
@@ -392,7 +390,7 @@ class DiagramLayoutManager:
 
         count = 0
         children = self.get_child_nodes(node)
-        children.sort(lambda x, y: cmp(x.xy.x, y.xy.y))
+        children.sort(key=cmp_to_key(lambda x, y: -1 if x.xy.x < y.xy.y else ( 0 if x.xy.x == y.xy.y else 1)))
 
         grandchild = 0
         for child in children:
@@ -710,9 +708,9 @@ class SeparateDiagramBuilder(ScreenNodeBuilder):
 
             # pick up nodes to base diagram
             nodes1 = [e.node1 for e in DiagramEdge.find(None, group)]
-            nodes1.sort(lambda x, y: cmp(x.order, y.order))
+            nodes1.sort(key=lambda x: x.order)
             nodes2 = [e.node2 for e in DiagramEdge.find(group, None)]
-            nodes2.sort(lambda x, y: cmp(x.order, y.order))
+            nodes2.sort(key=lambda x: x.order)
 
             nodes = nodes1 + [group] + nodes2
             for i, n in enumerate(nodes):

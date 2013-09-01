@@ -194,11 +194,11 @@ def sort_tree(tree):
         else:
             return 2
 
-    def compare(a, b):
-        return cmp(weight(a), weight(b))
+    def keyfunction(item):
+        return weight(item)
 
     if hasattr(tree, 'stmts'):
-        tree.stmts.sort(compare)
+        tree.stmts.sort(key=keyfunction)
         for stmt in tree.stmts:
             sort_tree(stmt)
 
