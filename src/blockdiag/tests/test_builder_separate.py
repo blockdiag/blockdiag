@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 from blockdiag.builder import SeparateDiagramBuilder
 from blockdiag.elements import DiagramNode
 from blockdiag.parser import parse_string
@@ -26,7 +27,7 @@ def test_separate1_diagram():
     for i, diagram in enumerate(diagram):
         for node in diagram.traverse_nodes():
             if isinstance(node, DiagramNode):
-                print node, assert_pos[i][node.id]
+                print(node, assert_pos[i][node.id])
                 assert node.xy == assert_pos[i][node.id]
 
 
@@ -43,5 +44,5 @@ def test_separate2_diagram():
     for i, diagram in enumerate(diagram):
         for node in diagram.traverse_nodes():
             if isinstance(node, DiagramNode):
-                print node, assert_pos[i][node.id]
+                print(node, assert_pos[i][node.id])
                 assert node.xy == assert_pos[i][node.id]

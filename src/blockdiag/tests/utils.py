@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 import re
 import sys
 from StringIO import StringIO
@@ -60,12 +61,12 @@ def stderr_wrapper(func):
             stderr = sys.stderr
             sys.stderr = StringIO()
 
-            print args, kwargs
+            print(args, kwargs)
             func(*args, **kwargs)
         finally:
             if sys.stderr.getvalue():
-                print "---[ stderr ] ---"
-                print sys.stderr.getvalue()
+                print("---[ stderr ] ---")
+                print(sys.stderr.getvalue())
 
             sys.stderr = stderr
 
@@ -106,13 +107,13 @@ def __validate_node_attributes(filename, **kwargs):
 
     for name, values in kwargs.items():
         if re.match('edge_', name):
-            print "[%s]" % name
+            print("[%s]" % name)
             name = re.sub('edge_', '', name)
             for (id1, id2), value in values.items():
                 found = False
                 for edge in diagram.edges:
                     if edge.node1.id == id1 and edge.node2.id == id2:
-                        print edge
+                        print(edge)
                         eq_(value, getattr(edge, name))
                         found = True
 
@@ -120,8 +121,8 @@ def __validate_node_attributes(filename, **kwargs):
                     raise RuntimeError('edge (%s -> %s) is not found' %
                                        (id1, id2))
         else:
-            print "[node.%s]" % name
+            print("[node.%s]" % name)
             for node in (n for n in diagram.nodes if n.drawable):
-                print node
+                print(node)
                 value = getattr(node, name)
                 eq_(values[node.id], value)
