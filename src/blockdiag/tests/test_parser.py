@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 from blockdiag.parser import parse_string, ParseException
 from blockdiag.parser import Graph, SubGraph, Statements, Node, Edge
 from nose.tools import raises
@@ -78,7 +79,7 @@ def test_parser_diagram_includes_edges():
            """
     tree = parse_string(code)
     assert isinstance(tree, Graph)
-    print tree.stmts
+    print(tree.stmts)
     assert len(tree.stmts) == 1
     assert isinstance(tree.stmts[0], Edge)
 
@@ -90,7 +91,7 @@ def test_parser_diagram_includes_edges():
            """
     tree = parse_string(code)
     assert isinstance(tree, Graph)
-    print tree.stmts
+    print(tree.stmts)
     assert len(tree.stmts) == 2
     assert isinstance(tree.stmts[0], Edge)
     assert isinstance(tree.stmts[1], Edge)
