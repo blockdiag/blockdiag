@@ -15,7 +15,11 @@
 
 import re
 import math
-from itertools import izip, tee
+from itertools import tee
+try:
+    from future_builtins import zip
+except ImportError:
+    pass
 from functools import partial, wraps
 from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached, ellipse
@@ -48,7 +52,7 @@ def point_pairs(xylist):
 def line_segments(xylist):
     p1, p2 = tee(point_pairs(xylist))
     p2.next()
-    return izip(p1, p2)
+    return zip(p1, p2)
 
 
 def dashize_line(line, length):
