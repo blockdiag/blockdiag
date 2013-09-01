@@ -137,7 +137,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         try:
             diagram = self.node2diagram(node)
-        except Exception, e:
+        except Exception as e:
             raise self.warning(e.message)
 
         if 'desctable' in node['options']:

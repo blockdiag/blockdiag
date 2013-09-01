@@ -34,14 +34,14 @@ class Application(object):
 
             parsed = self.parse_diagram()
             return self.build_diagram(parsed)
-        except SystemExit, e:
+        except SystemExit as e:
             return e
-        except UnicodeEncodeError, e:
+        except UnicodeEncodeError as e:
             msg = "ERROR: UnicodeEncodeError caught " + \
                   "(check your font settings)\n"
             sys.stderr.write(msg)
             return -1
-        except Exception, e:
+        except Exception as e:
             if self.options and self.options.debug:
                 import traceback
                 traceback.print_exc()
