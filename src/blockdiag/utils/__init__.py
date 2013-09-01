@@ -29,7 +29,10 @@ class XY(tuple):
         return super(XY, cls).__new__(cls, (x, y))
 
     def __getattr__(self, name):
-        return self[self.mapper[name]]
+        try:
+            return self[self.mapper[name]]
+        except KeyError:
+            raise AttributeError(name)
 
     def shift(self, x=0, y=0):
         return self.__class__(self.x + x, self.y + y)
@@ -42,7 +45,10 @@ class Box(list):
         super(Box, self).__init__((x1, y1, x2, y2))
 
     def __getattr__(self, name):
-        return self[self.mapper[name]]
+        try:
+            return self[self.mapper[name]]
+        except KeyError:
+            raise AttributeError(name)
 
     def __repr__(self):
         _format = "<%s (%s, %s) %dx%d at 0x%08x>"
