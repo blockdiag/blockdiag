@@ -16,9 +16,15 @@
 import re
 from cStringIO import StringIO
 
+import sys
+if sys.version_info[0] == 2:
+    string_types = (str, unicode)
+else:
+    string_types = (str,)
+
 
 def _escape(s):
-    if not isinstance(s, (str, unicode)):
+    if not isinstance(s, string_types):
         s = str(s)
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 

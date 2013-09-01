@@ -16,6 +16,12 @@
 import re
 from blockdiag.utils import Box, Size, XY
 
+import sys
+if sys.version_info[0] == 2:
+    string_types = (str, unicode)
+else:
+    string_types = (str,)
+
 
 def splitlabel(string):
     """Split text to lines as generator.
@@ -84,7 +90,7 @@ class VerticalTextFolder(object):
         self._result = self._lines()
 
     def textsize(self, text, scaled=False):
-        if isinstance(text, (str, unicode)):
+        if isinstance(text, string_types):
             size = [self.drawer.textlinesize(c, self.font) for c in text]
             width = max(s.width for s in size)
             height = (sum(s.height for s in size) +
@@ -206,7 +212,7 @@ class HorizontalTextFolder(object):
         self._result = self._lines()
 
     def textsize(self, text, scaled=False):
-        if isinstance(text, (str, unicode)):
+        if isinstance(text, string_types):
             textsize = self.drawer.textlinesize(text, self.font)
         else:
             if text:
