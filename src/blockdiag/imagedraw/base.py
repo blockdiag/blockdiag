@@ -72,8 +72,5 @@ class ImageDraw(object):
     def image(self, box, url):
         pass
 
-    def loadImage(self, filename, box):  # TODO: obsoleted
-        return self.image(box, filename)
-
     def save(self, filename, size, _format):
         pass
