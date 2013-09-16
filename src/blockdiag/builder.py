@@ -18,6 +18,7 @@ from blockdiag.elements import Diagram, DiagramNode, NodeGroup, DiagramEdge
 from blockdiag.utils import unquote, XY
 from functools import cmp_to_key
 
+
 class DiagramTreeBuilder:
     def build(self, tree):
         self.diagram = Diagram()
@@ -362,7 +363,13 @@ class DiagramLayoutManager:
                 x.node1 = x.node1.group
                 y.node1 = y.node1.group
 
-            return -1 if x.node1.order < y.node1.order else ( 0 if x.node1.order == y.node1.order else 1)
+            # cmp x.node1.order and y.node1.order
+            if x.node1.order < y.node1.order:
+                return -1
+            elif x.node1.order == y.node1.order:
+                return 0
+            else:
+                return 1
 
         edges = (DiagramEdge.find(parent, node1) +
                  DiagramEdge.find(parent, node2))
@@ -388,9 +395,17 @@ class DiagramLayoutManager:
         node.xy = XY(node.xy.x, height)
         self.mark_xy(node.xy, node.colwidth, node.colheight)
 
+        def cmp(x, y):
+            if x.xy.x < y.xy.y:
+                return -1
+            elif x.xy.x == y.xy.y:
+                return 0
+            else:
+                return 1
+
         count = 0
         children = self.get_child_nodes(node)
-        children.sort(key=cmp_to_key(lambda x, y: -1 if x.xy.x < y.xy.y else ( 0 if x.xy.x == y.xy.y else 1)))
+        children.sort(key=cmp_to_key(cmp))
 
         grandchild = 0
         for child in children:

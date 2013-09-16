@@ -5,6 +5,7 @@ try:
 except ImportError:
     import urllib.parse as urlparse
 
+
 def isurl(url):
     o = urlparse.urlparse(url)
     accpetable = ["http", "https"]

@@ -1027,7 +1027,8 @@ class FlowchartPortraitEdgeMetrics(PortraitEdgeMetrics):
             shaft.moveTo(node1.right)
 
             if self.edge.skipped:
-                shaft.lineTo(cell1.right.x + int(span.x * 3 / 4), cell1.right.y)
+                shaft.lineTo(cell1.right.x + int(span.x * 3 / 4),
+                             cell1.right.y)
                 shaft.lineTo(cell1.right.x + int(span.x * 3 / 4),
                              cell2.topleft.y - int(span.y / 2))
                 shaft.lineTo(cell2.top.x, cell2.top.y - int(span.y / 2))
