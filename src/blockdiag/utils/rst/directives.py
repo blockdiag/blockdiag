@@ -186,7 +186,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
                     new_size = (options['maxwidth'], int(size[1] * ratio))
                     content = drawer.save(new_size)
 
-                return nodes.raw('', content.decode('utf-8'), format='html')
+                return nodes.raw('', content, format='html')
 
         size = drawer.pagesize()
         if 'maxwidth' in options and options['maxwidth'] < size[0]:

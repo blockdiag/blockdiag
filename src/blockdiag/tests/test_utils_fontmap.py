@@ -125,7 +125,7 @@ class TestUtilsFontmap(unittest2.TestCase):
 
     @stderr_wrapper
     def test_fontmap_empty_config(self):
-        config = StringIO("")
+        config = StringIO(u"")
         fmap = FontMap(config)
 
         font1 = fmap.find()
@@ -164,7 +164,7 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(11, font1.size)
 
     def test_fontmap_normal_config(self):
-        _config = "[fontmap]\nsansserif: %s\nsansserif-bold: %s\n" % \
+        _config = u"[fontmap]\nsansserif: %s\nsansserif-bold: %s\n" % \
                   (self.fontpath[0], self.fontpath[1])
         config = StringIO(_config)
         fmap = FontMap(config)
@@ -206,7 +206,7 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(font1.size, font6.size)
 
     def test_fontmap_duplicated_fontentry1(self):
-        _config = "[fontmap]\nsansserif: %s\nsansserif: %s\n" % \
+        _config = u"[fontmap]\nsansserif: %s\nsansserif: %s\n" % \
                   (self.fontpath[0], self.fontpath[1])
         config = StringIO(_config)
         fmap = FontMap(config)
@@ -219,7 +219,7 @@ class TestUtilsFontmap(unittest2.TestCase):
     def test_fontmap_duplicated_fontentry2(self):
         # this testcase is only for python2.6 or later
         if sys.version_info > (2, 6):
-            _config = "[fontmap]\nsansserif: %s\nsansserif-normal: %s\n" % \
+            _config = u"[fontmap]\nsansserif: %s\nsansserif-normal: %s\n" % \
                       (self.fontpath[0], self.fontpath[1])
             config = StringIO(_config)
             fmap = FontMap(config)
@@ -231,7 +231,7 @@ class TestUtilsFontmap(unittest2.TestCase):
 
     @stderr_wrapper
     def test_fontmap_with_nodefault_fontentry(self):
-        _config = "[fontmap]\nserif: %s\n" % self.fontpath[0]
+        _config = u"[fontmap]\nserif: %s\n" % self.fontpath[0]
         config = StringIO(_config)
         fmap = FontMap(config)
 
@@ -254,7 +254,7 @@ class TestUtilsFontmap(unittest2.TestCase):
 
     @stderr_wrapper
     def test_fontmap_with_nonexistence_fontpath(self):
-        _config = "[fontmap]\nserif: unknown_file\n"
+        _config = u"[fontmap]\nserif: unknown_file\n"
         config = StringIO(_config)
         fmap = FontMap(config)
 
@@ -264,7 +264,7 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(11, font1.size)
 
     def test_fontmap_switch_defaultfamily(self):
-        _config = "[fontmap]\nserif-bold: %s\n" % self.fontpath[0]
+        _config = u"[fontmap]\nserif-bold: %s\n" % self.fontpath[0]
         config = StringIO(_config)
         fmap = FontMap(config)
 
@@ -292,8 +292,8 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(20, font4.size)
 
     def test_fontmap_using_fontalias(self):
-        _config = ("[fontmap]\nserif-bold: %s\n" +
-                   "[fontalias]\ntest = serif-bold\n") % self.fontpath[0]
+        _config = (u"[fontmap]\nserif-bold: %s\n" +
+                   u"[fontalias]\ntest = serif-bold\n") % self.fontpath[0]
         config = StringIO(_config)
         fmap = FontMap(config)
 
@@ -306,7 +306,7 @@ class TestUtilsFontmap(unittest2.TestCase):
     def test_fontmap_by_file(self):
         tmp = tempfile.mkstemp()
 
-        _config = "[fontmap]\nsansserif: %s\nsansserif-bold: %s\n" % \
+        _config = u"[fontmap]\nsansserif: %s\nsansserif-bold: %s\n" % \
                   (self.fontpath[0], self.fontpath[1])
 
         fp = os.fdopen(tmp[0], 'wt')
@@ -325,13 +325,13 @@ class TestUtilsFontmap(unittest2.TestCase):
     def test_fontmap_including_bom_by_file(self):
         tmp = tempfile.mkstemp()
 
-        _config = ("\xEF\xBB\xBF[fontmap]\nsansserif: %s\n"
-                   "sansserif-bold: %s\n") % \
+        _config = (u"[fontmap]\nsansserif: %s\n"
+                   u"sansserif-bold: %s\n") % \
                   (self.fontpath[0], self.fontpath[1])
 
         try:
-            fp = os.fdopen(tmp[0], 'wt')
-            fp.write(_config)
+            fp = os.fdopen(tmp[0], 'wb')
+            fp.write(_config.encode('utf-8-sig'))
             fp.close()
             fmap = FontMap(tmp[1])
 
