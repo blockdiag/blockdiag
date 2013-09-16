@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import os
 import sys
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
+
+import os
 import tempfile
-import unittest2
 from blockdiag.tests.utils import stderr_wrapper, assertRaises
 
 try:
@@ -17,7 +21,7 @@ from blockdiag.utils.fontmap import FontInfo, FontMap
 FontElement = namedtuple('FontElement', 'fontfamily fontsize')
 
 
-class TestUtilsFontmap(unittest2.TestCase):
+class TestUtilsFontmap(unittest.TestCase):
     def setUp(self):
         fontpath1 = __file__
         fontpath2 = os.path.join(os.path.dirname(__file__), 'utils.py')

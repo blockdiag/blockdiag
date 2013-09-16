@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import sys
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
+
 import os
 import tempfile
-import unittest2
 from blockdiag.tests.utils import stderr_wrapper, assertRaises
 
 from docutils import nodes
@@ -35,7 +40,7 @@ def use_tmpdir(func):
     return _
 
 
-class TestRstDirectives(unittest2.TestCase):
+class TestRstDirectives(unittest.TestCase):
     def tearDown(self):
         if 'blockdiag' in docutils._directives:
             del docutils._directives['blockdiag']

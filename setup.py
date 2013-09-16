@@ -25,12 +25,15 @@ requires = ['setuptools',
             'funcparserlib',
             'webcolors',
             'Pillow',]
-deplinks = []
+test_requires = [
+             'Nose',
+             'pep8>=1.3',]
 
 
 # only for Python2.6
 if sys.version_info > (2, 6) and sys.version_info < (2, 7):
     requires.append('OrderedDict')
+    test_requires.append('unittest2')
 
 
 setup(
@@ -52,11 +55,7 @@ setup(
      include_package_data=True,
      install_requires=requires,
      extras_require=dict(
-         test=[
-             'Nose',
-             'pep8>=1.3',
-             'unittest2',
-         ],
+         test=test_requires,
          pdf=[
              'reportlab',
          ],
@@ -64,9 +63,8 @@ setup(
              'docutils',
          ],
      ),
-     dependency_links=deplinks,
      test_suite='nose.collector',
-     tests_require=['Nose','pep8'],
+     tests_require=test_requires,
      entry_points="""
         [console_scripts]
         blockdiag = blockdiag.command:main
