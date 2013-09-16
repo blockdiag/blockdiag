@@ -7,6 +7,7 @@ else:
     import unittest
 
 import os
+import io
 import tempfile
 from blockdiag.tests.utils import argv_wrapper, assertRaises, with_pdf
 
@@ -137,8 +138,8 @@ class TestBootParams(unittest.TestCase):
     def test_config_option_with_bom(self):
         try:
             tmp = tempfile.mkstemp()
-            fp = os.fdopen(tmp[0], 'wt')
-            fp.write("\xEF\xBB\xBF[blockdiag]\n")
+            fp = io.open(tmp[0], 'wt', encoding='utf-8-sig')
+            fp.write("[blockdiag]\n")
             fp.close()
 
             sys.argv = ['', '-c', tmp[1], 'input.diag']
@@ -168,7 +169,7 @@ class TestBootParams(unittest.TestCase):
         try:
             tmp = tempfile.mkstemp()
             config = '[blockdiag]\nfontpath = /path/to/font\n'
-            os.fdopen(tmp[0], 'wt').write(config)
+            io.open(tmp[0], 'wt').write(config)
 
             sys.argv = ['', '-c', tmp[1], 'input.diag']
             options = self.parser.parse()

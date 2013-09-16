@@ -213,12 +213,17 @@ class TestUtilsFontmap(unittest.TestCase):
         _config = u"[fontmap]\nsansserif: %s\nsansserif: %s\n" % \
                   (self.fontpath[0], self.fontpath[1])
         config = StringIO(_config)
-        fmap = FontMap(config)
+        if sys.version_info < (2, 7):
+            fmap = FontMap(config)
 
-        font1 = fmap.find()
-        self.assertEqual('sansserif', font1.generic_family)
-        self.assertEqual(self.fontpath[1], font1.path)
-        self.assertEqual(11, font1.size)
+            font1 = fmap.find()
+            self.assertEqual('sansserif', font1.generic_family)
+            self.assertEqual(self.fontpath[1], font1.path)
+            self.assertEqual(11, font1.size)
+        else:
+            import configparser
+            with self.assertRaises(configparser.DuplicateOptionError):
+                FontMap(config)
 
     def test_fontmap_duplicated_fontentry2(self):
         # this testcase is only for python2.6 or later
