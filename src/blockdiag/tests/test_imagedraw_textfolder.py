@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import unittest2
+import sys
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
+
 from blockdiag.imagedraw.textfolder import splitlabel
 from blockdiag.imagedraw.textfolder import splittext
 from blockdiag.imagedraw.textfolder import truncate_text
@@ -17,7 +22,7 @@ class Metrics(object):
         return Size(CHAR_WIDTH * length, CHAR_HEIGHT)
 
 
-class TestTextFolder(unittest2.TestCase):
+class TestTextFolder(unittest.TestCase):
     def test_splitlabel(self):
         # single line text
         text = "abc"

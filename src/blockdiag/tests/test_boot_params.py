@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import os
 import sys
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
+
+import os
 import tempfile
-import unittest2
 from blockdiag.tests.utils import argv_wrapper, assertRaises, with_pdf
 
 import blockdiag
@@ -11,7 +15,7 @@ from blockdiag.command import BlockdiagOptions
 from blockdiag.utils.bootstrap import detectfont
 
 
-class TestBootParams(unittest2.TestCase):
+class TestBootParams(unittest.TestCase):
     def setUp(self):
         self.parser = BlockdiagOptions(blockdiag)
 
