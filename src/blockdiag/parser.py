@@ -35,7 +35,7 @@ At the moment, the parser builds only a parse tree, not an abstract syntax tree
   [1]: http://www.graphviz.org/doc/info/lang.html
 '''
 
-import codecs
+import io
 from re import MULTILINE, DOTALL
 from collections import namedtuple
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
@@ -217,5 +217,5 @@ def parse_string(string):
 
 
 def parse_file(path):
-    code = codecs.open(path, 'r', 'utf-8-sig').read()
+    code = io.open(path, 'r', encoding='utf-8-sig').read()
     return parse_string(code)

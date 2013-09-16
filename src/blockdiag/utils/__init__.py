@@ -164,25 +164,6 @@ def unquote(string):
         return string
 
 
-class codecs(object):
-    @staticmethod
-    def getreader(encoding):
-        import codecs
-        return codecs.getreader(encoding)
-
-    @staticmethod
-    def open(filename, mode, encoding):
-        import codecs
-        if sys.version_info <= (2, 5) and encoding == 'utf-8-sig':
-            fd = codecs.open(path, mode, 'utf-8')
-            if fd.read(1) != u'\uFEFF':  # skip BOM
-                fd.seek(0)
-        else:
-            fd = codecs.open(filename, mode, encoding)
-
-        return fd
-
-
 def is_PIL_available():
     try:
         try:
