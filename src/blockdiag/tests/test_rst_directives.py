@@ -7,6 +7,7 @@ else:
     import unittest
 
 import os
+import io
 import tempfile
 from blockdiag.tests.utils import stderr_wrapper, assertRaises
 
@@ -112,7 +113,7 @@ class TestRstDirectives(unittest.TestCase):
 
         self.assertEqual(1, len(doctree))
         self.assertEqual(directives.blockdiag, type(doctree[0]))
-        self.assertEqual(open(filename).read(), doctree[0]['code'])
+        self.assertEqual(io.open(filename).read(), doctree[0]['code'])
         self.assertEqual(None, doctree[0]['alt'])
         self.assertEqual({}, doctree[0]['options'])
 

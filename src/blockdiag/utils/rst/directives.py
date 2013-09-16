@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import os
-import codecs
+import io
 from collections import namedtuple
 from docutils import nodes
 from docutils.parsers import rst
@@ -88,7 +88,7 @@ class BlockdiagDirectiveBase(rst.Directive):
 
             try:
                 filename = self.source_filename(self.arguments[0])
-                fp = codecs.open(filename, 'r', 'utf-8-sig')
+                fp = io.open(filename, 'r', encoding='utf-8-sig')
                 try:
                     dotcode = fp.read()
                 finally:
