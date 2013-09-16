@@ -7,14 +7,6 @@ sys.path.insert(0, 'src')
 import blockdiag
 
 
-def is_installed(name):
-    try:
-        pkg_resources.get_distribution(name)
-        return True
-    except:
-        return False
-
-
 long_description = \
         open(os.path.join("src","README.txt")).read() + \
         open(os.path.join("src","TODO.txt")).read()
@@ -31,23 +23,9 @@ classifiers = [
 
 requires = ['setuptools',
             'funcparserlib',
-            'webcolors']
+            'webcolors',
+            'Pillow',]
 deplinks = []
-
-# For readthedocs.org
-# http://read-the-docs.readthedocs.org/en/latest/faq.html#how-do-i-change-behavior-for-read-the-docs
-# Find imaging libraries
-
-if 'READTHEDOCS' in os.environ:
-    requires.append('Pillow')
-elif is_installed('PIL'):
-    requires.append('PIL')
-elif is_installed('Pillow'):
-    requires.append('Pillow')
-elif sys.platform == 'win32':
-    requires.append('Pillow')
-else:
-    requires.append('PIL')
 
 
 # only for Python2.6
