@@ -16,7 +16,7 @@
 from blockdiag import parser
 from blockdiag.elements import Diagram, DiagramNode, NodeGroup, DiagramEdge
 from blockdiag.utils import unquote, XY
-from functools import cmp_to_key
+from blockdiag.utils.compat import cmp_to_key
 
 
 class DiagramTreeBuilder:
