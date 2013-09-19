@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 import re
 import sys
 import math
@@ -102,7 +103,7 @@ class Box(list):
 
     @property
     def top(self):
-        return XY(self.x1 + self.width / 2, self.y1)
+        return XY(self.x1 + self.width // 2, self.y1)
 
     @property
     def topright(self):
@@ -114,7 +115,7 @@ class Box(list):
 
     @property
     def bottom(self):
-        return XY(self.x1 + self.width / 2, self.y2)
+        return XY(self.x1 + self.width // 2, self.y2)
 
     @property
     def bottomright(self):
@@ -122,15 +123,15 @@ class Box(list):
 
     @property
     def left(self):
-        return XY(self.x1, self.y1 + self.height / 2)
+        return XY(self.x1, self.y1 + self.height // 2)
 
     @property
     def right(self):
-        return XY(self.x2, self.y1 + self.height / 2)
+        return XY(self.x2, self.y1 + self.height // 2)
 
     @property
     def center(self):
-        return XY(self.x1 + self.width / 2, self.y1 + self.height / 2)
+        return XY(self.x1 + self.width // 2, self.y1 + self.height // 2)
 
 
 def any(seq):

@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 import sys
 if sys.version_info[0] == 2:
     range = xrange
@@ -385,12 +386,12 @@ class ImageDrawExBase(base.ImageDraw):
         # centering image.
         w, h = image.size
         if box.width > w:
-            x = box[0] + (box.width - w) / 2
+            x = box[0] + (box.width - w) // 2
         else:
             x = box[0]
 
         if box.height > h:
-            y = box[1] + (box.height - h) / 2
+            y = box[1] + (box.height - h) // 2
         else:
             y = box[1]
 
