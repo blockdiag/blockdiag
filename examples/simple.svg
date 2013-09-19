@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd ">
+<svg viewBox="0 0 832 296 " xmlns="http://www.w3.org/2000/svg"  xmlns:xlink="http://www.w3.org/1999/xlink"  xmlns:inkspace="http://www.inkscape.org/namespaces/inkscape" >
+	<defs id="defs_block">
+		<filter inkspace:collect="always" height="1.504" width="1.1575" y="-0.252" x="-0.07875" id="filter_blur">
+			<feGaussianBlur stdDeviation="4.2" id="feGaussianBlur3780" inkspace:collect="always"/>
+		</filter>
+	</defs>
+	<title>blockdiag</title>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="54" x="67" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="54" x="259" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="214" x="259" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="54" x="451" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="54" x="643" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="134" x="643" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="214" x="451" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" height="40" width="128" stroke="rgb(0,0,0)" y="214" x="643" stroke-width="1" fill="rgb(0,0,0)"/>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="48" x="64" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="74" x="124" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">A</text>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="48" x="256" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="74" x="317" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">B</text>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="208" x="256" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="234" x="317" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">F</text>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="48" x="448" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="74" x="508" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">C</text>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="48" x="640" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="74" x="700" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">D</text>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="128" x="640" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="154" x="701" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">E</text>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="208" x="448" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="234" x="508" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">G</text>
+	<rect style="None" height="40" width="128" stroke="rgb(0,0,0)" y="208" x="640" stroke-width="1" fill="rgb(255,255,255)"/>
+	<text y="234" x="700" font-size="11" font-family="/usr/share/fonts/truetype/ipafont/ipagp.ttf" fill="rgb(0,0,0)">H</text>
+	<path stroke="rgb(0,0,0)" d="M 192 68 L 224 68 L 224 228 L 256 228" fill="none"/>
+	<polygon style="None" points="256, 228  248, 224  248, 232  256, 228  " stroke="rgb(0,0,0)" fill="rgb(0,0,0)"/>
+	<path stroke="rgb(0,0,0)" d="M 192 68 L 256 68" fill="none"/>
+	<polygon style="None" points="256, 68  248, 64  248, 72  256, 68  " stroke="rgb(0,0,0)" fill="rgb(0,0,0)"/>
+	<path stroke="rgb(0,0,0)" d="M 384 68 L 448 68" fill="none"/>
+	<polygon style="None" points="448, 68  440, 64  440, 72  448, 68  " stroke="rgb(0,0,0)" fill="rgb(0,0,0)"/>
+	<path stroke="rgb(0,0,0)" d="M 576 68 L 608 68 L 608 148 L 640 148" fill="none"/>
+	<polygon style="None" points="640, 148  632, 144  632, 152  640, 148  " stroke="rgb(0,0,0)" fill="rgb(0,0,0)"/>
+	<path stroke="rgb(0,0,0)" d="M 576 68 L 640 68" fill="none"/>
+	<polygon style="None" points="640, 68  632, 64  632, 72  640, 68  " stroke="rgb(0,0,0)" fill="rgb(0,0,0)"/>
+	<path stroke="rgb(0,0,0)" d="M 384 228 L 448 228" fill="none"/>
+	<polygon style="None" points="448, 228  440, 224  440, 232  448, 228  " stroke="rgb(0,0,0)" fill="rgb(0,0,0)"/>
+	<path stroke="rgb(0,0,0)" d="M 576 228 L 640 228" fill="none"/>
+	<polygon style="None" points="640, 228  632, 224  632, 232  640, 228  " stroke="rgb(0,0,0)" fill="rgb(0,0,0)"/>
+</svg>

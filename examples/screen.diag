@@ -1,0 +1,38 @@
+diagram admin {
+  top_page [label = "Top page", color = "pink"];
+
+  group foo {
+    foo_index [label = "List of FOOs"];
+    foo_detail [label = "Detail FOO", style = "dashed"];
+    foo_add [label = "Add FOO"];
+    foo_add_confirm [label = "Add FOO (confirm)"];
+    foo_edit [label = "Edit FOO"];
+    foo_edit_confirm [label = "Edit FOO (confirm)"];
+    foo_delete_confirm [label = "Delete FOO (confirm)"];
+  }
+
+  group bar {
+    bar_detail [label = "Detail of BAR", style = "dotted"];
+    bar_edit [label = "Edit BAR"];
+    bar_edit_confirm [label = "Edit BAR (confirm)"];
+  }
+
+  logout;
+
+  top_page -> foo_index [color = "red", dir = none, label = "button"];
+  top_page -> bar_detail [style = dashed, label = "link"];
+
+  foo_index -> foo_detail;
+               foo_detail -> foo_edit;
+               foo_detail -> foo_delete_confirm;
+  foo_index -> foo_add -> foo_add_confirm;
+                          foo_add_confirm -> foo_index [label = "added"];
+  foo_index -> foo_edit -> foo_edit_confirm;
+                           foo_edit_confirm -> foo_index [label = "changed"];
+  foo_index -> foo_delete_confirm;
+               foo_delete_confirm -> foo_index [label = "deleted"];
+
+  bar_detail -> bar_edit -> bar_edit_confirm -> bar_detail [dir = both, style = dotted];
+
+  foo_index -> foo_edit [style = dotted];
+}
