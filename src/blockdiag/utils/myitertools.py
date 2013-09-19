@@ -13,6 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+if sys.version_info[0] == 2:
+    range = xrange
 from itertools import cycle
 
 
@@ -37,10 +40,10 @@ def stepslice(iterable, steps):
             yield o
         else:
             yield next(iterable)
-            for _ in xrange(n - 2):
+            for _ in range(n - 2):
                 next(iterable)
             yield next(iterable)
 
         # skip (2)
-        for _ in xrange(next(step)):
+        for _ in range(next(step)):
             next(iterable)
