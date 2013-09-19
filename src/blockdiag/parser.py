@@ -194,11 +194,8 @@ def sort_tree(tree):
         else:
             return 2
 
-    def keyfunction(item):
-        return weight(item)
-
     if hasattr(tree, 'stmts'):
-        tree.stmts.sort(key=keyfunction)
+        tree.stmts.sort(key=lambda x: weight(x))
         for stmt in tree.stmts:
             sort_tree(stmt)
 

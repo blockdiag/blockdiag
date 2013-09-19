@@ -25,6 +25,7 @@ from blockdiag.drawer import DiagramDraw
 from blockdiag.utils import any
 from blockdiag.utils.bootstrap import detectfont
 from blockdiag.utils.rst.nodes import blockdiag
+from functools import cmp_to_key
 
 
 directive_options_default = dict(format='PNG',
@@ -59,7 +60,13 @@ def cmp_node_number(a, b):
     except (TypeError, ValueError):
         n2 = 65535
 
-    return cmp(n1, n2)
+    # cmp n1 and n2
+    if n1 < n2:
+        return -1
+    elif n1 == n2:
+        return 0
+    else:
+        return 1
 
 
 class BlockdiagDirectiveBase(rst.Directive):
@@ -262,7 +269,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         headers = [klass.attrname[n] for n in klass.desctable]
 
         descriptions = [n.to_desctable() for n in nodes if n.drawable]
-        descriptions.sort(cmp_node_number)
+        descriptions.sort(key=cmp_to_key(cmp_node_number))
 
         for i in reversed(range(len(headers))):
             if any(desc[i] for desc in descriptions):
