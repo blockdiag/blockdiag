@@ -44,14 +44,14 @@ def point_pairs(xylist):
     iterable = iter(xylist)
     for pt in iterable:
         if isinstance(pt, int):
-            yield (pt, iterable.next())
+            yield (pt, next(iterable))
         else:
             yield pt
 
 
 def line_segments(xylist):
     p1, p2 = tee(point_pairs(xylist))
-    p2.next()
+    next(p2)
     return zip(p1, p2)
 
 

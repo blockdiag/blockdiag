@@ -19,7 +19,7 @@ from itertools import cycle
 def istep(seq, step=2):
     iterable = iter(seq)
     while True:
-        yield [iterable.next() for _ in range(step)]
+        yield [next(iterable) for _ in range(step)]
 
 
 def stepslice(iterable, steps):
@@ -28,19 +28,19 @@ def stepslice(iterable, steps):
 
     while True:
         # skip (1)
-        n = step.next()
+        n = next(step)
         if n == 0:
             pass
         elif n == 1:
-            o = iterable.next()
+            o = next(iterable)
             yield o
             yield o
         else:
-            yield iterable.next()
+            yield next(iterable)
             for _ in xrange(n - 2):
-                iterable.next()
-            yield iterable.next()
+                next(iterable)
+            yield next(iterable)
 
         # skip (2)
-        for _ in xrange(step.next()):
-            iterable.next()
+        for _ in xrange(next(step)):
+            next(iterable)
