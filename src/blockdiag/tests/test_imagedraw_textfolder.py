@@ -10,6 +10,7 @@ from blockdiag.imagedraw.textfolder import splitlabel
 from blockdiag.imagedraw.textfolder import splittext
 from blockdiag.imagedraw.textfolder import truncate_text
 from blockdiag.utils import Size
+from blockdiag.utils.compat import u
 
 
 CHAR_WIDTH = 14
@@ -45,7 +46,10 @@ class TestTextFolder(unittest.TestCase):
         self.assertEqual(['abc\\ndef'], list(splitlabel(text)))
 
         # text includes escaped \n (\x5c and mac yensign mixed)
-        text = u"abc\xa5\\ndef"
+        if sys.version_info[0] == 2:
+            text = u("abc\xa5\\\\ndef")
+        else:
+            text = u("abc\xa5\\ndef")
         self.assertEqual(['abc\\ndef'], list(splitlabel(text)))
 
         # text include \n and spaces

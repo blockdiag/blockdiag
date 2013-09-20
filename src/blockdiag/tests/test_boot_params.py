@@ -14,6 +14,7 @@ from blockdiag.tests.utils import argv_wrapper, assertRaises, with_pdf
 import blockdiag
 from blockdiag.command import BlockdiagOptions
 from blockdiag.utils.bootstrap import detectfont
+from blockdiag.utils.compat import u
 
 
 class TestBootParams(unittest.TestCase):
@@ -139,7 +140,7 @@ class TestBootParams(unittest.TestCase):
         try:
             tmp = tempfile.mkstemp()
             fp = io.open(tmp[0], 'wt', encoding='utf-8-sig')
-            fp.write("[blockdiag]\n")
+            fp.write(u("[blockdiag]\n"))
             fp.close()
 
             sys.argv = ['', '-c', tmp[1], 'input.diag']
@@ -168,7 +169,7 @@ class TestBootParams(unittest.TestCase):
     def test_config_option_fontpath(self):
         try:
             tmp = tempfile.mkstemp()
-            config = '[blockdiag]\nfontpath = /path/to/font\n'
+            config = u("[blockdiag]\nfontpath = /path/to/font\n")
             io.open(tmp[0], 'wt').write(config)
 
             sys.argv = ['', '-c', tmp[1], 'input.diag']
