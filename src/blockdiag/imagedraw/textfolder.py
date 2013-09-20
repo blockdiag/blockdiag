@@ -15,6 +15,7 @@
 
 import re
 from blockdiag.utils import Box, Size, XY
+from blockdiag.utils.compat import u
 
 import sys
 if sys.version_info[0] == 2:
@@ -30,8 +31,9 @@ def splitlabel(string):
     """
     string = re.sub('^\s*', '', string)
     string = re.sub('\s*$', '', string)
-    string = re.sub('(?:\xa5|\\\\){2}', '\x00', string)
-    string = re.sub('(?:\xa5|\\\\)n', '\n', string)
+    string = re.sub('\xa5', '\\\\', string)
+    string = re.sub('(\\\\){2}', '\x00', string)
+    string = re.sub('\\\\n', '\n', string)
     for line in string.splitlines():
         yield re.sub('\x00', '\\\\', line).strip()
 
@@ -39,7 +41,7 @@ def splitlabel(string):
 def splittext(metrics, text, bound, measure='width'):
     folded = []
     if text == '':
-        folded.append(u' ')
+        folded.append(u(' '))
 
     for i in range(len(text), 0, -1):
         textsize = metrics.textsize(text[0:i])
