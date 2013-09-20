@@ -9,6 +9,7 @@ else:
 import os
 import io
 import tempfile
+from blockdiag.utils.compat import u
 from blockdiag.tests.utils import stderr_wrapper, assertRaises
 
 from docutils import nodes
@@ -283,7 +284,7 @@ class TestRstDirectives(unittest.TestCase):
     def test_block_inline_svg_true_with_multibytes(self, path):
         directives.setup(format='SVG', outputdir=path,
                          inline_svg=True, ignore_pil=True)
-        text = u".. blockdiag::\n   :alt: hello world\n\n   { あ -> い }"
+        text = u(".. blockdiag::\n   :alt: hello world\n\n   { あ -> い }")
         publish_parts(source=text)
 
     @use_tmpdir

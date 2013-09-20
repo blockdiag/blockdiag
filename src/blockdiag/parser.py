@@ -41,6 +41,7 @@ from collections import namedtuple
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
                                   forward_decl)
+from blockdiag.utils.compat import u
 
 
 ENCODING = 'utf-8'
@@ -67,8 +68,8 @@ def tokenize(string):
         ('Comment', (r'(//|#).*',)),
         ('NL',      (r'[\r\n]+',)),
         ('Space',   (r'[ \t\r\n]+',)),
-        ('Name',    (u'[A-Za-z_0-9\u0080-\uffff]'
-                     u'[A-Za-z_\\-.0-9\u0080-\uffff]*',)),
+        ('Name',    (u('[A-Za-z_0-9\u0080-\uffff]') +
+                     u('[A-Za-z_\\-.0-9\u0080-\uffff]*'),)),
         ('Op',      (r'[{};,=\[\]]|(<->)|(<-)|(--)|(->)|(>-<)|(-<)|(>-)',)),
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),
         ('String',  (r'(?P<quote>"|\').*?(?<!\\)(?P=quote)', DOTALL)),
@@ -90,7 +91,7 @@ def parse(seq):
     _id = some(lambda t:
                t.type in ['Name', 'Number', 'String']).named('id') >> tokval
     make_nodes = lambda args: Statements([Node(n, args[-1]) for n in args[0]])
-    make_graph_attr = lambda args: DefAttrs(u'graph', [Attr(*args)])
+    make_graph_attr = lambda args: DefAttrs('graph', [Attr(*args)])
     make_edge = lambda x, x2, xs, attrs: Edge([x, x2] + xs, attrs)
 
     #

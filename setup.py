@@ -12,10 +12,14 @@ long_description = \
         open(os.path.join("src","TODO.txt")).read()
 
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: System Administrators",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python",
+    "Programming Language :: Python :: 2.6",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3.2",
+    "Programming Language :: Python :: 3.3",
     "Topic :: Software Development",
     "Topic :: Software Development :: Documentation",
     "Topic :: Text Processing :: Markup",
