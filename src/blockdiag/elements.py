@@ -18,6 +18,7 @@ import re
 import sys
 import copy
 from blockdiag.utils import images, unquote, urlutil, uuid, XY
+from blockdiag.utils.compat import u
 from blockdiag import noderenderer, plugins
 
 
@@ -224,7 +225,7 @@ class DiagramNode(Element):
         for name in self.desctable:
             value = getattr(self, name)
             if value is None:
-                attrs.append(u"")
+                attrs.append(u(""))
             else:
                 attrs.append(value)
 
@@ -645,7 +646,7 @@ class Diagram(NodeGroup):
     def set_edge_layout(self, value):
         value = value.lower()
         if value in ('normal', 'flowchart'):
-            msg = "WARNING: edge_layout is very experimental feature!\n"
+            msg = u("WARNING: edge_layout is very experimental feature!\n")
             sys.stderr.write(msg)
 
             self.edge_layout = value

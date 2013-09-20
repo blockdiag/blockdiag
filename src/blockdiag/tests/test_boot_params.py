@@ -7,12 +7,14 @@ else:
     import unittest
 
 import os
+import io
 import tempfile
 from blockdiag.tests.utils import argv_wrapper, assertRaises, with_pdf
 
 import blockdiag
 from blockdiag.command import BlockdiagOptions
 from blockdiag.utils.bootstrap import detectfont
+from blockdiag.utils.compat import u
 
 
 class TestBootParams(unittest.TestCase):
@@ -137,8 +139,8 @@ class TestBootParams(unittest.TestCase):
     def test_config_option_with_bom(self):
         try:
             tmp = tempfile.mkstemp()
-            fp = os.fdopen(tmp[0], 'wt')
-            fp.write("\xEF\xBB\xBF[blockdiag]\n")
+            fp = io.open(tmp[0], 'wt', encoding='utf-8-sig')
+            fp.write(u("[blockdiag]\n"))
             fp.close()
 
             sys.argv = ['', '-c', tmp[1], 'input.diag']
@@ -167,8 +169,8 @@ class TestBootParams(unittest.TestCase):
     def test_config_option_fontpath(self):
         try:
             tmp = tempfile.mkstemp()
-            config = '[blockdiag]\nfontpath = /path/to/font\n'
-            os.fdopen(tmp[0], 'wt').write(config)
+            config = u("[blockdiag]\nfontpath = /path/to/font\n")
+            io.open(tmp[0], 'wt').write(config)
 
             sys.argv = ['', '-c', tmp[1], 'input.diag']
             options = self.parser.parse()

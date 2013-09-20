@@ -16,82 +16,37 @@
 import math
 import unicodedata
 from blockdiag.utils import Size
+from blockdiag.utils.compat import u
 
 
 def is_zenkaku(char):
-    u"""Detect given character is Japanese ZENKAKU character
-
-        >>> is_zenkaku(u"A")
-        False
-        >>> is_zenkaku(u"あ")
-        True
-    """
+    """Detect given character is Japanese ZENKAKU character"""
     char_width = unicodedata.east_asian_width(char)
-    return char_width in u"WFA"
+    return char_width in u("WFA")
 
 
 def zenkaku_len(string):
-    u"""
-    Count Japanese ZENKAKU characters from string
-
-    >>> zenkaku_len(u"abc")
-    0
-    >>> zenkaku_len(u"あいう")
-    3
-    >>> zenkaku_len(u"あいc")
-    2
-    """
+    """Count Japanese ZENKAKU characters from string"""
     return len([x for x in string if is_zenkaku(x)])
 
 
 def hankaku_len(string):
-    u"""Count non Japanese ZENKAKU characters from string
-
-        >>> hankaku_len(u"abc")
-        3
-        >>> hankaku_len(u"あいう")
-        0
-        >>> hankaku_len(u"あいc")
-        1
-    """
+    """Count non Japanese ZENKAKU characters from string"""
     return len([x for x in string if not is_zenkaku(x)])
 
 
 def string_width(string):
-    u"""Measure rendering width of string.
-        Count ZENKAKU-character as 2-point and non ZENKAKU-character as 1-point
-
-        >>> string_width(u"abc")
-        3
-        >>> string_width(u"あいう")
-        6
-        >>> string_width(u"あいc")
-        5
+    """Measure rendering width of string.
+       Count ZENKAKU-character as 2-point and non ZENKAKU-character as 1-point
     """
     widthmap = {'Na': 1, 'N': 1, 'H': 1, 'W': 2, 'F': 2, 'A': 2}
     return sum(widthmap[unicodedata.east_asian_width(c)] for c in string)
 
 
 def textsize(string, font):
-    u"""Measure rendering size (width and height) of line.
-        Returned size will not be exactly as rendered text size,
-        Because this method does not use fonts to measure size.
-
-        >>> from blockdiag.utils.fontmap import FontInfo
-        >>> box = [0, 0, 100, 50]
-        >>> font = FontInfo('serif', None, 11)
-        >>> textsize(u"abc", font)
-        Size(width=19, height=11)
-        >>> textsize(u"あいう", font)
-        Size(width=33, height=11)
-        >>> textsize(u"あいc", font)
-        Size(width=29, height=11)
-        >>> font = FontInfo('serif', None, 24)
-        >>> textsize(u"abc", font)
-        Size(width=40, height=24)
-        >>> font = FontInfo('serif', None, 18)
-        >>> textsize(u"あいう", font)
-        Size(width=54, height=18)
+    """Measure rendering size (width and height) of line.
+       Returned size will not be exactly as rendered text size,
+       Because this method does not use fonts to measure size.
     """
     width = (zenkaku_len(string) * font.size +
              hankaku_len(string) * font.size * 0.55)

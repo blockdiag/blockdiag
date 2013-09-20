@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import re
+from blockdiag.utils.compat import u
 try:
     from io import StringIO
 except ImportError:
@@ -62,26 +63,26 @@ class base(object):
         clsname = self.__class__.__name__
         indent = '  ' * level
 
-        io.write(u'%s<%s' % (indent, clsname))
+        io.write(u('%s<%s') % (indent, clsname))
         for key in sorted(self.attributes):
             value = self.attributes[key]
             if value is not None:
-                io.write(u' %s=%s' % (_escape(key), _quote(value)))
+                io.write(u(' %s=%s') % (_escape(key), _quote(value)))
 
         if self.elements == []:
             if self.text is not None:
-                io.write(u">%s</%s>\n" % (_escape(self.text), clsname))
+                io.write(u(">%s</%s>\n") % (_escape(self.text), clsname))
             else:
-                io.write(u" />\n")
+                io.write(u(" />\n"))
         elif self.elements:
             if self.text is not None:
-                io.write(u">%s\n" % (_escape(self.text),))
+                io.write(u(">%s\n") % (_escape(self.text),))
             else:
-                io.write(u">\n")
+                io.write(u(">\n"))
 
             for e in self.elements:
                 e.to_xml(io, level + 1)
-            io.write(u'%s</%s>\n' % (indent, clsname))
+            io.write(u('%s</%s>\n') % (indent, clsname))
 
 
 class element(base):
@@ -111,9 +112,9 @@ class svg(base):
 
         if not self.nodoctype:
             url = "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"
-            io.write(u"<?xml version='1.0' encoding='UTF-8'?>\n")
-            io.write(u'<!DOCTYPE svg PUBLIC '
-                     u'"-//W3C//DTD SVG 1.0//EN" "%s">\n' % url)
+            io.write(u("<?xml version='1.0' encoding='UTF-8'?>\n"))
+            io.write(u('<!DOCTYPE svg PUBLIC ') +
+                     u('"-//W3C//DTD SVG 1.0//EN" "%s">\n') % url)
 
         super(svg, self).to_xml(io)
 

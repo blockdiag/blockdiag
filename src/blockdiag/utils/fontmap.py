@@ -19,6 +19,7 @@ import sys
 import copy
 from collections import namedtuple
 from blockdiag.utils.config import ConfigParser
+from blockdiag.utils.compat import u
 
 
 def parse_fontpath(path):
@@ -151,7 +152,7 @@ class FontMap(object):
             font.size = fontsize
         elif element is not None:
             msg = "Unknown fontfamily: %s" % fontfamily
-            sys.stderr.write("WARNING: %s\n" % msg)
+            sys.stderr.write(u("WARNING: %s\n") % msg)
             elem = namedtuple('Font', 'fontsize')(fontsize)
             font = self.find(elem)
         else:

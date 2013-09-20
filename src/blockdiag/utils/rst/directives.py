@@ -25,8 +25,12 @@ from blockdiag.drawer import DiagramDraw
 from blockdiag.utils import any
 from blockdiag.utils.bootstrap import detectfont
 from blockdiag.utils.rst.nodes import blockdiag
-from functools import cmp_to_key
 
+import sys
+if sys.version_info[0] == 2:
+    string_types = (str, unicode)
+else:
+    string_types = (str,)
 
 directive_options_default = dict(format='PNG',
                                  antialias=False,
@@ -47,26 +51,6 @@ def relfn2path(env, filename):
         relfn = os.path.join(os.path.dirname(path), filename)
 
     return relfn, os.path.join(env.srcdir, relfn)
-
-
-def cmp_node_number(a, b):
-    try:
-        n1 = int(a[0])
-    except (TypeError, ValueError):
-        n1 = 65535
-
-    try:
-        n2 = int(b[0])
-    except (TypeError, ValueError):
-        n2 = 65535
-
-    # cmp n1 and n2
-    if n1 < n2:
-        return -1
-    elif n1 == n2:
-        return 0
-    else:
-        return 1
 
 
 class BlockdiagDirectiveBase(rst.Directive):
@@ -220,7 +204,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         fontpath = self.global_options['fontpath']
         if isinstance(fontpath, (list, tuple)):
             options = Options(fontpath)
-        elif isinstance(fontpath, (str, unicode)):
+        elif isinstance(fontpath, string_types):
             options = Options([fontpath])
         else:
             options = Options([])
@@ -238,7 +222,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         options = dict(node['options'])
         options.update(font=self.global_options['fontpath'],
                        antialias=self.global_options['antialias'])
-        hashseed = node['code'].encode('utf-8') + str(options)
+        hashseed = (node['code'] + str(options)).encode('utf-8')
         hashed = sha(hashseed).hexdigest()
 
         _format = self.global_options['format']
@@ -268,8 +252,14 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         widths = [25] + [50] * (len(klass.desctable) - 1)
         headers = [klass.attrname[n] for n in klass.desctable]
 
+        def node_number(node):
+            try:
+                return int(node[0])
+            except (TypeError, ValueError):
+                return 65535
+
         descriptions = [n.to_desctable() for n in nodes if n.drawable]
-        descriptions.sort(key=cmp_to_key(cmp_node_number))
+        descriptions.sort(key=node_number)
 
         for i in reversed(range(len(headers))):
             if any(desc[i] for desc in descriptions):
@@ -321,7 +311,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             row = nodes.row()
             for attr in desc:
                 entry = nodes.entry()
-                if not isinstance(attr, (str, unicode)):
+                if not isinstance(attr, string_types):
                     attr = str(attr)
                 self.state.nested_parse(ViewList([attr], source=attr),
                                         0, entry)
