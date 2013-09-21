@@ -134,14 +134,6 @@ class Box(list):
         return XY(self.x1 + self.width // 2, self.y1 + self.height // 2)
 
 
-def any(seq):
-    for element in seq:
-        if element:
-            return True
-
-    return False
-
-
 def unquote(string):
     """
     Remove quotas from string
