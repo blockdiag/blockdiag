@@ -78,24 +78,6 @@ def stderr_wrapper(func):
     return wrap
 
 
-def assertRaises(exc):
-    def decorator(func):
-        def fn(self, *args, **kwargs):
-            try:
-                func(self, *args, **kwargs)
-            except exc:
-                pass
-            else:
-                msg = '%s does not raise exceptions: %s' % \
-                      (func.__name__, str(exc))
-                self.fail(msg)
-
-        fn.__name__ = func.__name__
-        return fn
-
-    return decorator
-
-
 def __build_diagram(filename):
     import os
     testdir = os.path.dirname(__file__)

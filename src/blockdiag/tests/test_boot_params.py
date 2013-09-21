@@ -9,7 +9,7 @@ else:
 import os
 import io
 import tempfile
-from blockdiag.tests.utils import argv_wrapper, assertRaises, with_pdf
+from blockdiag.tests.utils import argv_wrapper, with_pdf
 
 import blockdiag
 from blockdiag.command import BlockdiagOptions
@@ -52,11 +52,11 @@ class TestBootParams(unittest.TestCase):
         options = self.parser.parse()
         self.assertEqual(options.output, 'input.pdf')
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_invalid_type_option(self):
-        sys.argv = ['', '-Tsvgz', 'input.diag']
-        self.parser.parse()
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '-Tsvgz', 'input.diag']
+            self.parser.parse()
 
     @argv_wrapper
     def test_separate_option_svg(self):
@@ -79,51 +79,51 @@ class TestBootParams(unittest.TestCase):
         sys.argv = ['', '-Tsvg', '--ignore-pil', 'input.diag']
         self.parser.parse()
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_png_ignore_pil_option(self):
-        sys.argv = ['', '-Tpng', '--ignore-pil', 'input.diag']
-        self.parser.parse()
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '-Tpng', '--ignore-pil', 'input.diag']
+            self.parser.parse()
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_pdf_ignore_pil_option(self):
-        sys.argv = ['', '-Tpdf', '--ignore-pil', 'input.diag']
-        self.parser.parse()
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '-Tpdf', '--ignore-pil', 'input.diag']
+            self.parser.parse()
 
     @argv_wrapper
     def test_svg_nodoctype_option(self):
         sys.argv = ['', '-Tsvg', '--nodoctype', 'input.diag']
         self.parser.parse()
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_png_nodoctype_option(self):
-        sys.argv = ['', '-Tpng', '--nodoctype', 'input.diag']
-        self.parser.parse()
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '-Tpng', '--nodoctype', 'input.diag']
+            self.parser.parse()
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_pdf_nodoctype_option(self):
-        sys.argv = ['', '-Tpdf', '--nodoctype', 'input.diag']
-        self.parser.parse()
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '-Tpdf', '--nodoctype', 'input.diag']
+            self.parser.parse()
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_svg_notransparency_option(self):
-        sys.argv = ['', '-Tsvg', '--no-transparency', 'input.diag']
-        self.parser.parse()
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '-Tsvg', '--no-transparency', 'input.diag']
+            self.parser.parse()
 
     @argv_wrapper
     def test_png_notransparency_option(self):
         sys.argv = ['', '-Tpng', '--no-transparency', 'input.diag']
         self.parser.parse()
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_pdf_notransparency_option(self):
-        sys.argv = ['', '-Tpdf', '--no-transparency', 'input.diag']
-        self.parser.parse()
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '-Tpdf', '--no-transparency', 'input.diag']
+            self.parser.parse()
 
     @argv_wrapper
     def test_config_option(self):
@@ -148,20 +148,20 @@ class TestBootParams(unittest.TestCase):
         finally:
             os.unlink(tmp[1])
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_invalid_config_option(self):
-        sys.argv = ['', '-c', '/unknown_config_file', 'input.diag']
-        self.parser.parse()
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '-c', '/unknown_config_file', 'input.diag']
+            self.parser.parse()
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_invalid_dir_config_option(self):
         try:
             tmp = tempfile.mkdtemp()
 
-            sys.argv = ['', '-c', tmp, 'input.diag']
-            self.parser.parse()
+            with self.assertRaises(RuntimeError):
+                sys.argv = ['', '-c', tmp, 'input.diag']
+                self.parser.parse()
         finally:
             os.rmdir(tmp)
 
@@ -191,20 +191,20 @@ class TestBootParams(unittest.TestCase):
         finally:
             os.unlink(tmp[1])
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_not_exist_font_config_option(self):
-        sys.argv = ['', '-f', '/font_is_not_exist', 'input.diag']
-        options = self.parser.parse()
-        detectfont(options)
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '-f', '/font_is_not_exist', 'input.diag']
+            options = self.parser.parse()
+            detectfont(options)
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_not_exist_font_config_option2(self):
-        sys.argv = ['', '-f', '/font_is_not_exist',
-                    '-f', '/font_is_not_exist2', 'input.diag']
-        options = self.parser.parse()
-        detectfont(options)
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '-f', '/font_is_not_exist',
+                        '-f', '/font_is_not_exist2', 'input.diag']
+            options = self.parser.parse()
+            detectfont(options)
 
     @argv_wrapper
     def test_no_size_option(self):
@@ -218,23 +218,23 @@ class TestBootParams(unittest.TestCase):
         options = self.parser.parse()
         self.assertEqual([480, 360], options.size)
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_invalid_size_option1(self):
-        sys.argv = ['', '--size', '480-360', 'input.diag']
-        self.parser.parse()
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '--size', '480-360', 'input.diag']
+            self.parser.parse()
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_invalid_size_option2(self):
-        sys.argv = ['', '--size', '480', 'input.diag']
-        self.parser.parse()
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '--size', '480', 'input.diag']
+            self.parser.parse()
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_invalid_size_option3(self):
-        sys.argv = ['', '--size', 'foobar', 'input.diag']
-        self.parser.parse()
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '--size', 'foobar', 'input.diag']
+            self.parser.parse()
 
     @argv_wrapper
     def test_auto_font_detection(self):
@@ -243,17 +243,17 @@ class TestBootParams(unittest.TestCase):
         fontpath = detectfont(options)
         self.assertTrue(fontpath)
 
-    @assertRaises(RuntimeError)
     @argv_wrapper
     def test_not_exist_fontmap_config(self):
-        sys.argv = ['', '--fontmap', '/fontmap_is_not_exist', 'input.diag']
-        options = self.parser.parse()
-        fontpath = detectfont(options)
-        self.assertTrue(fontpath)
+        with self.assertRaises(RuntimeError):
+            sys.argv = ['', '--fontmap', '/fontmap_is_not_exist', 'input.diag']
+            options = self.parser.parse()
+            fontpath = detectfont(options)
+            self.assertTrue(fontpath)
 
-    @assertRaises(RuntimeError)
     def test_unknown_image_driver(self):
         from blockdiag.drawer import DiagramDraw
         from blockdiag.elements import Diagram
 
-        DiagramDraw('unknown', Diagram())
+        with self.assertRaises(RuntimeError):
+            DiagramDraw('unknown', Diagram())
