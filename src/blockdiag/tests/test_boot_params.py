@@ -40,7 +40,7 @@ class TestBootParams(unittest.TestCase):
 
     @with_pdf
     def test_type_option_pdf(self):
-        options = self.parser.parse(['', '-Tpdf', 'input.diag'])
+        options = self.parser.parse(['-Tpdf', 'input.diag'])
         self.assertEqual(options.output, 'input.pdf')
 
     def test_invalid_type_option(self):
@@ -51,7 +51,7 @@ class TestBootParams(unittest.TestCase):
         self.parser.parse(['-Tsvg', '--separate', 'input.diag'])
 
     def test_separate_option_png(self):
-        self.parser.parse(['', '-Tpng', '--separate', 'input.diag'])
+        self.parser.parse(['-Tpng', '--separate', 'input.diag'])
 
     @with_pdf
     def test_separate_option_pdf(self):
