@@ -49,7 +49,7 @@ class Application(object):
                 sys.stderr.write("ERROR: %s\n" % e)
             return -1
 
-    def parse_options(self):
+    def parse_options(self, args):
         self.options = Options(self.module).parse(args)
 
     def create_fontmap(self):
