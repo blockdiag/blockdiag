@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import re
+import sys
 import blockdiag
 import blockdiag.builder
 import blockdiag.drawer
@@ -38,8 +39,8 @@ class BlockdiagOptions(Options):
 class BlockdiagApp(Application):
     module = blockdiag
 
-    def parse_options(self):
-        self.options = BlockdiagOptions(self.module).parse()
+    def parse_options(self, args):
+        self.options = BlockdiagOptions(self.module).parse(args)
 
     def build_diagram(self, tree):
         if not self.options.separate:
@@ -62,5 +63,5 @@ class BlockdiagApp(Application):
             return 0
 
 
-def main():
-    return BlockdiagApp().run()
+def main(args=sys.argv[1:]):
+    return BlockdiagApp().run(args)
