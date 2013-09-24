@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-import re
+
 import sys
-from nose.tools import eq_
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
+
+import os
+import re
 from blockdiag.builder import ScreenNodeBuilder
-from blockdiag.parser import parse_string
+from blockdiag.parser import parse_file, parse_string
 
 try:
     from io import StringIO
@@ -78,37 +84,32 @@ def stderr_wrapper(func):
     return wrap
 
 
-def __build_diagram(filename):
-    import os
-    testdir = os.path.dirname(__file__)
-    pathname = "%s/diagrams/%s" % (testdir, filename)
+class BuilderTestCase(unittest.TestCase):
+    def build(self, filename):
+        basedir = os.path.dirname(__file__)
+        pathname = os.path.join(basedir, 'diagrams', filename)
+        return ScreenNodeBuilder.build(parse_file(pathname))
 
-    code = open(pathname).read()
-    tree = parse_string(code)
-    return ScreenNodeBuilder.build(tree)
+    def __getattr__(self, name):
+        if name.startswith('assertNode'):
+            def asserter(diagram, attributes):
+                attr_name = name.replace('assertNode', '').lower()
+                print("[node.%s]" % attr_name)
+                for node in (n for n in diagram.nodes if n.drawable):
+                    print(node)
+                    excepted = attributes[node.id]
+                    self.assertEqual(excepted, getattr(node, attr_name))
 
-
-def __validate_node_attributes(filename, **kwargs):
-    diagram = __build_diagram(filename)
-
-    for name, values in kwargs.items():
-        if re.match('edge_', name):
-            print("[%s]" % name)
-            name = re.sub('edge_', '', name)
-            for (id1, id2), value in values.items():
-                found = False
+            return asserter
+        elif name.startswith('assertEdge'):
+            def asserter(diagram, attributes):
+                attr_name = name.replace('assertEdge', '').lower()
+                print("[edge.%s]" % attr_name)
                 for edge in diagram.edges:
-                    if edge.node1.id == id1 and edge.node2.id == id2:
-                        print(edge)
-                        eq_(value, getattr(edge, name))
-                        found = True
+                    print(edge)
+                    expected = attributes[(edge.node1.id, edge.node2.id)]
+                    self.assertEqual(expected, getattr(edge, attr_name))
 
-                if not found:
-                    raise RuntimeError('edge (%s -> %s) is not found' %
-                                       (id1, id2))
+            return asserter
         else:
-            print("[node.%s]" % name)
-            for node in (n for n in diagram.nodes if n.drawable):
-                print(node)
-                value = getattr(node, name)
-                eq_(values[node.id], value)
+            return getattr(super(BuilderTestCase, self), name)

@@ -1,155 +1,141 @@
 # -*- coding: utf-8 -*-
 
-from blockdiag.tests.utils import (stderr_wrapper, __build_diagram,
-                                   __validate_node_attributes)
+from blockdiag.tests.utils import BuilderTestCase, stderr_wrapper
 
 
-def test_single_edge_diagram():
-    diagram = __build_diagram('single_edge.diag')
+class TestBuilderEdge(BuilderTestCase):
+    def test_diagram_attributes(self):
+        diagram = self.build('diagram_attributes.diag')
 
-    assert len(diagram.nodes) == 2
-    assert len(diagram.edges) == 1
+    def test_single_edge_diagram(self):
+        diagram = self.build('single_edge.diag')
+        self.assertEqual(2, len(diagram.nodes))
+        self.assertEqual(1, len(diagram.edges))
 
-    positions = {'A': (0, 0), 'B': (1, 0)}
-    labels = {'A': 'A', 'B': 'B'}
-    __validate_node_attributes('single_edge.diag', xy=positions, label=labels)
+        self.assertNodeXY(diagram, {'A': (0, 0), 'B': (1, 0)})
+        self.assertNodeLabel(diagram, {'A': 'A', 'B': 'B'})
 
+    def test_two_edges_diagram(self):
+        diagram = self.build('two_edges.diag')
+        self.assertEqual(3, len(diagram.nodes))
+        self.assertEqual(2, len(diagram.edges))
 
-def test_two_edges_diagram():
-    diagram = __build_diagram('two_edges.diag')
+        self.assertNodeXY(diagram, {'A': (0, 0), 'B': (1, 0), 'C': (2, 0)})
 
-    assert len(diagram.nodes) == 3
-    assert len(diagram.edges) == 2
+    def test_edge_shape(self):
+        diagram = self.build('edge_shape.diag')
+        self.assertEdgeDir(diagram, {('A', 'B'): 'none',
+                                     ('B', 'C'): 'forward',
+                                     ('C', 'D'): 'back',
+                                     ('D', 'E'): 'both'})
 
-    positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0)}
-    __validate_node_attributes('two_edges.diag', xy=positions)
+    def test_edge_attribute(self):
+        diagram = self.build('edge_attribute.diag')
+        self.assertEdgeDir(diagram, {('A', 'B'): 'forward',
+                                     ('B', 'C'): 'forward',
+                                     ('C', 'D'): 'forward',
+                                     ('D', 'E'): 'none',
+                                     ('E', 'F'): 'both',
+                                     ('F', 'G'): 'forward'})
+        self.assertEdgeColor(diagram, {('A', 'B'): (255, 0, 0),  # red
+                                       ('B', 'C'): (255, 0, 0),  # red
+                                       ('C', 'D'): (255, 0, 0),  # red
+                                       ('D', 'E'): (0, 0, 0),
+                                       ('E', 'F'): (255, 0, 0),  # red
+                                       ('F', 'G'): (0, 0, 0)})
+        self.assertEdgeThick(diagram, {('A', 'B'): None,
+                                       ('B', 'C'): None,
+                                       ('C', 'D'): None,
+                                       ('D', 'E'): None,
+                                       ('E', 'F'): None,
+                                       ('F', 'G'): 3})
 
+    def test_folded_edge_diagram(self):
+        diagram = self.build('folded_edge.diag')
+        self.assertNodeXY(diagram, {'A': (0, 0), 'B': (1, 0),
+                                    'C': (2, 0), 'D': (0, 1),
+                                    'E': (0, 2), 'F': (1, 1),
+                                    'Z': (0, 3)})
 
-def test_edge_shape():
-    diagram = __build_diagram('edge_shape.diag')
+    def test_skipped_edge_right_diagram(self):
+        diagram = self.build('skipped_edge_right.diag')
+        self.assertEdgeSkipped(diagram, {('A', 'B'): False,
+                                         ('A', 'C'): True,
+                                         ('B', 'C'): False})
 
-    for edge in diagram.edges:
-        if edge.node1.id == 'A':
-            assert edge.dir == 'none'
-        elif edge.node1.id == 'B':
-            assert edge.dir == 'forward'
-        elif edge.node1.id == 'C':
-            assert edge.dir == 'back'
-        elif edge.node1.id == 'D':
-            assert edge.dir == 'both'
+    def test_skipped_edge_rightdown_diagram(self):
+        diagram = self.build('skipped_edge_rightdown.diag')
+        self.assertEdgeSkipped(diagram, {('A', 'B'): False,
+                                         ('A', 'C'): True,
+                                         ('A', 'D'): False,
+                                         ('B', 'C'): False,
+                                         ('B', 'D'): False})
 
+    def test_skipped_edge_up_diagram(self):
+        diagram = self.build('skipped_edge_up.diag')
+        self.assertEdgeSkipped(diagram, {('C', 'A'): True})
 
-def test_edge_attribute():
-    diagram = __build_diagram('edge_attribute.diag')
+    def test_skipped_edge_down_diagram(self):
+        diagram = self.build('skipped_edge_down.diag')
+        self.assertEdgeSkipped(diagram, {('A', 'C'): True})
 
-    for edge in diagram.edges:
-        if edge.node1.id == 'D':
-            assert edge.dir == 'none'
-            assert edge.color == (0, 0, 0)
-            assert edge.thick is None
-        elif edge.node1.id == 'F':
-            assert edge.dir == 'forward'
-            assert edge.color == (0, 0, 0)
-            assert edge.thick == 3
-        else:
-            assert edge.dir == 'forward'
-            assert edge.color == (255, 0, 0)  # red
-            assert edge.thick is None
+    def test_skipped_edge_leftdown_diagram(self):
+        diagram = self.build('skipped_edge_leftdown.diag')
+        self.assertEdgeSkipped(diagram, {('A', 'B'): False,
+                                         ('B', 'C'): False,
+                                         ('B', 'D'): False,
+                                         ('C', 'G'): True,
+                                         ('F', 'G'): False})
 
-    positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0),
-                 'D': (0, 1), 'E': (1, 1), 'F': (0, 2), 'G': (1, 2)}
-    __validate_node_attributes('edge_attribute.diag', xy=positions)
+    @stderr_wrapper
+    def test_skipped_edge_flowchart_rightdown_diagram(self):
+        diagram = self.build('skipped_edge_flowchart_rightdown.diag')
+        self.assertEdgeSkipped(diagram, {('A', 'B'): False,
+                                         ('A', 'C'): False,
+                                         ('A', 'D'): True,
+                                         ('C', 'D'): False})
 
+    @stderr_wrapper
+    def test_skipped_edge_flowchart_rightdown2_diagram(self):
+        diagram = self.build('skipped_edge_flowchart_rightdown2.diag')
+        self.assertEdgeSkipped(diagram, {('B', 'C'): False,
+                                         ('A', 'C'): True})
 
-def test_folded_edge_diagram():
-    positions = {'A': (0, 0), 'B': (1, 0), 'C': (2, 0), 'D': (0, 1),
-                 'E': (0, 2), 'F': (1, 1), 'Z': (0, 3)}
-    __validate_node_attributes('folded_edge.diag', xy=positions)
+    def test_skipped_edge_portrait_right_diagram(self):
+        diagram = self.build('skipped_edge_portrait_right.diag')
+        self.assertEdgeSkipped(diagram, {('A', 'C'): True})
 
+    def test_skipped_edge_portrait_rightdown_diagram(self):
+        diagram = self.build('skipped_edge_portrait_rightdown.diag')
+        self.assertEdgeSkipped(diagram, {('A', 'B'): False,
+                                         ('A', 'C'): False,
+                                         ('A', 'E'): True,
+                                         ('B', 'D'): False,
+                                         ('C', 'E'): False})
 
-def test_skipped_edge_right_diagram():
-    filename = 'skipped_edge_right.diag'
-    skipped = {('A', 'B'): False, ('A', 'C'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
+    def test_skipped_edge_portrait_leftdown_diagram(self):
+        diagram = self.build('skipped_edge_portrait_leftdown.diag')
+        self.assertEdgeSkipped(diagram, {('A', 'B'): False,
+                                         ('B', 'C'): False,
+                                         ('D', 'C'): True,
+                                         ('D', 'E'): False})
 
+    def test_skipped_edge_portrait_down_diagram(self):
+        diagram = self.build('skipped_edge_portrait_down.diag')
+        self.assertEdgeSkipped(diagram, {('A', 'B'): False,
+                                         ('A', 'C'): True,
+                                         ('B', 'C'): False})
 
-def test_skipped_edge_rightup_diagram():
-    filename = 'skipped_edge_rightup.diag'
-    skipped = {('A', 'B'): False, ('D', 'C'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
+    @stderr_wrapper
+    def test_skipped_edge_portrait_flowchart_rightdown_diagram(self):
+        diagram = self.build('skipped_edge_portrait_flowchart_rightdown.diag')
+        self.assertEdgeSkipped(diagram, {('A', 'B'): False,
+                                         ('A', 'C'): False,
+                                         ('A', 'D'): True,
+                                         ('C', 'D'): False})
 
-
-def test_skipped_edge_rightdown_diagram():
-    filename = 'skipped_edge_rightdown.diag'
-    skipped = {('A', 'B'): False, ('A', 'C'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
-
-
-def test_skipped_edge_up_diagram():
-    filename = 'skipped_edge_up.diag'
-    skipped = {('C', 'A'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
-
-
-def test_skipped_edge_down_diagram():
-    filename = 'skipped_edge_down.diag'
-    skipped = {('A', 'C'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
-
-
-def test_skipped_edge_leftdown_diagram():
-    filename = 'skipped_edge_leftdown.diag'
-    skipped = {('A', 'B'): False, ('C', 'G'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
-
-
-@stderr_wrapper
-def test_skipped_edge_flowchart_rightdown_diagram():
-    filename = 'skipped_edge_flowchart_rightdown.diag'
-    skipped = {('A', 'B'): False, ('A', 'D'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
-
-
-@stderr_wrapper
-def test_skipped_edge_flowchart_rightdown2_diagram():
-    filename = 'skipped_edge_flowchart_rightdown2.diag'
-    skipped = {('B', 'C'): False, ('A', 'C'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
-
-
-def test_skipped_edge_portrait_right_diagram():
-    filename = 'skipped_edge_portrait_right.diag'
-    skipped = {('A', 'C'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
-
-
-def test_skipped_edge_portrait_rightdown_diagram():
-    filename = 'skipped_edge_portrait_rightdown.diag'
-    skipped = {('A', 'B'): False, ('A', 'E'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
-
-
-def test_skipped_edge_portrait_leftdown_diagram():
-    filename = 'skipped_edge_portrait_leftdown.diag'
-    skipped = {('A', 'B'): False, ('D', 'C'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
-
-
-def test_skipped_edge_portrait_down_diagram():
-    filename = 'skipped_edge_portrait_down.diag'
-    skipped = {('A', 'B'): False, ('A', 'C'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
-
-
-@stderr_wrapper
-def test_skipped_edge_portrait_flowchart_rightdown_diagram():
-    filename = 'skipped_edge_portrait_flowchart_rightdown.diag'
-    skipped = {('A', 'B'): False, ('A', 'D'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
-
-
-@stderr_wrapper
-def test_skipped_edge_portrait_flowchart_rightdown2_diagram():
-    filename = 'skipped_edge_portrait_flowchart_rightdown2.diag'
-    skipped = {('B', 'C'): False, ('A', 'C'): True}
-    __validate_node_attributes(filename, edge_skipped=skipped)
+    @stderr_wrapper
+    def test_skipped_edge_portrait_flowchart_rightdown2_diagram(self):
+        diagram = self.build('skipped_edge_portrait_flowchart_rightdown2.diag')
+        self.assertEdgeSkipped(diagram, {('B', 'C'): False,
+                                         ('A', 'C'): True})
