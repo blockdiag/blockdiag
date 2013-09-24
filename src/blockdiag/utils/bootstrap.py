@@ -27,9 +27,9 @@ class Application(object):
     module = None
     options = None
 
-    def run(self):
+    def run(self, args):
         try:
-            self.parse_options()
+            self.parse_options(args)
             self.create_fontmap()
 
             parsed = self.parse_diagram()
@@ -50,7 +50,7 @@ class Application(object):
             return -1
 
     def parse_options(self):
-        self.options = Options(self.module).parse()
+        self.options = Options(self.module).parse(args)
 
     def create_fontmap(self):
         self.fontmap = create_fontmap(self.options)
@@ -108,8 +108,8 @@ class Options(object):
         self.module = module
         self.build_parser()
 
-    def parse(self):
-        self.options, self.args = self.parser.parse_args()
+    def parse(self, args):
+        self.options, self.args = self.parser.parse_args(args)
         self.validate()
         self.read_configfile()
 

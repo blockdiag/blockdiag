@@ -4,7 +4,7 @@ import os
 import sys
 import re
 import tempfile
-from blockdiag.tests.utils import argv_wrapper, stderr_wrapper
+from blockdiag.tests.utils import stderr_wrapper
 from blockdiag.tests.utils import with_pil, supported_pil, with_pdf
 
 import blockdiag
@@ -28,9 +28,8 @@ def extra_case(func):
     return func
 
 
-@argv_wrapper
 @stderr_wrapper
-def __build_diagram(filename, _format, args):
+def __build_diagram(filename, _format, additional_args):
     testdir = os.path.dirname(__file__)
     diagpath = "%s/diagrams/%s" % (testdir, filename)
     fontpath = get_fontpath()
@@ -40,16 +39,16 @@ def __build_diagram(filename, _format, args):
         tmpfile = tempfile.mkstemp(dir=tmpdir)
         os.close(tmpfile[0])
 
-        sys.argv = ['blockdiag.py', '-T', _format, '-o', tmpfile[1], diagpath]
-        if args:
-            if isinstance(args[0], (list, tuple)):
-                sys.argv += args[0]
+        args = ['-T', _format, '-o', tmpfile[1], diagpath]
+        if additional_args:
+            if isinstance(additional_args[0], (list, tuple)):
+                args += additional_args[0]
             else:
-                sys.argv += args
+                args += additional_args
         if os.path.exists(fontpath):
-            sys.argv += ['-f', fontpath]
+            args += ['-f', fontpath]
 
-        blockdiag.command.main()
+        blockdiag.command.main(args)
 
         if re.search('ERROR', sys.stderr.getvalue()):
             raise RuntimeError(sys.stderr.getvalue())
@@ -106,15 +105,13 @@ def generator_core(_format, *args):
 
 
 @extra_case
-@argv_wrapper
 def not_exist_font_config_option_test():
     fontpath = get_fontpath()
-    sys.argv = ['', '-f', '/font_is_not_exist', '-f', fontpath, 'input.diag']
-    options = blockdiag.command.BlockdiagOptions(blockdiag).parse()
+    args = ['-f', '/font_is_not_exist', '-f', fontpath, 'input.diag']
+    options = blockdiag.command.BlockdiagOptions(blockdiag).parse(args)
     blockdiag.command.detectfont(options)
 
 
-@argv_wrapper
 @stderr_wrapper
 def svg_includes_source_code_tag_test():
     from xml.etree import ElementTree
@@ -128,13 +125,13 @@ def svg_includes_source_code_tag_test():
         tmpfile = tempfile.mkstemp(dir=tmpdir)
         os.close(tmpfile[0])
 
-        sys.argv = ['blockdiag.py', '-T', 'SVG', '-o', tmpfile[1], diagpath]
+        args = ['-T', 'SVG', '-o', tmpfile[1], diagpath]
         if os.path.exists(fontpath):
-            sys.argv += ['-f', fontpath]
+            args += ['-f', fontpath]
         if not supported_pil():
-            sys.argv += ['--ignore-pil']
+            args += ['--ignore-pil']
 
-        blockdiag.command.main()
+        blockdiag.command.main(args)
 
         if re.search('ERROR', sys.stderr.getvalue()):
             raise RuntimeError(sys.stderr.getvalue())

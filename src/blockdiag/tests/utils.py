@@ -52,19 +52,6 @@ def with_pdf(fn):
     return fn
 
 
-def argv_wrapper(func, argv=[]):
-    def wrap(*args, **kwargs):
-        try:
-            argv = sys.argv
-            sys.argv = []
-            func(*args, **kwargs)
-        finally:
-            sys.argv = argv
-
-    wrap.__name__ = func.__name__
-    return wrap
-
-
 def stderr_wrapper(func):
     def wrap(*args, **kwargs):
         try:
@@ -88,7 +75,10 @@ class BuilderTestCase(unittest.TestCase):
     def build(self, filename):
         basedir = os.path.dirname(__file__)
         pathname = os.path.join(basedir, 'diagrams', filename)
-        return ScreenNodeBuilder.build(parse_file(pathname))
+        return self._build(parse_file(pathname))
+
+    def _build(self, tree):
+        return ScreenNodeBuilder.build(tree)
 
     def __getattr__(self, name):
         if name.startswith('assertNode'):
