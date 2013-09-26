@@ -19,40 +19,37 @@ from blockdiag.utils import urlutil
 try:
     from PIL import Image
 except ImportError:
-    try:
-        import Image
-    except ImportError:
-        class Image:
-            @classmethod
-            def open(cls, filename):
-                return cls(filename)
+    class Image:
+        @classmethod
+        def open(cls, filename):
+            return cls(filename)
 
-            def __init__(self, filename):
-                self.filename = filename
+        def __init__(self, filename):
+            self.filename = filename
 
-            @property
-            def size(self):
-                from blockdiag.utils import jpeg
-                import png
+        @property
+        def size(self):
+            from blockdiag.utils import jpeg
+            import png
 
+            try:
+                size = jpeg.JpegFile.get_size(self.filename)
+            except:
                 try:
-                    size = jpeg.JpegFile.get_size(self.filename)
+                    if isinstance(self.filename, (str, unicode)):
+                        content = open(self.filename, 'r')
+                    else:
+                        self.filename.seek(0)
+                        content = self.filename
+                    image = png.Reader(file=content).read()
+                    size = (image[0], image[1])
                 except:
-                    try:
-                        if isinstance(self.filename, (str, unicode)):
-                            content = open(self.filename, 'r')
-                        else:
-                            self.filename.seek(0)
-                            content = self.filename
-                        image = png.Reader(file=content).read()
-                        size = (image[0], image[1])
-                    except:
-                        size = None
+                    size = None
 
-                if hasattr(self.filename, 'seek'):
-                    self.filename.seek(0)
+            if hasattr(self.filename, 'seek'):
+                self.filename.seek(0)
 
-                return size
+            return size
 
 _image_size_cache = {}
 

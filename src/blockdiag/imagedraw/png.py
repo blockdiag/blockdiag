@@ -25,23 +25,13 @@ try:
 except ImportError:
     pass
 from functools import partial, wraps
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached
 from blockdiag.imagedraw.utils.ellipse import dots as ellipse_dots
 from blockdiag.utils import urlutil, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
-
-try:
-    from PIL import Image
-    from PIL import ImageDraw
-    from PIL import ImageFont
-    from PIL import ImageFilter
-except ImportError:
-    import Image
-    import ImageDraw
-    import ImageFont
-    import ImageFilter
 
 
 def point_pairs(xylist):
