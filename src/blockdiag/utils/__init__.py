@@ -156,13 +156,9 @@ def unquote(string):
         return string
 
 
-def is_PIL_available():
+def is_Pillow_available():
     try:
-        try:
-            from PIL import _imagingft
-        except ImportError:
-            import _imagingft
-
+        from PIL import _imagingft
         return True
     except ImportError:
         return False

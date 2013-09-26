@@ -19,7 +19,7 @@ import sys
 import codecs
 from optparse import OptionParser
 from blockdiag import imagedraw
-from blockdiag.utils import is_PIL_available
+from blockdiag.utils import is_Pillow_available
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 
@@ -60,9 +60,9 @@ class Application(object):
         _format = self.options.type.lower()
         ignore_pil = self.options.ignore_pil
         if _format in ('png', 'svg') and fontpath and ignore_pil is False:
-            if not is_PIL_available():
-                msg = "PIL does not support TrueType fonts, " \
-                      "reinstall PIL (and libfreetype2)"
+            if not is_Pillow_available():
+                msg = "Pillow does not support TrueType fonts, " \
+                      "reinstall Pillow (and libfreetype2)"
                 if _format != 'png':
                     msg += " or use --ignore-pil option"
 
@@ -129,7 +129,7 @@ class Options(object):
                      help='use FONTMAP file to draw diagram', metavar='FONT')
         p.add_option('--ignore-pil', dest='ignore_pil',
                      default=False, action='store_true',
-                     help='do not use PIL module forcely (SVG only)')
+                     help='do not use Pillow module forcely (SVG only)')
         p.add_option('--no-transparency', dest='transparency',
                      default=True, action='store_false',
                      help='do not make transparent background of diagram ' +
