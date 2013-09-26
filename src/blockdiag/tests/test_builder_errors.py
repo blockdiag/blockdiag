@@ -5,9 +5,6 @@ from blockdiag.parser import ParseException
 
 
 class TestBuilderError(BuilderTestCase):
-    def test_diagram_attributes(self):
-        diagram = self.build('diagram_attributes.diag')
-
     def test_unknown_diagram_default_shape_diagram(self):
         filename = 'errors/unknown_diagram_default_shape.diag'
         with self.assertRaises(AttributeError):

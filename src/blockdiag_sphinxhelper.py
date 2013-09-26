@@ -32,5 +32,5 @@ from blockdiag import command, parser, builder, drawer
 from blockdiag.utils.fontmap import FontMap
 from blockdiag.utils.rst.directives import blockdiag, BlockdiagDirective
 
-(command, parser, builder, drawer, collections,
+(command, parser, builder, drawer, nodes, directives, collections,
  FontMap, blockdiag, BlockdiagDirective)

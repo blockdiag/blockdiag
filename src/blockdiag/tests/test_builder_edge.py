@@ -6,6 +6,8 @@ from blockdiag.tests.utils import BuilderTestCase, stderr_wrapper
 class TestBuilderEdge(BuilderTestCase):
     def test_diagram_attributes(self):
         diagram = self.build('diagram_attributes.diag')
+        self.assertEqual(2, len(diagram.nodes))
+        self.assertEqual(1, len(diagram.edges))
 
     def test_single_edge_diagram(self):
         diagram = self.build('single_edge.diag')

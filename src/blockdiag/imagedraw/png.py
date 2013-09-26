@@ -26,7 +26,7 @@ except ImportError:
     pass
 from functools import partial, wraps
 from blockdiag.imagedraw import base
-from blockdiag.imagedraw.utils import cached, ellipse
+from blockdiag.imagedraw.utils import cached
 from blockdiag.imagedraw.utils.ellipse import dots as ellipse_dots
 from blockdiag.utils import urlutil, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
