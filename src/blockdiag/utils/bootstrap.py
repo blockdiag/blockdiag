@@ -19,6 +19,7 @@ import sys
 import codecs
 from optparse import OptionParser
 from blockdiag import imagedraw
+from blockdiag.utils import is_PIL_available
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 
@@ -59,12 +60,7 @@ class Application(object):
         _format = self.options.type.lower()
         ignore_pil = self.options.ignore_pil
         if _format in ('png', 'svg') and fontpath and ignore_pil is False:
-            try:
-                try:
-                    from PIL import _imagingft
-                except ImportError:
-                    import _imagingft
-            except:
+            if not is_PIL_available():
                 msg = "PIL does not support TrueType fonts, " \
                       "reinstall PIL (and libfreetype2)"
                 if _format != 'png':

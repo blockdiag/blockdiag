@@ -3,7 +3,6 @@
 from __future__ import print_function
 from blockdiag.builder import SeparateDiagramBuilder
 from blockdiag.elements import DiagramNode
-from blockdiag.parser import parse_string
 from blockdiag.tests.utils import BuilderTestCase
 
 

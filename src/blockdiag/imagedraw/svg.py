@@ -181,7 +181,6 @@ class SVGImageDrawElement(_base.ImageDraw):
         self.svg.addElement(p)
 
     def arc(self, box, start, end, **kwargs):
-        thick = kwargs.get('thick')
         fill = kwargs.get('fill')
 
         w = box.width / 2

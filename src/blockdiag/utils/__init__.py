@@ -15,7 +15,6 @@
 
 from __future__ import division
 import re
-import sys
 import math
 from collections import namedtuple
 

@@ -6,9 +6,7 @@ if sys.version_info < (2, 7):
 else:
     import unittest
 
-import os
 from blockdiag.imagedraw.utils import *
-from blockdiag.utils import Size
 from blockdiag.utils.compat import u
 
 
@@ -45,7 +43,6 @@ class TestUtils(unittest.TestCase):
 
     def test_test_textsize(self):
         from blockdiag.utils.fontmap import FontInfo
-        box = [0, 0, 100, 50]
         font = FontInfo('serif', None, 11)
 
         # abc

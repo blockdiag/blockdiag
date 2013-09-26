@@ -8,9 +8,8 @@ else:
     import unittest
 
 import os
-import re
 from blockdiag.builder import ScreenNodeBuilder
-from blockdiag.parser import parse_file, parse_string
+from blockdiag.parser import parse_file
 
 try:
     from io import StringIO
