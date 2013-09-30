@@ -5,7 +5,7 @@ import sys
 import re
 import tempfile
 from blockdiag.tests.utils import stderr_wrapper
-from blockdiag.tests.utils import with_pil, supported_pil, with_pdf
+from blockdiag.tests.utils import with_pil, with_pdf
 
 import blockdiag
 import blockdiag.command
