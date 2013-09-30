@@ -22,7 +22,7 @@ from docutils.statemachine import ViewList
 from blockdiag import parser
 from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.drawer import DiagramDraw
-from blockdiag.utils.bootstrap import detectfont
+from blockdiag.utils.bootstrap import create_fontmap
 from blockdiag.utils.rst.nodes import blockdiag
 
 import sys
@@ -155,7 +155,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
     def node2image(self, node, diagram):
         options = node['options']
         filename = self.image_filename(node)
-        fontpath = self.detectfont()
+        fontmap = self.create_fontmap()
         _format = self.global_options['format'].lower()
 
         if _format == 'svg' and self.global_options['inline_svg'] is True:
@@ -163,7 +163,8 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         kwargs = dict(self.global_options)
         del kwargs['format']
-        drawer = DiagramDraw(_format, diagram, filename, **kwargs)
+        drawer = DiagramDraw(_format, diagram, filename,
+                             fontmap=fontmap, **kwargs)
 
         if filename is None or not os.path.isfile(filename):
             drawer.draw()
@@ -198,17 +199,17 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         return image
 
-    def detectfont(self):
-        Options = namedtuple('Options', 'font')
+    def create_fontmap(self):
+        Options = namedtuple('Options', 'font fontmap')
         fontpath = self.global_options['fontpath']
         if isinstance(fontpath, (list, tuple)):
-            options = Options(fontpath)
+            options = Options(fontpath, None)
         elif isinstance(fontpath, string_types):
-            options = Options([fontpath])
+            options = Options([fontpath], None)
         else:
-            options = Options([])
+            options = Options([], None)
 
-        return detectfont(options)
+        return create_fontmap(options)
 
     def image_filename(self, node, prefix='', ext='png'):
         try:
