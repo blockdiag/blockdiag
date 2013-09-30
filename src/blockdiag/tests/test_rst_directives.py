@@ -10,7 +10,7 @@ import os
 import io
 import tempfile
 from blockdiag.utils.compat import u
-from blockdiag.tests.utils import stderr_wrapper
+from blockdiag.tests.utils import stderr_wrapper, with_pil
 
 from docutils import nodes
 from docutils.core import publish_doctree, publish_parts
@@ -238,6 +238,7 @@ class TestRstDirectives(unittest.TestCase):
                          "<!DOCTYPE ", doctree[0][0][:49])
         self.assertEqual(0, len(os.listdir(self.tmpdir)))
 
+    @with_pil
     def test_block_inline_svg_true_but_nonsvg_format(self):
         directives.setup(format='PNG', outputdir=self.tmpdir, inline_svg=True)
         text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
