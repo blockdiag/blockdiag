@@ -57,17 +57,6 @@ class TestBootParams(unittest.TestCase):
     def test_separate_option_pdf(self):
         self.parser.parse(['-Tpdf', '--separate', 'input.diag'])
 
-    def test_svg_ignore_pil_option(self):
-        self.parser.parse(['-Tsvg', '--ignore-pil', 'input.diag'])
-
-    def test_png_ignore_pil_option(self):
-        with self.assertRaises(RuntimeError):
-            self.parser.parse(['-Tpng', '--ignore-pil', 'input.diag'])
-
-    def test_pdf_ignore_pil_option(self):
-        with self.assertRaises(RuntimeError):
-            self.parser.parse(['-Tpdf', '--ignore-pil', 'input.diag'])
-
     def test_svg_nodoctype_option(self):
         self.parser.parse(['-Tsvg', '--nodoctype', 'input.diag'])
 

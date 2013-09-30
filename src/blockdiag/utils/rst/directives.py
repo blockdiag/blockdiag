@@ -37,8 +37,7 @@ directive_options_default = dict(format='PNG',
                                  outputdir=None,
                                  nodoctype=False,
                                  noviewbox=False,
-                                 inline_svg=False,
-                                 ignore_pil=False)
+                                 inline_svg=False)
 directive_options = {}
 
 

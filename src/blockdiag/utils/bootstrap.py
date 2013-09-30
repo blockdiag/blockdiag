@@ -17,7 +17,7 @@ import os
 import re
 import sys
 import codecs
-from optparse import OptionParser
+from optparse import OptionParser, SUPPRESS_HELP
 from blockdiag import imagedraw
 from blockdiag.utils import is_Pillow_available
 from blockdiag.utils.config import ConfigParser
@@ -56,18 +56,6 @@ class Application(object):
     def create_fontmap(self):
         self.fontmap = create_fontmap(self.options)
 
-        fontpath = self.fontmap.find().path
-        _format = self.options.type.lower()
-        ignore_pil = self.options.ignore_pil
-        if _format in ('png', 'svg') and fontpath and ignore_pil is False:
-            if not is_Pillow_available():
-                msg = "Pillow does not support TrueType fonts, " \
-                      "reinstall Pillow (and libfreetype2)"
-                if _format != 'png':
-                    msg += " or use --ignore-pil option"
-
-                raise RuntimeError(msg)
-
     def parse_diagram(self):
         if self.options.input == '-':
             stream = codecs.getreader('utf-8-sig')(sys.stdin)
@@ -86,7 +74,6 @@ class Application(object):
         drawer = DiagramDraw(self.options.type, diagram,
                              self.options.output, fontmap=self.fontmap,
                              code=self.code, antialias=self.options.antialias,
-                             ignore_pil=self.options.ignore_pil,
                              nodoctype=self.options.nodoctype,
                              transparency=self.options.transparency)
         drawer.draw()
@@ -128,8 +115,7 @@ class Options(object):
         p.add_option('--fontmap',
                      help='use FONTMAP file to draw diagram', metavar='FONT')
         p.add_option('--ignore-pil', dest='ignore_pil',
-                     default=False, action='store_true',
-                     help='do not use Pillow module forcely (SVG only)')
+                     default=False, action='store_true', help=SUPPRESS_HELP)
         p.add_option('--no-transparency', dest='transparency',
                      default=True, action='store_false',
                      help='do not make transparent background of diagram ' +
@@ -181,9 +167,10 @@ class Options(object):
                 msg = "could not output PDF format; Install reportlab."
                 raise RuntimeError(msg)
 
-        if self.options.ignore_pil and self.options.type != 'SVG':
-            msg = "--ignore-pil option work in SVG images."
-            raise RuntimeError(msg)
+        if self.options.ignore_pil:
+            msg = "WARNING: --ignore-pil option is deprecated " + \
+                  "(detect automatically).\n"
+            sys.stderr.write(msg)
 
         if self.options.nodoctype and self.options.type != 'SVG':
             msg = "--nodoctype option work in SVG images."

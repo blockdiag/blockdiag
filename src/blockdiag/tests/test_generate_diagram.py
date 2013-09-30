@@ -70,9 +70,6 @@ def diagram_files():
 
 def test_generator_svg():
     args = []
-    if not supported_pil():
-        args.append('--ignore-pil')
-
     for testcase in generator_core('svg', args):
         yield testcase
 
@@ -128,8 +125,6 @@ def svg_includes_source_code_tag_test():
         args = ['-T', 'SVG', '-o', tmpfile[1], diagpath]
         if os.path.exists(fontpath):
             args += ['-f', fontpath]
-        if not supported_pil():
-            args += ['--ignore-pil']
 
         blockdiag.command.main(args)
 

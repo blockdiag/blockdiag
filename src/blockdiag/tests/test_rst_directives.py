@@ -45,12 +45,10 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(False, options['nodoctype'])
         self.assertEqual(False, options['noviewbox'])
         self.assertEqual(False, options['inline_svg'])
-        self.assertEqual(False, options['ignore_pil'])
 
     def test_setup_with_args(self):
         directives.setup(format='SVG', antialias=True, fontpath='/dev/null',
-                         nodoctype=True, noviewbox=True, inline_svg=True,
-                         ignore_pil=True)
+                         nodoctype=True, noviewbox=True, inline_svg=True)
         options = directives.directive_options
 
         self.assertIn('blockdiag', docutils._directives)
@@ -62,7 +60,6 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(True, options['nodoctype'])
         self.assertEqual(True, options['noviewbox'])
         self.assertEqual(True, options['inline_svg'])
-        self.assertEqual(True, options['ignore_pil'])
 
     @stderr_wrapper
     def test_base_noargs(self):
@@ -247,8 +244,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.image, type(doctree[0]))
 
     def test_block_inline_svg_true_with_multibytes(self):
-        directives.setup(format='SVG', outputdir=self.tmpdir,
-                         inline_svg=True, ignore_pil=True)
+        directives.setup(format='SVG', outputdir=self.tmpdir)
         text = u(".. blockdiag::\n   :alt: hello world\n\n   { あ -> い }")
         publish_parts(source=text)
 
@@ -262,20 +258,6 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.Text, type(doctree[0][0]))
         self.assertRegexpMatches(doctree[0][0],
                                  '<svg height="\d+" width="100" ')
-
-    def test_block_ignore_pil_false(self):
-        directives.setup(format='SVG', outputdir=self.tmpdir, ignore_pil=False)
-        text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
-        doctree = publish_doctree(text)
-        self.assertEqual(1, len(doctree))
-        self.assertEqual(nodes.image, type(doctree[0]))
-
-    def test_block_ignore_pil_true(self):
-        directives.setup(format='SVG', outputdir=self.tmpdir, ignore_pil=True)
-        text = ".. blockdiag::\n   :alt: hello world\n\n   { A -> B }"
-        doctree = publish_doctree(text)
-        self.assertEqual(1, len(doctree))
-        self.assertEqual(nodes.image, type(doctree[0]))
 
     def test_desctable_without_description(self):
         directives.setup(format='SVG', outputdir=self.tmpdir)
