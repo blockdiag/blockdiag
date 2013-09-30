@@ -84,10 +84,6 @@ class SVGImageDrawElement(_base.ImageDraw):
 
     def __init__(self, svg, parent=None):
         self.svg = svg
-        if parent and parent.ignore_pil:
-            self.ignore_pil = True
-        else:
-            self.ignore_pil = False
 
     def path(self, pd, **kwargs):
         fill = kwargs.get('fill')
@@ -109,16 +105,15 @@ class SVGImageDrawElement(_base.ImageDraw):
 
     @cached
     def textlinesize(self, string, font, **kwargs):
-        if (kwargs.get('ignore_pil', self.ignore_pil) or
-           not is_Pillow_available()):
-            from blockdiag.imagedraw.utils import textsize
-            return textsize(string, font)
-        else:
+        if is_Pillow_available():
             if not hasattr(self, '_pil_drawer'):
                 from blockdiag.imagedraw import png
                 self._pil_drawer = png.ImageDrawEx(None)
 
             return self._pil_drawer.textlinesize(string, font)
+        else:
+            from blockdiag.imagedraw.utils import textsize
+            return textsize(string, font)
 
     def text(self, point, string, font, **kwargs):
         fill = kwargs.get('fill')
@@ -258,7 +253,6 @@ class SVGImageDraw(SVGImageDrawElement):
 
         self.filename = filename
         self.options = kwargs
-        self.ignore_pil = kwargs.get('ignore_pil')
         self.set_canvas_size((0, 0))
 
     def set_canvas_size(self, size):
