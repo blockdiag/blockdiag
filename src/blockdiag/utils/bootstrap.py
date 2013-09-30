@@ -19,7 +19,6 @@ import sys
 import codecs
 from optparse import OptionParser, SUPPRESS_HELP
 from blockdiag import imagedraw
-from blockdiag.utils import is_Pillow_available
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 
