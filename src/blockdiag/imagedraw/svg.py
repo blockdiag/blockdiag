@@ -16,7 +16,10 @@
 import re
 import base64
 from blockdiag.imagedraw import base as _base
-from blockdiag.imagedraw.simplesvg import *
+from blockdiag.imagedraw.simplesvg import (
+    svg, svgclass, filter, title, desc, defs, g, a, text,
+    rect, polygon, ellipse, path, pathdata, image
+)
 from blockdiag.imagedraw.utils import cached
 from blockdiag.imagedraw.utils.ellipse import endpoints as ellipse_endpoints
 from blockdiag.utils import urlutil, Box, XY, is_Pillow_available
