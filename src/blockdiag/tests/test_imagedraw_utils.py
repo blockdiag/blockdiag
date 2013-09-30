@@ -6,7 +6,10 @@ if sys.version_info < (2, 7):
 else:
     import unittest
 
-from blockdiag.imagedraw.utils import *
+from blockdiag.imagedraw.utils import (
+    is_zenkaku, zenkaku_len, hankaku_len,
+    string_width, textsize
+)
 from blockdiag.utils.compat import u
 
 
