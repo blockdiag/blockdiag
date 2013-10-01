@@ -103,10 +103,11 @@ def generator_core(_format, *args):
 
 @extra_case
 def not_exist_font_config_option_test():
+    from blockdiag.utils.bootstrap import detectfont
     fontpath = get_fontpath()
     args = ['-f', '/font_is_not_exist', '-f', fontpath, 'input.diag']
     options = blockdiag.command.BlockdiagOptions(blockdiag).parse(args)
-    blockdiag.command.detectfont(options)
+    detectfont(options)
 
 
 @stderr_wrapper
