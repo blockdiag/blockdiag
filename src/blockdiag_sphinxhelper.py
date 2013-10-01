@@ -13,24 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+__all__ = [
+  'core', 'utils'
+]
+
 import blockdiag.parser
 import blockdiag.builder
 import blockdiag.drawer
 core = blockdiag
 
 import blockdiag.utils.bootstrap
-import blockdiag.utils.collections
 import blockdiag.utils.fontmap
+import blockdiag.utils.rst.nodes
+import blockdiag.utils.rst.directives
 utils = blockdiag.utils
-
-from blockdiag.utils.rst import nodes
-from blockdiag.utils.rst import directives
-
-# FIXME: obsoleted interface (keep for compatibility)
-import collections
-from blockdiag import command, parser, builder, drawer
-from blockdiag.utils.fontmap import FontMap
-from blockdiag.utils.rst.directives import blockdiag, BlockdiagDirective
-
-(command, parser, builder, drawer, nodes, directives, collections,
- FontMap, blockdiag, BlockdiagDirective)
