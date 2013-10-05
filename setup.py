@@ -7,9 +7,7 @@ sys.path.insert(0, 'src')
 import blockdiag
 
 
-long_description = \
-        open(os.path.join("src","README.txt")).read() + \
-        open(os.path.join("src","TODO.txt")).read()
+long_description = open(os.path.join("src","README.txt")).read()
 
 classifiers = [
     "Development Status :: 5 - Production/Stable",
