@@ -23,13 +23,8 @@ from blockdiag import parser
 from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.drawer import DiagramDraw
 from blockdiag.utils.bootstrap import create_fontmap
+from blockdiag.utils.compat import string_types
 from blockdiag.utils.rst.nodes import blockdiag
-
-import sys
-if sys.version_info[0] == 2:
-    string_types = (str, unicode)
-else:
-    string_types = (str,)
 
 directive_options_default = dict(format='PNG',
                                  antialias=False,

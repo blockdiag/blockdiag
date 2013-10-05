@@ -15,13 +15,7 @@
 
 import re
 from blockdiag.utils import Box, Size, XY
-from blockdiag.utils.compat import u
-
-import sys
-if sys.version_info[0] == 2:
-    string_types = (str, unicode)
-else:
-    string_types = (str,)
+from blockdiag.utils.compat import u, string_types
 
 
 def splitlabel(string):

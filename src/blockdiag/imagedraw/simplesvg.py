@@ -14,17 +14,11 @@
 #  limitations under the License.
 
 import re
-from blockdiag.utils.compat import u
+from blockdiag.utils.compat import u, string_types
 try:
     from io import StringIO
 except ImportError:
     from cStringIO import StringIO
-
-import sys
-if sys.version_info[0] == 2:
-    string_types = (str, unicode)
-else:
-    string_types = (str,)
 
 
 def _escape(s):

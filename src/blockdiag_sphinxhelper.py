@@ -23,6 +23,7 @@ import blockdiag.drawer
 core = blockdiag
 
 import blockdiag.utils.bootstrap
+import blockdiag.utils.compat
 import blockdiag.utils.fontmap
 import blockdiag.utils.rst.nodes
 import blockdiag.utils.rst.directives
