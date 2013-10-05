@@ -15,6 +15,11 @@
 
 import sys
 
+if sys.version_info[0] == 2:
+    string_types = (str, unicode)
+else:
+    string_types = (str,)
+
 
 def u(string):
     if sys.version_info[0] == 2:
