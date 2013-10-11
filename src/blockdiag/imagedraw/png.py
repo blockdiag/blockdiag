@@ -14,10 +14,8 @@
 #  limitations under the License.
 
 from __future__ import division
-import sys
-if sys.version_info[0] == 2:
-    range = xrange
 import re
+import sys
 import math
 from itertools import tee
 try:
@@ -362,7 +360,6 @@ class ImageDrawExBase(base.ImageDraw):
             try:
                 url = StringIO(urllib.urlopen(url).read())
             except:
-                import sys
                 msg = "WARNING: Could not retrieve: %s\n" % url
                 sys.stderr.write(msg)
                 return

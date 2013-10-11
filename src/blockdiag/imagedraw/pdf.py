@@ -23,6 +23,7 @@ from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached
 from blockdiag.utils import urlutil, Box, Size
 from blockdiag.utils.fontmap import parse_fontpath
+from blockdiag.utils.compat import string_types
 
 
 class PDFImageDraw(base.ImageDraw):
@@ -90,7 +91,7 @@ class PDFImageDraw(base.ImageDraw):
             self.canvas.setDash()
 
     def set_stroke_color(self, color="black"):
-        if isinstance(color, basestring):
+        if isinstance(color, string_types):
             self.canvas.setStrokeColor(color)
         elif color:
             rgb = (color[0] / 256.0, color[1] / 256.0, color[2] / 256.0)
@@ -99,7 +100,7 @@ class PDFImageDraw(base.ImageDraw):
             self.set_stroke_color()
 
     def set_fill_color(self, color="white"):
-        if isinstance(color, basestring):
+        if isinstance(color, string_types):
             if color != 'none':
                 self.canvas.setFillColor(color)
         elif color:
