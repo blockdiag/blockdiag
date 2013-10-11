@@ -15,6 +15,7 @@
 
 import re
 from blockdiag.utils import urlutil
+from blockdiag.utils.compat import string_types
 
 try:
     from PIL import Image
@@ -36,7 +37,7 @@ except ImportError:
                 size = jpeg.JpegFile.get_size(self.filename)
             except:
                 try:
-                    if isinstance(self.filename, (str, unicode)):
+                    if isinstance(self.filename, string_types):
                         content = open(self.filename, 'r')
                     else:
                         self.filename.seek(0)

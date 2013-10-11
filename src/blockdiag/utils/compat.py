@@ -16,14 +16,14 @@
 import sys
 
 if sys.version_info[0] == 2:
-    string_types = (str, unicode)
+    string_types = (str, unicode)  # NOQA: pyflakes complains to unicode in py3
 else:
     string_types = (str,)
 
 
 def u(string):
     if sys.version_info[0] == 2:
-        return unicode(string, "unicode_escape")
+        return unicode(string, "unicode_escape")  # NOQA: pyflakes complains to unicode in py3
     else:
         return string
 
