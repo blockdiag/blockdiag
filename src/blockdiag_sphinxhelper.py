@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 __all__ = [
-  'core', 'utils'
+    'core', 'utils'
 ]
 
 import blockdiag.parser
