@@ -6,9 +6,6 @@ from setuptools import setup, find_packages
 sys.path.insert(0, 'src')
 import blockdiag
 
-
-long_description = open(os.path.join("src", "README.txt")).read()
-
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: System Administrators",
@@ -41,7 +38,7 @@ setup(
     name='blockdiag',
     version=blockdiag.__version__,
     description='blockdiag generates block-diagram image from text',
-    long_description=long_description,
+    long_description=open("README.txt").read(),
     classifiers=classifiers,
     keywords=['diagram', 'generator'],
     author='Takeshi Komiya',
