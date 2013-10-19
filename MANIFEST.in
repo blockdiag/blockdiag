@@ -4,5 +4,6 @@ include MANIFEST.in
 include README.rst
 include LICENSE
 include blockdiag.1
-recursive-include examples *.diag *.png *.svg
-recursive-include src *.py *.diag
+include tox.ini
+recursive-include examples blockdiagrc *.diag *.png *.svg
+recursive-include src *.py *.diag *.gif
