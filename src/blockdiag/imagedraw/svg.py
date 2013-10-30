@@ -139,8 +139,9 @@ class SVGImageDrawElement(_base.ImageDraw):
                 rendered = True
 
             if not rendered and font.size > 0:
-                font.size = int(font.size * 0.8)
-                self.textarea(box, string, font, **kwargs)
+                _font = font.duplicate()
+                _font.size = int(font.size * 0.8)
+                self.textarea(box, string, _font, **kwargs)
 
     def rotated_textarea(self, box, string, font, **kwargs):
         angle = int(kwargs['rotate']) % 360
