@@ -288,9 +288,11 @@ class HorizontalTextFolder(object):
                 if height + textsize.height + self.line_spacing < maxheight:
                     lines.append(folded)
                     height += textsize.height + self.line_spacing
-                elif len(lines) > 0:
-                    lines[-1] = truncate_text(self, lines[-1],
-                                              maxwidth, measure)
+                else:
+                    if len(lines) > 0:
+                        lines[-1] = truncate_text(self, lines[-1],
+                                                  maxwidth, measure)
+
                     finished = True
                     break
 
