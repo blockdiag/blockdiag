@@ -8,7 +8,7 @@ else:
     import unittest
 
 from blockdiag.parser import parse_string, ParseException
-from blockdiag.parser import Graph, SubGraph, Statements, Node, Edge
+from blockdiag.parser import Diagram, Group, Statements, Node, Edge
 
 
 class TestParser(unittest.TestCase):
@@ -21,7 +21,7 @@ class TestParser(unittest.TestCase):
                """
 
         tree = parse_string(code)
-        self.assertIsInstance(tree, Graph)
+        self.assertIsInstance(tree, Diagram)
 
     def test_without_diagram_id(self):
         code = """
@@ -30,7 +30,7 @@ class TestParser(unittest.TestCase):
                }
                """
         tree = parse_string(code)
-        self.assertIsInstance(tree, Graph)
+        self.assertIsInstance(tree, Diagram)
 
         code = """
                {
@@ -38,7 +38,7 @@ class TestParser(unittest.TestCase):
                }
                """
         tree = parse_string(code)
-        self.assertIsInstance(tree, Graph)
+        self.assertIsInstance(tree, Diagram)
 
     def test_empty_diagram(self):
         code = """
@@ -46,14 +46,14 @@ class TestParser(unittest.TestCase):
                }
                """
         tree = parse_string(code)
-        self.assertIsInstance(tree, Graph)
+        self.assertIsInstance(tree, Diagram)
 
         code = """
                {
                }
                """
         tree = parse_string(code)
-        self.assertIsInstance(tree, Graph)
+        self.assertIsInstance(tree, Diagram)
 
     def test_diagram_includes_nodes(self):
         code = """
@@ -64,7 +64,7 @@ class TestParser(unittest.TestCase):
                }
                """
         tree = parse_string(code)
-        self.assertIsInstance(tree, Graph)
+        self.assertIsInstance(tree, Diagram)
         self.assertEqual(3, len(tree.stmts))
         self.assertIsInstance(tree.stmts[0], Statements)
         self.assertIsInstance(tree.stmts[0].stmts[0], Node)
@@ -80,9 +80,12 @@ class TestParser(unittest.TestCase):
                }
                """
         tree = parse_string(code)
-        self.assertIsInstance(tree, Graph)
+        self.assertIsInstance(tree, Diagram)
         self.assertEqual(1, len(tree.stmts))
-        self.assertIsInstance(tree.stmts[0], Edge)
+        self.assertIsInstance(tree.stmts[0], Statements)
+        self.assertEqual(2, len(tree.stmts[0].stmts))
+        self.assertIsInstance(tree.stmts[0].stmts[0], Edge)
+        self.assertIsInstance(tree.stmts[0].stmts[1], Edge)
 
         code = """
                diagram {
@@ -91,10 +94,15 @@ class TestParser(unittest.TestCase):
                }
                """
         tree = parse_string(code)
-        self.assertIsInstance(tree, Graph)
+        self.assertIsInstance(tree, Diagram)
         self.assertEqual(2, len(tree.stmts))
-        self.assertIsInstance(tree.stmts[0], Edge)
-        self.assertIsInstance(tree.stmts[1], Edge)
+        self.assertIsInstance(tree.stmts[0], Statements)
+        self.assertEqual(2, len(tree.stmts[0].stmts))
+        self.assertIsInstance(tree.stmts[0].stmts[0], Edge)
+        self.assertIsInstance(tree.stmts[0].stmts[1], Edge)
+        self.assertIsInstance(tree.stmts[1], Statements)
+        self.assertEqual(1, len(tree.stmts[1].stmts))
+        self.assertIsInstance(tree.stmts[1].stmts[0], Edge)
 
     def test_diagram_includes_groups(self):
         code = """
@@ -108,19 +116,20 @@ class TestParser(unittest.TestCase):
                }
                """
         tree = parse_string(code)
-        self.assertIsInstance(tree, Graph)
+        self.assertIsInstance(tree, Diagram)
         self.assertEqual(2, len(tree.stmts))
 
-        self.assertIsInstance(tree.stmts[0], SubGraph)
+        self.assertIsInstance(tree.stmts[0], Group)
         self.assertEqual(2, len(tree.stmts[0].stmts))
         self.assertIsInstance(tree.stmts[0].stmts[0], Statements)
         self.assertIsInstance(tree.stmts[0].stmts[0].stmts[0], Node)
         self.assertIsInstance(tree.stmts[0].stmts[1], Statements)
         self.assertIsInstance(tree.stmts[0].stmts[1].stmts[0], Node)
 
-        self.assertIsInstance(tree.stmts[1], SubGraph)
+        self.assertIsInstance(tree.stmts[1], Group)
         self.assertEqual(1, len(tree.stmts[1].stmts))
-        self.assertIsInstance(tree.stmts[1].stmts[0], Edge)
+        self.assertIsInstance(tree.stmts[1].stmts[0], Statements)
+        self.assertIsInstance(tree.stmts[1].stmts[0].stmts[0], Edge)
 
     def test_diagram_includes_diagram_attributes(self):
         code = """
@@ -130,7 +139,7 @@ class TestParser(unittest.TestCase):
                }
                """
         tree = parse_string(code)
-        self.assertIsInstance(tree, Graph)
+        self.assertIsInstance(tree, Diagram)
         self.assertEqual(2, len(tree.stmts))
 
     def test_parenthesis_ness(self):
