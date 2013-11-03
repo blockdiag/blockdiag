@@ -3,138 +3,110 @@
 import os
 import sys
 import re
-import tempfile
-from blockdiag.tests.utils import stderr_wrapper
-from blockdiag.tests.utils import with_pil, with_pdf
+from nose.tools import nottest
+from blockdiag.tests.utils import capture_stderr, TemporaryDirectory
+from blockdiag.tests.utils import supported_pil, supported_pdf
 
 import blockdiag
 import blockdiag.command
 
 
-def get_fontpath():
-    filename = "VL-PGothic-Regular.ttf"
-    testdir = os.path.dirname(__file__)
-    return "%s/truetype/%s" % (testdir, filename)
+def get_fontpath(testdir=None):
+    if testdir is None:
+        testdir = os.path.dirname(__file__)
+    return os.path.join(testdir, 'truetype', 'VL-PGothic-Regular.ttf')
 
 
-def extra_case(func):
-    pathname = get_fontpath()
+def get_diagram_files(testdir):
+    diagramsdir = os.path.join(testdir, 'diagrams')
 
-    if os.path.exists(pathname):
-        func.__test__ = True
-    else:
-        func.__test__ = False
+    skipped = ['errors', 'white.gif']
+    for file in os.listdir(diagramsdir):
+        if file in skipped:
+            pass
+        else:
+            yield os.path.join(diagramsdir, file)
 
-    return func
+
+def test_generate():
+    mainfunc = blockdiag.command.main
+    basepath = os.path.dirname(__file__)
+    files = get_diagram_files(basepath)
+    options = []
+
+    for testcase in testcase_generator(basepath, mainfunc, files, options):
+        yield testcase
 
 
-@stderr_wrapper
-def __build_diagram(filename, _format, additional_args):
-    testdir = os.path.dirname(__file__)
-    diagpath = "%s/diagrams/%s" % (testdir, filename)
-    fontpath = get_fontpath()
+def test_generate_with_separate():
+    mainfunc = blockdiag.command.main
+    basepath = os.path.dirname(__file__)
+    files = get_diagram_files(basepath)
+    filtered = (f for f in files if re.search('separate', f))
+    options = ['--separate']
 
+    for testcase in testcase_generator(basepath, mainfunc, filtered, options):
+        yield testcase
+
+
+@nottest
+def testcase_generator(basepath, mainfunc, files, options):
+    fontpath = get_fontpath(basepath)
+    if os.path.exists(fontpath):
+        options = options + ['-f', fontpath]
+
+    for source in files:
+        yield generate, mainfunc, 'svg', source, options
+
+        if supported_pil() and os.path.exists(fontpath):
+            yield generate, mainfunc, 'png', source, options
+            yield generate, mainfunc, 'png', source, options + ['--antialias']
+
+        if supported_pdf() and os.path.exists(fontpath):
+            yield generate, mainfunc, 'pdf', source, options
+
+
+@capture_stderr
+def generate(mainfunc, filetype, source, options):
     try:
-        tmpdir = tempfile.mkdtemp()
-        tmpfile = tempfile.mkstemp(dir=tmpdir)
-        os.close(tmpfile[0])
+        tmpdir = TemporaryDirectory()
+        fd, tmpfile = tmpdir.mkstemp()
+        os.close(fd)
 
-        args = ['-T', _format, '-o', tmpfile[1], diagpath]
-        if additional_args:
-            if isinstance(additional_args[0], (list, tuple)):
-                args += additional_args[0]
-            else:
-                args += additional_args
-        if os.path.exists(fontpath):
-            args += ['-f', fontpath]
-
-        blockdiag.command.main(args)
-
-        if re.search('ERROR', sys.stderr.getvalue()):
-            raise RuntimeError(sys.stderr.getvalue())
+        mainfunc(['-T', filetype, '-o', tmpfile, source] + list(options))
     finally:
-        for filename in os.listdir(tmpdir):
-            os.unlink(tmpdir + "/" + filename)
-        os.rmdir(tmpdir)
+        tmpdir.clean()
 
 
-def diagram_files():
-    testdir = os.path.dirname(__file__)
-    pathname = "%s/diagrams/" % testdir
-
-    skipped = ['errors',
-               'white.gif']
-
-    return [d for d in os.listdir(pathname) if d not in skipped]
-
-
-def test_generator_svg():
-    args = []
-    for testcase in generator_core('svg', args):
-        yield testcase
-
-
-@with_pil
-@extra_case
-def test_generator_png():
-    for testcase in generator_core('png'):
-        yield testcase
-
-
-@with_pdf
-@extra_case
-def test_generator_pdf():
-    for testcase in generator_core('pdf'):
-        yield testcase
-
-
-def generator_core(_format, *args):
-    for diagram in diagram_files():
-        yield __build_diagram, diagram, _format, args
-
-        if re.search('separate', diagram):
-            _args = list(args) + ['--separate']
-            yield __build_diagram, diagram, _format, _args
-
-        if _format == 'png':
-            _args = list(args) + ['--antialias']
-            yield __build_diagram, diagram, _format, _args
-
-
-@extra_case
 def not_exist_font_config_option_test():
-    from blockdiag.utils.bootstrap import detectfont
     fontpath = get_fontpath()
-    args = ['-f', '/font_is_not_exist', '-f', fontpath, 'input.diag']
-    options = blockdiag.command.BlockdiagOptions(blockdiag).parse(args)
-    detectfont(options)
+    if os.path.exists(fontpath):
+        args = ['-f', '/font_is_not_exist', '-f', fontpath, 'input.diag']
+        options = blockdiag.command.BlockdiagOptions(blockdiag).parse(args)
+
+        from blockdiag.utils.bootstrap import detectfont
+        detectfont(options)
 
 
-@stderr_wrapper
+@capture_stderr
 def svg_includes_source_code_tag_test():
     from xml.etree import ElementTree
 
     testdir = os.path.dirname(__file__)
-    diagpath = "%s/diagrams/single_edge.diag" % testdir
+    diagpath = os.path.join(testdir, 'diagrams', 'single_edge.diag')
     fontpath = get_fontpath()
 
     try:
-        tmpdir = tempfile.mkdtemp()
-        tmpfile = tempfile.mkstemp(dir=tmpdir)
-        os.close(tmpfile[0])
+        tmpdir = TemporaryDirectory()
+        fd, tmpfile = tmpdir.mkstemp()
+        os.close(fd)
 
-        args = ['-T', 'SVG', '-o', tmpfile[1], diagpath]
-        if os.path.exists(fontpath):
-            args += ['-f', fontpath]
-
+        args = ['-T', 'SVG', '-o', tmpfile, diagpath]
         blockdiag.command.main(args)
-
-        if re.search('ERROR', sys.stderr.getvalue()):
-            raise RuntimeError(sys.stderr.getvalue())
 
         # compare embeded source code
         source_code = open(diagpath).read()
-        tree = ElementTree.parse(tmpfile[1])
+        tree = ElementTree.parse(tmpfile)
         desc = tree.find('{http://www.w3.org/2000/svg}desc')
 
         # strip spaces
@@ -142,6 +114,4 @@ def svg_includes_source_code_tag_test():
         embeded = re.sub('\s+', ' ', desc.text)
         assert source_code == embeded
     finally:
-        for filename in os.listdir(tmpdir):
-            os.unlink(tmpdir + "/" + filename)
-        os.rmdir(tmpdir)
+        tmpdir.clean()

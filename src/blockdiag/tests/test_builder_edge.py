@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from blockdiag.tests.utils import BuilderTestCase, stderr_wrapper
+from blockdiag.tests.utils import BuilderTestCase, capture_stderr
 
 
 class TestBuilderEdge(BuilderTestCase):
@@ -89,7 +89,7 @@ class TestBuilderEdge(BuilderTestCase):
                                          ('C', 'G'): True,
                                          ('F', 'G'): False})
 
-    @stderr_wrapper
+    @capture_stderr
     def test_skipped_edge_flowchart_rightdown_diagram(self):
         diagram = self.build('skipped_edge_flowchart_rightdown.diag')
         self.assertEdgeSkipped(diagram, {('A', 'B'): False,
@@ -97,7 +97,7 @@ class TestBuilderEdge(BuilderTestCase):
                                          ('A', 'D'): True,
                                          ('C', 'D'): False})
 
-    @stderr_wrapper
+    @capture_stderr
     def test_skipped_edge_flowchart_rightdown2_diagram(self):
         diagram = self.build('skipped_edge_flowchart_rightdown2.diag')
         self.assertEdgeSkipped(diagram, {('B', 'C'): False,
@@ -128,7 +128,7 @@ class TestBuilderEdge(BuilderTestCase):
                                          ('A', 'C'): True,
                                          ('B', 'C'): False})
 
-    @stderr_wrapper
+    @capture_stderr
     def test_skipped_edge_portrait_flowchart_rightdown_diagram(self):
         diagram = self.build('skipped_edge_portrait_flowchart_rightdown.diag')
         self.assertEdgeSkipped(diagram, {('A', 'B'): False,
@@ -136,7 +136,7 @@ class TestBuilderEdge(BuilderTestCase):
                                          ('A', 'D'): True,
                                          ('C', 'D'): False})
 
-    @stderr_wrapper
+    @capture_stderr
     def test_skipped_edge_portrait_flowchart_rightdown2_diagram(self):
         diagram = self.build('skipped_edge_portrait_flowchart_rightdown2.diag')
         self.assertEdgeSkipped(diagram, {('B', 'C'): False,

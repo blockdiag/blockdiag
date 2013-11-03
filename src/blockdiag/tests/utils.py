@@ -8,6 +8,10 @@ else:
     import unittest
 
 import os
+import re
+import functools
+from shutil import rmtree
+from tempfile import mkdtemp, mkstemp
 from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.parser import parse_file
 
@@ -51,14 +55,16 @@ def with_pdf(fn):
     return fn
 
 
-def stderr_wrapper(func):
+def capture_stderr(func):
     def wrap(*args, **kwargs):
         try:
             stderr = sys.stderr
             sys.stderr = StringIO()
 
-            print(args, kwargs)
             func(*args, **kwargs)
+
+            if re.search('ERROR', sys.stderr.getvalue()):
+                raise AssertionError('Caught error')
         finally:
             if sys.stderr.getvalue():
                 print("---[ stderr ] ---")
@@ -66,8 +72,25 @@ def stderr_wrapper(func):
 
             sys.stderr = stderr
 
-    wrap.__name__ = func.__name__
-    return wrap
+    return functools.wraps(func)(wrap)
+
+
+stderr_wrapper = capture_stderr   # FIXME: deprecated
+
+
+class TemporaryDirectory(object):
+    def __init__(self, suffix='', prefix='tmp', dir=None):
+        self.name = mkdtemp(suffix, prefix, dir)
+
+    def __del__(self):
+        self.clean()
+
+    def clean(self):
+        if os.path.exists(self.name):
+            rmtree(self.name)
+
+    def mkstemp(self, suffix='', prefix='tmp', text=False):
+        return mkstemp(suffix, prefix, self.name, text)
 
 
 class BuilderTestCase(unittest.TestCase):
