@@ -9,7 +9,7 @@ else:
 import os
 import tempfile
 from blockdiag.utils.compat import u
-from blockdiag.tests.utils import stderr_wrapper
+from blockdiag.tests.utils import capture_stderr
 
 try:
     from io import StringIO
@@ -128,7 +128,7 @@ class TestUtilsFontmap(unittest.TestCase):
         font = FontInfo("-serif", None, 11)
         self.assertEqual('serif-normal', font.familyname)
 
-    @stderr_wrapper
+    @capture_stderr
     def test_fontmap_empty_config(self):
         config = StringIO(u(""))
         fmap = FontMap(config)
@@ -158,7 +158,7 @@ class TestUtilsFontmap(unittest.TestCase):
         self.assertEqual(font1.path, font4.path)
         self.assertEqual(font1.size, font4.size)
 
-    @stderr_wrapper
+    @capture_stderr
     def test_fontmap_none_config(self):
         fmap = FontMap()
 
@@ -239,7 +239,7 @@ class TestUtilsFontmap(unittest.TestCase):
             self.assertEqual(self.fontpath[1], font1.path)
             self.assertEqual(11, font1.size)
 
-    @stderr_wrapper
+    @capture_stderr
     def test_fontmap_with_nodefault_fontentry(self):
         _config = u("[fontmap]\nserif: %s\n") % self.fontpath[0]
         config = StringIO(_config)
@@ -262,7 +262,7 @@ class TestUtilsFontmap(unittest.TestCase):
         self.assertEqual(None, font3.path)
         self.assertEqual(20, font3.size)
 
-    @stderr_wrapper
+    @capture_stderr
     def test_fontmap_with_nonexistence_fontpath(self):
         _config = u("[fontmap]\nserif: unknown_file\n")
         config = StringIO(_config)
