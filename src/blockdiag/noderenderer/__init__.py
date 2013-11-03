@@ -101,7 +101,7 @@ class NodeShape(object):
         self.render_number_badge(drawer, **kwargs)
 
     def render_icon(self, drawer, **kwargs):
-        if self.node.icon is not None and kwargs.get('shadow') is False:
+        if self.node.icon is not None and kwargs.get('shadow') is not True:
             drawer.image(self.iconbox, self.node.icon)
 
     def render_shape(self, drawer, _, **kwargs):
