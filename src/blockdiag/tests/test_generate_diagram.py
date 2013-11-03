@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
 import re
 from nose.tools import nottest
 from blockdiag.tests.utils import capture_stderr, TemporaryDirectory
@@ -94,7 +93,6 @@ def svg_includes_source_code_tag_test():
 
     testdir = os.path.dirname(__file__)
     diagpath = os.path.join(testdir, 'diagrams', 'single_edge.diag')
-    fontpath = get_fontpath()
 
     try:
         tmpdir = TemporaryDirectory()
