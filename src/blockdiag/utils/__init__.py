@@ -159,7 +159,6 @@ def unquote(string):
 def is_Pillow_available():
     try:
         from PIL import _imagingft
-        _imagingft
         return True
     except ImportError:
         return False

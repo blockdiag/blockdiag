@@ -23,9 +23,7 @@ except ImportError:
 
 def supported_pil():
     try:
-        import _imagingft
-        _imagingft
-
+        from PIL import _imagingft
         return True
     except:
         return False
