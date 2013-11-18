@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
 from blockdiag.utils import Box
@@ -24,8 +25,8 @@ class Cloud(NodeShape):
         super(Cloud, self).__init__(node, metrics)
 
         pt = metrics.cell(node).topleft
-        rx = (self.node.width or self.metrics.node_width) / 12
-        ry = (self.node.height or self.metrics.node_height) / 5
+        rx = (self.node.width or self.metrics.node_width) // 12
+        ry = (self.node.height or self.metrics.node_height) // 5
         self.textbox = Box(pt.x + rx * 2, pt.y + ry,
                            pt.x + rx * 11, pt.y + ry * 4)
 
@@ -41,8 +42,8 @@ class Cloud(NodeShape):
 
         m = self.metrics.cell(self.node)
         pt = m.topleft
-        rx = (self.node.width or self.metrics.node_width) / 12
-        ry = (self.node.height or self.metrics.node_height) / 5
+        rx = (self.node.width or self.metrics.node_width) // 12
+        ry = (self.node.height or self.metrics.node_height) // 5
 
         ellipses = [Box(pt.x + rx * 2, pt.y + ry,
                         pt.x + rx * 5, pt.y + ry * 3),
@@ -95,8 +96,8 @@ class Cloud(NodeShape):
 
         # create pathdata
         m = self.metrics.cell(self.node)
-        rx = (self.node.width or self.metrics.node_width) / 12
-        ry = (self.node.height or self.metrics.node_height) / 5
+        rx = (self.node.width or self.metrics.node_width) // 12
+        ry = (self.node.height or self.metrics.node_height) // 5
 
         pt = m.topleft
         if kwargs.get('shadow'):
@@ -104,12 +105,12 @@ class Cloud(NodeShape):
 
         path = pathdata(pt.x + rx * 2, pt.y + ry * 2)
         path.ellarc(rx * 2, ry, 0, 0, 1, pt.x + rx * 4, pt.y + ry)
-        path.ellarc(rx * 2, ry * 3 / 4, 0, 0, 1, pt.x + rx * 9, pt.y + ry)
+        path.ellarc(rx * 2, ry * 3 // 4, 0, 0, 1, pt.x + rx * 9, pt.y + ry)
         path.ellarc(rx * 2, ry, 0, 0, 1, pt.x + rx * 11, pt.y + ry * 2)
         path.ellarc(rx * 2, ry, 0, 0, 1, pt.x + rx * 11, pt.y + ry * 4)
-        path.ellarc(rx * 2, ry * 5 / 2, 0, 0, 1, pt.x + rx * 8, pt.y + ry * 4)
-        path.ellarc(rx * 2, ry * 5 / 2, 0, 0, 1, pt.x + rx * 5, pt.y + ry * 4)
-        path.ellarc(rx * 2, ry * 5 / 2, 0, 0, 1, pt.x + rx * 2, pt.y + ry * 4)
+        path.ellarc(rx * 2, ry * 5 // 2, 0, 0, 1, pt.x + rx * 8, pt.y + ry * 4)
+        path.ellarc(rx * 2, ry * 5 // 2, 0, 0, 1, pt.x + rx * 5, pt.y + ry * 4)
+        path.ellarc(rx * 2, ry * 5 // 2, 0, 0, 1, pt.x + rx * 2, pt.y + ry * 4)
         path.ellarc(rx * 2, ry, 0, 0, 1, pt.x + rx * 2, pt.y + ry * 2)
 
         # draw outline
