@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
 from blockdiag.utils import Box, XY
@@ -29,10 +30,10 @@ class Diamond(NodeShape):
                            XY(m.bottom.x, m.bottom.y + r),
                            XY(m.left.x - r, m.left.y),
                            XY(m.top.x, m.top.y - r)]
-        self.textbox = Box((self.connectors[0].x + self.connectors[3].x) / 2,
-                           (self.connectors[0].y + self.connectors[3].y) / 2,
-                           (self.connectors[1].x + self.connectors[2].x) / 2,
-                           (self.connectors[1].y + self.connectors[2].y) / 2)
+        self.textbox = Box((self.connectors[0].x + self.connectors[3].x) // 2,
+                           (self.connectors[0].y + self.connectors[3].y) // 2,
+                           (self.connectors[1].x + self.connectors[2].x) // 2,
+                           (self.connectors[1].y + self.connectors[2].y) // 2)
 
     def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')

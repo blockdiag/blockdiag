@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
 from blockdiag.utils import Box, XY
@@ -23,7 +24,7 @@ class LoopOut(NodeShape):
         super(LoopOut, self).__init__(node, metrics)
 
         m = self.metrics.cell(self.node)
-        ydiff = self.metrics.node_height / 4
+        ydiff = self.metrics.node_height // 4
 
         self.textbox = Box(m.topleft.x, m.topleft.y,
                            m.bottomright.x, m.bottomright.y - ydiff)
@@ -32,8 +33,8 @@ class LoopOut(NodeShape):
         fill = kwargs.get('fill')
 
         m = self.metrics.cell(self.node)
-        xdiff = self.metrics.node_width / 4
-        ydiff = self.metrics.node_height / 4
+        xdiff = self.metrics.node_width // 4
+        ydiff = self.metrics.node_height // 4
 
         shape = [XY(m.topleft.x, m.topleft.y),
                  XY(m.topright.x, m.topright.y),
