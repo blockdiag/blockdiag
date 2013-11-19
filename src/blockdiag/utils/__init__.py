@@ -132,6 +132,9 @@ class Box(list):
     def center(self):
         return XY(self.x1 + self.width // 2, self.y1 + self.height // 2)
 
+    def to_integer_point(self):
+        return Box(*[int(i) for i in self])
+
 
 def unquote(string):
     """

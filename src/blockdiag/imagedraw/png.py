@@ -167,7 +167,7 @@ class ImageDrawExBase(base.ImageDraw):
             for pt in ellipse_dots(box, cycle, start, end):
                 self.draw.line([pt, pt], fill=kwargs['fill'])
         else:
-            self.draw.arc(box, start, end, **kwargs)
+            self.draw.arc(box.to_integer_point(), start, end, **kwargs)
 
     def ellipse(self, box, **kwargs):
         if 'filter' in kwargs:
@@ -195,7 +195,7 @@ class ImageDrawExBase(base.ImageDraw):
             if kwargs.get('fill') == 'none':
                 del kwargs['fill']
 
-            self.draw.ellipse(box, **kwargs)
+            self.draw.ellipse(box.to_integer_point(), **kwargs)
 
     def line(self, xy, **kwargs):
         if 'jump' in kwargs:

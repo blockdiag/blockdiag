@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 import re
 from blockdiag.utils import urlutil
 from blockdiag.utils.compat import string_types
@@ -76,10 +77,10 @@ def get_image_size(filename):
 
 def calc_image_size(size, bounded):
     if bounded[0] < size[0] or bounded[1] < size[1]:
-        if (size[0] * 1.0 / bounded[0]) < (size[1] * 1.0 / bounded[1]):
-            size = (size[0] * bounded[1] / size[1], bounded[1])
+        if (size[0] * 1.0 // bounded[0]) < (size[1] * 1.0 // bounded[1]):
+            size = (size[0] * bounded[1] // size[1], bounded[1])
         else:
-            size = (bounded[0], size[1] * bounded[0] / size[0])
+            size = (bounded[0], size[1] * bounded[0] // size[0])
 
     return size
 

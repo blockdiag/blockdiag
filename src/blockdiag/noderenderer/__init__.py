@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 import pkg_resources
 from blockdiag.utils import images, Box, XY
 
@@ -66,10 +67,10 @@ class NodeShape(object):
             if image_size is None:
                 iconsize = (0, 0)
             else:
-                boundedbox = [metrics.node_width / 2, metrics.node_height]
+                boundedbox = [metrics.node_width // 2, metrics.node_height]
                 iconsize = images.calc_image_size(image_size, boundedbox)
 
-            vmargin = (metrics.node_height - iconsize[1]) / 2
+            vmargin = (metrics.node_height - iconsize[1]) // 2
             self.iconbox = Box(m.topleft.x,
                                m.topleft.y + vmargin,
                                m.topleft.x + iconsize[0],
@@ -85,7 +86,7 @@ class NodeShape(object):
             node.background = ""
             for i in range(2, 0, -1):
                 # use original_metrics FORCE
-                r = self.metrics.original_metrics.cellsize / 2 * i
+                r = self.metrics.original_metrics.cellsize // 2 * i
                 metrics = self.metrics.shift(r, r)
 
                 self.__class__(node, metrics).render(drawer, _format,
@@ -121,7 +122,7 @@ class NodeShape(object):
             badgeFill = kwargs.get('badgeFill')
 
             xy = self.metrics.cell(self.node).topleft
-            r = self.metrics.cellsize * 3 / 2
+            r = self.metrics.cellsize * 3 // 2
 
             box = Box(xy.x - r, xy.y - r, xy.x + r, xy.y + r)
             font = self.metrics.font_for(self.node)
