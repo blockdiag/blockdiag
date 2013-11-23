@@ -11,24 +11,18 @@ You can get some examples and generated images on
 Setup
 =====
 
-by easy_install
-----------------
-Make environment::
+Use easy_install or pip::
 
-   $ easy_install blockdiag
+   $ sudo easy_install blockdiag
+
+   Or
+
+   $ sudo pip blockdiag
 
 If you want to export as PDF format, give pdf arguments::
 
-   $ easy_install "blockdiag[pdf]"
+   $ sudo easy_install "blockdiag[pdf]"
 
-by buildout
-------------
-Make environment::
-
-   $ hg clone http://bitbucket.org/tk0miya/blockdiag
-   $ cd blockdiag
-   $ python bootstrap.py
-   $ bin/buildout
 
 Copy and modify ini file. example::
 
