@@ -95,6 +95,11 @@ class TestBuilderError(BuilderTestCase):
         with self.assertRaises(ParseException):
             self.build(filename)
 
+    def test_unknown_diagram_type(self):
+        filename = 'errors/unknown_diagram_type.diag'
+        with self.assertRaises(ParseException):
+            self.build(filename)
+
     def test_lexer_error_diagram(self):
         filename = 'errors/lexer_error.diag'
         with self.assertRaises(ParseException):
