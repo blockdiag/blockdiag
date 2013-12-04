@@ -46,7 +46,7 @@ from blockdiag.utils.compat import u
 
 ENCODING = 'utf-8'
 
-Diagram = namedtuple('Diagram', 'type id stmts')
+Diagram = namedtuple('Diagram', 'id stmts')
 Group = namedtuple('Group', 'id stmts')
 Node = namedtuple('Node', 'id attrs')
 Attr = namedtuple('Attr', 'name value')
@@ -209,6 +209,11 @@ def parse(seq):
     #        A;
     #     }
     #
+    diagram_id = (
+        (keyword('diagram') | keyword('blockdiag')) +
+        maybe(_id)
+        >> list
+    )
     diagram_inline_stmt = (
         extension_stmt |
         group_inline_stmt
@@ -217,8 +222,7 @@ def parse(seq):
         many(diagram_inline_stmt + skip(maybe(op(';'))))
     )
     diagram = (
-        maybe(keyword('diagram') | keyword('blockdiag')) +
-        maybe(_id) +
+        maybe(diagram_id) +
         op_('{') +
         diagram_inline_stmt_list +
         op_('}')
