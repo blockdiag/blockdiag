@@ -17,7 +17,7 @@ Use easy_install or pip::
 
    Or
 
-   $ sudo pip blockdiag
+   $ sudo pip install blockdiag
 
 If you want to export as PDF format, give pdf arguments::
 
