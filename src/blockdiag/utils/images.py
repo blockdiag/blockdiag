@@ -61,16 +61,23 @@ def get_image_size(filename):
         uri = filename
         if urlutil.isurl(filename):
             try:
-                from io import StringIO
+                from io import BytesIO as StringIO
             except ImportError:
                 from cStringIO import StringIO
-            import urllib
             try:
-                uri = StringIO(urllib.urlopen(filename).read())
-            except:
-                return None
+                from urllib.request import urlopen
+            except ImportError:
+                from urllib import urlopen
 
-        _image_size_cache[filename] = Image.open(uri).size
+            try:
+                uri = StringIO(urlopen(filename).read())
+            except IOError:
+                raise RuntimeError('Could not retrieve: %s' % filename)
+
+        try:
+            _image_size_cache[filename] = Image.open(uri).size
+        except:
+            raise RuntimeError('Colud not get size of image: %s' % filename)
 
     return _image_size_cache[filename]
 
