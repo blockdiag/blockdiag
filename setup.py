@@ -24,8 +24,10 @@ requires = ['setuptools',
             'funcparserlib',
             'webcolors',
             'Pillow']
-test_requires = ['Nose',
-                 'pep8>=1.3']
+test_requires = ['nose',
+                 'pep8>=1.3',
+                 'reportlab',
+                 'docutils']
 
 
 # only for Python2.6
@@ -53,7 +55,7 @@ setup(
     include_package_data=True,
     install_requires=requires,
     extras_require=dict(
-        test=test_requires,
+        testing=test_requires,
         pdf=[
             'reportlab',
         ],
