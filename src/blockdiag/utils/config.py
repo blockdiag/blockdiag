@@ -13,9 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import io
 import sys
-from blockdiag.utils import codecs
-from ConfigParser import SafeConfigParser
+try:
+    from configparser import SafeConfigParser
+except ImportError:
+    from ConfigParser import SafeConfigParser
 
 
 class ConfigParser(SafeConfigParser):
@@ -30,6 +33,6 @@ class ConfigParser(SafeConfigParser):
             SafeConfigParser.__init__(self)
 
     def read(self, path):
-        fd = codecs.open(path, 'r', 'utf-8-sig')
+        fd = io.open(path, 'r', encoding='utf-8-sig')
         self.readfp(fd)
         fd.close()

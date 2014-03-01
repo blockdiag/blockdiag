@@ -13,10 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 import re
-import sys
 import math
-from blockdiag.utils.collections import namedtuple
+from collections import namedtuple
 
 
 Size = namedtuple('Size', 'width height')
@@ -29,7 +29,13 @@ class XY(tuple):
         return super(XY, cls).__new__(cls, (x, y))
 
     def __getattr__(self, name):
-        return self[self.mapper[name]]
+        try:
+            return self[self.mapper[name]]
+        except KeyError:
+            raise AttributeError(name)
+
+    def __setattr__(self, name, value):
+        raise TypeError("'XY' object does not support item assignment")
 
     def shift(self, x=0, y=0):
         return self.__class__(self.x + x, self.y + y)
@@ -42,7 +48,10 @@ class Box(list):
         super(Box, self).__init__((x1, y1, x2, y2))
 
     def __getattr__(self, name):
-        return self[self.mapper[name]]
+        try:
+            return self[self.mapper[name]]
+        except KeyError:
+            raise AttributeError(name)
 
     def __repr__(self):
         _format = "<%s (%s, %s) %dx%d at 0x%08x>"
@@ -93,7 +102,7 @@ class Box(list):
 
     @property
     def top(self):
-        return XY(self.x1 + self.width / 2, self.y1)
+        return XY(self.x1 + self.width // 2, self.y1)
 
     @property
     def topright(self):
@@ -105,7 +114,7 @@ class Box(list):
 
     @property
     def bottom(self):
-        return XY(self.x1 + self.width / 2, self.y2)
+        return XY(self.x1 + self.width // 2, self.y2)
 
     @property
     def bottomright(self):
@@ -113,23 +122,18 @@ class Box(list):
 
     @property
     def left(self):
-        return XY(self.x1, self.y1 + self.height / 2)
+        return XY(self.x1, self.y1 + self.height // 2)
 
     @property
     def right(self):
-        return XY(self.x2, self.y1 + self.height / 2)
+        return XY(self.x2, self.y1 + self.height // 2)
 
     @property
     def center(self):
-        return XY(self.x1 + self.width / 2, self.y1 + self.height / 2)
+        return XY(self.x1 + self.width // 2, self.y1 + self.height // 2)
 
-
-def any(seq):
-    for element in seq:
-        if element:
-            return True
-
-    return False
+    def to_integer_point(self):
+        return Box(*[int(i) for i in self])
 
 
 def unquote(string):
@@ -155,32 +159,10 @@ def unquote(string):
         return string
 
 
-class codecs(object):
-    @staticmethod
-    def getreader(encoding):
-        import codecs
-        return codecs.getreader(encoding)
-
-    @staticmethod
-    def open(filename, mode, encoding):
-        import codecs
-        if sys.version_info <= (2, 5) and encoding == 'utf-8-sig':
-            fd = codecs.open(path, mode, 'utf-8')
-            if fd.read(1) != u'\uFEFF':  # skip BOM
-                fd.seek(0)
-        else:
-            fd = codecs.open(filename, mode, encoding)
-
-        return fd
-
-
-def is_PIL_available():
+def is_Pillow_available():
     try:
-        try:
-            from PIL import _imagingft
-        except ImportError:
-            import _imagingft
-
+        from PIL import _imagingft
+        _imagingft
         return True
     except ImportError:
         return False

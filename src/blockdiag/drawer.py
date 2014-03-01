@@ -13,13 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from collections import defaultdict
 from blockdiag import imagedraw, noderenderer
 from blockdiag.metrics import AutoScaler, DiagramMetrics
-from blockdiag.utils.collections import defaultdict
 
 
 class DiagramDraw(object):
-    MetricsClass = None  # TODO: obsoleted interface
     shadow_colors = defaultdict(lambda: (0, 0, 0))
     shadow_colors['PNG'] = (64, 64, 64)
     shadow_colors['PDF'] = (144, 144, 144)
@@ -52,10 +51,7 @@ class DiagramDraw(object):
         self.drawer.set_options(jump_radius=self.metrics.cellsize / 2)
 
     def create_metrics(self, *args, **kwargs):
-        if self.MetricsClass:
-            return self.MetricsClass(*args, **kwargs)
-        else:
-            return DiagramMetrics(*args, **kwargs)
+        return DiagramMetrics(*args, **kwargs)
 
     @property
     def nodes(self):

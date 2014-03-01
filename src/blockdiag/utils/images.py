@@ -13,46 +13,45 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 import re
 from blockdiag.utils import urlutil
+from blockdiag.utils.compat import string_types
 
 try:
     from PIL import Image
 except ImportError:
-    try:
-        import Image
-    except ImportError:
-        class Image:
-            @classmethod
-            def open(cls, filename):
-                return cls(filename)
+    class Image:
+        @classmethod
+        def open(cls, filename):
+            return cls(filename)
 
-            def __init__(self, filename):
-                self.filename = filename
+        def __init__(self, filename):
+            self.filename = filename
 
-            @property
-            def size(self):
-                from blockdiag.utils import jpeg
-                import png
+        @property
+        def size(self):
+            from blockdiag.utils import jpeg
+            import png
 
+            try:
+                size = jpeg.JpegFile.get_size(self.filename)
+            except:
                 try:
-                    size = jpeg.JpegFile.get_size(self.filename)
+                    if isinstance(self.filename, string_types):
+                        content = open(self.filename, 'r')
+                    else:
+                        self.filename.seek(0)
+                        content = self.filename
+                    image = png.Reader(file=content).read()
+                    size = (image[0], image[1])
                 except:
-                    try:
-                        if isinstance(self.filename, (str, unicode)):
-                            content = open(self.filename, 'r')
-                        else:
-                            self.filename.seek(0)
-                            content = self.filename
-                        image = png.Reader(file=content).read()
-                        size = (image[0], image[1])
-                    except:
-                        size = None
+                    size = None
 
-                if hasattr(self.filename, 'seek'):
-                    self.filename.seek(0)
+            if hasattr(self.filename, 'seek'):
+                self.filename.seek(0)
 
-                return size
+            return size
 
 _image_size_cache = {}
 
@@ -61,24 +60,34 @@ def get_image_size(filename):
     if filename not in _image_size_cache:
         uri = filename
         if urlutil.isurl(filename):
-            import cStringIO
-            import urllib
             try:
-                uri = cStringIO.StringIO(urllib.urlopen(filename).read())
-            except:
-                return None
+                from io import BytesIO as StringIO
+            except ImportError:
+                from cStringIO import StringIO
+            try:
+                from urllib.request import urlopen
+            except ImportError:
+                from urllib import urlopen
 
-        _image_size_cache[filename] = Image.open(uri).size
+            try:
+                uri = StringIO(urlopen(filename).read())
+            except IOError:
+                raise RuntimeError('Could not retrieve: %s' % filename)
+
+        try:
+            _image_size_cache[filename] = Image.open(uri).size
+        except:
+            raise RuntimeError('Colud not get size of image: %s' % filename)
 
     return _image_size_cache[filename]
 
 
 def calc_image_size(size, bounded):
     if bounded[0] < size[0] or bounded[1] < size[1]:
-        if (size[0] * 1.0 / bounded[0]) < (size[1] * 1.0 / bounded[1]):
-            size = (size[0] * bounded[1] / size[1], bounded[1])
+        if (size[0] * 1.0 // bounded[0]) < (size[1] * 1.0 // bounded[1]):
+            size = (size[0] * bounded[1] // size[1], bounded[1])
         else:
-            size = (bounded[0], size[1] * bounded[0] / size[0])
+            size = (bounded[0], size[1] * bounded[0] // size[0])
 
     return size
 

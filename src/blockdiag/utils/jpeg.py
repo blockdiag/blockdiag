@@ -14,6 +14,9 @@
 #  limitations under the License.
 
 
+from blockdiag.utils.compat import string_types
+
+
 class StreamReader(object):
     def __init__(self, stream):
         self.stream = stream
@@ -74,7 +77,7 @@ class JpegFile(object):
 
     @classmethod
     def get_size(self, filename):
-        if isinstance(filename, (str, unicode)):
+        if isinstance(filename, string_types):
             image = open(filename, 'rb').read()
         else:
             image = filename.read()

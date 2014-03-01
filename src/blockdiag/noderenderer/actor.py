@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
 from blockdiag.utils import XY, Box
@@ -24,16 +25,16 @@ class Actor(NodeShape):
 
         shortside = min(self.node.width or metrics.node_height,
                         self.node.height or metrics.node_height)
-        r = self.radius = shortside / 8  # radius of actor's head
+        r = self.radius = shortside // 8  # radius of actor's head
         self.center = metrics.cell(node).center
 
-        self.connectors[0] = XY(self.center.x, self.center.y - r * 9 / 2)
+        self.connectors[0] = XY(self.center.x, self.center.y - r * 9 // 2)
         self.connectors[1] = XY(self.center.x + r * 4, self.center.y)
         self.connectors[2] = XY(self.center.x, self.center.y + r * 4)
         self.connectors[3] = XY(self.center.x - r * 4, self.center.y)
 
     def head_part(self):
-        r = self.radius * 3 / 2
+        r = self.radius * 3 // 2
         pt = self.metrics.cell(self.node).center.shift(y=-self.radius * 3)
         return Box(pt.x - r, pt.y - r, pt.x + r, pt.y + r)
 
@@ -42,12 +43,12 @@ class Actor(NodeShape):
         m = self.metrics.cell(self.node)
 
         bodyC = m.center
-        neckWidth = r * 2 / 3  # neck size
+        neckWidth = r * 2 // 3  # neck size
         arm = r * 4  # arm length
         armWidth = r
-        bodyWidth = r * 2 / 3  # half of body width
+        bodyWidth = r * 2 // 3  # half of body width
         bodyHeight = r
-        legXout = r * 7 / 2  # toe outer position
+        legXout = r * 7 // 2  # toe outer position
         legYout = bodyHeight + r * 3
         legXin = r * 2  # toe inner position
         legYin = bodyHeight + r * 3

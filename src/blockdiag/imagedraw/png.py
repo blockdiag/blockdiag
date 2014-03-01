@@ -13,42 +13,38 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 import re
+import sys
 import math
-from itertools import izip, tee
+from itertools import tee
+try:
+    from future_builtins import zip
+except ImportError:
+    pass
+from functools import partial, wraps
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from blockdiag.imagedraw import base
-from blockdiag.imagedraw.utils import cached, ellipse
+from blockdiag.imagedraw.utils import cached
 from blockdiag.imagedraw.utils.ellipse import dots as ellipse_dots
 from blockdiag.utils import urlutil, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
-from blockdiag.utils.functools import partial, wraps
 from blockdiag.utils.myitertools import istep, stepslice
-
-try:
-    from PIL import Image
-    from PIL import ImageDraw
-    from PIL import ImageFont
-    from PIL import ImageFilter
-except ImportError:
-    import Image
-    import ImageDraw
-    import ImageFont
-    import ImageFilter
 
 
 def point_pairs(xylist):
     iterable = iter(xylist)
     for pt in iterable:
         if isinstance(pt, int):
-            yield (pt, iterable.next())
+            yield (pt, next(iterable))
         else:
             yield pt
 
 
 def line_segments(xylist):
     p1, p2 = tee(point_pairs(xylist))
-    p2.next()
-    return izip(p1, p2)
+    next(p2)
+    return zip(p1, p2)
 
 
 def dashize_line(line, length):
@@ -57,7 +53,7 @@ def dashize_line(line, length):
         if pt1[1] > pt2[1]:
             pt2, pt1 = line
 
-        r = stepslice(xrange(pt1[1], pt2[1]), length)
+        r = stepslice(range(pt1[1], pt2[1]), length)
         for y1, y2 in istep(n for n in r):
             yield [(pt1[0], y1), (pt1[0], y2)]
 
@@ -65,7 +61,7 @@ def dashize_line(line, length):
         if pt1[0] > pt2[0]:
             pt2, pt1 = line
 
-        r = stepslice(xrange(pt1[0], pt2[0]), length)
+        r = stepslice(range(pt1[0], pt2[0]), length)
         for x1, x2 in istep(n for n in r):
             yield [(x1, pt1[1]), (x2, pt1[1])]
     else:  # diagonal
@@ -171,7 +167,7 @@ class ImageDrawExBase(base.ImageDraw):
             for pt in ellipse_dots(box, cycle, start, end):
                 self.draw.line([pt, pt], fill=kwargs['fill'])
         else:
-            self.draw.arc(box, start, end, **kwargs)
+            self.draw.arc(box.to_integer_point(), start, end, **kwargs)
 
     def ellipse(self, box, **kwargs):
         if 'filter' in kwargs:
@@ -199,7 +195,7 @@ class ImageDrawExBase(base.ImageDraw):
             if kwargs.get('fill') == 'none':
                 del kwargs['fill']
 
-            self.draw.ellipse(box, **kwargs)
+            self.draw.ellipse(box.to_integer_point(), **kwargs)
 
     def line(self, xy, **kwargs):
         if 'jump' in kwargs:
@@ -351,17 +347,24 @@ class ImageDrawExBase(base.ImageDraw):
             rendered = True
 
         if not rendered and font.size > 0:
-            font.size = int(font.size * 0.8)
-            self.textarea(box, string, font, **kwargs)
+            _font = font.duplicate()
+            _font.size = int(font.size * 0.8)
+            self.textarea(box, string, _font, **kwargs)
 
     def image(self, box, url):
         if urlutil.isurl(url):
-            import cStringIO
-            import urllib
             try:
-                url = cStringIO.StringIO(urllib.urlopen(url).read())
+                from io import BytesIO as StringIO
+            except ImportError:
+                from cStringIO import StringIO
+            try:
+                from urllib.request import urlopen
+            except ImportError:
+                from urllib import urlopen
+
+            try:
+                url = StringIO(urlopen(url).read())
             except:
-                import sys
                 msg = "WARNING: Could not retrieve: %s\n" % url
                 sys.stderr.write(msg)
                 return
@@ -375,12 +378,12 @@ class ImageDrawExBase(base.ImageDraw):
         # centering image.
         w, h = image.size
         if box.width > w:
-            x = box[0] + (box.width - w) / 2
+            x = box[0] + (box.width - w) // 2
         else:
             x = box[0]
 
         if box.height > h:
-            y = box[1] + (box.height - h) / 2
+            y = box[1] + (box.height - h) // 2
         else:
             y = box[1]
 
@@ -401,8 +404,11 @@ class ImageDrawExBase(base.ImageDraw):
             self._image.save(self.filename, _format)
             image = None
         else:
-            import cStringIO
-            tmp = cStringIO.StringIO()
+            try:
+                from io import StringIO
+            except ImportError:
+                from cStringIO import StringIO
+            tmp = StringIO()
             self._image.save(tmp, _format)
             image = tmp.getvalue()
 

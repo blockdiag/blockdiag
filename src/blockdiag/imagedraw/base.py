@@ -13,9 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from functools import partial
 from blockdiag.imagedraw import textfolder
 from blockdiag.utils import Box
-from blockdiag.utils.functools import partial
 
 
 class ImageDraw(object):
@@ -71,9 +71,6 @@ class ImageDraw(object):
 
     def image(self, box, url):
         pass
-
-    def loadImage(self, filename, box):  # TODO: obsoleted
-        return self.image(box, filename)
 
     def save(self, filename, size, _format):
         pass

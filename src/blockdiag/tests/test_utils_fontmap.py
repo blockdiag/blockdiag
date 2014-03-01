@@ -1,20 +1,28 @@
 # -*- coding: utf-8 -*-
 
-import os
 import sys
-import tempfile
-import unittest2
-from blockdiag.tests.utils import stderr_wrapper, assertRaises
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 
-from cStringIO import StringIO
-from blockdiag.utils.collections import namedtuple
+import os
+import tempfile
+from blockdiag.utils.compat import u
+from blockdiag.tests.utils import capture_stderr
+
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
+from collections import namedtuple
 from blockdiag.utils.fontmap import FontInfo, FontMap
 
 
 FontElement = namedtuple('FontElement', 'fontfamily fontsize')
 
 
-class TestUtilsFontmap(unittest2.TestCase):
+class TestUtilsFontmap(unittest.TestCase):
     def setUp(self):
         fontpath1 = __file__
         fontpath2 = os.path.join(os.path.dirname(__file__), 'utils.py')
@@ -33,33 +41,33 @@ class TestUtilsFontmap(unittest2.TestCase):
         FontInfo("my-cursive", None, 11)
         FontInfo("-fantasy", None, 11)
 
-    @assertRaises(AttributeError)
     def test_fontinfo_invalid_familyname1(self):
-        FontInfo("unknown", None, 11)
+        with self.assertRaises(AttributeError):
+            FontInfo("unknown", None, 11)
 
-    @assertRaises(AttributeError)
     def test_fontinfo_invalid_familyname2(self):
-        FontInfo("sansserif-", None, 11)
+        with self.assertRaises(AttributeError):
+            FontInfo("sansserif-", None, 11)
 
-    @assertRaises(AttributeError)
     def test_fontinfo_invalid_familyname3(self):
-        FontInfo("monospace-unkown", None, 11)
+        with self.assertRaises(AttributeError):
+            FontInfo("monospace-unkown", None, 11)
 
-    @assertRaises(AttributeError)
     def test_fontinfo_invalid_familyname4(self):
-        FontInfo("cursive-bold-bold", None, 11)
+        with self.assertRaises(AttributeError):
+            FontInfo("cursive-bold-bold", None, 11)
 
-    @assertRaises(AttributeError)
     def test_fontinfo_invalid_familyname5(self):
-        FontInfo("SERIF", None, 11)
+        with self.assertRaises(AttributeError):
+            FontInfo("SERIF", None, 11)
 
-    @assertRaises(TypeError)
     def test_fontinfo_invalid_fontsize1(self):
-        FontInfo("serif", None, None)
+        with self.assertRaises(TypeError):
+            FontInfo("serif", None, None)
 
-    @assertRaises(ValueError)
     def test_fontinfo_invalid_fontsize2(self):
-        FontInfo("serif", None, '')
+        with self.assertRaises(ValueError):
+            FontInfo("serif", None, '')
 
     def test_fontinfo_parse(self):
         font = FontInfo("serif", None, 11)
@@ -120,9 +128,9 @@ class TestUtilsFontmap(unittest2.TestCase):
         font = FontInfo("-serif", None, 11)
         self.assertEqual('serif-normal', font.familyname)
 
-    @stderr_wrapper
+    @capture_stderr
     def test_fontmap_empty_config(self):
-        config = StringIO("")
+        config = StringIO(u(""))
         fmap = FontMap(config)
 
         font1 = fmap.find()
@@ -150,7 +158,7 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(font1.path, font4.path)
         self.assertEqual(font1.size, font4.size)
 
-    @stderr_wrapper
+    @capture_stderr
     def test_fontmap_none_config(self):
         fmap = FontMap()
 
@@ -161,7 +169,7 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(11, font1.size)
 
     def test_fontmap_normal_config(self):
-        _config = "[fontmap]\nsansserif: %s\nsansserif-bold: %s\n" % \
+        _config = u("[fontmap]\nsansserif: %s\nsansserif-bold: %s\n") % \
                   (self.fontpath[0], self.fontpath[1])
         config = StringIO(_config)
         fmap = FontMap(config)
@@ -203,20 +211,25 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(font1.size, font6.size)
 
     def test_fontmap_duplicated_fontentry1(self):
-        _config = "[fontmap]\nsansserif: %s\nsansserif: %s\n" % \
+        _config = u("[fontmap]\nsansserif: %s\nsansserif: %s\n") % \
                   (self.fontpath[0], self.fontpath[1])
         config = StringIO(_config)
-        fmap = FontMap(config)
+        if sys.version_info[0] == 2:
+            fmap = FontMap(config)
 
-        font1 = fmap.find()
-        self.assertEqual('sansserif', font1.generic_family)
-        self.assertEqual(self.fontpath[1], font1.path)
-        self.assertEqual(11, font1.size)
+            font1 = fmap.find()
+            self.assertEqual('sansserif', font1.generic_family)
+            self.assertEqual(self.fontpath[1], font1.path)
+            self.assertEqual(11, font1.size)
+        else:
+            import configparser
+            with self.assertRaises(configparser.DuplicateOptionError):
+                FontMap(config)
 
     def test_fontmap_duplicated_fontentry2(self):
         # this testcase is only for python2.6 or later
         if sys.version_info > (2, 6):
-            _config = "[fontmap]\nsansserif: %s\nsansserif-normal: %s\n" % \
+            _config = u("[fontmap]\nsansserif: %s\nsansserif-normal: %s\n") % \
                       (self.fontpath[0], self.fontpath[1])
             config = StringIO(_config)
             fmap = FontMap(config)
@@ -226,9 +239,9 @@ class TestUtilsFontmap(unittest2.TestCase):
             self.assertEqual(self.fontpath[1], font1.path)
             self.assertEqual(11, font1.size)
 
-    @stderr_wrapper
+    @capture_stderr
     def test_fontmap_with_nodefault_fontentry(self):
-        _config = "[fontmap]\nserif: %s\n" % self.fontpath[0]
+        _config = u("[fontmap]\nserif: %s\n") % self.fontpath[0]
         config = StringIO(_config)
         fmap = FontMap(config)
 
@@ -249,9 +262,9 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(None, font3.path)
         self.assertEqual(20, font3.size)
 
-    @stderr_wrapper
+    @capture_stderr
     def test_fontmap_with_nonexistence_fontpath(self):
-        _config = "[fontmap]\nserif: unknown_file\n"
+        _config = u("[fontmap]\nserif: unknown_file\n")
         config = StringIO(_config)
         fmap = FontMap(config)
 
@@ -261,7 +274,7 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(11, font1.size)
 
     def test_fontmap_switch_defaultfamily(self):
-        _config = "[fontmap]\nserif-bold: %s\n" % self.fontpath[0]
+        _config = u("[fontmap]\nserif-bold: %s\n") % self.fontpath[0]
         config = StringIO(_config)
         fmap = FontMap(config)
 
@@ -289,8 +302,8 @@ class TestUtilsFontmap(unittest2.TestCase):
         self.assertEqual(20, font4.size)
 
     def test_fontmap_using_fontalias(self):
-        _config = ("[fontmap]\nserif-bold: %s\n" +
-                   "[fontalias]\ntest = serif-bold\n") % self.fontpath[0]
+        _config = (u("[fontmap]\nserif-bold: %s\n") +
+                   u("[fontalias]\ntest = serif-bold\n")) % self.fontpath[0]
         config = StringIO(_config)
         fmap = FontMap(config)
 
@@ -303,7 +316,7 @@ class TestUtilsFontmap(unittest2.TestCase):
     def test_fontmap_by_file(self):
         tmp = tempfile.mkstemp()
 
-        _config = "[fontmap]\nsansserif: %s\nsansserif-bold: %s\n" % \
+        _config = u("[fontmap]\nsansserif: %s\nsansserif-bold: %s\n") % \
                   (self.fontpath[0], self.fontpath[1])
 
         fp = os.fdopen(tmp[0], 'wt')
@@ -322,13 +335,13 @@ class TestUtilsFontmap(unittest2.TestCase):
     def test_fontmap_including_bom_by_file(self):
         tmp = tempfile.mkstemp()
 
-        _config = ("\xEF\xBB\xBF[fontmap]\nsansserif: %s\n"
-                   "sansserif-bold: %s\n") % \
+        _config = (u("[fontmap]\nsansserif: %s\n") +
+                   u("sansserif-bold: %s\n")) % \
                   (self.fontpath[0], self.fontpath[1])
 
         try:
-            fp = os.fdopen(tmp[0], 'wt')
-            fp.write(_config)
+            fp = os.fdopen(tmp[0], 'wb')
+            fp.write(_config.encode('utf-8-sig'))
             fp.close()
             fmap = FontMap(tmp[1])
 
