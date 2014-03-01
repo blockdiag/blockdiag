@@ -28,6 +28,7 @@ from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached
 from blockdiag.imagedraw.utils.ellipse import dots as ellipse_dots
 from blockdiag.utils import urlutil, Box, Size, XY
+from blockdiag.utils.compat import u
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
 
@@ -365,7 +366,7 @@ class ImageDrawExBase(base.ImageDraw):
             try:
                 url = StringIO(urlopen(url).read())
             except:
-                msg = "WARNING: Could not retrieve: %s\n" % url
+                msg = u("WARNING: Could not retrieve: %s\n") % url
                 sys.stderr.write(msg)
                 return
         image = Image.open(url)
