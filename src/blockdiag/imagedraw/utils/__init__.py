@@ -15,6 +15,7 @@
 
 import math
 import unicodedata
+from functools import wraps
 from blockdiag.utils import Size
 from blockdiag.utils.compat import u
 
@@ -55,6 +56,7 @@ def textsize(string, font):
 
 
 def cached(fn):
+    @wraps(fn)
     def func(self, *args, **kwargs):
         name = fn.__name__
         key = args + tuple(kwargs.values())
