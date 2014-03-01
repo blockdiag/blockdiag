@@ -204,14 +204,14 @@ class DiagramNode(Element):
         if urlutil.isurl(value) or os.path.isfile(value):
             self.icon = value
         else:
-            msg = "WARNING: icon image not found: %s\n" % value
+            msg = u("WARNING: icon image not found: %s\n") % value
             sys.stderr.write(msg)
 
     def set_background(self, value):
         if urlutil.isurl(value) or os.path.isfile(value):
             self.background = value
         else:
-            msg = "WARNING: background image not found: %s\n" % value
+            msg = u("WARNING: background image not found: %s\n") % value
             sys.stderr.write(msg)
 
     def set_stacked(self, _):
@@ -597,8 +597,8 @@ class Diagram(NodeGroup):
             raise AttributeError(msg)
 
     def set_default_text_color(self, color):
-        msg = "WARNING: default_text_color is obsoleted; " + \
-              "use default_textcolor\n"
+        msg = u("WARNING: default_text_color is obsoleted; "
+                "use default_textcolor\n")
         sys.stderr.write(msg)
         self.set_default_textcolor(color)
 
@@ -620,8 +620,8 @@ class Diagram(NodeGroup):
             raise AttributeError(msg)
 
     def set_default_line_color(self, color):
-        msg = "WARNING: default_line_color is obsoleted; " + \
-              "use default_linecolor\n"
+        msg = u("WARNING: default_line_color is obsoleted; "
+                "use default_linecolor\n")
         sys.stderr.write(msg)
         self.set_default_linecolor(color)
 
@@ -667,6 +667,6 @@ class Diagram(NodeGroup):
             raise AttributeError(msg)
 
     def set_fontsize(self, value):
-        msg = "WARNING: fontsize is obsoleted; use default_fontsize\n"
+        msg = u("WARNING: fontsize is obsoleted; use default_fontsize\n")
         sys.stderr.write(msg)
         self.set_default_fontsize(int(value))

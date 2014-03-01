@@ -135,7 +135,7 @@ class FontMap(object):
             self.fonts[font.familyname] = font
         else:
             msg = 'fontfile `%s` is not found: %s' % (fontfamily, path)
-            sys.stderr.write("WARNING: %s\n" % msg)
+            sys.stderr.write(u("WARNING: %s\n") % msg)
 
     def _regulate_familyname(self, name):
         return FontInfo(name, None, self.BASE_FONTSIZE).familyname

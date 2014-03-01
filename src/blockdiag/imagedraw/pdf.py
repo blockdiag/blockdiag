@@ -23,7 +23,7 @@ from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached
 from blockdiag.utils import urlutil, Box, Size
 from blockdiag.utils.fontmap import parse_fontpath
-from blockdiag.utils.compat import string_types
+from blockdiag.utils.compat import u, string_types
 
 
 class PDFImageDraw(base.ImageDraw):
@@ -218,7 +218,7 @@ class PDFImageDraw(base.ImageDraw):
             try:
                 url = ImageReader(url)
             except:
-                msg = "WARNING: Could not retrieve: %s\n" % url
+                msg = u("WARNING: Could not retrieve: %s\n") % url
                 sys.stderr.write(msg)
                 return
 

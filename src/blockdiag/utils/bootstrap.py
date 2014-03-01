@@ -19,6 +19,7 @@ import sys
 import codecs
 from optparse import OptionParser, SUPPRESS_HELP
 from blockdiag import imagedraw
+from blockdiag.utils.compat import u
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 
@@ -37,8 +38,8 @@ class Application(object):
         except SystemExit as e:
             return e
         except UnicodeEncodeError as e:
-            msg = "ERROR: UnicodeEncodeError caught " + \
-                  "(check your font settings)\n"
+            msg = u("ERROR: UnicodeEncodeError caught "
+                    "(check your font settings)\n")
             sys.stderr.write(msg)
             return -1
         except Exception as e:
@@ -46,7 +47,7 @@ class Application(object):
                 import traceback
                 traceback.print_exc()
             else:
-                sys.stderr.write("ERROR: %s\n" % e)
+                sys.stderr.write(u("ERROR: %s\n") % e)
             return -1
 
     def parse_options(self, args):
