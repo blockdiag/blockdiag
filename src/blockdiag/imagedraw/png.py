@@ -354,12 +354,16 @@ class ImageDrawExBase(base.ImageDraw):
     def image(self, box, url):
         if urlutil.isurl(url):
             try:
-                from io import StringIO
+                from io import BytesIO as StringIO
             except ImportError:
                 from cStringIO import StringIO
-            import urllib
             try:
-                url = StringIO(urllib.urlopen(url).read())
+                from urllib.request import urlopen
+            except ImportError:
+                from urllib import urlopen
+
+            try:
+                url = StringIO(urlopen(url).read())
             except:
                 msg = "WARNING: Could not retrieve: %s\n" % url
                 sys.stderr.write(msg)
