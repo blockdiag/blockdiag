@@ -16,6 +16,7 @@
 from blockdiag import parser
 from blockdiag.elements import Diagram, DiagramNode, NodeGroup, DiagramEdge
 from blockdiag.utils import unquote, XY
+from blockdiag.utils.compat import cmp_to_key
 
 
 class DiagramTreeBuilder:
@@ -67,7 +68,7 @@ class DiagramTreeBuilder:
 
     def instantiate(self, group, tree):
         for stmt in tree.stmts:
-            # Translate Node having group attribute to SubGraph
+            # Translate Node having group attribute to Group
             if isinstance(stmt, parser.Node):
                 group_attr = [a for a in stmt.attrs if a.name == 'group']
                 if group_attr:
@@ -75,7 +76,7 @@ class DiagramTreeBuilder:
                     stmt.attrs.remove(group_id)
 
                     if group_id.value != group.id:
-                        stmt = parser.SubGraph(group_id.value, [stmt])
+                        stmt = parser.Group(group_id.value, [stmt])
 
             # Instantiate statements
             if isinstance(stmt, parser.Node):
@@ -84,42 +85,33 @@ class DiagramTreeBuilder:
                 self.belong_to(node, group)
 
             elif isinstance(stmt, parser.Edge):
-                nodes = stmt.nodes.pop(0)
-                edge_from = [DiagramNode.get(n) for n in nodes]
-                for node in edge_from:
+                from_nodes = [DiagramNode.get(n) for n in stmt.from_nodes]
+                to_nodes = [DiagramNode.get(n) for n in stmt.to_nodes]
+
+                for node in from_nodes + to_nodes:
                     self.belong_to(node, group)
 
-                while len(stmt.nodes):
-                    edge_type, edge_to = stmt.nodes.pop(0)
-                    edge_to = [DiagramNode.get(n) for n in edge_to]
-                    for node in edge_to:
-                        self.belong_to(node, group)
+                for node1 in from_nodes:
+                    for node2 in to_nodes:
+                        edge = DiagramEdge.get(node1, node2)
+                        edge.set_dir(stmt.edge_type)
+                        edge.set_attributes(stmt.attrs)
 
-                    for node1 in edge_from:
-                        for node2 in edge_to:
-                            edge = DiagramEdge.get(node1, node2)
-                            if edge_type:
-                                attrs = [parser.Attr('dir', edge_type)]
-                                edge.set_attributes(attrs)
-                            edge.set_attributes(stmt.attrs)
-
-                    edge_from = edge_to
-
-            elif isinstance(stmt, parser.SubGraph):
+            elif isinstance(stmt, parser.Group):
                 subgroup = NodeGroup.get(stmt.id)
                 subgroup.level = group.level + 1
                 self.belong_to(subgroup, group)
                 self.instantiate(subgroup, stmt)
 
-            elif isinstance(stmt, parser.DefAttrs):
-                group.set_attributes(stmt.attrs)
+            elif isinstance(stmt, parser.Attr):
+                group.set_attribute(stmt)
 
-            elif isinstance(stmt, parser.AttrClass):
-                name = unquote(stmt.name)
-                Diagram.classes[name] = stmt
-
-            elif isinstance(stmt, parser.AttrPlugin):
-                self.diagram.set_plugin(stmt.name, stmt.attrs)
+            elif isinstance(stmt, parser.Extension):
+                if stmt.type == 'class':
+                    name = unquote(stmt.name)
+                    Diagram.classes[name] = stmt
+                elif stmt.type == 'plugin':
+                    self.diagram.set_plugin(stmt.name, stmt.attrs)
 
             elif isinstance(stmt, parser.Statements):
                 self.instantiate(group, stmt)
@@ -201,7 +193,7 @@ class DiagramLayoutManager:
             else:
                 related.append(uniq_node)
 
-        related.sort(lambda x, y: cmp(x.order, y.order))
+        related.sort(key=lambda x: x.order)
         return related
 
     def get_parent_nodes(self, node):
@@ -250,9 +242,7 @@ class DiagramLayoutManager:
                         if not parent in circular:
                             parents.append(parent)
 
-                parents.sort(lambda x, y: cmp(x.order, y.order))
-
-                for parent in parents:
+                for parent in sorted(parents, key=lambda x: x.order):
                     children = self.get_child_nodes(parent)
                     if node1 in children and node2 in children:
                         if circular.index(node1) > circular.index(node2):
@@ -364,11 +354,17 @@ class DiagramLayoutManager:
                 x.node1 = x.node1.group
                 y.node1 = y.node1.group
 
-            return cmp(x.node1.order, y.node1.order)
+            # cmp x.node1.order and y.node1.order
+            if x.node1.order < y.node1.order:
+                return -1
+            elif x.node1.order == y.node1.order:
+                return 0
+            else:
+                return 1
 
         edges = (DiagramEdge.find(parent, node1) +
                  DiagramEdge.find(parent, node2))
-        edges.sort(compare)
+        edges.sort(key=cmp_to_key(compare))
         if len(edges) == 0:
             return 0
         elif edges[0].node2 == node2:
@@ -390,9 +386,17 @@ class DiagramLayoutManager:
         node.xy = XY(node.xy.x, height)
         self.mark_xy(node.xy, node.colwidth, node.colheight)
 
+        def cmp(x, y):
+            if x.xy.x < y.xy.y:
+                return -1
+            elif x.xy.x == y.xy.y:
+                return 0
+            else:
+                return 1
+
         count = 0
         children = self.get_child_nodes(node)
-        children.sort(lambda x, y: cmp(x.xy.x, y.xy.y))
+        children.sort(key=cmp_to_key(cmp))
 
         grandchild = 0
         for child in children:
@@ -710,9 +714,9 @@ class SeparateDiagramBuilder(ScreenNodeBuilder):
 
             # pick up nodes to base diagram
             nodes1 = [e.node1 for e in DiagramEdge.find(None, group)]
-            nodes1.sort(lambda x, y: cmp(x.order, y.order))
+            nodes1.sort(key=lambda x: x.order)
             nodes2 = [e.node2 for e in DiagramEdge.find(group, None)]
-            nodes2.sort(lambda x, y: cmp(x.order, y.order))
+            nodes2.sort(key=lambda x: x.order)
 
             nodes = nodes1 + [group] + nodes2
             for i, n in enumerate(nodes):

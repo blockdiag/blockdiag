@@ -34,8 +34,8 @@ def _coordinates(du, a, b, start, end):
 
 
 def endpoints(du, a, b, start, end):
-    pt1 = iter(_coordinates(du, a, b, start, start + 1)).next()
-    pt2 = iter(_coordinates(du, a, b, end, end + 1)).next()
+    pt1 = next(iter(_coordinates(du, a, b, start, start + 1)))
+    pt2 = next(iter(_coordinates(du, a, b, end, end + 1)))
 
     return [XY(*pt1), XY(*pt2)]
 

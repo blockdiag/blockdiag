@@ -1,17 +1,30 @@
 # -*- coding: utf-8 -*-
-import re
+from __future__ import print_function
+
 import sys
-from StringIO import StringIO
-from nose.tools import eq_
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
+
+import os
+import re
+import functools
+from shutil import rmtree
+from tempfile import mkdtemp, mkstemp
 from blockdiag.builder import ScreenNodeBuilder
-from blockdiag.parser import parse_string
+from blockdiag.parser import parse_file
+
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 
 
 def supported_pil():
     try:
-        import _imagingft
+        from PIL import _imagingft
         _imagingft
-
         return True
     except:
         return False
@@ -41,87 +54,73 @@ def with_pdf(fn):
     return fn
 
 
-def argv_wrapper(func, argv=[]):
-    def wrap(*args, **kwargs):
-        try:
-            argv = sys.argv
-            sys.argv = []
-            func(*args, **kwargs)
-        finally:
-            sys.argv = argv
-
-    wrap.__name__ = func.__name__
-    return wrap
-
-
-def stderr_wrapper(func):
+def capture_stderr(func):
     def wrap(*args, **kwargs):
         try:
             stderr = sys.stderr
             sys.stderr = StringIO()
 
-            print args, kwargs
             func(*args, **kwargs)
+
+            if re.search('ERROR', sys.stderr.getvalue()):
+                raise AssertionError('Caught error')
         finally:
             if sys.stderr.getvalue():
-                print "---[ stderr ] ---"
-                print sys.stderr.getvalue()
+                print("---[ stderr ] ---")
+                print(sys.stderr.getvalue())
 
             sys.stderr = stderr
 
-    wrap.__name__ = func.__name__
-    return wrap
+    return functools.wraps(func)(wrap)
 
 
-def assertRaises(exc):
-    def decorator(func):
-        def fn(self, *args, **kwargs):
-            try:
-                func(self, *args, **kwargs)
-            except exc:
-                pass
-            else:
-                msg = '%s does not raise exceptions: %s' % \
-                      (func.__name__, str(exc))
-                self.fail(msg)
-
-        fn.__name__ = func.__name__
-        return fn
-
-    return decorator
+stderr_wrapper = capture_stderr   # FIXME: deprecated
 
 
-def __build_diagram(filename):
-    import os
-    testdir = os.path.dirname(__file__)
-    pathname = "%s/diagrams/%s" % (testdir, filename)
+class TemporaryDirectory(object):
+    def __init__(self, suffix='', prefix='tmp', dir=None):
+        self.name = mkdtemp(suffix, prefix, dir)
 
-    code = open(pathname).read()
-    tree = parse_string(code)
-    return ScreenNodeBuilder.build(tree)
+    def __del__(self):
+        self.clean()
+
+    def clean(self):
+        if os.path.exists(self.name):
+            rmtree(self.name)
+
+    def mkstemp(self, suffix='', prefix='tmp', text=False):
+        return mkstemp(suffix, prefix, self.name, text)
 
 
-def __validate_node_attributes(filename, **kwargs):
-    diagram = __build_diagram(filename)
+class BuilderTestCase(unittest.TestCase):
+    def build(self, filename):
+        basedir = os.path.dirname(__file__)
+        pathname = os.path.join(basedir, 'diagrams', filename)
+        return self._build(parse_file(pathname))
 
-    for name, values in kwargs.items():
-        if re.match('edge_', name):
-            print "[%s]" % name
-            name = re.sub('edge_', '', name)
-            for (id1, id2), value in values.items():
-                found = False
+    def _build(self, tree):
+        return ScreenNodeBuilder.build(tree)
+
+    def __getattr__(self, name):
+        if name.startswith('assertNode'):
+            def asserter(diagram, attributes):
+                attr_name = name.replace('assertNode', '').lower()
+                print("[node.%s]" % attr_name)
+                for node in (n for n in diagram.nodes if n.drawable):
+                    print(node)
+                    excepted = attributes[node.id]
+                    self.assertEqual(excepted, getattr(node, attr_name))
+
+            return asserter
+        elif name.startswith('assertEdge'):
+            def asserter(diagram, attributes):
+                attr_name = name.replace('assertEdge', '').lower()
+                print("[edge.%s]" % attr_name)
                 for edge in diagram.edges:
-                    if edge.node1.id == id1 and edge.node2.id == id2:
-                        print edge
-                        eq_(value, getattr(edge, name))
-                        found = True
+                    print(edge)
+                    expected = attributes[(edge.node1.id, edge.node2.id)]
+                    self.assertEqual(expected, getattr(edge, attr_name))
 
-                if not found:
-                    raise RuntimeError('edge (%s -> %s) is not found' %
-                                       (id1, id2))
+            return asserter
         else:
-            print "[node.%s]" % name
-            for node in (n for n in diagram.nodes if n.drawable):
-                print node
-                value = getattr(node, name)
-                eq_(values[node.id], value)
+            return getattr(super(BuilderTestCase, self), name)

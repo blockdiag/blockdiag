@@ -16,11 +16,13 @@
 import re
 import base64
 from blockdiag.imagedraw import base as _base
-from blockdiag.imagedraw.simplesvg import *
+from blockdiag.imagedraw.simplesvg import (
+    svg, svgclass, filter, title, desc, defs, g, a, text,
+    rect, polygon, ellipse, path, pathdata, image
+)
 from blockdiag.imagedraw.utils import cached
 from blockdiag.imagedraw.utils.ellipse import endpoints as ellipse_endpoints
-from blockdiag.utils import urlutil, Box, XY, is_PIL_available
-from blockdiag.utils.functools import partial
+from blockdiag.utils import urlutil, Box, XY, is_Pillow_available
 
 feGaussianBlur = svgclass('feGaussianBlur')
 
@@ -82,10 +84,6 @@ class SVGImageDrawElement(_base.ImageDraw):
 
     def __init__(self, svg, parent=None):
         self.svg = svg
-        if parent and parent.ignore_pil:
-            self.ignore_pil = True
-        else:
-            self.ignore_pil = False
 
     def path(self, pd, **kwargs):
         fill = kwargs.get('fill')
@@ -107,15 +105,15 @@ class SVGImageDrawElement(_base.ImageDraw):
 
     @cached
     def textlinesize(self, string, font, **kwargs):
-        if kwargs.get('ignore_pil', self.ignore_pil) or not is_PIL_available():
-            from blockdiag.imagedraw.utils import textsize
-            return textsize(string, font)
-        else:
+        if is_Pillow_available():
             if not hasattr(self, '_pil_drawer'):
                 from blockdiag.imagedraw import png
                 self._pil_drawer = png.ImageDrawEx(None)
 
             return self._pil_drawer.textlinesize(string, font)
+        else:
+            from blockdiag.imagedraw.utils import textsize
+            return textsize(string, font)
 
     def text(self, point, string, font, **kwargs):
         fill = kwargs.get('fill')
@@ -141,8 +139,9 @@ class SVGImageDrawElement(_base.ImageDraw):
                 rendered = True
 
             if not rendered and font.size > 0:
-                font.size = int(font.size * 0.8)
-                self.textarea(box, string, font, **kwargs)
+                _font = font.duplicate()
+                _font.size = int(font.size * 0.8)
+                self.textarea(box, string, _font, **kwargs)
 
     def rotated_textarea(self, box, string, font, **kwargs):
         angle = int(kwargs['rotate']) % 360
@@ -182,7 +181,6 @@ class SVGImageDrawElement(_base.ImageDraw):
         self.svg.addElement(p)
 
     def arc(self, box, start, end, **kwargs):
-        thick = kwargs.get('thick')
         fill = kwargs.get('fill')
 
         w = box.width / 2
@@ -231,7 +229,7 @@ class SVGImageDrawElement(_base.ImageDraw):
     def image(self, box, url):
         if not urlutil.isurl(url):
             string = open(url, 'rb').read()
-            url = "data:;base64," + base64.b64encode(string)
+            url = "data:;base64," + str(base64.b64encode(string))
 
         im = image(url, box.x1, box.y1, box.width, box.height)
         self.svg.addElement(im)
@@ -256,7 +254,6 @@ class SVGImageDraw(SVGImageDrawElement):
 
         self.filename = filename
         self.options = kwargs
-        self.ignore_pil = kwargs.get('ignore_pil')
         self.set_canvas_size((0, 0))
 
     def set_canvas_size(self, size):
@@ -293,7 +290,7 @@ class SVGImageDraw(SVGImageDrawElement):
         image = self.svg.to_xml()
 
         if self.filename:
-            open(self.filename, 'w').write(image)
+            open(self.filename, 'wb').write(image.encode('utf-8'))
 
         return image
 

@@ -14,18 +14,17 @@
 #  limitations under the License.
 
 import os
+import io
+from collections import namedtuple
 from docutils import nodes
 from docutils.parsers import rst
 from docutils.statemachine import ViewList
 from blockdiag import parser
 from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.drawer import DiagramDraw
-from blockdiag.utils import any
-from blockdiag.utils import codecs
-from blockdiag.utils.bootstrap import detectfont
-from blockdiag.utils.collections import namedtuple
+from blockdiag.utils.bootstrap import create_fontmap
+from blockdiag.utils.compat import string_types
 from blockdiag.utils.rst.nodes import blockdiag
-
 
 directive_options_default = dict(format='PNG',
                                  antialias=False,
@@ -33,8 +32,7 @@ directive_options_default = dict(format='PNG',
                                  outputdir=None,
                                  nodoctype=False,
                                  noviewbox=False,
-                                 inline_svg=False,
-                                 ignore_pil=False)
+                                 inline_svg=False)
 directive_options = {}
 
 
@@ -46,20 +44,6 @@ def relfn2path(env, filename):
         relfn = os.path.join(os.path.dirname(path), filename)
 
     return relfn, os.path.join(env.srcdir, relfn)
-
-
-def cmp_node_number(a, b):
-    try:
-        n1 = int(a[0])
-    except (TypeError, ValueError):
-        n1 = 65535
-
-    try:
-        n2 = int(b[0])
-    except (TypeError, ValueError):
-        n2 = 65535
-
-    return cmp(n1, n2)
 
 
 class BlockdiagDirectiveBase(rst.Directive):
@@ -88,7 +72,7 @@ class BlockdiagDirectiveBase(rst.Directive):
 
             try:
                 filename = self.source_filename(self.arguments[0])
-                fp = codecs.open(filename, 'r', 'utf-8-sig')
+                fp = io.open(filename, 'r', encoding='utf-8-sig')
                 try:
                     dotcode = fp.read()
                 finally:
@@ -137,7 +121,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         try:
             diagram = self.node2diagram(node)
-        except Exception, e:
+        except Exception as e:
             raise self.warning(e.message)
 
         if 'desctable' in node['options']:
@@ -159,13 +143,19 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         return directive_options
 
     def node2diagram(self, node):
-        tree = parser.parse_string(node['code'])
+        try:
+            tree = parser.parse_string(node['code'])
+        except:
+            code = 'blockdiag { %s }' % node['code']
+            tree = parser.parse_string(code)
+            node['code'] = code  # replace if suceeded
+
         return ScreenNodeBuilder.build(tree)
 
     def node2image(self, node, diagram):
         options = node['options']
         filename = self.image_filename(node)
-        fontpath = self.detectfont()
+        fontmap = self.create_fontmap()
         _format = self.global_options['format'].lower()
 
         if _format == 'svg' and self.global_options['inline_svg'] is True:
@@ -173,7 +163,8 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         kwargs = dict(self.global_options)
         del kwargs['format']
-        drawer = DiagramDraw(_format, diagram, filename, **kwargs)
+        drawer = DiagramDraw(_format, diagram, filename,
+                             fontmap=fontmap, **kwargs)
 
         if filename is None or not os.path.isfile(filename):
             drawer.draw()
@@ -186,7 +177,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
                     new_size = (options['maxwidth'], int(size[1] * ratio))
                     content = drawer.save(new_size)
 
-                return nodes.raw('', content.decode('utf-8'), format='html')
+                return nodes.raw('', content, format='html')
 
         size = drawer.pagesize()
         if 'maxwidth' in options and options['maxwidth'] < size[0]:
@@ -208,17 +199,17 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         return image
 
-    def detectfont(self):
-        Options = namedtuple('Options', 'font')
+    def create_fontmap(self):
+        Options = namedtuple('Options', 'font fontmap')
         fontpath = self.global_options['fontpath']
         if isinstance(fontpath, (list, tuple)):
-            options = Options(fontpath)
-        elif isinstance(fontpath, (str, unicode)):
-            options = Options([fontpath])
+            options = Options(fontpath, None)
+        elif isinstance(fontpath, string_types):
+            options = Options([fontpath], None)
         else:
-            options = Options([])
+            options = Options([], None)
 
-        return detectfont(options)
+        return create_fontmap(options)
 
     def image_filename(self, node, prefix='', ext='png'):
         try:
@@ -231,7 +222,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         options = dict(node['options'])
         options.update(font=self.global_options['fontpath'],
                        antialias=self.global_options['antialias'])
-        hashseed = node['code'].encode('utf-8') + str(options)
+        hashseed = (node['code'] + str(options)).encode('utf-8')
         hashed = sha(hashseed).hexdigest()
 
         _format = self.global_options['format']
@@ -261,8 +252,14 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         widths = [25] + [50] * (len(klass.desctable) - 1)
         headers = [klass.attrname[n] for n in klass.desctable]
 
+        def node_number(node):
+            try:
+                return int(node[0])
+            except (TypeError, ValueError):
+                return 65535
+
         descriptions = [n.to_desctable() for n in nodes if n.drawable]
-        descriptions.sort(cmp_node_number)
+        descriptions.sort(key=node_number)
 
         for i in reversed(range(len(headers))):
             if any(desc[i] for desc in descriptions):
@@ -314,7 +311,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             row = nodes.row()
             for attr in desc:
                 entry = nodes.entry()
-                if not isinstance(attr, (str, unicode)):
+                if not isinstance(attr, string_types):
                     attr = str(attr)
                 self.state.nested_parse(ViewList([attr], source=attr),
                                         0, entry)

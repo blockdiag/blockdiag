@@ -16,7 +16,8 @@
 import os
 import re
 import sys
-from optparse import OptionParser
+import codecs
+from optparse import OptionParser, SUPPRESS_HELP
 from blockdiag import imagedraw
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
@@ -26,21 +27,21 @@ class Application(object):
     module = None
     options = None
 
-    def run(self):
+    def run(self, args):
         try:
-            self.parse_options()
+            self.parse_options(args)
             self.create_fontmap()
 
             parsed = self.parse_diagram()
             return self.build_diagram(parsed)
-        except SystemExit, e:
+        except SystemExit as e:
             return e
-        except UnicodeEncodeError, e:
+        except UnicodeEncodeError as e:
             msg = "ERROR: UnicodeEncodeError caught " + \
                   "(check your font settings)\n"
             sys.stderr.write(msg)
             return -1
-        except Exception, e:
+        except Exception as e:
             if self.options and self.options.debug:
                 import traceback
                 traceback.print_exc()
@@ -48,31 +49,13 @@ class Application(object):
                 sys.stderr.write("ERROR: %s\n" % e)
             return -1
 
-    def parse_options(self):
-        self.options = Options(self.module).parse()
+    def parse_options(self, args):
+        self.options = Options(self.module).parse(args)
 
     def create_fontmap(self):
         self.fontmap = create_fontmap(self.options)
 
-        fontpath = self.fontmap.find().path
-        _format = self.options.type.lower()
-        ignore_pil = self.options.ignore_pil
-        if _format in ('png', 'svg') and fontpath and ignore_pil is False:
-            try:
-                try:
-                    from PIL import _imagingft
-                except ImportError:
-                    import _imagingft
-            except:
-                msg = "PIL does not support TrueType fonts, " \
-                      "reinstall PIL (and libfreetype2)"
-                if _format != 'png':
-                    msg += " or use --ignore-pil option"
-
-                raise RuntimeError(msg)
-
     def parse_diagram(self):
-        from blockdiag.utils import codecs
         if self.options.input == '-':
             stream = codecs.getreader('utf-8-sig')(sys.stdin)
             self.code = stream.read()
@@ -90,7 +73,6 @@ class Application(object):
         drawer = DiagramDraw(self.options.type, diagram,
                              self.options.output, fontmap=self.fontmap,
                              code=self.code, antialias=self.options.antialias,
-                             ignore_pil=self.options.ignore_pil,
                              nodoctype=self.options.nodoctype,
                              transparency=self.options.transparency)
         drawer.draw()
@@ -108,8 +90,8 @@ class Options(object):
         self.module = module
         self.build_parser()
 
-    def parse(self):
-        self.options, self.args = self.parser.parse_args()
+    def parse(self, args):
+        self.options, self.args = self.parser.parse_args(args)
         self.validate()
         self.read_configfile()
 
@@ -132,8 +114,7 @@ class Options(object):
         p.add_option('--fontmap',
                      help='use FONTMAP file to draw diagram', metavar='FONT')
         p.add_option('--ignore-pil', dest='ignore_pil',
-                     default=False, action='store_true',
-                     help='do not use PIL module forcely (SVG only)')
+                     default=False, action='store_true', help=SUPPRESS_HELP)
         p.add_option('--no-transparency', dest='transparency',
                      default=True, action='store_false',
                      help='do not make transparent background of diagram ' +
@@ -185,9 +166,10 @@ class Options(object):
                 msg = "could not output PDF format; Install reportlab."
                 raise RuntimeError(msg)
 
-        if self.options.ignore_pil and self.options.type != 'SVG':
-            msg = "--ignore-pil option work in SVG images."
-            raise RuntimeError(msg)
+        if self.options.ignore_pil:
+            msg = "WARNING: --ignore-pil option is deprecated " + \
+                  "(detect automatically).\n"
+            sys.stderr.write(msg)
 
         if self.options.nodoctype and self.options.type != 'SVG':
             msg = "--nodoctype option work in SVG images."

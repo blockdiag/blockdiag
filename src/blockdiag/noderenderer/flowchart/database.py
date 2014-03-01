@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
 from blockdiag.utils import XY, Box
@@ -25,8 +26,8 @@ class Database(NodeShape):
 
         m = self.metrics.cell(self.node)
         r = self.metrics.cellsize
-        self.textbox = Box(m.topleft.x, m.topleft.y + r * 3 / 2,
-                           m.bottomright.x, m.bottomright.y - r / 2)
+        self.textbox = Box(m.topleft.x, m.topleft.y + r * 3 // 2,
+                           m.bottomright.x, m.bottomright.y - r // 2)
 
     def render_shape(self, drawer, _, **kwargs):
         # draw background
@@ -99,9 +100,9 @@ class Database(NodeShape):
             box = self.shift_shadow(box)
 
         path = pathdata(box[0], box[1] + r)
-        path.ellarc(width / 2, r, 0, 0, 1, box[2], box[1] + r)
+        path.ellarc(width // 2, r, 0, 0, 1, box[2], box[1] + r)
         path.line(box[2], box[3] - r)
-        path.ellarc(width / 2, r, 0, 0, 1, box[0], box[3] - r)
+        path.ellarc(width // 2, r, 0, 0, 1, box[0], box[3] - r)
         path.line(box[0], box[1] + r)
 
         # draw outline
@@ -124,7 +125,7 @@ class Database(NodeShape):
         # draw cap of cylinder
         if not kwargs.get('shadow'):
             path = pathdata(box[2], box[1] + r)
-            path.ellarc(width / 2, r, 0, 0, 1, box[0], box[1] + r)
+            path.ellarc(width // 2, r, 0, 0, 1, box[0], box[1] + r)
             drawer.path(path, fill=self.node.color,
                         outline=self.node.linecolor, style=self.node.style)
 

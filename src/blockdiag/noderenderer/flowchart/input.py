@@ -34,11 +34,11 @@ class Input(NodeShape):
         m = self.metrics.cell(self.node)
         r = self.metrics.cellsize * 3
 
-        shape = [XY(m.topleft.x + r,  m.topleft.y),
+        shape = [XY(m.topleft.x + r, m.topleft.y),
                  XY(m.topright.x, m.topright.y),
                  XY(m.bottomright.x - r, m.bottomright.y),
-                 XY(m.bottomleft.x,  m.bottomleft.y),
-                 XY(m.topleft.x + r,  m.topleft.y)]
+                 XY(m.bottomleft.x, m.bottomleft.y),
+                 XY(m.topleft.x + r, m.topleft.y)]
 
         # draw outline
         if kwargs.get('shadow'):

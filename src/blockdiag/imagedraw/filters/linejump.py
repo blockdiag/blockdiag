@@ -13,7 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from blockdiag.utils import functools, Box, XY
+import functools
+from blockdiag.utils import Box, XY
 
 
 class LazyReceiver(object):

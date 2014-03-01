@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import division
 from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
 from blockdiag.utils import images, Box, XY
@@ -27,8 +28,8 @@ class TextBox(NodeShape):
             size = images.calc_image_size(size, self.textbox.size)
 
             pt = self.textbox.center
-            self.textbox = Box(pt.x - size[0] / 2, pt.y - size[1] / 2,
-                               pt.x + size[0] / 2, pt.y + size[1] / 2)
+            self.textbox = Box(pt.x - size[0] // 2, pt.y - size[1] // 2,
+                               pt.x + size[0] // 2, pt.y + size[1] // 2)
 
             self.connectors[0] = XY(pt.x, self.textbox[1])
             self.connectors[1] = XY(self.textbox[2], pt.y)
