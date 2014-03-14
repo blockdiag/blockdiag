@@ -16,9 +16,11 @@ from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.parser import parse_file
 
 try:
-    from io import StringIO
-except ImportError:
+    # sys.stderr in py2.x allows mixture of str and unicode
     from cStringIO import StringIO
+except ImportError:
+    # sys.stderr in py3.x allows only str objects (disallow bytes objs)
+    from io import StringIO
 
 
 def supported_pil():
