@@ -72,7 +72,8 @@ def generate(mainfunc, filetype, source, options):
         fd, tmpfile = tmpdir.mkstemp()
         os.close(fd)
 
-        mainfunc(['-T', filetype, '-o', tmpfile, source] + list(options))
+        mainfunc(['--debug', '-T', filetype, '-o', tmpfile, source] +
+                 list(options))
     finally:
         tmpdir.clean()
 
