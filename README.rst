@@ -93,9 +93,9 @@ Execute blockdiag command::
 
 Requirements
 ============
-* Python 2.6, 2.7, 3.2, 3.3
-* Pillow 2.2.1
-* funcparserlib 0.3.6
+* Python 2.6, 2.7, 3.2, 3.3, 3.4
+* Pillow 2.2.1 or later
+* funcparserlib 0.3.6 or later
 * setuptools
 
 
