@@ -115,7 +115,7 @@ class TestBootParams(unittest.TestCase):
         try:
             tmp = tempfile.mkstemp()
             config = u("[blockdiag]\nfontpath = /path/to/font\n")
-            io.open(tmp[0], 'wt').write(config)
+            io.open(tmp[0], 'wt', encoding='utf-8-sig').write(config)
 
             options = self.parser.parse(['-c', tmp[1], 'input.diag'])
             self.assertEqual(options.font, ['/path/to/font'])

@@ -93,7 +93,8 @@ class TestRstDirectives(unittest.TestCase):
 
         self.assertEqual(1, len(doctree))
         self.assertEqual(directives.blockdiag, type(doctree[0]))
-        self.assertEqual(io.open(filename).read(), doctree[0]['code'])
+        self.assertEqual(io.open(filename, encoding='utf-8-sig').read(),
+                         doctree[0]['code'])
         self.assertEqual(None, doctree[0]['alt'])
         self.assertEqual({}, doctree[0]['options'])
 
