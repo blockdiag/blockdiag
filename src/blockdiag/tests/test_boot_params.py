@@ -166,11 +166,6 @@ class TestBootParams(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             self.parser.parse(['--size', 'foobar', 'input.diag'])
 
-    def test_auto_font_detection(self):
-        options = self.parser.parse(['input.diag'])
-        fontpath = detectfont(options)
-        self.assertTrue(fontpath)
-
     def test_not_exist_fontmap_config(self):
         with self.assertRaises(RuntimeError):
             args = ['--fontmap', '/fontmap_is_not_exist', 'input.diag']

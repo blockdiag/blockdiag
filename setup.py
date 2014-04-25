@@ -25,6 +25,7 @@ requires = ['setuptools',
             'webcolors',
             'Pillow']
 test_requires = ['nose',
+                 'mock',
                  'pep8>=1.3',
                  'reportlab',
                  'docutils']
