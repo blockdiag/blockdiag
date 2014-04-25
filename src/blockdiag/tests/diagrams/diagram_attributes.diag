@@ -5,6 +5,7 @@ blockdiag {
   span_height = 32;
   default_fontsize = 16;
   default_shape = diamond
+  default_node_style = dotted
   default_node_color = red
   default_group_color = blue
   default_linecolor = gray

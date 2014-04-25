@@ -13,6 +13,7 @@ class TestBuilder(BuilderTestCase):
         self.assertEqual(32, diagram.span_height)
         self.assertEqual((128, 128, 128), diagram.linecolor)       # gray
         self.assertEqual('diamond', diagram.nodes[0].shape)
+        self.assertEqual('dotted', diagram.nodes[0].style)
         self.assertEqual((255, 0, 0), diagram.nodes[0].color)      # red
         self.assertEqual((0, 128, 0), diagram.nodes[0].textcolor)  # green
         self.assertEqual(16, diagram.nodes[0].fontsize)
