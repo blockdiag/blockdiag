@@ -282,7 +282,13 @@ class ImageDrawExBase(base.ImageDraw):
             size = Size(int(size[0] * font_ratio),
                         int(size[1] * font_ratio))
         else:
-            size = self.draw.textsize(string, font=ttfont)
+            size = ttfont.getsize(string)
+
+            # Avoid offset problem in Pillow (>= 2.2.0)
+            if hasattr(ttfont, 'getoffset'):
+                offset = ttfont.getoffset(string)
+                size = (size[0] + offset[0], size[1] + offset[1])
+
             size = Size(*size)
 
         return size
@@ -306,7 +312,12 @@ class ImageDrawExBase(base.ImageDraw):
                 text_image = image.resize(basesize, Image.ANTIALIAS)
                 self.paste(text_image, xy, text_image)
         else:
-            size = self.draw.textsize(string, font=ttfont)
+            size = ttfont.getsize(string)
+
+            # Avoid offset problem in Pillow (>= 2.2.0)
+            if hasattr(ttfont, 'getoffset'):
+                offset = ttfont.getoffset(string)
+                size = (size[0] + offset[0], size[1] + offset[1])
 
             # Generate mask to support BDF(bitmap font)
             mask = Image.new('1', size)
