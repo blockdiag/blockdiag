@@ -107,6 +107,11 @@ Apache License 2.0
 History
 =======
 
+1.3.3 (2014-04-26)
+------------------
+* Add diagram attribute: default_node_style
+* Fix bugs
+
 1.3.2 (2013-11-19)
 ------------------
 * Fix bugs
