@@ -5,7 +5,7 @@ Features
 * Generate block-diagram from dot like text (basic feature).
 * Multilingualization for node-label (utf-8 only).
 
-You can get some examples and generated images on 
+You can get some examples and generated images on
 `blockdiag.com <http://blockdiag.com/blockdiag/build/html/index.html>`_ .
 
 Setup
@@ -36,7 +36,7 @@ spec-text setting sample
 ========================
 Few examples are available.
 You can get more examples at
-`blockdiag.com <http://blockdiag.com/blockdiag/build/html/index.html>`_ .
+`blockdiag.com`_ .
 
 simple.diag
 ------------
@@ -273,7 +273,7 @@ History
 0.9.0 (2011-09-25)
 ------------------
 * Add icon attribute to node
-* Make transparency to background of PNG images 
+* Make transparency to background of PNG images
 * Fix bugs
 
 0.8.9 (2011-08-09)
