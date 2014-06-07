@@ -15,10 +15,7 @@
 
 import re
 from blockdiag.utils.compat import u, string_types
-try:
-    from io import StringIO
-except ImportError:
-    from cStringIO import StringIO
+from io import StringIO
 
 
 def _escape(s):

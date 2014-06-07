@@ -11,10 +11,7 @@ import tempfile
 from blockdiag.utils.compat import u
 from blockdiag.tests.utils import capture_stderr
 
-try:
-    from io import StringIO
-except ImportError:
-    from cStringIO import StringIO
+from io import StringIO
 from collections import namedtuple
 from blockdiag.utils.fontmap import FontInfo, FontMap
 

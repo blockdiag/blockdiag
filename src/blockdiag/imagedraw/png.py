@@ -365,17 +365,14 @@ class ImageDrawExBase(base.ImageDraw):
 
     def image(self, box, url):
         if urlutil.isurl(url):
-            try:
-                from io import BytesIO as StringIO
-            except ImportError:
-                from cStringIO import StringIO
+            from io import BytesIO
             try:
                 from urllib.request import urlopen
             except ImportError:
                 from urllib import urlopen
 
             try:
-                url = StringIO(urlopen(url).read())
+                url = BytesIO(urlopen(url).read())
             except:
                 msg = u("WARNING: Could not retrieve: %s\n") % url
                 sys.stderr.write(msg)
@@ -416,11 +413,8 @@ class ImageDrawExBase(base.ImageDraw):
             self._image.save(self.filename, _format)
             image = None
         else:
-            try:
-                from io import StringIO
-            except ImportError:
-                from cStringIO import StringIO
-            tmp = StringIO()
+            from io import BytesIO
+            tmp = BytesIO()
             self._image.save(tmp, _format)
             image = tmp.getvalue()
 
