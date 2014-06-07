@@ -22,6 +22,7 @@ from blockdiag import imagedraw
 from blockdiag.utils.compat import u
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
+from blockdiag.utils.logging import warning
 
 
 class Application(object):
@@ -168,9 +169,8 @@ class Options(object):
                 raise RuntimeError(msg)
 
         if self.options.ignore_pil:
-            msg = "WARNING: --ignore-pil option is deprecated " + \
-                  "(detect automatically).\n"
-            sys.stderr.write(msg)
+            warning("--ignore-pil option is deprecated "
+                    "(detect automatically).")
 
         if self.options.nodoctype and self.options.type != 'SVG':
             msg = "--nodoctype option work in SVG images."

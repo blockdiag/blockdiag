@@ -15,9 +15,9 @@
 
 from __future__ import division
 import re
-import sys
 from blockdiag.utils import urlutil
 from blockdiag.utils.compat import u, string_types
+from blockdiag.utils.logging import warning
 
 try:
     from PIL import Image
@@ -115,13 +115,11 @@ def convert_svg_to_png(filename, stream):
                 png_image.seek(0)
                 return png_image
         except ImportError:
-            msg = u("WARNING: wand library is required to embed SVG image.\n")
-            sys.stderr.write(msg)
-            raise IOError(msg)
+            warning("wand library is required to embed SVG image.")
+            raise IOError
         except Exception as exc:
-            msg = u("WARNING: Fail to convert SVG to PNG: %r\n") % exc
-            sys.stderr.write(msg)
-            raise IOError(msg)
+            warning("Fail to convert SVG to PNG: %r", exc)
+            raise IOError
     else:
         return stream
 
@@ -139,9 +137,8 @@ def open(url):
         try:
             fd = io.BytesIO(urlopen(url).read())
         except:
-            msg = u("WARNING: Could not retrieve: %s\n") % url
-            sys.stderr.write(msg)
-            raise IOError(msg)
+            warning(u("Could not retrieve: %s"), url)
+            raise IOError
 
     if url.lower().endswith('.svg'):
         svg = convert_svg_to_png(url, fd)
