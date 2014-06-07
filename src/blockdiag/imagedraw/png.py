@@ -15,7 +15,6 @@
 
 from __future__ import division
 import re
-import sys
 import math
 from itertools import tee
 try:
@@ -27,8 +26,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached
 from blockdiag.imagedraw.utils.ellipse import dots as ellipse_dots
-from blockdiag.utils import urlutil, Box, Size, XY
-from blockdiag.utils.compat import u
+from blockdiag.utils import images, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
 
@@ -364,39 +362,33 @@ class ImageDrawExBase(base.ImageDraw):
             self.textarea(box, string, _font, **kwargs)
 
     def image(self, box, url):
-        if urlutil.isurl(url):
-            from io import BytesIO
-            try:
-                from urllib.request import urlopen
-            except ImportError:
-                from urllib import urlopen
+        try:
+            stream = images.open(url)
+            image = Image.open(stream)
 
-            try:
-                url = BytesIO(urlopen(url).read())
-            except:
-                msg = u("WARNING: Could not retrieve: %s\n") % url
-                sys.stderr.write(msg)
-                return
-        image = Image.open(url)
+            # resize image.
+            w = min([box.width, image.size[0] * self.scale_ratio])
+            h = min([box.height, image.size[1] * self.scale_ratio])
+            image.thumbnail((w, h), Image.ANTIALIAS)
 
-        # resize image.
-        w = min([box.width, image.size[0] * self.scale_ratio])
-        h = min([box.height, image.size[1] * self.scale_ratio])
-        image.thumbnail((w, h), Image.ANTIALIAS)
+            # centering image.
+            w, h = image.size
+            if box.width > w:
+                x = box[0] + (box.width - w) // 2
+            else:
+                x = box[0]
 
-        # centering image.
-        w, h = image.size
-        if box.width > w:
-            x = box[0] + (box.width - w) // 2
-        else:
-            x = box[0]
+            if box.height > h:
+                y = box[1] + (box.height - h) // 2
+            else:
+                y = box[1]
 
-        if box.height > h:
-            y = box[1] + (box.height - h) // 2
-        else:
-            y = box[1]
-
-        self.paste(image, (x, y))
+            self.paste(image, (x, y))
+        except IOError:
+            stream = None
+        finally:
+            if stream:
+                stream.close()
 
     def save(self, filename, size, _format):
         if filename:

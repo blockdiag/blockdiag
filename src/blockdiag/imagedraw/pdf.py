@@ -14,16 +14,16 @@
 #  limitations under the License.
 
 import re
-import sys
 import math
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.utils import ImageReader
 from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached
-from blockdiag.utils import urlutil, Box, Size
+from blockdiag.utils import images, Box, Size
 from blockdiag.utils.fontmap import parse_fontpath
-from blockdiag.utils.compat import u, string_types
+from blockdiag.utils.compat import string_types
 
 
 class PDFImageDraw(base.ImageDraw):
@@ -213,18 +213,18 @@ class PDFImageDraw(base.ImageDraw):
         self.canvas.drawPath(pd, **params)
 
     def image(self, box, url):
-        if urlutil.isurl(url):
-            from reportlab.lib.utils import ImageReader
-            try:
-                url = ImageReader(url)
-            except:
-                msg = u("WARNING: Could not retrieve: %s\n") % url
-                sys.stderr.write(msg)
-                return
+        try:
+            stream = images.open(url)
+            url = ImageReader(stream)
 
-        y = self.size[1] - box[3]
-        self.canvas.drawImage(url, box.x1, y, box.width, box.height,
-                              mask='auto', preserveAspectRatio=True)
+            y = self.size[1] - box[3]
+            self.canvas.drawImage(url, box.x1, y, box.width, box.height,
+                                  mask='auto', preserveAspectRatio=True)
+        except IOError:
+            stream = None
+        finally:
+            if stream:
+                stream.close()
 
     def save(self, filename, size, _format):
         # Ignore size and format parameter; compatibility for ImageDrawEx.
