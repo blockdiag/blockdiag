@@ -15,11 +15,10 @@
 
 import re
 import os
-import sys
 import copy
 from collections import namedtuple
 from blockdiag.utils.config import ConfigParser
-from blockdiag.utils.compat import u
+from blockdiag.utils.logging import warning
 
 
 def parse_fontpath(path):
@@ -134,8 +133,7 @@ class FontMap(object):
             font = FontInfo(fontfamily, path, self.fontsize)
             self.fonts[font.familyname] = font
         else:
-            msg = 'fontfile `%s` is not found: %s' % (fontfamily, path)
-            sys.stderr.write(u("WARNING: %s\n") % msg)
+            warning('fontfile `%s` is not found: %s', fontfamily, path)
 
     def _regulate_familyname(self, name):
         return FontInfo(name, None, self.BASE_FONTSIZE).familyname
@@ -151,8 +149,7 @@ class FontMap(object):
             font = self.fonts[name].duplicate()
             font.size = fontsize
         elif element is not None:
-            msg = "Unknown fontfamily: %s" % fontfamily
-            sys.stderr.write(u("WARNING: %s\n") % msg)
+            warning("Unknown fontfamily: %s", fontfamily)
             elem = namedtuple('Font', 'fontsize')(fontsize)
             font = self.find(elem)
         else:
