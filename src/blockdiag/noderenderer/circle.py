@@ -23,7 +23,8 @@ class Circle(NodeShape):
     def __init__(self, node, metrics=None):
         super(Circle, self).__init__(node, metrics)
 
-        r = min(metrics.node_width, metrics.node_height) // 2 + \
+        cell = metrics.cell(node)
+        r = min(cell.box.width, cell.box.height) // 2 + \
             metrics.cellsize // 2
         pt = metrics.cell(node).center
         self.connectors = [XY(pt.x, pt.y - r),  # top
