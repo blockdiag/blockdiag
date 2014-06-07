@@ -15,8 +15,9 @@
 
 from __future__ import division
 import re
+import sys
 from blockdiag.utils import urlutil
-from blockdiag.utils.compat import string_types
+from blockdiag.utils.compat import u, string_types
 
 try:
     from PIL import Image
@@ -99,3 +100,52 @@ def color_to_rgb(color):
         rgb = webcolors.name_to_rgb(color)
 
     return rgb
+
+
+def convert_svg_to_png(filename, stream):
+    if filename.lower().endswith('.svg'):
+        try:
+            import io
+            import wand.image
+
+            png_image = io.BytesIO()
+            with wand.image.Image(file=stream) as img:
+                img.format = 'PNG'
+                img.save(file=png_image)
+                png_image.seek(0)
+                return png_image
+        except ImportError:
+            msg = u("WARNING: wand library is required to embed SVG image.\n")
+            sys.stderr.write(msg)
+            raise IOError(msg)
+        except Exception as exc:
+            msg = u("WARNING: Fail to convert SVG to PNG: %r\n") % exc
+            sys.stderr.write(msg)
+            raise IOError(msg)
+    else:
+        return stream
+
+
+def open(url):
+    import io
+    if not urlutil.isurl(url):
+        fd = io.open(url, 'rb')
+    else:
+        try:
+            from urllib.request import urlopen
+        except ImportError:
+            from urllib import urlopen
+
+        try:
+            fd = io.BytesIO(urlopen(url).read())
+        except:
+            msg = u("WARNING: Could not retrieve: %s\n") % url
+            sys.stderr.write(msg)
+            raise IOError(msg)
+
+    if url.lower().endswith('.svg'):
+        svg = convert_svg_to_png(url, fd)
+        fd.close()
+        return svg
+    else:
+        return fd

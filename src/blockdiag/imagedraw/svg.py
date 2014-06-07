@@ -22,7 +22,7 @@ from blockdiag.imagedraw.simplesvg import (
 )
 from blockdiag.imagedraw.utils import cached
 from blockdiag.imagedraw.utils.ellipse import endpoints as ellipse_endpoints
-from blockdiag.utils import urlutil, Box, XY, is_Pillow_available
+from blockdiag.utils import images, urlutil, Box, XY, is_Pillow_available
 
 feGaussianBlur = svgclass('feGaussianBlur')
 
@@ -228,8 +228,14 @@ class SVGImageDrawElement(_base.ImageDraw):
 
     def image(self, box, url):
         if not urlutil.isurl(url):
-            string = open(url, 'rb').read()
-            url = "data:;base64," + str(base64.b64encode(string))
+            try:
+                stream = images.open(url)
+                url = "data:;base64," + str(base64.b64encode(stream.read()))
+            except IOError:
+                stream = None
+            finally:
+                if stream:
+                    stream.close()
 
         im = image(url, box.x1, box.y1, box.width, box.height)
         self.svg.addElement(im)
