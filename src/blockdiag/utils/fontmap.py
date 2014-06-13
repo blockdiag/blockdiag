@@ -136,7 +136,7 @@ class FontMap(object):
             warning('fontfile `%s` is not found: %s', fontfamily, path)
 
     def _regulate_familyname(self, name):
-        return FontInfo(name, None, self.BASE_FONTSIZE).familyname
+        return FontInfo(name, None, self.BASE_FONTSIZE).familyname.lower()
 
     def find(self, element=None):
         fontfamily = getattr(element, 'fontfamily', None) or \
