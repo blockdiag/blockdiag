@@ -236,6 +236,19 @@ class TestUtilsFontmap(unittest.TestCase):
             self.assertEqual(self.fontpath[1], font1.path)
             self.assertEqual(11, font1.size)
 
+    def test_fontmap_with_capital_character(self):
+        _config = u("[fontmap]\nCapitalCase-sansserif: %s\n") % \
+                  self.fontpath[0]
+        config = StringIO(_config)
+        fmap = FontMap(config)
+
+        element = FontElement('CapitalCase-sansserif', 11)
+        font1 = fmap.find(element)
+        self.assertEqual('sansserif', font1.generic_family)
+        self.assertEqual('capitalcase-sansserif-normal', font1.familyname)
+        self.assertEqual(self.fontpath[0], font1.path)
+        self.assertEqual(11, font1.size)
+
     @capture_stderr
     def test_fontmap_with_nodefault_fontentry(self):
         _config = u("[fontmap]\nserif: %s\n") % self.fontpath[0]
