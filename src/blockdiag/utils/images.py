@@ -14,9 +14,10 @@
 #  limitations under the License.
 
 from __future__ import division
+import io
 import re
 from blockdiag.utils import urlutil
-from blockdiag.utils.compat import u, string_types
+from blockdiag.utils.compat import u, string_types, urlopen
 from blockdiag.utils.logging import warning
 
 try:
@@ -61,14 +62,8 @@ def get_image_size(filename):
     if filename not in _image_size_cache:
         uri = filename
         if urlutil.isurl(filename):
-            from io import BytesIO
             try:
-                from urllib.request import urlopen
-            except ImportError:
-                from urllib import urlopen
-
-            try:
-                uri = BytesIO(urlopen(filename).read())
+                uri = io.BytesIO(urlopen(filename).read())
             except IOError:
                 raise RuntimeError('Could not retrieve: %s' % filename)
 
@@ -125,15 +120,9 @@ def convert_svg_to_png(filename, stream):
 
 
 def open(url):
-    import io
     if not urlutil.isurl(url):
         fd = io.open(url, 'rb')
     else:
-        try:
-            from urllib.request import urlopen
-        except ImportError:
-            from urllib import urlopen
-
         try:
             fd = io.BytesIO(urlopen(url).read())
         except:
