@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
 import re
 import base64
 from blockdiag.imagedraw import base as _base
@@ -227,12 +228,14 @@ class SVGImageDrawElement(_base.ImageDraw):
         self.svg.addElement(pg)
 
     def image(self, box, url):
-        if not urlutil.isurl(url):
+        ext = os.path.splitext(url)[1].lower()
+        if ext not in ('.jpg', '.png', '.gif'):
+            stream = None
             try:
-                stream = images.open(url)
+                stream = images.open(url, mode='png')
                 url = "data:;base64," + str(base64.b64encode(stream.read()))
             except IOError:
-                stream = None
+                pass
             finally:
                 if stream:
                     stream.close()

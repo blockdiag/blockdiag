@@ -214,17 +214,14 @@ class PDFImageDraw(base.ImageDraw):
 
     def image(self, box, url):
         try:
-            stream = images.open(url)
-            url = ImageReader(stream)
+            image = images.open(url, mode='pillow')
+            url = ImageReader(image)
 
             y = self.size[1] - box[3]
             self.canvas.drawImage(url, box.x1, y, box.width, box.height,
                                   mask='auto', preserveAspectRatio=True)
         except IOError:
-            stream = None
-        finally:
-            if stream:
-                stream.close()
+            pass
 
     def save(self, filename, size, _format):
         # Ignore size and format parameter; compatibility for ImageDrawEx.

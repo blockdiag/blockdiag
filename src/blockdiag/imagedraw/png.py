@@ -363,8 +363,7 @@ class ImageDrawExBase(base.ImageDraw):
 
     def image(self, box, url):
         try:
-            stream = images.open(url)
-            image = Image.open(stream)
+            image = images.open(url, mode='pillow')
 
             # resize image.
             w = min([box.width, image.size[0] * self.scale_ratio])
@@ -385,10 +384,7 @@ class ImageDrawExBase(base.ImageDraw):
 
             self.paste(image, (x, y))
         except IOError:
-            stream = None
-        finally:
-            if stream:
-                stream.close()
+            pass
 
     def save(self, filename, size, _format):
         if filename:
