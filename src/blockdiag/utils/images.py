@@ -97,41 +97,54 @@ def color_to_rgb(color):
     return rgb
 
 
-def convert_svg_to_png(filename, stream):
-    if filename.lower().endswith('.svg'):
-        try:
-            import io
-            import wand.image
+def wand_open(url, stream):
+    try:
+        import wand.image
+    except:
+        warning("unknown image type: %s", url)
+        raise IOError
 
-            png_image = io.BytesIO()
-            with wand.image.Image(file=stream) as img:
-                img.format = 'PNG'
-                img.save(file=png_image)
-                png_image.seek(0)
-                return png_image
-        except ImportError:
-            warning("wand library is required to embed SVG image.")
-            raise IOError
-        except Exception as exc:
-            warning("Fail to convert SVG to PNG: %r", exc)
-            raise IOError
-    else:
-        return stream
+    try:
+        png_image = io.BytesIO()
+        with wand.image.Image(file=stream) as img:
+            img.format = 'PNG'
+            img.save(file=png_image)
+            png_image.seek(0)
+            return png_image
+    except Exception as exc:
+        warning("Fail to convert %s to PNG: %r", url, exc)
+        raise IOError
 
 
-def open(url):
+def pillow_open(url, stream):
+    try:
+        return Image.open(stream)
+    except IOError:
+        stream.seek(0)
+        png_stream = wand_open(url, stream)
+
+        return Image.open(png_stream)
+
+
+def open(url, mode='Pillow'):
     if not urlutil.isurl(url):
-        fd = io.open(url, 'rb')
+        stream = io.open(url, 'rb')
     else:
         try:
-            fd = io.BytesIO(urlopen(url).read())
+            # wrap BytesIO for rewind stream
+            stream = io.BytesIO(urlopen(url).read())
         except:
             warning(u("Could not retrieve: %s"), url)
             raise IOError
 
-    if url.lower().endswith('.svg'):
-        svg = convert_svg_to_png(url, fd)
-        fd.close()
-        return svg
-    else:
-        return fd
+    image = pillow_open(url, stream)
+    if mode.lower() == 'pillow':
+        # stream will be closed by GC
+        return image
+    else:  # mode == 'png'
+        png_image = io.BytesIO()
+        image.save(png_image, 'PNG')
+        stream.close()
+
+        png_image.seek(0)
+        return png_image
