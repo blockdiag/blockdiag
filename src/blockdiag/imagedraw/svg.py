@@ -23,7 +23,7 @@ from blockdiag.imagedraw.simplesvg import (
 )
 from blockdiag.imagedraw.utils import cached
 from blockdiag.imagedraw.utils.ellipse import endpoints as ellipse_endpoints
-from blockdiag.utils import images, urlutil, Box, XY, is_Pillow_available
+from blockdiag.utils import images, Box, XY, is_Pillow_available
 
 feGaussianBlur = svgclass('feGaussianBlur')
 
