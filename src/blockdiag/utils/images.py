@@ -16,44 +16,10 @@
 from __future__ import division
 import io
 import re
+from PIL import Image
 from blockdiag.utils import urlutil
-from blockdiag.utils.compat import u, string_types, urlopen
+from blockdiag.utils.compat import u, urlopen
 from blockdiag.utils.logging import warning
-
-try:
-    from PIL import Image
-except ImportError:
-    class Image:
-        @classmethod
-        def open(cls, filename):
-            return cls(filename)
-
-        def __init__(self, filename):
-            self.filename = filename
-
-        @property
-        def size(self):
-            from blockdiag.utils import jpeg
-            import png
-
-            try:
-                size = jpeg.JpegFile.get_size(self.filename)
-            except:
-                try:
-                    if isinstance(self.filename, string_types):
-                        content = open(self.filename, 'r')
-                    else:
-                        self.filename.seek(0)
-                        content = self.filename
-                    image = png.Reader(file=content).read()
-                    size = (image[0], image[1])
-                except:
-                    size = None
-
-            if hasattr(self.filename, 'seek'):
-                self.filename.seek(0)
-
-            return size
 
 _image_size_cache = {}
 
