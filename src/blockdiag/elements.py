@@ -19,6 +19,7 @@ import sys
 import copy
 from blockdiag.utils import images, unquote, urlutil, uuid, XY
 from blockdiag.utils.compat import u
+from blockdiag.utils.logging import warning
 from blockdiag import noderenderer, plugins
 
 
@@ -204,15 +205,13 @@ class DiagramNode(Element):
         if urlutil.isurl(value) or os.path.isfile(value):
             self.icon = value
         else:
-            msg = u("WARNING: icon image not found: %s\n") % value
-            sys.stderr.write(msg)
+            warning("icon image not found: %s", value)
 
     def set_background(self, value):
         if urlutil.isurl(value) or os.path.isfile(value):
             self.background = value
         else:
-            msg = u("WARNING: background image not found: %s\n") % value
-            sys.stderr.write(msg)
+            warning("background image not found: %s", value)
 
     def set_stacked(self, _):
         self.stacked = True
@@ -597,9 +596,7 @@ class Diagram(NodeGroup):
             raise AttributeError(msg)
 
     def set_default_text_color(self, color):
-        msg = u("WARNING: default_text_color is obsoleted; "
-                "use default_textcolor\n")
-        sys.stderr.write(msg)
+        warning("default_text_color is obsoleted; use default_textcolor")
         self.set_default_textcolor(color)
 
     def set_default_textcolor(self, color):
@@ -620,9 +617,7 @@ class Diagram(NodeGroup):
             raise AttributeError(msg)
 
     def set_default_line_color(self, color):
-        msg = u("WARNING: default_line_color is obsoleted; "
-                "use default_linecolor\n")
-        sys.stderr.write(msg)
+        warning("default_line_color is obsoleted; use default_linecolor")
         self.set_default_linecolor(color)
 
     def set_default_linecolor(self, color):
@@ -658,8 +653,7 @@ class Diagram(NodeGroup):
     def set_edge_layout(self, value):
         value = value.lower()
         if value in ('normal', 'flowchart'):
-            msg = u("WARNING: edge_layout is very experimental feature!\n")
-            sys.stderr.write(msg)
+            warning("edge_layout is very experimental feature!")
 
             self.edge_layout = value
         else:
@@ -667,6 +661,5 @@ class Diagram(NodeGroup):
             raise AttributeError(msg)
 
     def set_fontsize(self, value):
-        msg = u("WARNING: fontsize is obsoleted; use default_fontsize\n")
-        sys.stderr.write(msg)
+        warning("fontsize is obsoleted; use default_fontsize")
         self.set_default_fontsize(int(value))
