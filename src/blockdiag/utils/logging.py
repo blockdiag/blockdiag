@@ -21,3 +21,9 @@ def warning(msg, *args):
     sys.stderr.write(u("WARNING: "))
     sys.stderr.write(msg % args)
     sys.stderr.write(u("\n"))
+
+
+def error(msg, *args):
+    sys.stderr.write(u("ERROR: "))
+    sys.stderr.write(msg % args)
+    sys.stderr.write(u("\n"))

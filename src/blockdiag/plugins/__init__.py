@@ -26,7 +26,7 @@ def load(plugins, diagram, **kwargs):
                 module.setup(module, diagram, **kwargs)
             break
         else:
-            msg = "WARNING: unknown plugin: %s\n" % name
+            msg = "unknown plugin: %s" % name
             raise AttributeError(msg)
 
 
