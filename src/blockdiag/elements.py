@@ -15,7 +15,6 @@
 
 import os
 import re
-import sys
 import copy
 from blockdiag.utils import images, unquote, urlutil, uuid, XY
 from blockdiag.utils.compat import u
@@ -93,7 +92,7 @@ class Base(object):
             self.style = value.lower()
         else:
             class_name = self.__class__.__name__
-            msg = "WARNING: unknown %s style: %s\n" % (class_name, value)
+            msg = "unknown %s style: %s" % (class_name, value)
             raise AttributeError(msg)
 
 
@@ -198,7 +197,7 @@ class DiagramNode(Element):
         if noderenderer.get(value):
             self.shape = value
         else:
-            msg = "WARNING: unknown node shape: %s\n" % value
+            msg = "unknown node shape: %s" % value
             raise AttributeError(msg)
 
     def set_icon(self, value):
@@ -221,7 +220,7 @@ class DiagramNode(Element):
         if value in ('horizontal', 'vertical'):
             self.label_orientation = value
         else:
-            msg = "WARNING: unknown label orientation: %s\n" % value
+            msg = "unknown label orientation: %s" % value
             raise AttributeError(msg)
 
     def to_desctable(self):
@@ -337,7 +336,7 @@ class NodeGroup(Element):
         if value in ('landscape', 'portrait'):
             self.orientation = value
         else:
-            msg = "WARNING: unknown diagram orientation: %s\n" % value
+            msg = "unknown diagram orientation: %s" % value
             raise AttributeError(msg)
 
     def set_shape(self, value):
@@ -345,7 +344,7 @@ class NodeGroup(Element):
         if value in ('box', 'line'):
             self.shape = value
         else:
-            msg = "WARNING: unknown group shape: %s\n" % value
+            msg = "unknown group shape: %s" % value
             raise AttributeError(msg)
 
 
@@ -470,7 +469,7 @@ class DiagramEdge(Base):
         elif value == '--':
             self.dir = 'none'
         else:
-            msg = "WARNING: unknown edge dir: %s\n" % value
+            msg = "unknown edge dir: %s" % value
             raise AttributeError(msg)
 
     def set_color(self, color):
@@ -493,7 +492,7 @@ class DiagramEdge(Base):
             self.dir = 'both'
             self.hstyle = value
         else:
-            msg = "WARNING: unknown edge hstyle: %s\n" % value
+            msg = "unknown edge hstyle: %s" % value
             raise AttributeError(msg)
 
     def set_folded(self, _):
@@ -568,13 +567,9 @@ class Diagram(NodeGroup):
         self.edge_layout = None
 
     def set_plugin(self, name, attrs):
-        try:
-            kwargs = dict([str(unquote(attr.name)), unquote(attr.value)]
-                          for attr in attrs)
-            plugins.load([name], diagram=self, **kwargs)
-        except:
-            msg = "WARNING: fail to load plugin: %s\n" % name
-            raise AttributeError(msg)
+        kwargs = dict([str(unquote(attr.name)), unquote(attr.value)]
+                      for attr in attrs)
+        plugins.load([name], diagram=self, **kwargs)
 
     def set_plugins(self, value):
         modules = [name.strip() for name in value.split(',')]
@@ -584,7 +579,7 @@ class Diagram(NodeGroup):
         if noderenderer.get(value):
             DiagramNode.set_default_shape(value)
         else:
-            msg = "WARNING: unknown node shape: %s\n" % value
+            msg = "unknown node shape: %s" % value
             raise AttributeError(msg)
 
     def set_default_label_orientation(self, value):
@@ -592,7 +587,7 @@ class Diagram(NodeGroup):
         if value in ('horizontal', 'vertical'):
             DiagramNode.label_orientation = value
         else:
-            msg = "WARNING: unknown label orientation: %s\n" % value
+            msg = "unknown label orientation: %s" % value
             raise AttributeError(msg)
 
     def set_default_text_color(self, color):
@@ -613,7 +608,7 @@ class Diagram(NodeGroup):
         if re.search('^(?:none|solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
             self._DiagramNode.set_default_style(value)
         else:
-            msg = "WARNING: unknown %s style: %s\n" % value
+            msg = "unknown node style: %s" % value
             raise AttributeError(msg)
 
     def set_default_line_color(self, color):
@@ -647,7 +642,7 @@ class Diagram(NodeGroup):
         if value in ('solid', 'blur', 'none'):
             self.shadow_style = value
         else:
-            msg = "WARNING: unknown shadow style: %s\n" % value
+            msg = "unknown shadow style: %s" % value
             raise AttributeError(msg)
 
     def set_edge_layout(self, value):
@@ -657,7 +652,7 @@ class Diagram(NodeGroup):
 
             self.edge_layout = value
         else:
-            msg = "WARNING: unknown edge layout: %s\n" % value
+            msg = "unknown edge layout: %s" % value
             raise AttributeError(msg)
 
     def set_fontsize(self, value):
