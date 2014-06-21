@@ -17,20 +17,29 @@ from __future__ import division
 import io
 import re
 from PIL import Image
+from tempfile import NamedTemporaryFile
 from blockdiag.utils import urlutil
-from blockdiag.utils.compat import u, urlopen
+from blockdiag.utils.compat import u
 from blockdiag.utils.logging import warning
 
-_image_size_cache = {}
+urlopen_cache = {}
+
+
+def urlopen(url, *args, **kwargs):
+    """ auto caching urlopen() (using tempfile) """
+    from blockdiag.utils.compat import urlopen as orig_urlopen
+
+    if url not in urlopen_cache:
+        tmpfile = NamedTemporaryFile()
+        tmpfile.write(orig_urlopen(url, *args, **kwargs).read())
+        tmpfile.flush()
+        urlopen_cache[url] = tmpfile
+
+    return io.open(urlopen_cache[url].name, 'rb')
 
 
 def get_image_size(filename):
-    try:
-        _image_size_cache[filename] = open(filename).size
-    except:
-        raise RuntimeError('Colud not get size of image: %s' % filename)
-
-    return _image_size_cache[filename]
+    return open(filename).size
 
 
 def calc_image_size(size, bounded):
