@@ -25,18 +25,10 @@ _image_size_cache = {}
 
 
 def get_image_size(filename):
-    if filename not in _image_size_cache:
-        uri = filename
-        if urlutil.isurl(filename):
-            try:
-                uri = io.BytesIO(urlopen(filename).read())
-            except IOError:
-                raise RuntimeError('Could not retrieve: %s' % filename)
-
-        try:
-            _image_size_cache[filename] = Image.open(uri).size
-        except:
-            raise RuntimeError('Colud not get size of image: %s' % filename)
+    try:
+        _image_size_cache[filename] = open(filename).size
+    except:
+        raise RuntimeError('Colud not get size of image: %s' % filename)
 
     return _image_size_cache[filename]
 
