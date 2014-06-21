@@ -14,8 +14,8 @@
 #  limitations under the License.
 
 from __future__ import division
-from blockdiag.noderenderer import NodeShape
 from blockdiag.noderenderer import install_renderer
+from blockdiag.noderenderer.base import NodeShape
 from blockdiag.utils import images, Box, XY
 
 
