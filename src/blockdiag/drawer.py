@@ -42,7 +42,8 @@ class DiagramDraw(object):
                                        **kwargs)
 
         self.metrics = self.create_metrics(kwargs.get('basediagram', diagram),
-                                           drawer=self.drawer, **kwargs)
+                                           drawer=self.drawer,
+                                           fontmap=kwargs.get('fontmap'))
         if self.scale_ratio == 2:
             self.metrics = AutoScaler(self.metrics,
                                       scale_ratio=self.scale_ratio)

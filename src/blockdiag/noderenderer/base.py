@@ -18,7 +18,7 @@ from blockdiag.utils import images, Box, XY
 
 
 class NodeShape(object):
-    def __init__(self, node, metrics=None):
+    def __init__(self, node, metrics):
         self.node = node
         self.metrics = metrics
 

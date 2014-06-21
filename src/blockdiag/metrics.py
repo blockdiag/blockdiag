@@ -140,8 +140,8 @@ class DiagramMetrics(object):
     span_width = cellsize * 8
     span_height = cellsize * 5
 
-    def __init__(self, diagram, **kwargs):
-        self.drawer = kwargs.get('drawer')
+    def __init__(self, diagram, drawer=None, fontmap=None):
+        self.drawer = drawer
 
         if diagram.node_width is not None:
             self.node_width = diagram.node_width
@@ -155,7 +155,6 @@ class DiagramMetrics(object):
         if diagram.span_height is not None:
             self.span_height = diagram.span_height
 
-        fontmap = kwargs.get('fontmap')
         if fontmap is not None:
             self.fontmap = fontmap
         else:
