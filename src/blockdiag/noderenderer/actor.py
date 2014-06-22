@@ -16,22 +16,35 @@
 from __future__ import division
 from blockdiag.noderenderer import install_renderer
 from blockdiag.noderenderer.base import NodeShape
-from blockdiag.utils import XY, Box
+from blockdiag.utils import XY, Box, Size
 
 
 class Actor(NodeShape):
     def __init__(self, node, metrics=None):
         super(Actor, self).__init__(node, metrics)
 
-        shortside = min(self.node.width or metrics.node_height,
-                        self.node.height or metrics.node_height)
+        m = metrics.cell(node)
+        if node.label:
+            font = metrics.font_for(self.node)
+            textsize = metrics.textsize(node.label, font)
+            shortside = min(m.width, m.height - textsize.height)
+        else:
+            textsize = Size(0, 0)
+            shortside = min(m.width, m.height)
+
         r = self.radius = shortside // 8  # radius of actor's head
         self.center = metrics.cell(node).center
 
         self.connectors[0] = XY(self.center.x, self.center.y - r * 9 // 2)
         self.connectors[1] = XY(self.center.x + r * 4, self.center.y)
-        self.connectors[2] = XY(self.center.x, self.center.y + r * 4)
+        self.connectors[2] = XY(self.center.x,
+                                self.center.y + r * 4 + textsize.height)
         self.connectors[3] = XY(self.center.x - r * 4, self.center.y)
+
+        self.textbox = Box(m.left.x,
+                           self.center.y + r * 4,
+                           m.right.x,
+                           self.connectors[2].y)
 
     def head_part(self):
         r = self.radius * 3 // 2
@@ -76,10 +89,6 @@ class Actor(NodeShape):
     def render_shape(self, drawer, _, **kwargs):
         fill = kwargs.get('fill')
 
-        # FIXME: Actor does not support
-        #  - background image
-        #  - textarea
-
         # draw body part
         body = self.body_part()
         if kwargs.get('shadow'):
@@ -104,9 +113,6 @@ class Actor(NodeShape):
         else:
             drawer.ellipse(head, fill=self.node.color,
                            outline=self.node.linecolor, style=self.node.style)
-
-    def render_label(self, drawer, **kwargs):
-        pass
 
 
 def setup(self):
