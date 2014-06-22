@@ -15,6 +15,7 @@
 
 import os
 import io
+from hashlib import sha1
 from collections import namedtuple
 from docutils import nodes
 from docutils.parsers import rst
@@ -212,18 +213,11 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         return create_fontmap(options)
 
     def image_filename(self, node, prefix='', ext='png'):
-        try:
-            from hashlib import sha1
-            sha = sha1
-        except ImportError:
-            from sha import sha
-            sha = sha
-
         options = dict(node['options'])
         options.update(font=self.global_options['fontpath'],
                        antialias=self.global_options['antialias'])
         hashseed = (node['code'] + str(options)).encode('utf-8')
-        hashed = sha(hashseed).hexdigest()
+        hashed = sha1(hashseed).hexdigest()
 
         _format = self.global_options['format']
         outputdir = self.global_options['outputdir']
