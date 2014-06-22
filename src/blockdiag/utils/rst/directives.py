@@ -58,9 +58,12 @@ class BlockdiagDirectiveBase(rst.Directive):
     final_argument_whitespace = False
     option_spec = {
         'alt': rst.directives.unchanged,
+        'height': rst.directives.length_or_unitless,
+        'width': rst.directives.length_or_percentage_or_unitless,
+        'scale': rst.directives.percentage,
         'caption': rst.directives.unchanged,
         'desctable': rst.directives.flag,
-        'maxwidth': rst.directives.nonnegative_int,
+        'maxwidth': rst.directives.nonnegative_int,  # deprecated
     }
 
     def run(self):
@@ -90,18 +93,25 @@ class BlockdiagDirectiveBase(rst.Directive):
                                                             line=self.lineno)]
 
         node = self.node_class()
+        results = [node]
+
         node['code'] = dotcode
+        node['caption'] = self.options.pop('caption', None)
+        node['options'] = self.options
+
+        # for sphinxcontrib.* module (backward compatibility)
         node['alt'] = self.options.get('alt')
-        if 'caption' in self.options:
-            node['caption'] = self.options.get('caption')
 
-        node['options'] = {}
-        if 'maxwidth' in self.options:
-            node['options']['maxwidth'] = self.options['maxwidth']
-        if 'desctable' in self.options:
-            node['options']['desctable'] = self.options['desctable']
+        # replace maxwidth option to width (backward compatibility)
+        if 'maxwidth' in node['options']:
+            node['options']['width'] = str(node['options']['maxwidth'])
 
-        return [node]
+            msg = ':maxwidth: option is deprecated. Use :width: option.'
+            warning = self.state_machine.reporter.warning(msg,
+                                                          line=self.lineno)
+            results.append(warning)
+
+        return results
 
     def source_filename(self, filename):
         if hasattr(self.state.document.settings, 'env'):
@@ -126,12 +136,11 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             raise self.warning(e.message)
 
         if 'desctable' in node['options']:
-            del node['options']['desctable']
             results += self.description_tables(diagram)
 
         results[0] = self.node2image(node, diagram)
 
-        if 'caption' in node:
+        if node.get('caption'):
             fig = nodes.figure()
             fig += results[0]
             fig += nodes.caption(text=node['caption'])
@@ -160,45 +169,36 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         _format = self.global_options['format'].lower()
 
         if _format == 'svg' and self.global_options['inline_svg'] is True:
-            filename = None
+            return self.node2image_inline_svg(diagram, options, fontmap)
 
         kwargs = dict(self.global_options)
         del kwargs['format']
         drawer = DiagramDraw(_format, diagram, filename,
                              fontmap=fontmap, **kwargs)
 
-        if filename is None or not os.path.isfile(filename):
+        if not os.path.isfile(filename):
             drawer.draw()
-            content = drawer.save()
+            drawer.save()
 
-            if _format == 'svg' and self.global_options['inline_svg'] is True:
-                size = drawer.pagesize()
-                if 'maxwidth' in options and options['maxwidth'] < size[0]:
-                    ratio = float(options['maxwidth']) / size[0]
-                    new_size = (options['maxwidth'], int(size[1] * ratio))
-                    content = drawer.save(new_size)
+        return nodes.image(uri=filename, **options)
 
-                return nodes.raw('', content, format='html')
+    def node2image_inline_svg(self, diagram, options, fontmap):
+        kwargs = dict(self.global_options)
+        del kwargs['format']
+        drawer = DiagramDraw('svg', diagram, None, fontmap=fontmap, **kwargs)
+        drawer.draw()
 
         size = drawer.pagesize()
-        if 'maxwidth' in options and options['maxwidth'] < size[0]:
-            ratio = float(options['maxwidth']) / size[0]
-            thumb_size = (options['maxwidth'], int(size[1] * ratio))
-
-            thumb_filename = self.image_filename(node, prefix='_thumb')
-            if not os.path.isfile(thumb_filename):
-                drawer.filename = thumb_filename
-                drawer.draw()
-                drawer.save(thumb_size)
-
-            image = nodes.image(uri=thumb_filename, target=filename)
+        print options
+        width = options.get('width')
+        if width and int(width) < size[0]:
+            ratio = float(width) / size[0]
+            new_size = (int(width), int(size[1] * ratio))
+            content = drawer.save(new_size)
         else:
-            image = nodes.image(uri=filename)
+            content = drawer.save()
 
-        if node['alt']:
-            image['alt'] = node['alt']
-
-        return image
+        return nodes.raw('', content, format='html')
 
     def create_fontmap(self):
         Options = namedtuple('Options', 'font fontmap')
