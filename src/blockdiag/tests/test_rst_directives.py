@@ -113,14 +113,18 @@ class TestRstDirectives(unittest.TestCase):
 
     def test_base_with_options(self):
         text = ".. blockdiag::\n   :alt: hello world\n   :desctable:\n" + \
-               "   :maxwidth: 100\n\n   { A -> B }"
+               "   :width: 200\n   :height: 100\n" + \
+               "   :scale: 50%\n\n   { A -> B }"
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(directives.blockdiag, type(doctree[0]))
         self.assertEqual('{ A -> B }', doctree[0]['code'])
         self.assertEqual('hello world', doctree[0]['alt'])
         self.assertEqual(None, doctree[0]['options']['desctable'])
-        self.assertEqual(100, doctree[0]['options']['maxwidth'])
+        self.assertEqual('200', doctree[0]['options']['width'])
+        self.assertEqual('100', doctree[0]['options']['height'])
+        self.assertEqual(50, doctree[0]['options']['scale'])
+        self.assertEqual('hello world', doctree[0]['options']['alt'])
 
     def test_block(self):
         directives.setup(format='SVG', outputdir=self.tmpdir)
@@ -130,7 +134,6 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.image, type(doctree[0]))
         self.assertFalse('alt' in doctree[0])
         self.assertEqual(0, doctree[0]['uri'].index(self.tmpdir))
-        self.assertFalse('target' in doctree[0])
 
     def test_block_without_braces(self):
         directives.setup(format='SVG', outputdir=self.tmpdir)
@@ -140,7 +143,6 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.image, type(doctree[0]))
         self.assertFalse('alt' in doctree[0])
         self.assertEqual(0, doctree[0]['uri'].index(self.tmpdir))
-        self.assertFalse('target' in doctree[0])
 
     def test_block_alt(self):
         directives.setup(format='SVG', outputdir=self.tmpdir)
@@ -150,7 +152,6 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.image, type(doctree[0]))
         self.assertEqual('hello world', doctree[0]['alt'])
         self.assertEqual(0, doctree[0]['uri'].index(self.tmpdir))
-        self.assertFalse('target' in doctree[0])
 
     def test_block_fontpath1(self):
         with self.assertRaises(RuntimeError):
@@ -179,15 +180,47 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.Text, type(doctree[0][1][0]))
         self.assertEqual('hello world', doctree[0][1][0])
 
+    @capture_stderr
     def test_block_maxwidth(self):
         directives.setup(format='SVG', outputdir=self.tmpdir)
         text = ".. blockdiag::\n   :maxwidth: 100\n\n   { A -> B }"
         doctree = publish_doctree(text)
+        self.assertEqual(2, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertFalse('alt' in doctree[0])
+        self.assertEqual('100', doctree[0]['width'])
+        self.assertEqual(0, doctree[0]['uri'].index(self.tmpdir))
+        self.assertEqual(nodes.system_message, type(doctree[1]))
+
+    def test_block_width(self):
+        directives.setup(format='SVG', outputdir=self.tmpdir)
+        text = ".. blockdiag::\n   :width: 100\n\n   { A -> B }"
+        doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
         self.assertFalse('alt' in doctree[0])
+        self.assertEqual('100', doctree[0]['width'])
         self.assertEqual(0, doctree[0]['uri'].index(self.tmpdir))
-        self.assertFalse(0, doctree[0]['target'].index(self.tmpdir))
+
+    def test_block_height(self):
+        directives.setup(format='SVG', outputdir=self.tmpdir)
+        text = ".. blockdiag::\n   :height: 100\n\n   { A -> B }"
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertFalse('alt' in doctree[0])
+        self.assertEqual('100', doctree[0]['height'])
+        self.assertEqual(0, doctree[0]['uri'].index(self.tmpdir))
+
+    def test_block_scale(self):
+        directives.setup(format='SVG', outputdir=self.tmpdir)
+        text = ".. blockdiag::\n   :scale: 50%\n\n   { A -> B }"
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertFalse('alt' in doctree[0])
+        self.assertEqual(50, doctree[0]['scale'])
+        self.assertEqual(0, doctree[0]['uri'].index(self.tmpdir))
 
     def test_block_nodoctype_false(self):
         directives.setup(format='SVG', outputdir=self.tmpdir, nodoctype=False)
@@ -263,7 +296,18 @@ class TestRstDirectives(unittest.TestCase):
     def test_block_max_width_inline_svg(self):
         directives.setup(format='SVG', outputdir=self.tmpdir,
                          nodoctype=True, noviewbox=True, inline_svg=True)
-        text = ".. blockdiag::\n   :maxwidth: 100\n\n   { A -> B }"
+        text = ".. blockdiag::\n   :width: 100\n\n   { A -> B }"
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.raw, type(doctree[0]))
+        self.assertEqual(nodes.Text, type(doctree[0][0]))
+        self.assertRegexpMatches(doctree[0][0],
+                                 '<svg height="\d+" width="100" ')
+
+    def test_block_width_inline_svg(self):
+        directives.setup(format='SVG', outputdir=self.tmpdir,
+                         nodoctype=True, noviewbox=True, inline_svg=True)
+        text = ".. blockdiag::\n   :width: 100\n\n   { A -> B }"
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.raw, type(doctree[0]))
