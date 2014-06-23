@@ -122,7 +122,7 @@ Apache License 2.0
 History
 =======
 
-1.4.0 (2014-04-26)
+1.4.0 (2014-06-23)
 ------------------
 * Support embedding SVG/EPS images as background
 * Use wand to paste background images that is not supported by Pillow (if installed)
