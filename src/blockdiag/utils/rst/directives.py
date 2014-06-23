@@ -21,12 +21,13 @@ from docutils import nodes
 from docutils.parsers import rst
 from docutils.parsers.rst.roles import set_classes
 from docutils.statemachine import ViewList
-from blockdiag import parser
-from blockdiag.builder import ScreenNodeBuilder
-from blockdiag.drawer import DiagramDraw
+
+import blockdiag.parser
+import blockdiag.builder
+import blockdiag.drawer
 from blockdiag.utils.bootstrap import create_fontmap
 from blockdiag.utils.compat import string_types
-from blockdiag.utils.rst.nodes import blockdiag
+from blockdiag.utils.rst.nodes import blockdiag as blockdiag_node
 
 directive_options_default = dict(format='PNG',
                                  antialias=False,
@@ -63,7 +64,7 @@ def figwidth_value(argument):
 class BlockdiagDirectiveBase(rst.Directive):
     """ Directive to insert arbitrary dot markup. """
     name = "blockdiag"
-    node_class = blockdiag
+    node_class = blockdiag_node
 
     has_content = True
     required_arguments = 0
@@ -142,6 +143,8 @@ class BlockdiagDirectiveBase(rst.Directive):
 
 
 class BlockdiagDirective(BlockdiagDirectiveBase):
+    processor = blockdiag
+
     def run(self):
         figwidth = self.options.pop('figwidth', None)
         figclasses = self.options.pop('figclass', None)
@@ -192,17 +195,18 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
     def node2diagram(self, node):
         try:
-            tree = parser.parse_string(node['code'])
+            tree = self.processor.parser.parse_string(node['code'])
         except:
-            code = 'blockdiag { %s }' % node['code']
-            tree = parser.parse_string(code)
+            code = '%s { %s }' % (self.name, node['code'])
+            tree = self.processor.parser.parse_string(code)
             node['code'] = code  # replace if suceeded
 
-        return ScreenNodeBuilder.build(tree)
+        return self.processor.builder.ScreenNodeBuilder.build(tree)
 
     def get_actual_width(self, diagram):
         fontmap = self.create_fontmap()
-        drawer = DiagramDraw('SVG', diagram, None, fontmap=fontmap)
+        drawer = self.processor.drawer.DiagramDraw('SVG', diagram,
+                                                   None, fontmap=fontmap)
         return drawer.pagesize()[0]
 
     def node2image(self, node, diagram):
@@ -216,8 +220,8 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         kwargs = dict(self.global_options)
         del kwargs['format']
-        drawer = DiagramDraw(_format, diagram, filename,
-                             fontmap=fontmap, **kwargs)
+        drawer = self.processor.drawer.DiagramDraw(_format, diagram, filename,
+                                                   fontmap=fontmap, **kwargs)
 
         if not os.path.isfile(filename):
             drawer.draw()
@@ -228,7 +232,9 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
     def node2image_inline_svg(self, diagram, options, fontmap):
         kwargs = dict(self.global_options)
         del kwargs['format']
-        drawer = DiagramDraw('svg', diagram, None, fontmap=fontmap, **kwargs)
+        drawer = self.processor.drawer.DiagramDraw('svg', diagram,
+                                                   None, fontmap=fontmap,
+                                                   **kwargs)
         drawer.draw()
 
         size = drawer.pagesize()

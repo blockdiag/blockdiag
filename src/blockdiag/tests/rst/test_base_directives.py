@@ -14,6 +14,7 @@ from docutils import nodes
 from docutils.core import publish_doctree
 from docutils.parsers.rst import directives as docutils
 from blockdiag.utils.rst import directives
+from blockdiag.utils.rst.nodes import blockdiag as blockdiag_node
 
 
 class TestRstDirectives(unittest.TestCase):
@@ -41,7 +42,7 @@ class TestRstDirectives(unittest.TestCase):
                 "   { A -> B }")
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
-        self.assertEqual(directives.blockdiag, type(doctree[0]))
+        self.assertEqual(blockdiag_node, type(doctree[0]))
         self.assertEqual('{ A -> B }', doctree[0]['code'])
         self.assertEqual(None, doctree[0]['alt'])
         self.assertEqual({}, doctree[0]['options'])
@@ -63,7 +64,7 @@ class TestRstDirectives(unittest.TestCase):
         doctree = publish_doctree(text)
 
         self.assertEqual(1, len(doctree))
-        self.assertEqual(directives.blockdiag, type(doctree[0]))
+        self.assertEqual(blockdiag_node, type(doctree[0]))
         self.assertEqual(io.open(filename, encoding='utf-8-sig').read(),
                          doctree[0]['code'])
         self.assertEqual(None, doctree[0]['alt'])
@@ -100,7 +101,7 @@ class TestRstDirectives(unittest.TestCase):
                 "   A -> B")
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
-        self.assertEqual(directives.blockdiag, type(doctree[0]))
+        self.assertEqual(blockdiag_node, type(doctree[0]))
         self.assertEqual('A -> B', doctree[0]['code'])
         self.assertEqual('hello world', doctree[0]['alt'])
         self.assertEqual('center', doctree[0]['options']['align'])
@@ -122,7 +123,7 @@ class TestRstDirectives(unittest.TestCase):
                 "   A -> B")
         doctree = publish_doctree(text)
         self.assertEqual(2, len(doctree))
-        self.assertEqual(directives.blockdiag, type(doctree[0]))
+        self.assertEqual(blockdiag_node, type(doctree[0]))
         self.assertEqual('A -> B', doctree[0]['code'])
         self.assertEqual('200', doctree[0]['options']['width'])
         self.assertEqual(nodes.system_message, type(doctree[1]))
