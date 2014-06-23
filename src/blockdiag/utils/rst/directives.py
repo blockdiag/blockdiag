@@ -227,10 +227,19 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         drawer.draw()
 
         size = drawer.pagesize()
-        width = options.get('width')
-        if width and int(width) < size[0]:
+        if 'width' in options and 'height' in options:
+            width = int(options.get('width'))
+            height = int(options.get('height'))
+            content = drawer.save((width, height))
+        elif 'width' in options:
+            width = int(options.get('width'))
             ratio = float(width) / size[0]
-            new_size = (int(width), int(size[1] * ratio))
+            new_size = (width, int(size[1] * ratio))
+            content = drawer.save(new_size)
+        elif 'height' in options:
+            height = int(options.get('height'))
+            ratio = float(height) / size[1]
+            new_size = (int(size[0] * ratio), height)
             content = drawer.save(new_size)
         else:
             content = drawer.save()

@@ -165,7 +165,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
 
-    def test_setup_inline_svg_is_true_and_width_option(self):
+    def test_setup_inline_svg_is_true_and_width_option1(self):
         directives.setup(format='SVG', outputdir=self.tmpdir,
                          nodoctype=True, noviewbox=True, inline_svg=True)
         text = (".. blockdiag::\n"
@@ -178,6 +178,63 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.Text, type(doctree[0][0]))
         self.assertRegexpMatches(doctree[0][0],
                                  '<svg height="\d+" width="100" ')
+
+    def test_setup_inline_svg_is_true_and_width_option2(self):
+        directives.setup(format='SVG', outputdir=self.tmpdir,
+                         nodoctype=True, noviewbox=True, inline_svg=True)
+        text = (".. blockdiag::\n"
+                "   :width: 10000\n"
+                "\n"
+                "   A -> B")
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.raw, type(doctree[0]))
+        self.assertEqual(nodes.Text, type(doctree[0][0]))
+        self.assertRegexpMatches(doctree[0][0],
+                                 '<svg height="\d+" width="10000" ')
+
+    def test_setup_inline_svg_is_true_and_height_option1(self):
+        directives.setup(format='SVG', outputdir=self.tmpdir,
+                         nodoctype=True, noviewbox=True, inline_svg=True)
+        text = (".. blockdiag::\n"
+                "   :height: 100\n"
+                "\n"
+                "   A -> B")
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.raw, type(doctree[0]))
+        self.assertEqual(nodes.Text, type(doctree[0][0]))
+        self.assertRegexpMatches(doctree[0][0],
+                                 '<svg height="100" width="\d+" ')
+
+    def test_setup_inline_svg_is_true_and_height_option2(self):
+        directives.setup(format='SVG', outputdir=self.tmpdir,
+                         nodoctype=True, noviewbox=True, inline_svg=True)
+        text = (".. blockdiag::\n"
+                "   :height: 10000\n"
+                "\n"
+                "   A -> B")
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.raw, type(doctree[0]))
+        self.assertEqual(nodes.Text, type(doctree[0][0]))
+        self.assertRegexpMatches(doctree[0][0],
+                                 '<svg height="10000" width="\d+" ')
+
+    def test_setup_inline_svg_is_true_and_width_and_height_option(self):
+        directives.setup(format='SVG', outputdir=self.tmpdir,
+                         nodoctype=True, noviewbox=True, inline_svg=True)
+        text = (".. blockdiag::\n"
+                "   :width: 200\n"
+                "   :height: 100\n"
+                "\n"
+                "   A -> B")
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.raw, type(doctree[0]))
+        self.assertEqual(nodes.Text, type(doctree[0][0]))
+        self.assertRegexpMatches(doctree[0][0],
+                                 '<svg height="100" width="200" ')
 
     def test_call_with_brace(self):
         directives.setup(format='SVG', outputdir=self.tmpdir)
