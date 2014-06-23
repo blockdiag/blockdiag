@@ -19,6 +19,7 @@ from hashlib import sha1
 from collections import namedtuple
 from docutils import nodes
 from docutils.parsers import rst
+from docutils.parsers.rst.roles import set_classes
 from docutils.statemachine import ViewList
 from blockdiag import parser
 from blockdiag.builder import ScreenNodeBuilder
@@ -47,6 +48,18 @@ def relfn2path(env, filename):
     return relfn, os.path.join(env.srcdir, relfn)
 
 
+def align(argument):
+    align_values = ('left', 'center', 'right', 'top', 'middle', 'bottom')
+    return rst.directives.choice(argument, align_values)
+
+
+def figwidth_value(argument):
+    if argument.lower() == 'image':
+        return 'image'
+    else:
+        return rst.directives.length_or_percentage_or_unitless(argument, 'px')
+
+
 class BlockdiagDirectiveBase(rst.Directive):
     """ Directive to insert arbitrary dot markup. """
     name = "blockdiag"
@@ -61,9 +74,14 @@ class BlockdiagDirectiveBase(rst.Directive):
         'height': rst.directives.length_or_unitless,
         'width': rst.directives.length_or_percentage_or_unitless,
         'scale': rst.directives.percentage,
+        'align': align,
         'caption': rst.directives.unchanged,
         'desctable': rst.directives.flag,
         'maxwidth': rst.directives.nonnegative_int,  # deprecated
+        'name': rst.directives.unchanged,
+        'class': rst.directives.class_option,
+        'figwidth': figwidth_value,
+        'figclass': rst.directives.class_option,
     }
 
     def run(self):
@@ -92,6 +110,7 @@ class BlockdiagDirectiveBase(rst.Directive):
                 return [self.state_machine.reporter.warning(msg,
                                                             line=self.lineno)]
 
+        set_classes(self.options)
         node = self.node_class()
         results = [node]
 
@@ -124,6 +143,10 @@ class BlockdiagDirectiveBase(rst.Directive):
 
 class BlockdiagDirective(BlockdiagDirectiveBase):
     def run(self):
+        figwidth = self.options.pop('figwidth', None)
+        figclasses = self.options.pop('figclass', None)
+        align = self.options.pop('align', None)
+
         results = super(BlockdiagDirective, self).run()
 
         node = results[0]
@@ -139,11 +162,22 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             results += self.description_tables(diagram)
 
         results[0] = self.node2image(node, diagram)
+        self.add_name(results[0])
 
         if node.get('caption'):
             fig = nodes.figure()
             fig += results[0]
             fig += nodes.caption(text=node['caption'])
+
+            if figwidth == 'image':
+                fig['width'] = str(self.image_size[0]) + 'px'
+            elif figwidth is not None:
+                fig['width'] = figwidth
+            if figclasses:
+                fig['classes'] += figclasses
+            if align:
+                fig['align'] = align
+
             results[0] = fig
 
         return results
@@ -175,6 +209,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         del kwargs['format']
         drawer = DiagramDraw(_format, diagram, filename,
                              fontmap=fontmap, **kwargs)
+        self.image_size = drawer.pagesize()
 
         if not os.path.isfile(filename):
             drawer.draw()
