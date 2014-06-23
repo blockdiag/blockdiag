@@ -109,6 +109,8 @@ Requirements
 * Python 2.6, 2.7, 3.2, 3.3, 3.4
 * Pillow 2.2.1 or later
 * funcparserlib 0.3.6 or later
+* reportlab (optional)
+* wand and imagemagick (optional)
 * setuptools
 
 
@@ -119,6 +121,20 @@ Apache License 2.0
 
 History
 =======
+
+1.4.0 (2014-04-26)
+------------------
+* Support embedding SVG/EPS images as background
+* Use wand to paste background images that is not supported by Pillow (if installed)
+* Add options to blockdiag directive (docutils extension)
+   - :width:
+   - :height:
+   - :scale:
+   - :align:
+   - :name:
+   - :class:
+   - :figwidth:
+   - :figclass:
 
 1.3.3 (2014-04-26)
 ------------------
