@@ -49,7 +49,7 @@ def relfn2path(env, filename):
 
 
 def align(argument):
-    align_values = ('left', 'center', 'right', 'top', 'middle', 'bottom')
+    align_values = ('left', 'center', 'right')
     return rst.directives.choice(argument, align_values)
 
 
@@ -145,7 +145,10 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
     def run(self):
         figwidth = self.options.pop('figwidth', None)
         figclasses = self.options.pop('figclass', None)
-        align = self.options.pop('align', None)
+        if self.options.get('caption'):
+            align = self.options.pop('align', None)
+        else:
+            align = None
 
         results = super(BlockdiagDirective, self).run()
 
