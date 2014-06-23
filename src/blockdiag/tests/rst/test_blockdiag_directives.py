@@ -11,7 +11,7 @@ from blockdiag.utils.compat import u
 from blockdiag.tests.utils import capture_stderr, with_pil, TemporaryDirectory
 
 from docutils import nodes
-from docutils.core import publish_doctree, publish_parts
+from docutils.core import publish_doctree
 from docutils.parsers.rst import directives as docutils
 from blockdiag.utils.rst import directives
 
