@@ -135,6 +135,7 @@ History
    - :class:
    - :figwidth:
    - :figclass:
+* actor shape supports label rendering
 
 1.3.3 (2014-04-26)
 ------------------
