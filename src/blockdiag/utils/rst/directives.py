@@ -173,7 +173,8 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             fig += nodes.caption(text=node['caption'])
 
             if figwidth == 'image':
-                fig['width'] = str(self.image_size[0]) + 'px'
+                width = self.get_actual_width(diagram)
+                fig['width'] = str(width) + 'px'
             elif figwidth is not None:
                 fig['width'] = figwidth
             if figclasses:
@@ -199,6 +200,11 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
 
         return ScreenNodeBuilder.build(tree)
 
+    def get_actual_width(self, diagram):
+        fontmap = self.create_fontmap()
+        drawer = DiagramDraw('SVG', diagram, None, fontmap=fontmap)
+        return drawer.pagesize()[0]
+
     def node2image(self, node, diagram):
         options = node['options']
         filename = self.image_filename(node)
@@ -212,7 +218,6 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         del kwargs['format']
         drawer = DiagramDraw(_format, diagram, filename,
                              fontmap=fontmap, **kwargs)
-        self.image_size = drawer.pagesize()
 
         if not os.path.isfile(filename):
             drawer.draw()
