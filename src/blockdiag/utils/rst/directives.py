@@ -189,7 +189,6 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         drawer.draw()
 
         size = drawer.pagesize()
-        print options
         width = options.get('width')
         if width and int(width) < size[0]:
             ratio = float(width) / size[0]
