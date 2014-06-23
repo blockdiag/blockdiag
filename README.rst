@@ -1,5 +1,18 @@
 `blockdiag` generate block-diagram image file from spec-text file.
 
+.. image:: https://drone.io/bitbucket.org/blockdiag/blockdiag/status.png
+   :target: https://drone.io/bitbucket.org/blockdiag/blockdiag
+   :alt: drone.io CI build status
+
+.. image:: https://pypip.in/v/blockdiag/badge.png
+   :target: https://pypi.python.org/pypi/blockdiag/
+   :alt: Latest PyPI version
+
+.. image:: https://pypip.in/d/blockdiag/badge.png
+   :target: https://pypi.python.org/pypi/blockdiag/
+   :alt: Number of PyPI downloads
+
+
 Features
 ========
 * Generate block-diagram from dot like text (basic feature).
