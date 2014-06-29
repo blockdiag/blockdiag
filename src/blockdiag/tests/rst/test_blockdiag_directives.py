@@ -238,7 +238,6 @@ class TestRstDirectives(unittest.TestCase):
 
     def test_call_with_brace(self):
         directives.setup(format='SVG', outputdir=self.tmpdir)
-        text = ".. blockdiag::\n\n   { A -> B }"
         text = (".. blockdiag::\n"
                 "\n"
                 "   {"
@@ -800,3 +799,13 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(1, len(tbody[1][1][0]))
         self.assertEqual(nodes.Text, type(tbody[1][1][0][0]))
         self.assertEqual('bar', str(tbody[1][1][0][0]))
+
+    @capture_stderr
+    def test_broken_diagram(self):
+        directives.setup(format='SVG', outputdir=self.tmpdir)
+        text = (".. blockdiag::\n"
+                "\n"
+                "     A ->")
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.system_message, type(doctree[0]))
