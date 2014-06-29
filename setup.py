@@ -23,6 +23,7 @@ requires = ['setuptools',
             'funcparserlib',
             'webcolors',
             'Pillow']
+pdf_requires = ['reportlab']
 test_requires = ['nose',
                  'mock',
                  'pep8>=1.3',
@@ -33,6 +34,7 @@ test_requires = ['nose',
 # only for Python2.6
 if sys.version_info > (2, 6) and sys.version_info < (2, 7):
     requires.append('OrderedDict')
+    pdf_requires[0] = 'reportlab < 3.0'
     test_requires.append('unittest2')
 
 
@@ -56,9 +58,7 @@ setup(
     install_requires=requires,
     extras_require=dict(
         testing=test_requires,
-        pdf=[
-            'reportlab',
-        ],
+        pdf=pdf_requires,
         rst=[
             'docutils',
         ],
