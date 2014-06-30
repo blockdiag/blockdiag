@@ -22,9 +22,6 @@ from docutils.parsers import rst
 from docutils.parsers.rst.roles import set_classes
 from docutils.statemachine import ViewList
 
-import blockdiag.parser
-import blockdiag.builder
-import blockdiag.drawer
 from blockdiag.utils.bootstrap import create_fontmap
 from blockdiag.utils.compat import string_types
 from blockdiag.utils.rst.nodes import blockdiag as blockdiag_node
@@ -143,7 +140,7 @@ class BlockdiagDirectiveBase(rst.Directive):
 
 
 class BlockdiagDirective(BlockdiagDirectiveBase):
-    processor = blockdiag
+    processor = None  # backward compatibility for 1.4.0
 
     def run(self):
         figwidth = self.options.pop('figwidth', None)
@@ -176,7 +173,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             fig += nodes.caption(text=node['caption'])
 
             if figwidth == 'image':
-                width = self.get_actual_width(diagram)
+                width = self.get_actual_width(node, diagram)
                 fig['width'] = str(width) + 'px'
             elif figwidth is not None:
                 fig['width'] = figwidth
@@ -194,47 +191,63 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         return directive_options
 
     def node2diagram(self, node):
-        try:
-            tree = self.processor.parser.parse_string(node['code'])
-        except:
-            code = '%s { %s }' % (self.name, node['code'])
-            tree = self.processor.parser.parse_string(code)
-            node['code'] = code  # replace if suceeded
+        if hasattr(node, 'to_diagram'):
+            return node.to_diagram()
+        else:
+            try:
+                tree = self.processor.parser.parse_string(node['code'])
+            except:
+                code = '%s { %s }' % (self.name, node['code'])
+                tree = self.processor.parser.parse_string(code)
+                node['code'] = code  # replace if suceeded
 
-        return self.processor.builder.ScreenNodeBuilder.build(tree)
+            return self.processor.builder.ScreenNodeBuilder.build(tree)
 
-    def get_actual_width(self, diagram):
+    def get_actual_width(self, node, diagram):
         fontmap = self.create_fontmap()
-        drawer = self.processor.drawer.DiagramDraw('SVG', diagram,
-                                                   None, fontmap=fontmap)
+        if hasattr(node, 'to_drawer'):
+            drawer = node.to_drawer('SVG', None, fontmap,
+                                    **self.global_options)
+        else:
+            drawer = self.processor.drawer.DiagramDraw('SVG', diagram,
+                                                       None, fontmap=fontmap)
+
         return drawer.pagesize()[0]
 
     def node2image(self, node, diagram):
-        options = node['options']
+        _format = self.global_options['format'].lower()
+        if _format == 'svg' and self.global_options['inline_svg'] is True:
+            return self.node2image_inline_svg(node, diagram)
+
         filename = self.image_filename(node)
         fontmap = self.create_fontmap()
-        _format = self.global_options['format'].lower()
-
-        if _format == 'svg' and self.global_options['inline_svg'] is True:
-            return self.node2image_inline_svg(diagram, options, fontmap)
-
-        drawer = self.processor.drawer.DiagramDraw(_format, diagram, filename,
-                                                   fontmap=fontmap,
-                                                   **self.global_options)
+        if hasattr(node, 'to_drawer'):
+            drawer = node.to_drawer(_format, filename, fontmap,
+                                    **self.global_options)
+        else:
+            drawer = self.processor.drawer.DiagramDraw(_format, diagram,
+                                                       filename,
+                                                       fontmap=fontmap,
+                                                       **self.global_options)
 
         if not os.path.isfile(filename):
             drawer.draw()
             drawer.save()
 
-        return nodes.image(uri=filename, **options)
+        return nodes.image(uri=filename, **node['options'])
 
-    def node2image_inline_svg(self, diagram, options, fontmap):
-        drawer = self.processor.drawer.DiagramDraw('svg', diagram,
-                                                   None, fontmap=fontmap,
-                                                   **self.global_options)
+    def node2image_inline_svg(self, node, diagram):
+        fontmap = self.create_fontmap()
+        if hasattr(node, 'to_drawer'):
+            drawer = node.to_drawer('SVG', None, fontmap,
+                                    **self.global_options)
+        else:
+            drawer = self.processor.drawer.DiagramDraw('svg', diagram,
+                                                       None, fontmap=fontmap,
+                                                       **self.global_options)
         drawer.draw()
 
-        size = drawer.pagesize().resize(**options).to_integer_point()
+        size = drawer.pagesize().resize(**node['options']).to_integer_point()
         content = drawer.save(size)
 
         return nodes.raw('', content, format='html')
@@ -252,19 +265,22 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         return create_fontmap(options)
 
     def image_filename(self, node, prefix='', ext='png'):
-        options = dict(node['options'])
-        options.update(font=self.global_options['fontpath'],
-                       antialias=self.global_options['antialias'])
-        hashseed = (node['code'] + str(options)).encode('utf-8')
-        hashed = sha1(hashseed).hexdigest()
+        if hasattr(node, 'get_path'):
+            return node.get_path(**self.global_options)
+        else:
+            options = dict(node['options'])
+            options.update(font=self.global_options['fontpath'],
+                           antialias=self.global_options['antialias'])
+            hashseed = (node['code'] + str(options)).encode('utf-8')
+            hashed = sha1(hashseed).hexdigest()
 
-        _format = self.global_options['format']
-        outputdir = self.global_options['outputdir']
-        filename = "%s%s-%s.%s" % (self.name, prefix, hashed, _format.lower())
-        if outputdir:
-            filename = os.path.join(outputdir, filename)
+            _format = self.global_options['format'].lower()
+            outputdir = self.global_options['outputdir']
+            filename = "%s%s-%s.%s" % (self.name, prefix, hashed, _format)
+            if outputdir:
+                filename = os.path.join(outputdir, filename)
 
-        return filename
+            return filename
 
     def description_tables(self, diagram):
         tables = []
