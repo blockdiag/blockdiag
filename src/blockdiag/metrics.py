@@ -349,8 +349,8 @@ class SpreadSheetMetrics(SubMetrics):
         x, y = self._node_bottomright(dummy, use_padding=False)
         x_span = self.span_width[width]
         y_span = self.span_height[height]
-        return XY(x + margin.x + padding[1] + x_span,
-                  y + margin.y + padding[2] + y_span)
+        return Size(x + margin.x + padding[1] + x_span,
+                    y + margin.y + padding[2] + y_span)
 
 
 class NodeMetrics(SubMetrics):

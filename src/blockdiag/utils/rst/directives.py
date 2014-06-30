@@ -218,10 +218,9 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         if _format == 'svg' and self.global_options['inline_svg'] is True:
             return self.node2image_inline_svg(diagram, options, fontmap)
 
-        kwargs = dict(self.global_options)
-        del kwargs['format']
         drawer = self.processor.drawer.DiagramDraw(_format, diagram, filename,
-                                                   fontmap=fontmap, **kwargs)
+                                                   fontmap=fontmap,
+                                                   **self.global_options)
 
         if not os.path.isfile(filename):
             drawer.draw()
@@ -230,30 +229,13 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         return nodes.image(uri=filename, **options)
 
     def node2image_inline_svg(self, diagram, options, fontmap):
-        kwargs = dict(self.global_options)
-        del kwargs['format']
         drawer = self.processor.drawer.DiagramDraw('svg', diagram,
                                                    None, fontmap=fontmap,
-                                                   **kwargs)
+                                                   **self.global_options)
         drawer.draw()
 
-        size = drawer.pagesize()
-        if 'width' in options and 'height' in options:
-            width = int(options.get('width'))
-            height = int(options.get('height'))
-            content = drawer.save((width, height))
-        elif 'width' in options:
-            width = int(options.get('width'))
-            ratio = float(width) / size[0]
-            new_size = (width, int(size[1] * ratio))
-            content = drawer.save(new_size)
-        elif 'height' in options:
-            height = int(options.get('height'))
-            ratio = float(height) / size[1]
-            new_size = (int(size[0] * ratio), height)
-            content = drawer.save(new_size)
-        else:
-            content = drawer.save()
+        size = drawer.pagesize().resize(**options).to_integer_point()
+        content = drawer.save(size)
 
         return nodes.raw('', content, format='html')
 
