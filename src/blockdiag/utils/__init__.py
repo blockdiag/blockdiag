@@ -16,10 +16,6 @@
 from __future__ import division
 import re
 import math
-from collections import namedtuple
-
-
-Size = namedtuple('Size', 'width height')
 
 
 class XY(tuple):
@@ -39,6 +35,40 @@ class XY(tuple):
 
     def shift(self, x=0, y=0):
         return self.__class__(self.x + x, self.y + y)
+
+
+class Size(tuple):
+    def __new__(cls, width, height):
+        return super(Size, cls).__new__(cls, (width, height))
+
+    @property
+    def width(self):
+        return self[0]
+
+    @property
+    def height(self):
+        return self[1]
+
+    def resize(self, **kwargs):
+        if 'width' in kwargs and 'height' in kwargs:
+            size = Size(float(kwargs['width']), float(kwargs['height']))
+        elif 'width' in kwargs:
+            width = float(kwargs['width'])
+            size = Size(width, self.height * width / self.width)
+        elif 'height' in kwargs:
+            height = float(kwargs['height'])
+            size = Size(self.width * height / self.height, height)
+        else:
+            size = self
+
+        if 'scale' in kwargs:
+            scale = float(kwargs['scale']) / 100
+            size = Size(size.width * scale, size.height * scale)
+
+        return size
+
+    def to_integer_point(self):
+        return Size(int(self.width), int(self.height))
 
 
 class Box(list):
