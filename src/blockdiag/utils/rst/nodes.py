@@ -16,28 +16,30 @@
 import os
 from hashlib import sha1
 from docutils import nodes
-from blockdiag.parser import parse_string
-from blockdiag.builder import ScreenNodeBuilder
-from blockdiag.drawer import DiagramDraw
+import blockdiag.parser
+import blockdiag.builder
+import blockdiag.drawer
 
 
 class blockdiag(nodes.General, nodes.Element):
     name = 'blockdiag'
+    processor = blockdiag
 
     def to_diagram(self):
         try:
-            tree = parse_string(self['code'])
+            tree = self.processor.parser.parse_string(self['code'])
         except:
             code = '%s { %s }' % (self.name, self['code'])
-            tree = parse_string(code)
+            tree = self.processor.parser.parse_string(code)
             self['code'] = code  # replace if suceeded
 
-        return ScreenNodeBuilder.build(tree)
+        return self.processor.builder.ScreenNodeBuilder.build(tree)
 
     def to_drawer(self, image_format, filename, fontmap, **kwargs):
         diagram = self.to_diagram()
-        return DiagramDraw(image_format, diagram, filename,
-                           fontmap=fontmap, **kwargs)
+        return self.processor.drawer.DiagramDraw(image_format, diagram,
+                                                 filename, fontmap=fontmap,
+                                                 **kwargs)
 
     def get_path(self, **options):
         options.update(self['options'])
