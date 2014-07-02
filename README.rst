@@ -122,6 +122,11 @@ Apache License 2.0
 History
 =======
 
+1.4.1 (2014-07-02)
+------------------
+* Change interface of docutils node (for sphinxcontrib module)
+* Fix bugs
+
 1.4.0 (2014-06-23)
 ------------------
 * Support embedding SVG/EPS images as background
