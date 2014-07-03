@@ -64,7 +64,7 @@ def capture_stderr(func):
 
             func(*args, **kwargs)
 
-            if re.search('ERROR', sys.stderr.getvalue()):
+            if re.search('(ERROR|Traceback)', sys.stderr.getvalue()):
                 raise AssertionError('Caught error')
         finally:
             if sys.stderr.getvalue():
