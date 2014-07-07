@@ -119,9 +119,12 @@ class SVGImageDrawElement(_base.ImageDraw):
     def text(self, point, string, font, **kwargs):
         fill = kwargs.get('fill')
 
+        size = self.textlinesize(string, font)
+        point = point.shift(size.width / 2)
         t = text(point.x, point.y, string, fill=rgb(fill),
                  font_family=font.generic_family, font_size=font.size,
-                 font_weight=font.weight, font_style=font.style)
+                 font_weight=font.weight, font_style=font.style,
+                 text_anchor='middle')
         self.svg.addElement(t)
 
     def textarea(self, box, string, font, **kwargs):
