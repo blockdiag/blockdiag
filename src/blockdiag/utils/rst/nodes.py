@@ -31,7 +31,7 @@ class blockdiag(nodes.General, nodes.Element):
         except:
             code = '%s { %s }' % (self.name, self['code'])
             tree = self.processor.parser.parse_string(code)
-            self['code'] = code  # replace if suceeded
+            self['code'] = code  # replace if succeeded
 
         return self.processor.builder.ScreenNodeBuilder.build(tree)
 
