@@ -199,7 +199,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
             except:
                 code = '%s { %s }' % (self.name, node['code'])
                 tree = self.processor.parser.parse_string(code)
-                node['code'] = code  # replace if suceeded
+                node['code'] = code  # replace if succeeded
 
             return self.processor.builder.ScreenNodeBuilder.build(tree)
 
