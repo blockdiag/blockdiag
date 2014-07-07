@@ -148,13 +148,13 @@ class PDFImageDraw(base.ImageDraw):
 
             if angle == 90:
                 box = Box(-box.y2, box.x1, -box.y1, box.x1 + box.width)
-                box = box.shift(x=self.size.y, y=self.size.y)
+                box = box.shift(x=self.size.height, y=self.size.height)
             elif angle == 180:
                 box = Box(-box.x2, -box.y2, -box.x1, -box.y2 + box.height)
-                box = box.shift(y=self.size.y * 2)
+                box = box.shift(y=self.size.height * 2)
             elif angle == 270:
                 box = Box(box.y1, -box.x2, box.y2, -box.x1)
-                box = box.shift(x=-self.size.y, y=self.size.y)
+                box = box.shift(x=-self.size.height, y=self.size.height)
 
         self.set_font(font)
         lines = self.textfolder(box, string, font, **kwargs)
