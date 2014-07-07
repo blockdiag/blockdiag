@@ -6,6 +6,12 @@ from nose.tools import nottest
 from blockdiag.tests.utils import capture_stderr, TemporaryDirectory
 from blockdiag.tests.utils import supported_pil, supported_pdf
 
+import sys
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
+
 import blockdiag
 import blockdiag.command
 
@@ -60,9 +66,14 @@ def testcase_generator(basepath, mainfunc, files, options):
         if supported_pil() and os.path.exists(fontpath):
             yield generate, mainfunc, 'png', source, options
             yield generate, mainfunc, 'png', source, options + ['--antialias']
+        else:
+            yield unittest.skip("Pillow is not available")(generate)
+            yield unittest.skip("Pillow is not available")(generate)
 
         if supported_pdf() and os.path.exists(fontpath):
             yield generate, mainfunc, 'pdf', source, options
+        else:
+            yield unittest.skip("reportlab is not available")(generate)
 
 
 @capture_stderr
