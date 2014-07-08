@@ -215,10 +215,13 @@ class PDFImageDraw(base.ImageDraw):
     def image(self, box, url):
         try:
             image = images.open(url, mode='pillow')
-            url = ImageReader(image)
+            if image.mode not in ('RGBA', 'L', 'RGB', 'CYMYK'):
+                # convert to format that reportlab can recognize
+                image = image.convert('RGBA')
 
             y = self.size[1] - box[3]
-            self.canvas.drawImage(url, box.x1, y, box.width, box.height,
+            data = ImageReader(image)
+            self.canvas.drawImage(data, box.x1, y, box.width, box.height,
                                   mask='auto', preserveAspectRatio=True)
         except IOError:
             pass

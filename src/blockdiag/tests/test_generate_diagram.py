@@ -25,7 +25,8 @@ def get_fontpath(testdir=None):
 def get_diagram_files(testdir):
     diagramsdir = os.path.join(testdir, 'diagrams')
 
-    skipped = ['errors', 'white.gif']
+    skipped = ['README', 'debian-logo-256color-palettealpha.png',
+               'errors', 'white.gif']
     for file in os.listdir(diagramsdir):
         if file in skipped:
             pass

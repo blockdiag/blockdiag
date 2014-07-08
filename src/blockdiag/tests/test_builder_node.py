@@ -63,11 +63,13 @@ class TestBuilderNode(BuilderTestCase):
     def test_node_attribute(self):
         labels = {'A': 'B', 'B': 'double quoted', 'C': 'single quoted',
                   'D': '\'"double" quoted\'', 'E': '"\'single\' quoted"',
-                  'F': 'F', 'G': 'G', 'H': 'H', 'I': 'I', 'J': 'Hello'}
+                  'F': 'F', 'G': 'G', 'H': 'H', 'I': 'I',
+                  'J': 'Hello', 'K': 'K'}
         colors = {'A': (255, 0, 0), 'B': (255, 255, 255), 'C': (255, 0, 0),
                   'D': (255, 0, 0), 'E': (255, 0, 0), 'F': (255, 255, 255),
                   'G': (255, 255, 255), 'H': (255, 255, 255),
-                  'I': (255, 255, 255), 'J': (255, 255, 255)}
+                  'I': (255, 255, 255), 'J': (255, 255, 255),
+                  'K': (255, 255, 255)}
         textcolors = defaultdict(lambda: (0, 0, 0))
         textcolors['F'] = (255, 0, 0)
         linecolors = defaultdict(lambda: (0, 0, 0))
@@ -80,6 +82,9 @@ class TestBuilderNode(BuilderTestCase):
         fontsize['H'] = 16
         orientations = defaultdict(lambda: 'horizontal')
         orientations['J'] = 'vertical'
+        backgrounds = defaultdict(lambda: None)
+        backgrounds['K'] = ('src/blockdiag/tests/diagrams/'
+                            'debian-logo-256color-palettealpha.png')
 
         diagram = self.build('node_attribute.diag')
         self.assertNodeLabel(diagram, labels)
@@ -90,6 +95,7 @@ class TestBuilderNode(BuilderTestCase):
         self.assertNodeStacked(diagram, stacked)
         self.assertNodeFontsize(diagram, fontsize)
         self.assertNodeLabel_Orientation(diagram, orientations)
+        self.assertNodeBackground(diagram, backgrounds)
 
     def test_node_height_diagram(self):
         diagram = self.build('node_height.diag')
