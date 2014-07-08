@@ -6,7 +6,7 @@ include LICENSE
 include blockdiag.1
 include tox.ini
 recursive-include examples blockdiagrc *.diag *.png *.svg
-recursive-include src *.py *.diag *.gif
+recursive-include src README *.py *.diag *.gif *.png
 
 exclude .drone.io.sh
 exclude examples/update.sh
