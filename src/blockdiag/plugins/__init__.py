@@ -16,6 +16,7 @@
 from pkg_resources import iter_entry_points
 
 node_handlers = []
+general_handlers = {}
 
 
 def load(plugins, diagram, **kwargs):
@@ -30,23 +31,39 @@ def load(plugins, diagram, **kwargs):
             raise AttributeError(msg)
 
 
+def install_general_handler(name, handler):
+    if name not in general_handlers:
+        general_handlers[name] = []
+
+    general_handlers[name].append(handler)
+
+
+def fire_general_event(name, *args):
+    handlers = general_handlers.get(name, [])
+    return all(handler(*args) for handler in handlers)
+
+
 def install_node_handler(handler):
     if handler not in node_handlers:
         node_handlers.append(handler)
 
 
 def fire_node_event(node, name, *args):
-    method = "on_" + name
-    for handler in node_handlers:
-        getattr(handler, method)(node, *args)
+    return all(handler.fire(name, node, *args) for handler in node_handlers)
 
 
 class NodeHandler(object):
     def __init__(self, diagram, **kwargs):
         self.diagram = diagram
 
+    def fire(self, name, *args):
+        return getattr(self, "on_" + name)(*args)
+
     def on_created(self, node):
-        pass
+        return True
+
+    def on_attr_changing(self, node, attr):
+        return True
 
     def on_attr_changed(self, node, attr):
-        pass
+        return True

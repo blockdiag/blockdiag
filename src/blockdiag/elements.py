@@ -187,8 +187,9 @@ class DiagramNode(Element):
         plugins.fire_node_event(self, 'created')
 
     def set_attribute(self, attr):
-        super(DiagramNode, self).set_attribute(attr)
-        plugins.fire_node_event(self, 'attr_changed', attr)
+        if plugins.fire_node_event(self, 'attr_changing', attr):
+            super(DiagramNode, self).set_attribute(attr)
+            plugins.fire_node_event(self, 'attr_changed', attr)
 
     def set_linecolor(self, color):
         self.linecolor = images.color_to_rgb(color)

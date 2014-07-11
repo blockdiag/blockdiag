@@ -19,6 +19,7 @@ import sys
 import codecs
 from optparse import OptionParser, SUPPRESS_HELP
 from blockdiag import imagedraw
+from blockdiag import plugins
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.logging import warning, error
@@ -47,6 +48,8 @@ class Application(object):
             else:
                 error("%s" % e)
             return -1
+        finally:
+            plugins.fire_general_event('cleanup')
 
     def parse_options(self, args):
         self.options = Options(self.module).parse(args)

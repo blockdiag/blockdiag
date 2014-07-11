@@ -20,7 +20,7 @@ from blockdiag import plugins
 class AutoClass(plugins.NodeHandler):
     def on_created(self, node):
         if node.id is None:
-            return
+            return True
 
         for name, klass in self.diagram.classes.items():
             pattern = "_%s$" % re.escape(name)
@@ -28,6 +28,8 @@ class AutoClass(plugins.NodeHandler):
             if re.search(pattern, node.id):
                 node.label = re.sub(pattern, '', node.id)
                 node.set_attributes(klass.attrs)
+
+        return True
 
 
 def setup(self, diagram, **kwargs):
