@@ -22,7 +22,7 @@ try:
 except ImportError:
     pass
 from functools import partial, wraps
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import PILLOW_VERSION, Image, ImageDraw, ImageFont, ImageFilter
 from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import cached
 from blockdiag.imagedraw.utils.ellipse import dots as ellipse_dots
@@ -282,8 +282,8 @@ class ImageDrawExBase(base.ImageDraw):
         else:
             size = ttfont.getsize(string)
 
-            # Avoid offset problem in Pillow (>= 2.2.0)
-            if hasattr(ttfont, 'getoffset'):
+            # Avoid offset problem in Pillow (>= 2.2.0, < 2.6.0)
+            if "2.2.0" <= PILLOW_VERSION < "2.6.0":
                 offset = ttfont.getoffset(string)
                 size = (size[0] + offset[0], size[1] + offset[1])
 
