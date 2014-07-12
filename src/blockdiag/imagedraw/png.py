@@ -382,7 +382,14 @@ class ImageDrawExBase(base.ImageDraw):
             else:
                 y = box[1]
 
-            self.paste(image, (x, y))
+            if image.mode == 'P':
+                # convert P to RGBA to masking transparent pixels
+                image = image.convert('RGBA')
+
+            if image.mode == 'RGBA':
+                self.paste(image, (x, y), mask=image)
+            else:
+                self.paste(image, (x, y))
         except IOError:
             pass
 
