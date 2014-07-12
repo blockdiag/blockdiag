@@ -94,7 +94,9 @@ def pillow_open(url, stream):
 
 
 def open(url, mode='Pillow'):
-    if not urlutil.isurl(url):
+    if hasattr(url, 'read'):
+        stream = url
+    elif not urlutil.isurl(url):
         stream = io.open(url, 'rb')
     else:
         try:

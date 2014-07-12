@@ -15,7 +15,7 @@
 
 import os
 import re
-import base64
+from base64 import b64encode
 from blockdiag.imagedraw import base as _base
 from blockdiag.imagedraw.simplesvg import (
     svg, svgclass, filter, title, desc, defs, g, a, text,
@@ -231,17 +231,20 @@ class SVGImageDrawElement(_base.ImageDraw):
         self.svg.addElement(pg)
 
     def image(self, box, url):
-        ext = os.path.splitext(url)[1].lower()
-        if ext not in ('.jpg', '.png', '.gif'):
-            stream = None
-            try:
-                stream = images.open(url, mode='png')
-                url = "data:;base64," + str(base64.b64encode(stream.read()))
-            except IOError:
-                pass
-            finally:
-                if stream:
-                    stream.close()
+        if hasattr(url, 'read'):
+            url = "data:;base64," + str(b64encode(url.read()))
+        else:
+            ext = os.path.splitext(url)[1].lower()
+            if ext not in ('.jpg', '.png', '.gif'):
+                stream = None
+                try:
+                    stream = images.open(url, mode='png')
+                    url = "data:;base64," + str(b64encode(stream.read()))
+                except IOError:
+                    pass
+                finally:
+                    if stream:
+                        stream.close()
 
         im = image(url, box.x1, box.y1, box.width, box.height)
         self.svg.addElement(im)
