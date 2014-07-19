@@ -27,7 +27,7 @@ def init_imagedrawers(debug=False):
                 module.setup(module)
         except Exception as exc:
             if debug:
-                warning('Failed to load %s: %r' % (module.__name__, exc))
+                warning('Failed to load %s: %r' % (drawer.module_name, exc))
 
 
 def install_imagedrawer(ext, drawer):
