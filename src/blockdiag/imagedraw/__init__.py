@@ -14,18 +14,20 @@
 #  limitations under the License.
 
 import pkg_resources
+from blockdiag.utils.logging import warning
 
 drawers = {}
 
 
-def init_imagedrawers():
+def init_imagedrawers(debug=False):
     for drawer in pkg_resources.iter_entry_points('blockdiag_imagedrawers'):
         try:
             module = drawer.load()
             if hasattr(module, 'setup'):
                 module.setup(module)
-        except:
-            pass
+        except Exception as exc:
+            if debug:
+                warning('Failed to load %s: %r' % (module.__name__, exc))
 
 
 def install_imagedrawer(ext, drawer):
@@ -34,7 +36,7 @@ def install_imagedrawer(ext, drawer):
 
 def create(_format, filename, **kwargs):
     if len(drawers) == 0:
-        init_imagedrawers()
+        init_imagedrawers(debug=kwargs.get('debug'))
 
     _format = _format.lower()
     if _format in drawers:
