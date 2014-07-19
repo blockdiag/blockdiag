@@ -17,6 +17,7 @@ import os
 import re
 import sys
 import codecs
+import traceback
 from optparse import OptionParser, SUPPRESS_HELP
 from blockdiag import imagedraw
 from blockdiag import plugins
@@ -43,7 +44,6 @@ class Application(object):
             return -1
         except Exception as e:
             if self.options and self.options.debug:
-                import traceback
                 traceback.print_exc()
             else:
                 error("%s" % e)
@@ -147,7 +147,7 @@ class Options(object):
 
         self.options.type = self.options.type.upper()
         try:
-            imagedraw.create(self.options.type, None)
+            imagedraw.create(self.options.type, None, debug=self.options.debug)
         except:
             msg = "unknown format: %s" % self.options.type
             raise RuntimeError(msg)
