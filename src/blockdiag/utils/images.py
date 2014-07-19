@@ -85,7 +85,10 @@ def wand_open(url, stream):
 
 def pillow_open(url, stream):
     try:
-        return Image.open(stream)
+        if isinstance(url, Image.Image):
+            return url
+        else:
+            return Image.open(stream)
     except IOError:
         stream.seek(0)
         png_stream = wand_open(url, stream)
@@ -94,7 +97,7 @@ def pillow_open(url, stream):
 
 
 def open(url, mode='Pillow'):
-    if hasattr(url, 'read'):
+    if hasattr(url, 'read') or isinstance(url, Image.Image):
         stream = url
     elif not urlutil.isurl(url):
         stream = io.open(url, 'rb')
