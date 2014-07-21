@@ -24,7 +24,7 @@ except ImportError:
 from functools import partial, wraps
 from PIL import PILLOW_VERSION, Image, ImageDraw, ImageFont, ImageFilter
 from blockdiag.imagedraw import base
-from blockdiag.imagedraw.utils import cached
+from blockdiag.imagedraw.utils import memoize
 from blockdiag.imagedraw.utils.ellipse import dots as ellipse_dots
 from blockdiag.utils import images, Box, Size, XY
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
@@ -270,7 +270,7 @@ class ImageDrawExBase(base.ImageDraw):
         textfolder = super(ImageDrawExBase, self).textfolder
         return partial(textfolder, scale=self.scale_ratio)
 
-    @cached
+    @memoize
     def textlinesize(self, string, font):
         ttfont = ttfont_for(font)
         if ttfont is None:
