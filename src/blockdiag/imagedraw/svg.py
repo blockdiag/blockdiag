@@ -21,7 +21,7 @@ from blockdiag.imagedraw.simplesvg import (
     svg, svgclass, filter, title, desc, defs, g, a, text,
     rect, polygon, ellipse, path, pathdata, image
 )
-from blockdiag.imagedraw.utils import cached
+from blockdiag.imagedraw.utils import memoize
 from blockdiag.imagedraw.utils.ellipse import endpoints as ellipse_endpoints
 from blockdiag.utils import images, Box, XY, is_Pillow_available
 
@@ -104,7 +104,7 @@ class SVGImageDrawElement(_base.ImageDraw):
                  stroke_width=thick, **drawing_params(kwargs))
         self.svg.addElement(r)
 
-    @cached
+    @memoize
     def textlinesize(self, string, font, **kwargs):
         if is_Pillow_available():
             if not hasattr(self, '_pil_drawer'):
