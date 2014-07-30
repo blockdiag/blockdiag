@@ -122,15 +122,25 @@ Apache License 2.0
 History
 =======
 
+1.4.3 (2014-07-30)
+------------------
+* Show warnings on loading imagedrawers in debug mode
+* ImageDraw#image() accepts Image objects
+* Fix bugs
+
+  - PNG: could not load png imagedrawer if could not access PIL.PILLOW_VERSION
+
+
 1.4.2 (2014-07-12)
 ------------------
 * SVG: Adjust text alignment precisely
 * Add plugin events: node.changing and cleanup
 * ImageDraw#image() accepts image from IO objects
 * Fix bugs
-   - PDF: Fix failure text rotating
-   - PDF: Fix failure pasting PNG images (256 palette/transparency)
-   - PNG: Fix background of node was transparent on pasting transparent images
+
+  - PDF: Fix failure text rotating
+  - PDF: Fix failure pasting PNG images (256 palette/transparency)
+  - PNG: Fix background of node was transparent on pasting transparent images
 
 1.4.1 (2014-07-02)
 ------------------
@@ -142,14 +152,16 @@ History
 * Support embedding SVG/EPS images as background
 * Use wand to paste background images that is not supported by Pillow (if installed)
 * Add options to blockdiag directive (docutils extension)
-   - \:width:
-   - \:height:
-   - \:scale:
-   - \:align:
-   - \:name:
-   - \:class:
-   - \:figwidth:
-   - \:figclass:
+
+  - \:width:
+  - \:height:
+  - \:scale:
+  - \:align:
+  - \:name:
+  - \:class:
+  - \:figwidth:
+  - \:figclass:
+
 * actor shape supports label rendering
 
 1.3.3 (2014-04-26)
