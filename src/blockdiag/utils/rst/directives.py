@@ -168,9 +168,12 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         self.add_name(results[0])
 
         if node.get('caption'):
+            elem = nodes.Element()
+            self.state.nested_parse(ViewList([node['caption']], source=''),
+                                    0, elem)
             fig = nodes.figure()
             fig += results[0]
-            fig += nodes.caption(text=node['caption'])
+            fig += nodes.caption(node['caption'], '', *elem)
 
             if figwidth == 'image':
                 width = self.get_actual_width(node, diagram)

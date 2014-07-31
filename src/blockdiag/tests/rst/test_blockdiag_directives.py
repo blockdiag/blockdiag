@@ -334,8 +334,31 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.image, type(doctree[0][0]))
         self.assertEqual(nodes.caption, type(doctree[0][1]))
         self.assertEqual(1, len(doctree[0][1]))
-        self.assertEqual(nodes.Text, type(doctree[0][1][0]))
-        self.assertEqual('hello world', doctree[0][1][0])
+        self.assertEqual(nodes.paragraph, type(doctree[0][1][0]))
+        self.assertEqual(nodes.Text, type(doctree[0][1][0][0]))
+        self.assertEqual('hello world', doctree[0][1][0][0])
+
+    def test_caption_option2(self):
+        directives.setup(format='SVG', outputdir=self.tmpdir)
+        text = (".. blockdiag::\n"
+                "   :caption: **hello** *world*\n"
+                "\n"
+                "   A -> B")
+        doctree = publish_doctree(text)
+        self.assertEqual(1, len(doctree))
+        self.assertEqual(nodes.figure, type(doctree[0]))
+        self.assertEqual(2, len(doctree[0]))
+        self.assertEqual(nodes.image, type(doctree[0][0]))
+        self.assertEqual(nodes.caption, type(doctree[0][1]))
+        self.assertEqual(1, len(doctree[0][1]))
+        self.assertEqual(nodes.paragraph, type(doctree[0][1][0]))
+        self.assertEqual(3, len(doctree[0][1][0]))
+        self.assertEqual(nodes.strong, type(doctree[0][1][0][0]))
+        self.assertEqual('hello', doctree[0][1][0][0][0])
+        self.assertEqual(nodes.Text, type(doctree[0][1][0][1]))
+        self.assertEqual(' ', doctree[0][1][0][1][0])
+        self.assertEqual(nodes.emphasis, type(doctree[0][1][0][2]))
+        self.assertEqual('world', doctree[0][1][0][2][0])
 
     def test_caption_option_and_align_option(self):
         directives.setup(format='SVG', outputdir=self.tmpdir)
@@ -353,8 +376,9 @@ class TestRstDirectives(unittest.TestCase):
         self.assertNotIn('align', doctree[0][0])
         self.assertEqual(nodes.caption, type(doctree[0][1]))
         self.assertEqual(1, len(doctree[0][1]))
-        self.assertEqual(nodes.Text, type(doctree[0][1][0]))
-        self.assertEqual('hello world', doctree[0][1][0])
+        self.assertEqual(nodes.paragraph, type(doctree[0][1][0]))
+        self.assertEqual(nodes.Text, type(doctree[0][1][0][0]))
+        self.assertEqual('hello world', doctree[0][1][0][0])
 
     @capture_stderr
     def test_maxwidth_option(self):
