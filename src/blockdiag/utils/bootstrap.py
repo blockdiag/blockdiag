@@ -16,11 +16,11 @@
 import os
 import re
 import sys
-import codecs
 import traceback
 from optparse import OptionParser, SUPPRESS_HELP
 from blockdiag import imagedraw
 from blockdiag import plugins
+from blockdiag.utils.compat import codecs
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.logging import warning, error
