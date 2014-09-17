@@ -100,6 +100,26 @@ def not_exist_font_config_option_test():
         detectfont(options)
 
 
+def stdin_test():
+    testdir = os.path.dirname(__file__)
+    diagpath = os.path.join(testdir, 'diagrams', 'single_edge.diag')
+
+    try:
+        stdin = sys.stdin
+        sys.stdin = open(diagpath, 'r')
+
+        tmpdir = TemporaryDirectory()
+        fd, tmpfile = tmpdir.mkstemp()
+        os.close(fd)
+
+        args = ['-T', 'SVG', '-o', tmpfile, '-']
+        ret = blockdiag.command.main(args)
+        assert ret == 0
+    finally:
+        sys.stdin = stdin
+        tmpdir.clean()
+
+
 @capture_stderr
 def svg_includes_source_code_tag_test():
     from xml.etree import ElementTree

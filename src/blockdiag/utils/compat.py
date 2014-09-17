@@ -30,6 +30,17 @@ def u(string):
         return string
 
 
+# replace codecs.getreader
+import codecs
+if sys.version_info[0] == 3:
+    getreader = codecs.getreader
+
+    def py3_getreader(encoding):
+        return lambda stream, *args: getreader(encoding)(stream.buffer, *args)
+
+    codecs.getreader = py3_getreader
+
+
 def cmp_to_key(mycmp):
     """Convert a cmp= function into a key= function"""
     class K(object):
