@@ -1,12 +1,12 @@
 include buildout.cfg
 include bootstrap.py
+include CHANGES.rst
 include MANIFEST.in
-include README.rst
 include LICENSE
 include blockdiag.1
 include tox.ini
 recursive-include examples blockdiagrc *.diag *.png *.svg
-recursive-include src README *.py *.diag *.gif *.png
+recursive-include src *.py *.diag *.gif *.png
 
 exclude .drone.io.sh
 exclude examples/update.sh
