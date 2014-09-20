@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.4.4 (2014-09-20)
+------------------
+* :caption: option of blockdiag directive recognizes inline markups
+* Fix bugs
+
+  - Fix #58 failed to handle diagram definitions from stdin in py3
+
 1.4.3 (2014-07-30)
 ------------------
 * Show warnings on loading imagedrawers in debug mode
