@@ -68,3 +68,6 @@ class NodeHandler(object):
 
     def on_attr_changed(self, node, attr):
         return True
+
+    def on_build_finished(self, node):
+        return True
