@@ -20,7 +20,8 @@ from blockdiag.utils.compat import cmp_to_key
 
 
 class DiagramTreeBuilder:
-    def build(self, tree):
+    def build(self, tree, config):
+        self.config = config
         self.diagram = Diagram()
         self.instantiate(self.diagram, tree)
         for subgroup in self.diagram.traverse_groups():
@@ -111,7 +112,8 @@ class DiagramTreeBuilder:
                     name = unquote(stmt.name)
                     Diagram.classes[name] = stmt
                 elif stmt.type == 'plugin':
-                    self.diagram.set_plugin(stmt.name, stmt.attrs)
+                    self.diagram.set_plugin(stmt.name, stmt.attrs,
+                                            config=self.config)
 
             elif isinstance(stmt, parser.Statements):
                 self.instantiate(group, stmt)
@@ -595,16 +597,17 @@ class EdgeLayoutManager(object):
 
 class ScreenNodeBuilder:
     @classmethod
-    def build(cls, tree, layout=True):
+    def build(cls, tree, config=None, layout=True):
         DiagramNode.clear()
         DiagramEdge.clear()
         NodeGroup.clear()
         Diagram.clear()
 
-        return cls(tree, layout).run()
+        return cls(tree, config, layout).run()
 
-    def __init__(self, tree, layout):
-        self.diagram = DiagramTreeBuilder().build(tree)
+    def __init__(self, tree, config, layout):
+        self.diagram = DiagramTreeBuilder().build(tree, config)
+        self.config = config
         self.layout = layout
 
     def run(self):
