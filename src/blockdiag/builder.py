@@ -15,6 +15,7 @@
 
 from blockdiag import parser
 from blockdiag.elements import Diagram, DiagramNode, NodeGroup, DiagramEdge
+from blockdiag.plugins import fire_node_event
 from blockdiag.utils import unquote, XY
 from blockdiag.utils.compat import cmp_to_key
 
@@ -29,7 +30,13 @@ class DiagramTreeBuilder:
                 subgroup.group.nodes.remove(subgroup)
 
         self.bind_edges(self.diagram)
+        self.fire_node_event('build_finished')
         return self.diagram
+
+    def fire_node_event(self, event_type):
+        for node in self.diagram.nodes:
+            if node.drawable:
+                fire_node_event(node, event_type)
 
     def is_related_group(self, group1, group2):
         if group1.is_parent(group2) or group2.is_parent(group1):
