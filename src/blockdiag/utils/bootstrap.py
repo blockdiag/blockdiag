@@ -68,10 +68,13 @@ class Application(object):
         return self.module.parser.parse_string(self.code)
 
     def build_diagram(self, tree):
+        ScreenNodeBuilder = self.module.builder.ScreenNodeBuilder
+        try:
+            diagram = ScreenNodeBuilder.build(tree, self.options)
+        except:
+            diagram = ScreenNodeBuilder.build(tree)  # old interface
+
         DiagramDraw = self.module.drawer.DiagramDraw
-
-        diagram = self.module.builder.ScreenNodeBuilder.build(tree)
-
         drawer = DiagramDraw(self.options.type, diagram,
                              self.options.output, fontmap=self.fontmap,
                              code=self.code, antialias=self.options.antialias,

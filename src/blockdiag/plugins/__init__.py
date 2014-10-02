@@ -55,6 +55,7 @@ def fire_node_event(node, name, *args):
 class NodeHandler(object):
     def __init__(self, diagram, **kwargs):
         self.diagram = diagram
+        self.config = kwargs.get('config')
 
     def fire(self, name, *args):
         return getattr(self, "on_" + name)(*args)
