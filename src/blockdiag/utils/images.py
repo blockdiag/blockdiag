@@ -39,7 +39,13 @@ def urlopen(url, *args, **kwargs):
 
 
 def get_image_size(filename):
-    return open(filename).size
+    image = None
+    try:
+        image = open(filename)
+        return image.size
+    finally:
+        if image:
+            image.close()
 
 
 def calc_image_size(size, bounded):
