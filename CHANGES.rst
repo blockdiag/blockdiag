@@ -1,6 +1,14 @@
 Changelog
 =========
 
+1.4.5 (2014-10-04)
+------------------
+* Add node event: build_finished
+* Take config object to plugins
+* Fix bugs
+
+  - Fix utils.images.get_image_size() does not close an image descriptor
+
 1.4.4 (2014-09-20)
 ------------------
 * :caption: option of blockdiag directive recognizes inline markups
