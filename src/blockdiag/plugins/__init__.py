@@ -14,15 +14,22 @@
 #  limitations under the License.
 
 from pkg_resources import iter_entry_points
+from blockdiag.utils.logging import warning
 
+loaded_plugins = []
 node_handlers = []
 general_handlers = {}
 
 
 def load(plugins, diagram, **kwargs):
     for name in plugins:
+        if name in loaded_plugins:
+            warning('plugin "%s" is already loaded. ignored.', name)
+            return
+
         for ep in iter_entry_points('blockdiag_plugins', name):
             module = ep.load()
+            loaded_plugins.append(name)
             if hasattr(module, 'setup'):
                 module.setup(module, diagram, **kwargs)
             break
