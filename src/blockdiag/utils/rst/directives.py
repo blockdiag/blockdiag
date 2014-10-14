@@ -170,10 +170,15 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         if node.get('caption'):
             elem = nodes.Element()
             self.state.nested_parse(ViewList([node['caption']], source=''),
-                                    0, elem)
+                                    self.content_offset, elem)
+            caption_node = nodes.caption(elem[0].rawsource, '',
+                                         *elem[0].children)
+            caption_node.source = elem[0].source
+            caption_node.line = elem[0].line
+
             fig = nodes.figure()
             fig += results[0]
-            fig += nodes.caption(node['caption'], '', *elem)
+            fig += caption_node
 
             if figwidth == 'image':
                 width = self.get_actual_width(node, diagram)
