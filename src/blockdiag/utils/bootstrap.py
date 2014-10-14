@@ -50,6 +50,7 @@ class Application(object):
             return -1
         finally:
             plugins.fire_general_event('cleanup')
+            plugins.unload_all()
 
     def parse_options(self, args):
         self.options = Options(self.module).parse(args)

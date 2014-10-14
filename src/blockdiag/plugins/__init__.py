@@ -38,6 +38,14 @@ def load(plugins, diagram, **kwargs):
             raise AttributeError(msg)
 
 
+def unload_all():
+    for name in general_handlers:
+        del general_handlers[name]
+
+    for handler in node_handlers:
+        node_handlers.remove(handler)
+
+
 def install_general_handler(name, handler):
     if name not in general_handlers:
         general_handlers[name] = []
