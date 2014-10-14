@@ -1,6 +1,14 @@
 Changelog
 =========
 
+1.4.6 (2014-10-14)
+------------------
+* Show warnings on loading plugin multiple times
+* Unload all plugins on shutdown
+* Fix bugs
+
+  - Fix caption is wrapped by paragraph node in reST parser
+
 1.4.5 (2014-10-04)
 ------------------
 * Add node event: build_finished
