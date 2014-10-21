@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.4.7 (2014-10-21)
+------------------
+* Fix bugs
+
+  - Fix RuntimeError on unloading plugins
+
 1.4.6 (2014-10-14)
 ------------------
 * Show warnings on loading plugin multiple times
