@@ -39,10 +39,10 @@ def load(plugins, diagram, **kwargs):
 
 
 def unload_all():
-    for name in general_handlers:
+    for name in general_handlers.keys():
         del general_handlers[name]
 
-    for handler in node_handlers:
+    for handler in node_handlers[:]:
         node_handlers.remove(handler)
 
 
