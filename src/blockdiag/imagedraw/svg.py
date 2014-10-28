@@ -15,6 +15,7 @@
 
 import os
 import re
+from PIL.Image import Image
 from base64 import b64encode
 from blockdiag.imagedraw import base as _base
 from blockdiag.imagedraw.simplesvg import (
@@ -234,7 +235,11 @@ class SVGImageDrawElement(_base.ImageDraw):
         if hasattr(url, 'read'):
             url = "data:;base64," + str(b64encode(url.read()))
         else:
-            ext = os.path.splitext(url)[1].lower()
+            if isinstance(url, Image):
+                ext = None
+            else:
+                ext = os.path.splitext(url)[1].lower()
+
             if ext not in ('.jpg', '.png', '.gif'):
                 stream = None
                 try:
