@@ -38,14 +38,17 @@ def urlopen(url, *args, **kwargs):
     return io.open(urlopen_cache[url].name, 'rb')
 
 
-def get_image_size(filename):
-    image = None
-    try:
-        image = open(filename)
+def get_image_size(image):
+    if isinstance(image, Image.Image):
         return image.size
-    finally:
-        if image:
-            image.close()
+    else:
+        stream = None
+        try:
+            stream = open(image)
+            return stream.size
+        finally:
+            if stream:
+                stream.close()
 
 
 def calc_image_size(size, bounded):
