@@ -124,14 +124,15 @@ class TestBootParams(unittest.TestCase):
 
     def test_exist_font_config_option(self):
         try:
-            tmp = tempfile.mkstemp()
+            fd, path = tempfile.mkstemp()
+            os.close(fd)
 
-            options = self.parser.parse(['-f', tmp[1], 'input.diag'])
-            self.assertEqual(options.font, [tmp[1]])
+            options = self.parser.parse(['-f', path, 'input.diag'])
+            self.assertEqual(options.font, [path])
             fontpath = detectfont(options)
-            self.assertEqual(fontpath, tmp[1])
+            self.assertEqual(fontpath, path)
         finally:
-            os.unlink(tmp[1])
+            os.unlink(path)
 
     def test_not_exist_font_config_option(self):
         with self.assertRaises(RuntimeError):
