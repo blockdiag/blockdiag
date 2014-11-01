@@ -132,9 +132,13 @@ def open(url, mode='Pillow'):
         # stream will be closed by GC
         return image
     else:  # mode == 'png'
-        png_image = io.BytesIO()
-        image.save(png_image, 'PNG')
-        stream.close()
+        try:
+            png_image = io.BytesIO()
+            image.save(png_image, 'PNG')
+            stream.close()
+        except:
+            warning(u("Could not convert image: %s"), url)
+            raise IOError
 
         png_image.seek(0)
         return png_image
