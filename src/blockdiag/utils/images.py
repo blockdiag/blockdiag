@@ -15,6 +15,7 @@
 
 from __future__ import division
 import io
+import os
 import re
 from PIL import Image
 from tempfile import NamedTemporaryFile
@@ -30,12 +31,20 @@ def urlopen(url, *args, **kwargs):
     from blockdiag.utils.compat import urlopen as orig_urlopen
 
     if url not in urlopen_cache:
-        tmpfile = NamedTemporaryFile()
-        tmpfile.write(orig_urlopen(url, *args, **kwargs).read())
-        tmpfile.flush()
-        urlopen_cache[url] = tmpfile
+        with NamedTemporaryFile(delete=False) as tmpfile:
+            tmpfile.write(orig_urlopen(url, *args, **kwargs).read())
+            tmpfile.flush()
+            urlopen_cache[url] = tmpfile.name
 
-    return io.open(urlopen_cache[url].name, 'rb')
+    return io.open(urlopen_cache[url], 'rb')
+
+
+def cleanup_urlopen_cache():
+    for path in urlopen_cache:
+        try:
+            os.remove(path)
+        except:
+            pass
 
 
 def get_image_size(image):

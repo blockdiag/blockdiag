@@ -20,6 +20,7 @@ import traceback
 from optparse import OptionParser, SUPPRESS_HELP
 from blockdiag import imagedraw
 from blockdiag import plugins
+from blockdiag.utils import images
 from blockdiag.utils.compat import codecs
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import parse_fontpath, FontMap
@@ -49,6 +50,7 @@ class Application(object):
                 error("%s" % e)
             return -1
         finally:
+            images.cleanup_urlopen_cache()
             plugins.fire_general_event('cleanup')
             plugins.unload_all()
 
