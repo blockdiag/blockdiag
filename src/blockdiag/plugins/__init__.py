@@ -38,14 +38,6 @@ def load(plugins, diagram, **kwargs):
             raise AttributeError(msg)
 
 
-def unload_all():
-    for name in general_handlers.keys():
-        del general_handlers[name]
-
-    for handler in node_handlers[:]:
-        node_handlers.remove(handler)
-
-
 def install_general_handler(name, handler):
     if name not in general_handlers:
         general_handlers[name] = []
@@ -86,3 +78,17 @@ class NodeHandler(object):
 
     def on_build_finished(self, node):
         return True
+
+
+def cleanup():
+    fire_general_event('cleanup')
+
+    for name in general_handlers.keys():
+        del general_handlers[name]
+
+    for handler in node_handlers[:]:
+        node_handlers.remove(handler)
+
+
+def setup(app):
+    app.register_cleanup_handler(cleanup)
