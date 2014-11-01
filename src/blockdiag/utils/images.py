@@ -39,14 +39,6 @@ def urlopen(url, *args, **kwargs):
     return io.open(urlopen_cache[url], 'rb')
 
 
-def cleanup_urlopen_cache():
-    for path in urlopen_cache:
-        try:
-            os.remove(path)
-        except:
-            pass
-
-
 def get_image_size(image):
     if isinstance(image, Image.Image):
         return image.size
@@ -142,3 +134,16 @@ def open(url, mode='Pillow'):
 
         png_image.seek(0)
         return png_image
+
+
+def cleanup():
+    for url, path in urlopen_cache.items():
+        del urlopen_cache[url]
+        try:
+            os.remove(path)
+        except:
+            pass
+
+
+def setup(app):
+    app.register_cleanup_handler(cleanup)

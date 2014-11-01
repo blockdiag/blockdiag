@@ -31,10 +31,17 @@ class Application(object):
     module = None
     options = None
 
+    def __init__(self):
+        self.cleanup_handlers = []
+
+    def register_cleanup_handler(self, handler):
+        self.cleanup_handlers.append(handler)
+
     def run(self, args):
         try:
             self.parse_options(args)
             self.create_fontmap()
+            self.setup()
 
             parsed = self.parse_diagram()
             return self.build_diagram(parsed)
@@ -50,15 +57,17 @@ class Application(object):
                 error("%s" % e)
             return -1
         finally:
-            images.cleanup_urlopen_cache()
-            plugins.fire_general_event('cleanup')
-            plugins.unload_all()
+            self.cleanup()
 
     def parse_options(self, args):
         self.options = Options(self.module).parse(args)
 
     def create_fontmap(self):
         self.fontmap = create_fontmap(self.options)
+
+    def setup(self):
+        images.setup(self)
+        plugins.setup(self)
 
     def parse_diagram(self):
         if self.options.input == '-':
@@ -91,6 +100,15 @@ class Application(object):
             drawer.save()
 
         return 0
+
+    def cleanup(self):
+        for handler in self.cleanup_handlers[:]:
+            try:
+                handler()
+            except Exception as exc:
+                error("%s" % exc)
+            finally:
+                self.cleanup_handlers.remove(handler)
 
 
 class Options(object):
