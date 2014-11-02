@@ -83,7 +83,7 @@ class NodeHandler(object):
 def cleanup():
     fire_general_event('cleanup')
 
-    for name in general_handlers.keys():
+    for name in list(general_handlers.keys()):
         del general_handlers[name]
 
     for handler in node_handlers[:]:

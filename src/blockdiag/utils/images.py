@@ -137,8 +137,8 @@ def open(url, mode='Pillow'):
 
 
 def cleanup():
-    for url, path in urlopen_cache.items():
-        del urlopen_cache[url]
+    for url in list(urlopen_cache.keys()):
+        path = urlopen_cache.pop(url)
         try:
             os.remove(path)
         except:
