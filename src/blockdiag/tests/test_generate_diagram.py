@@ -121,6 +121,27 @@ def stdin_test():
 
 
 @capture_stderr
+def ghostscript_not_found_test():
+    testdir = os.path.dirname(__file__)
+    diagpath = os.path.join(testdir, 'diagrams', 'background_url_image.diag')
+
+    try:
+        old_path = os.environ['PATH']
+        os.environ['PATH'] = ''
+        tmpdir = TemporaryDirectory()
+        fd, tmpfile = tmpdir.mkstemp()
+        os.close(fd)
+
+        args = ['-T', 'SVG', '-o', tmpfile, diagpath]
+        ret = blockdiag.command.main(args)
+        assert 'Could not convert image:' in sys.stderr.getvalue()
+        assert ret == 0
+    finally:
+        tmpdir.clean()
+        os.environ['PATH'] = old_path
+
+
+@capture_stderr
 def svg_includes_source_code_tag_test():
     from xml.etree import ElementTree
 
