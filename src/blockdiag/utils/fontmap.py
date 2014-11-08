@@ -50,10 +50,15 @@ class FontInfo(object):
         else:
             name = ''
 
-        if self.weight == 'bold':
-            return "%s%s-%s" % (name, self.generic_family, self.weight)
+        if self.generic_family == 'sans-serif':
+            generic_family = 'sansserif'
         else:
-            return "%s%s-%s" % (name, self.generic_family, self.style)
+            generic_family = self.generic_family
+
+        if self.weight == 'bold':
+            return "%s%s-%s" % (name, generic_family, self.weight)
+        else:
+            return "%s%s-%s" % (name, generic_family, self.style)
 
     def _parse(self, familyname):
         pattern = '^(?:(.*)-)?' + \
@@ -68,6 +73,9 @@ class FontInfo(object):
         name = match.group(1) or ''
         generic_family = match.group(2)
         style = match.group(3) or ''
+
+        if generic_family == 'sansserif':
+            generic_family = 'sans-serif'
 
         if style == 'bold':
             weight = 'bold'
