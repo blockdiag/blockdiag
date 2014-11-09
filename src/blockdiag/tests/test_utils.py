@@ -6,7 +6,7 @@ if sys.version_info < (2, 7):
 else:
     import unittest
 
-from blockdiag.utils import Size
+from blockdiag.utils import Size, unquote
 
 
 class TestUtils(unittest.TestCase):
@@ -38,3 +38,9 @@ class TestUtils(unittest.TestCase):
         size = Size(1.5, 2.5)
 
         self.assertEqual((1, 2), size.to_integer_point())
+
+    def test_unquote(self):
+        self.assertEqual('test', unquote('"test"'))
+        self.assertEqual('test', unquote("'test'"))
+        self.assertEqual("'half quoted", unquote("'half quoted"))
+        self.assertEqual('"half quoted', unquote('"half quoted'))
