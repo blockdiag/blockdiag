@@ -89,6 +89,9 @@ def cleanup():
     for handler in node_handlers[:]:
         node_handlers.remove(handler)
 
+    for plugin in loaded_plugins[:]:
+        loaded_plugins.remove(plugin)
+
 
 def setup(app):
     app.register_cleanup_handler(cleanup)
