@@ -16,13 +16,14 @@
 import os
 import io
 from hashlib import sha1
+from functools import wraps
 from collections import namedtuple
 from docutils import nodes
 from docutils.parsers import rst
 from docutils.parsers.rst.roles import set_classes
 from docutils.statemachine import ViewList
 
-from blockdiag.utils.bootstrap import create_fontmap
+from blockdiag.utils.bootstrap import create_fontmap, Application
 from blockdiag.utils.compat import string_types
 from blockdiag.utils.rst.nodes import blockdiag as blockdiag_node
 
@@ -44,6 +45,19 @@ def relfn2path(env, filename):
         relfn = os.path.join(os.path.dirname(path), filename)
 
     return relfn, os.path.join(env.srcdir, relfn)
+
+
+def with_blockdiag(fn):
+    @wraps(fn)
+    def decorator(*args):
+        try:
+            app = Application()
+            app.setup()
+            return fn(*args)
+        finally:
+            app.cleanup()
+
+    return decorator
 
 
 def align(argument):
@@ -379,10 +393,17 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         return table
 
 
+class BlockdiagDirectiveForDocutils(BlockdiagDirective):
+    @with_blockdiag
+    def run(self):
+        return super(BlockdiagDirectiveForDocutils, self).run()
+
+
 def setup(**kwargs):
     global directive_options, directive_options_default
 
     for key, value in directive_options_default.items():
         directive_options[key] = kwargs.get(key, value)
 
-    rst.directives.register_directive("blockdiag", BlockdiagDirective)
+    rst.directives.register_directive("blockdiag",
+                                      BlockdiagDirectiveForDocutils)
