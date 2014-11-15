@@ -35,7 +35,7 @@ class TestRstDirectives(unittest.TestCase):
         options = directives.directive_options
 
         self.assertIn('blockdiag', docutils._directives)
-        self.assertEqual(directives.BlockdiagDirective,
+        self.assertEqual(directives.BlockdiagDirectiveForDocutils,
                          docutils._directives['blockdiag'])
         self.assertEqual('PNG', options['format'])
         self.assertEqual(False, options['antialias'])
@@ -50,7 +50,7 @@ class TestRstDirectives(unittest.TestCase):
         options = directives.directive_options
 
         self.assertIn('blockdiag', docutils._directives)
-        self.assertEqual(directives.BlockdiagDirective,
+        self.assertEqual(directives.BlockdiagDirectiveForDocutils,
                          docutils._directives['blockdiag'])
         self.assertEqual('SVG', options['format'])
         self.assertEqual(True, options['antialias'])
@@ -58,6 +58,18 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(True, options['nodoctype'])
         self.assertEqual(True, options['noviewbox'])
         self.assertEqual(True, options['inline_svg'])
+
+    @capture_stderr
+    def test_cleanup(self):
+        directives.setup(format='SVG', outputdir=self.tmpdir, noviewbox=False)
+        text = (".. blockdiag::\n"
+                "\n"
+                "   plugin autoclass\n"
+                "   A -> B")
+        publish_doctree(text)
+
+        from blockdiag import plugins
+        self.assertEqual([], plugins.loaded_plugins)
 
     def test_setup_fontpath1(self):
         with self.assertRaises(RuntimeError):
