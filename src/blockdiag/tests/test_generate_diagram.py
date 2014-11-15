@@ -16,10 +16,12 @@ import blockdiag
 import blockdiag.command
 
 
-def get_fontpath(testdir=None):
-    if testdir is None:
-        testdir = os.path.dirname(__file__)
-    return os.path.join(testdir, 'truetype', 'VL-PGothic-Regular.ttf')
+TESTDIR = os.path.dirname(__file__)
+FONTPATH = os.path.join(TESTDIR, 'VLGothic', 'VL-Gothic-Regular.ttf')
+
+
+def get_fontpath(testdir):
+    return os.path.join(testdir, 'VLGothic', 'VL-Gothic-Regular.ttf')
 
 
 def get_diagram_files(testdir):
@@ -58,23 +60,29 @@ def test_generate_with_separate():
 @nottest
 def testcase_generator(basepath, mainfunc, files, options):
     fontpath = get_fontpath(basepath)
-    if os.path.exists(fontpath):
-        options = options + ['-f', fontpath]
+    options = options + ['-f', fontpath]
 
     for source in files:
         yield generate, mainfunc, 'svg', source, options
 
-        if supported_pil() and os.path.exists(fontpath):
+        if not supported_pil():
+            yield unittest.skip("Pillow is not available")(generate)
+            yield unittest.skip("Pillow is not available")(generate)
+        elif os.environ.get('ALL_TESTS') is None:
+            message = "Skipped by default. To enable it, specify $ALL_TESTS=1"
+            yield unittest.skip(message)(generate)
+            yield unittest.skip(message)(generate)
+        else:
             yield generate, mainfunc, 'png', source, options
             yield generate, mainfunc, 'png', source, options + ['--antialias']
-        else:
-            yield unittest.skip("Pillow is not available")(generate)
-            yield unittest.skip("Pillow is not available")(generate)
 
-        if supported_pdf() and os.path.exists(fontpath):
-            yield generate, mainfunc, 'pdf', source, options
-        else:
+        if not supported_pdf():
             yield unittest.skip("reportlab is not available")(generate)
+        elif os.environ.get('ALL_TESTS') is None:
+            message = "Skipped by default. To enable it, specify $ALL_TESTS=1"
+            yield unittest.skip(message)(generate)
+        else:
+            yield generate, mainfunc, 'pdf', source, options
 
 
 @capture_stderr
@@ -91,13 +99,11 @@ def generate(mainfunc, filetype, source, options):
 
 
 def not_exist_font_config_option_test():
-    fontpath = get_fontpath()
-    if os.path.exists(fontpath):
-        args = ['-f', '/font_is_not_exist', '-f', fontpath, 'input.diag']
-        options = blockdiag.command.BlockdiagOptions(blockdiag).parse(args)
+    args = ['-f', '/font_is_not_exist', '-f', FONTPATH, 'input.diag']
+    options = blockdiag.command.BlockdiagOptions(blockdiag).parse(args)
 
-        from blockdiag.utils.bootstrap import detectfont
-        detectfont(options)
+    from blockdiag.utils.bootstrap import detectfont
+    detectfont(options)
 
 
 def stdin_test():
