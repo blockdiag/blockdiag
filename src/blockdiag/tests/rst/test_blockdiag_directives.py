@@ -35,7 +35,7 @@ class TestRstDirectives(unittest.TestCase):
         options = directives.directive_options
 
         self.assertIn('blockdiag', docutils._directives)
-        self.assertEqual(directives.BlockdiagDirectiveForDocutils,
+        self.assertEqual(directives.BlockdiagDirective,
                          docutils._directives['blockdiag'])
         self.assertEqual('PNG', options['format'])
         self.assertEqual(False, options['antialias'])
@@ -50,7 +50,7 @@ class TestRstDirectives(unittest.TestCase):
         options = directives.directive_options
 
         self.assertIn('blockdiag', docutils._directives)
-        self.assertEqual(directives.BlockdiagDirectiveForDocutils,
+        self.assertEqual(directives.BlockdiagDirective,
                          docutils._directives['blockdiag'])
         self.assertEqual('SVG', options['format'])
         self.assertEqual(True, options['antialias'])
