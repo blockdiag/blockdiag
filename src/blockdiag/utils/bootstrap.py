@@ -34,6 +34,13 @@ class Application(object):
     def __init__(self):
         self.cleanup_handlers = []
 
+    def __enter__(self):
+        self.setup()
+        return self
+
+    def __exit__(self, *args):
+        self.cleanup()
+
     def register_cleanup_handler(self, handler):
         self.cleanup_handlers.append(handler)
 

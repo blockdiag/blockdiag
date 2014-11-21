@@ -50,12 +50,8 @@ def relfn2path(env, filename):
 def with_blockdiag(fn):
     @wraps(fn)
     def decorator(*args):
-        try:
-            app = Application()
-            app.setup()
+        with Application():
             return fn(*args)
-        finally:
-            app.cleanup()
 
     return decorator
 
