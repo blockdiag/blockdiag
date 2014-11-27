@@ -48,7 +48,7 @@ def get_image_size(image):
             stream = open(image)
             return stream.size
         finally:
-            if stream:
+            if stream and hasattr(stream, 'close'):
                 stream.close()
 
 
