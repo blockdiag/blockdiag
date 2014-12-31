@@ -1,6 +1,18 @@
 Changelog
 =========
 
+1.5.0 (2015-01-01)
+------------------
+* Refactor cleanup procedures
+* Fix bugs
+
+  - Fix get_image_size() closes Image object automatically
+  - Fix pasting Image object failed on SVG mode
+  - Fix #61 images.urlopen() got PermissionError on Windows
+  - Fix #61 images.open() raises exception if ghostscript not found
+  - Fix #62 Use "sans-serif" to font-family property on SVG output ("sansserif" is invalid)
+  - Fix #63 AttributeError on get_image_size(); Pillow (<= 2.4.x) does not have Image#close()
+
 1.4.7 (2014-10-21)
 ------------------
 * Fix bugs
