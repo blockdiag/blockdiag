@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.5.1 (2015-02-21)
+------------------
+* Fix bug
+
+  - Fix labels are overwrapped on antialias mode
+
 1.5.0 (2015-01-01)
 ------------------
 * Refactor cleanup procedures
