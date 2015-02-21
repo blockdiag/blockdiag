@@ -2,13 +2,13 @@
 from __future__ import print_function
 
 import sys
+from blockdiag.parser import parse_string, ParseException
+from blockdiag.parser import Diagram, Group, Statements, Node, Edge
+
 if sys.version_info < (2, 7):
     import unittest2 as unittest
 else:
     import unittest
-
-from blockdiag.parser import parse_string, ParseException
-from blockdiag.parser import Diagram, Group, Statements, Node, Edge
 
 
 class TestParser(unittest.TestCase):

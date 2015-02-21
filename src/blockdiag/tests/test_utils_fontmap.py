@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import os
 import sys
+import tempfile
+from io import StringIO
+from collections import namedtuple
+from blockdiag.utils.compat import u
+from blockdiag.utils.fontmap import FontInfo, FontMap
+from blockdiag.tests.utils import capture_stderr
+
 if sys.version_info < (2, 7):
     import unittest2 as unittest
 else:
     import unittest
-
-import os
-import tempfile
-from blockdiag.utils.compat import u
-from blockdiag.tests.utils import capture_stderr
-
-from io import StringIO
-from collections import namedtuple
-from blockdiag.utils.fontmap import FontInfo, FontMap
 
 
 FontElement = namedtuple('FontElement', 'fontfamily fontsize')

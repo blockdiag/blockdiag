@@ -13,18 +13,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-__all__ = [
-    'core', 'utils'
-]
-
 import blockdiag.parser
 import blockdiag.builder
 import blockdiag.drawer
-core = blockdiag
 
 import blockdiag.utils.bootstrap
 import blockdiag.utils.compat
 import blockdiag.utils.fontmap
 import blockdiag.utils.rst.nodes
 import blockdiag.utils.rst.directives
+
+__all__ = [
+    'core', 'utils'
+]
+
+core = blockdiag
 utils = blockdiag.utils

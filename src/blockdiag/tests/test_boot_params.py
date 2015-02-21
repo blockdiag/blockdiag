@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import sys
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
-
 import os
 import io
+import sys
 import tempfile
 from blockdiag.tests.utils import with_pdf
 
@@ -15,6 +10,11 @@ import blockdiag
 from blockdiag.command import BlockdiagOptions
 from blockdiag.utils.bootstrap import detectfont
 from blockdiag.utils.compat import u
+
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 
 
 class TestBootParams(unittest.TestCase):

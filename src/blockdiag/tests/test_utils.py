@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from blockdiag.utils import Size, unquote
+
 if sys.version_info < (2, 7):
     import unittest2 as unittest
 else:
     import unittest
-
-from blockdiag.utils import Size, unquote
 
 
 class TestUtils(unittest.TestCase):

@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import sys
+import codecs
 
 if sys.version_info[0] == 2:
     string_types = (str, unicode)  # NOQA: pyflakes complains to unicode in py3
@@ -31,7 +32,6 @@ def u(string):
 
 
 # replace codecs.getreader
-import codecs
 if sys.version_info[0] == 3:
     getreader = codecs.getreader
 

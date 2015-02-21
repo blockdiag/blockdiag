@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import sys
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
-
 from blockdiag.imagedraw.utils import (
     is_zenkaku, zenkaku_len, hankaku_len,
     string_width, textsize
 )
 from blockdiag.utils.compat import u
+
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 
 
 class TestUtils(unittest.TestCase):
