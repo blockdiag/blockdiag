@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 
-import sys
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
-
 import os
 import re
+import sys
 import functools
 from shutil import rmtree
 from tempfile import mkdtemp, mkstemp
 from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.parser import parse_file
+
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 
 try:
     # sys.stderr in py2.x allows mixture of str and unicode

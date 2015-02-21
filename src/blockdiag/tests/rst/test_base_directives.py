@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 
-import sys
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
-
-import os
 import io
-from blockdiag.tests.utils import capture_stderr, TemporaryDirectory
-
+import os
+import sys
 from docutils import nodes
 from docutils.core import publish_doctree
 from docutils.parsers.rst import directives as docutils
 from blockdiag.utils.rst import directives
 from blockdiag.utils.rst.nodes import blockdiag as blockdiag_node
+from blockdiag.tests.utils import capture_stderr, TemporaryDirectory
+
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
 
 
 class TestRstDirectives(unittest.TestCase):
