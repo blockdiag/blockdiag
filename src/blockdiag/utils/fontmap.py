@@ -43,6 +43,10 @@ class FontInfo(object):
         self.weight = family[2]
         self.style = family[3]
 
+    def __repr__(self):
+        return ("<FontInfo familyname=%r size=%r>" %
+                (self.familyname, self.size))
+
     @property
     def familyname(self):
         if self.name:
