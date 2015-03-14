@@ -127,7 +127,8 @@ def open(url, mode='Pillow'):
         try:
             png_image = io.BytesIO()
             image.save(png_image, 'PNG')
-            stream.close()
+            if hasattr(stream, 'close'):  # close() is implemented on Pillow
+                stream.close()
         except:
             warning(u("Could not convert image: %s"), url)
             raise IOError
