@@ -21,7 +21,6 @@ classifiers = [
 
 requires = ['setuptools',
             'funcparserlib',
-            'webcolors',
             'Pillow']
 pdf_requires = ['reportlab']
 test_requires = ['nose',
@@ -32,10 +31,16 @@ test_requires = ['nose',
 
 
 # only for Python2.6
-if sys.version_info > (2, 6) and sys.version_info < (2, 7):
+if (2, 6) < sys.version_info < (2, 7):
     requires.append('OrderedDict')
     pdf_requires[0] = 'reportlab < 3.0'
     test_requires.append('unittest2')
+
+# webcolors
+if (3, 2) < sys.version_info < (3, 3):
+    requires.append('webcolors < 1.5')  # webcolors-1.5 does not support py32
+else:
+    requires.append('webcolors')
 
 
 setup(
