@@ -1,6 +1,13 @@
 Changelog
 =========
 
+1.5.2 (2015-05-17)
+------------------
+* Fix dependency; webcolors-1.5 does not support py32
+* Fix bug
+
+  - Fix images.open() failed with PIL
+
 1.5.1 (2015-02-21)
 ------------------
 * Fix bug
