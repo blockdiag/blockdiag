@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.5.3 (2015-07-30)
+------------------
+* Fix bug
+
+  - Fix #67 Group overlaps with nodes having href
+
 1.5.2 (2015-05-17)
 ------------------
 * Fix dependency; webcolors-1.5 does not support py32
