@@ -51,7 +51,7 @@ setup(
     classifiers=classifiers,
     keywords=['diagram', 'generator'],
     author='Takeshi Komiya',
-    author_email='i.tkomiya at gmail.com',
+    author_email='i.tkomiya@gmail.com',
     url='http://blockdiag.com/',
     download_url='http://pypi.python.org/pypi/blockdiag',
     license='Apache License 2.0',
