@@ -335,7 +335,7 @@ class ImageDrawExBase(base.ImageDraw):
             text.textarea(textbox, string, font, **kwargs)
 
             filler = Image.new('RGB', box.size, kwargs.get('fill'))
-            self.paste(filler, box.topleft, text._image.rotate(angle))
+            self.paste(filler, box.topleft, text._image.rotate(angle, expand=1))
             return
 
         lines = self.textfolder(box, string, font, **kwargs)
