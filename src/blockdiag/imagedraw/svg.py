@@ -57,9 +57,9 @@ def dasharray(pattern, thick):
         value = 4 * thick
     elif pattern == 'none':
         value = "%d %d" % (0, 65535 * thick)
-    elif re.search('^\d+(,\d+)*$', pattern or ""):
-        l = [int(n) * thick for n in pattern.split(",")]
-        value = " ".join(str(n) for n in l)
+    elif re.search(r'^\d+(,\d+)*$', pattern or ""):
+        lengths = [int(n) * thick for n in pattern.split(",")]
+        value = " ".join(str(n) for n in lengths)
     else:
         value = None
 

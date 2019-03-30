@@ -97,7 +97,7 @@ def style2cycle(style, thick):
         length = [4 * thick, 4 * thick]
     elif style == 'none':
         length = [0, 65535 * thick]
-    elif re.search('^\d+(,\d+)*$', style or ""):
+    elif re.search(r'^\d+(,\d+)*$', style or ""):
         length = [int(n) * thick for n in style.split(',')]
     else:
         length = None
@@ -213,7 +213,7 @@ class ImageDrawExBase(base.ImageDraw):
         if kwargs.get('fill') == 'none':
             pass
         elif (style in ('dotted', 'dashed', 'none') or
-              re.search('^\d+(,\d+)*$', style or "")):
+              re.search(r'^\d+(,\d+)*$', style or "")):
             self.dashed_line(xy, **kwargs)
         else:
             if 'style' in kwargs:

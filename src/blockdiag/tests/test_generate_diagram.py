@@ -180,8 +180,8 @@ def svg_includes_source_code_tag_test():
         desc = tree.find('{http://www.w3.org/2000/svg}desc')
 
         # strip spaces
-        source_code = re.sub('\s+', ' ', source_code)
-        embeded = re.sub('\s+', ' ', desc.text)
+        source_code = re.sub(r'\s+', ' ', source_code)
+        embeded = re.sub(r'\s+', ' ', desc.text)
         assert source_code == embeded
     finally:
         tmpdir.clean()

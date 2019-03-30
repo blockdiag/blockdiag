@@ -169,7 +169,7 @@ class Box(list):
 def unquote(string):
     """ Remove quotas from string """
     if string:
-        m = re.match('\A(?P<quote>"|\')((.|\s)*)(?P=quote)\Z', string, re.M)
+        m = re.match(r'\A(?P<quote>"|\')((.|\s)*)(?P=quote)\Z', string, re.M)
         if m:
             return re.sub("\\\\" + m.group(1), m.group(1), m.group(2))
         else:

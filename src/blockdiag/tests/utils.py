@@ -41,7 +41,7 @@ def supported_pil():
         from PIL import _imagingft
         _imagingft
         return True
-    except:
+    except Exception:
         return False
 
 
@@ -58,7 +58,7 @@ def supported_pdf():
         reportlab
 
         return True
-    except:
+    except Exception:
         return False
 
 

@@ -28,7 +28,7 @@ class blockdiag(nodes.General, nodes.Element):
     def to_diagram(self):
         try:
             tree = self.processor.parser.parse_string(self['code'])
-        except:
+        except Exception:
             code = '%s { %s }' % (self.name, self['code'])
             tree = self.processor.parser.parse_string(code)
             self['code'] = code  # replace if succeeded
