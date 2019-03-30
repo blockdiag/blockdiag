@@ -16,16 +16,12 @@
 import os
 import re
 import sys
+import unittest
 from nose.tools import nottest
 import blockdiag
 import blockdiag.command
 from blockdiag.tests.utils import capture_stderr, TemporaryDirectory
 from blockdiag.tests.utils import supported_pil, supported_pdf
-
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
 
 
 TESTDIR = os.path.dirname(__file__)

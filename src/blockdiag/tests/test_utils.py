@@ -13,13 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
+import unittest
 from blockdiag.utils import Size, unquote
-
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
 
 
 class TestUtils(unittest.TestCase):
