@@ -24,17 +24,13 @@ You can get some examples and generated images on
 Setup
 =====
 
-Use easy_install or pip::
-
-   $ sudo easy_install blockdiag
-
-   Or
+Use pip::
 
    $ sudo pip install blockdiag
 
 If you want to export as PDF format, give pdf arguments::
 
-   $ sudo easy_install "blockdiag[pdf]"
+   $ sudo pip install "blockdiag[pdf]"
 
 
 Copy and modify ini file. example::
