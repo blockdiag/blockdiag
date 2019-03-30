@@ -77,7 +77,7 @@ def color_to_rgb(color):
 def wand_open(url, stream):
     try:
         import wand.image
-    except:
+    except Exception:
         warning("unknown image type: %s", url)
         raise IOError
 
@@ -115,7 +115,7 @@ def open(url, mode='Pillow'):
         try:
             # wrap BytesIO for rewind stream
             stream = io.BytesIO(urlopen(url).read())
-        except:
+        except Exception:
             warning(u("Could not retrieve: %s"), url)
             raise IOError
 
@@ -129,7 +129,7 @@ def open(url, mode='Pillow'):
             image.save(png_image, 'PNG')
             if hasattr(stream, 'close'):  # close() is implemented on Pillow
                 stream.close()
-        except:
+        except Exception:
             warning(u("Could not convert image: %s"), url)
             raise IOError
 
@@ -142,7 +142,7 @@ def cleanup():
         path = urlopen_cache.pop(url)
         try:
             os.remove(path)
-        except:
+        except Exception:
             pass
 
 

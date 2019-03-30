@@ -215,7 +215,7 @@ class BlockdiagDirective(BlockdiagDirectiveBase):
         else:
             try:
                 tree = self.processor.parser.parse_string(node['code'])
-            except:
+            except Exception:
                 code = '%s { %s }' % (self.name, node['code'])
                 tree = self.processor.parser.parse_string(code)
                 node['code'] = code  # replace if succeeded

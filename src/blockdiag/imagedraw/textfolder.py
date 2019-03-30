@@ -23,9 +23,9 @@ def splitlabel(string):
        Every line will be stripped.
        If text includes characters "\n", treat as line separator.
     """
-    string = re.sub('^\s*', '', string)
-    string = re.sub('\s*$', '', string)
-    string = re.sub('\xa5', '\\\\', string)
+    string = re.sub(r'^\s*', '', string)
+    string = re.sub(r'\s*$', '', string)
+    string = re.sub(r'\xa5', '\\\\', string)
     string = re.sub('(\\\\){2}', '\x00', string)
     string = re.sub('\\\\n', '\n', string)
     for line in string.splitlines():

@@ -88,7 +88,7 @@ class Base(object):
             self.set_attribute(attr)
 
     def set_style(self, value):
-        if re.search('^(?:none|solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
+        if re.search(r'^(?:none|solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
             self.style = value.lower()
         else:
             class_name = self.__class__.__name__
@@ -607,7 +607,7 @@ class Diagram(NodeGroup):
         self._DiagramNode.set_default_color(color)
 
     def set_default_node_style(self, value):
-        if re.search('^(?:none|solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
+        if re.search(r'^(?:none|solid|dotted|dashed|\d+(,\d+)*)$', value, re.I):
             self._DiagramNode.set_default_style(value)
         else:
             msg = "unknown node style: %s" % value

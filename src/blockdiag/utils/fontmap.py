@@ -25,7 +25,7 @@ def parse_fontpath(path):
     if path is None:
         return (None, None)
 
-    match = re.search('^(.*):(\d)$', path)
+    match = re.search(r'^(.*):(\d)$', path)
     if match:
         return (match.group(1), int(match.group(2)))
     else:

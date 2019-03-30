@@ -134,7 +134,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
         svg = open(doctree[0]['uri']).read()
-        self.assertRegexpMatches(svg, '<svg height="\d+" width="\d+" ')
+        self.assertRegexpMatches(svg, r'<svg height="\d+" width="\d+" ')
 
     def test_setup_noviewbox_is_false(self):
         directives.setup(format='SVG', outputdir=self.tmpdir, noviewbox=False)
@@ -145,7 +145,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
         svg = open(doctree[0]['uri']).read()
-        self.assertRegexpMatches(svg, '<svg viewBox="0 0 \d+ \d+" ')
+        self.assertRegexpMatches(svg, r'<svg viewBox="0 0 \d+ \d+" ')
 
     def test_setup_inline_svg_is_true(self):
         directives.setup(format='SVG', outputdir=self.tmpdir, inline_svg=True)
@@ -202,7 +202,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.raw, type(doctree[0]))
         self.assertEqual(nodes.Text, type(doctree[0][0]))
         self.assertRegexpMatches(doctree[0][0],
-                                 '<svg height="\d+" width="100" ')
+                                 r'<svg height="\d+" width="100" ')
 
     def test_setup_inline_svg_is_true_and_width_option2(self):
         directives.setup(format='SVG', outputdir=self.tmpdir,
@@ -216,7 +216,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.raw, type(doctree[0]))
         self.assertEqual(nodes.Text, type(doctree[0][0]))
         self.assertRegexpMatches(doctree[0][0],
-                                 '<svg height="\d+" width="10000" ')
+                                 r'<svg height="\d+" width="10000" ')
 
     def test_setup_inline_svg_is_true_and_height_option1(self):
         directives.setup(format='SVG', outputdir=self.tmpdir,
@@ -230,7 +230,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.raw, type(doctree[0]))
         self.assertEqual(nodes.Text, type(doctree[0][0]))
         self.assertRegexpMatches(doctree[0][0],
-                                 '<svg height="100" width="\d+" ')
+                                 r'<svg height="100" width="\d+" ')
 
     def test_setup_inline_svg_is_true_and_height_option2(self):
         directives.setup(format='SVG', outputdir=self.tmpdir,
@@ -244,7 +244,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.raw, type(doctree[0]))
         self.assertEqual(nodes.Text, type(doctree[0][0]))
         self.assertRegexpMatches(doctree[0][0],
-                                 '<svg height="10000" width="\d+" ')
+                                 r'<svg height="10000" width="\d+" ')
 
     def test_setup_inline_svg_is_true_and_width_and_height_option(self):
         directives.setup(format='SVG', outputdir=self.tmpdir,

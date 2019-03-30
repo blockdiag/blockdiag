@@ -85,7 +85,7 @@ class PDFImageDraw(base.ImageDraw):
             self.canvas.setDash([4 * thick, 4 * thick])
         elif style == 'none':
             self.canvas.setDash([0, 65535 * thick])
-        elif re.search('^\d+(,\d+)*$', style or ""):
+        elif re.search(r'^\d+(,\d+)*$', style or ""):
             self.canvas.setDash([int(n) * thick for n in style.split(',')])
         else:
             self.canvas.setDash()
