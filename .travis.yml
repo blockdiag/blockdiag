@@ -5,6 +5,7 @@ cache: pip
 env:
   global:
     - PYTHONFAULTHANDLER=x
+    - ALL_TESTS=1
 
 matrix:
   include:
@@ -37,7 +38,7 @@ matrix:
         - TOXENV=pillow7.x
 
 install:
-  - sudo apt-get install fonts-ipafont-gothic libjpeg8-dev libfreetype6-dev
+  - sudo apt-get install fonts-ipafont-gothic ghostscript libjpeg8-dev libfreetype6-dev
   - pip install -U docutils tox
 
 script:
