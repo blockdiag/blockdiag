@@ -14,16 +14,12 @@
 #  limitations under the License.
 
 import sys
+import unittest
 from blockdiag.imagedraw.textfolder import splitlabel
 from blockdiag.imagedraw.textfolder import splittext
 from blockdiag.imagedraw.textfolder import truncate_text
 from blockdiag.utils import Size
 from blockdiag.utils.compat import u
-
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
 
 
 CHAR_WIDTH = 14

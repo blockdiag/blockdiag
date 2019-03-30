@@ -15,18 +15,13 @@
 
 import os
 import sys
+import unittest
 from docutils import nodes
 from docutils.core import publish_doctree
 from docutils.parsers.rst import directives as docutils
 from blockdiag.utils.compat import u
 from blockdiag.utils.rst import directives
 from blockdiag.tests.utils import capture_stderr, with_pil, TemporaryDirectory
-
-
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
 
 
 class TestRstDirectives(unittest.TestCase):

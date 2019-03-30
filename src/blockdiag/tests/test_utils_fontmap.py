@@ -16,16 +16,12 @@
 import os
 import sys
 import tempfile
+import unittest
 from io import StringIO
 from collections import namedtuple
 from blockdiag.utils.compat import u
 from blockdiag.utils.fontmap import FontInfo, FontMap
 from blockdiag.tests.utils import capture_stderr
-
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
 
 
 FontElement = namedtuple('FontElement', 'fontfamily fontsize')
@@ -239,17 +235,15 @@ class TestUtilsFontmap(unittest.TestCase):
                 FontMap(config)
 
     def test_fontmap_duplicated_fontentry2(self):
-        # this testcase is only for python2.6 or later
-        if sys.version_info > (2, 6):
-            _config = u("[fontmap]\nsansserif: %s\nsansserif-normal: %s\n") % \
-                      (self.fontpath[0], self.fontpath[1])
-            config = StringIO(_config)
-            fmap = FontMap(config)
+        _config = u("[fontmap]\nsansserif: %s\nsansserif-normal: %s\n") % \
+                  (self.fontpath[0], self.fontpath[1])
+        config = StringIO(_config)
+        fmap = FontMap(config)
 
-            font1 = fmap.find()
-            self.assertEqual('sans-serif', font1.generic_family)
-            self.assertEqual(self.fontpath[1], font1.path)
-            self.assertEqual(11, font1.size)
+        font1 = fmap.find()
+        self.assertEqual('sans-serif', font1.generic_family)
+        self.assertEqual(self.fontpath[1], font1.path)
+        self.assertEqual(11, font1.size)
 
     def test_fontmap_with_capital_character(self):
         _config = u("[fontmap]\nCapitalCase-sansserif: %s\n") % \

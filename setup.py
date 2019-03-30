@@ -10,37 +10,14 @@ classifiers = [
     "Intended Audience :: System Administrators",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 2.6",
     "Programming Language :: Python :: 2.7",
-    "Programming Language :: Python :: 3.2",
-    "Programming Language :: Python :: 3.3",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
     "Topic :: Software Development",
     "Topic :: Software Development :: Documentation",
     "Topic :: Text Processing :: Markup",
 ]
-
-requires = ['setuptools',
-            'funcparserlib',
-            'Pillow']
-pdf_requires = ['reportlab']
-test_requires = ['nose',
-                 'mock',
-                 'pep8>=1.3',
-                 'reportlab',
-                 'docutils']
-
-
-# only for Python2.6
-if (2, 6) < sys.version_info < (2, 7):
-    requires.append('OrderedDict')
-    pdf_requires[0] = 'reportlab < 3.0'
-    test_requires.append('unittest2')
-
-# webcolors
-if (3, 2) < sys.version_info < (3, 3):
-    requires.append('webcolors < 1.5')  # webcolors-1.5 does not support py32
-else:
-    requires.append('webcolors')
 
 
 setup(
@@ -60,16 +37,30 @@ setup(
     package_dir={'': 'src'},
     package_data={'': ['buildout.cfg']},
     include_package_data=True,
-    install_requires=requires,
-    extras_require=dict(
-        testing=test_requires,
-        pdf=pdf_requires,
-        rst=[
+    install_requires=[
+        'setuptools',
+        'funcparserlib',
+        'Pillow',
+        'webcolors',
+    ],
+    extras_require={
+        'pdf': [
+            'reportlab'
+        ],
+        'rst': [
+            'docutils'
+        ],
+        'testing': [
+            'nose',
+            'mock',
+            'flake8',
+            'flake8-coding',
+            'flake8-copyright',
+            'reportlab',
             'docutils',
         ],
-    ),
+    },
     test_suite='nose.collector',
-    tests_require=test_requires,
     entry_points="""
        [console_scripts]
        blockdiag = blockdiag.command:main

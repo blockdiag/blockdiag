@@ -14,14 +14,9 @@
 #  limitations under the License.
 
 import os
-import sys
+import unittest
 from blockdiag.command import BlockdiagApp
 from blockdiag.tests.utils import TemporaryDirectory
-
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
 
 
 class TestBlockdiagApp(unittest.TestCase):
