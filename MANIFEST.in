@@ -1,5 +1,3 @@
-include buildout.cfg
-include bootstrap.py
 include CHANGES.rst
 include MANIFEST.in
 include LICENSE
@@ -9,5 +7,4 @@ include src/blockdiag/tests/VLGothic/*
 recursive-include examples blockdiagrc *.diag *.png *.svg
 recursive-include src README *.py *.diag *.gif *.png
 
-exclude .drone.io.sh
 exclude examples/update.sh

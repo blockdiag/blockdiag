@@ -35,7 +35,6 @@ setup(
     py_modules=['blockdiag_sphinxhelper'],
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    package_data={'': ['buildout.cfg']},
     include_package_data=True,
     install_requires=[
         'setuptools',
