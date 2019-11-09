@@ -366,6 +366,10 @@ class ImageDrawExBase(base.ImageDraw):
             self.textarea(box, string, _font, **kwargs)
 
     def image(self, box, url):
+        if not box.width or not box.height:
+            # resizing image into "0 width and/or height" is meaningless
+            return
+
         try:
             image = images.open(url, mode='pillow')
 
