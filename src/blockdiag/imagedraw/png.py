@@ -335,7 +335,18 @@ class ImageDrawExBase(base.ImageDraw):
             text.textarea(textbox, string, font, **kwargs)
 
             filler = Image.new('RGB', box.size, kwargs.get('fill'))
-            self.paste(filler, box.topleft, text._image.rotate(angle))
+
+            mask = text._image.rotate(angle, expand=True)
+            if mask.size != filler.size:
+                # Image.rotate(expand=True) of Pillow earlier than
+                # 3.3.0 (including 2.x) returns image object with
+                # unexpected size: for example, rotating 10x20 by 270
+                # causes not 20x10 but 21x11.
+                # Therefore, crop rotated image in order to make it
+                # match against size of "filler".
+                mask = mask.crop((0, 0, box.width, box.height))
+
+            self.paste(filler, box.topleft, mask)
             return
 
         lines = self.textfolder(box, string, font, **kwargs)
