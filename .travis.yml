@@ -22,6 +22,21 @@ matrix:
         - TOXENV=py37
     - python: 'nightly'
       env: TOXENV=py38
+    - python: '3.7'
+      env:
+        - TOXENV=pillow2.x
+    - python: '3.7'
+      env:
+        - TOXENV=pillow3.x
+    - python: '3.7'
+      env:
+        - TOXENV=pillow4.x
+    - python: '3.7'
+      env:
+        - TOXENV=pillow5.x
+    - python: '3.7'
+      env:
+        - TOXENV=pillow6.x
 
 install:
   - sudo apt-get install fonts-ipafont-gothic libjpeg8-dev libfreetype6-dev
