@@ -13,14 +13,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+PILLOW_VERSION = (-1, -1, -1)
+
 
 def patch_FreeTypeFont_getsize():
     try:
-        from PIL import PILLOW_VERSION
         from PIL.ImageFont import FreeTypeFont
 
         # Avoid offset problem in Pillow (>= 2.2.0, < 2.6.0)
-        if "2.2.0" <= PILLOW_VERSION < "2.6.0":
+        if (2, 2, 0) <= PILLOW_VERSION < (2, 6, 0):
             original_getsize = FreeTypeFont.getsize
 
             def getsize(self, string):
@@ -35,4 +36,20 @@ def patch_FreeTypeFont_getsize():
 
 
 def apply_patch():
+    try:
+        import PIL
+
+        # check PIL.__version__ at first, because PILLOW_VERSION was
+        # removed at 7.0.0
+        version = getattr(PIL, '__version__', None)
+        if not version:
+            version = getattr(PIL, 'PILLOW_VERSION', '-1.-1.-1')
+
+        global PILLOW_VERSION
+        PILLOW_VERSION = tuple(int(v) for v in version.split('.')[:3])
+    except (ImportError, ValueError):
+        # no need to patch FreeTypeFont.getsize, because Pillow is
+        # "not available" or "changed drastically"
+        return
+
     patch_FreeTypeFont_getsize()
