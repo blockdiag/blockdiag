@@ -15,10 +15,12 @@
 
 import os
 from hashlib import sha1
+
 from docutils import nodes
-import blockdiag.parser
+
 import blockdiag.builder
 import blockdiag.drawer
+import blockdiag.parser
 
 
 class blockdiag(nodes.General, nodes.Element):

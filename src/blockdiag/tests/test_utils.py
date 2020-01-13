@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import unittest
+
 from blockdiag.utils import Size, unquote
 
 

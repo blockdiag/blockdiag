@@ -15,8 +15,9 @@
 from __future__ import print_function
 
 import unittest
-from blockdiag.parser import parse_string, ParseException
-from blockdiag.parser import Diagram, Group, Statements, Node, Edge
+
+from blockdiag.parser import (Diagram, Edge, Group, Node, ParseException,
+                              Statements, parse_string)
 
 
 class TestParser(unittest.TestCase):

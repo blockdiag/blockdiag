@@ -13,14 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
 import io
+import os
 import tempfile
 import unittest
-from blockdiag.tests.utils import with_pdf
 
 import blockdiag
 from blockdiag.command import BlockdiagOptions
+from blockdiag.tests.utils import with_pdf
 from blockdiag.utils.bootstrap import detectfont
 
 

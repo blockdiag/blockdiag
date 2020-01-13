@@ -14,10 +14,9 @@
 #  limitations under the License.
 
 import unittest
-from blockdiag.imagedraw.utils import (
-    is_zenkaku, zenkaku_len, hankaku_len,
-    string_width, textsize
-)
+
+from blockdiag.imagedraw.utils import (hankaku_len, is_zenkaku, string_width,
+                                       textsize, zenkaku_len)
 
 
 class TestUtils(unittest.TestCase):

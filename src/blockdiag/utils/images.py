@@ -14,11 +14,14 @@
 #  limitations under the License.
 
 from __future__ import division
+
 import io
 import os
 import re
-from PIL import Image
 from tempfile import NamedTemporaryFile
+
+from PIL import Image
+
 from blockdiag.utils import urlutil
 from blockdiag.utils.logging import warning
 

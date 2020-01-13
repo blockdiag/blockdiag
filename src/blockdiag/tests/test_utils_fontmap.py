@@ -13,15 +13,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import configparser
 import os
 import tempfile
 import unittest
-import configparser
-from io import StringIO
 from collections import namedtuple
-from blockdiag.utils.fontmap import FontInfo, FontMap
-from blockdiag.tests.utils import capture_stderr
+from io import StringIO
 
+from blockdiag.tests.utils import capture_stderr
+from blockdiag.utils.fontmap import FontInfo, FontMap
 
 FontElement = namedtuple('FontElement', 'fontfamily fontsize')
 

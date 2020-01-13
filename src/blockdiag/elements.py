@@ -13,12 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import copy
 import os
 import re
-import copy
-from blockdiag.utils import images, unquote, urlutil, uuid, XY
-from blockdiag.utils.logging import warning
+
 from blockdiag import noderenderer, plugins
+from blockdiag.utils import XY, images, unquote, urlutil, uuid
+from blockdiag.utils.logging import warning
 
 
 class Base(object):

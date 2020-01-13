@@ -16,6 +16,7 @@
 import math
 import unicodedata
 from functools import wraps
+
 from blockdiag.utils import Size
 
 

@@ -13,15 +13,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
 import math
-from reportlab.pdfgen import canvas
+import re
+
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.lib.utils import ImageReader
+from reportlab.pdfgen import canvas
+
 from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import memoize
-from blockdiag.utils import images, Box, Size
+from blockdiag.utils import Box, Size, images
 from blockdiag.utils.fontmap import parse_fontpath
 
 

@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 from __future__ import print_function
+
 from blockdiag.builder import SeparateDiagramBuilder
 from blockdiag.elements import DiagramNode
 from blockdiag.tests.utils import BuilderTestCase

@@ -13,15 +13,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import blockdiag.parser
 import blockdiag.builder
 import blockdiag.drawer
-
+import blockdiag.parser
 import blockdiag.utils.bootstrap
 import blockdiag.utils.compat
 import blockdiag.utils.fontmap
-import blockdiag.utils.rst.nodes
 import blockdiag.utils.rst.directives
+import blockdiag.utils.rst.nodes
 
 __all__ = [
     'core', 'utils'

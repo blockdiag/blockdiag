@@ -17,12 +17,13 @@ import os
 import re
 import sys
 import unittest
+
 from nose.tools import nottest
+
 import blockdiag
 import blockdiag.command
-from blockdiag.tests.utils import capture_stderr, TemporaryDirectory
-from blockdiag.tests.utils import supported_pil, supported_pdf
-
+from blockdiag.tests.utils import (TemporaryDirectory, capture_stderr,
+                                   supported_pdf, supported_pil)
 
 TESTDIR = os.path.dirname(__file__)
 FONTPATH = os.path.join(TESTDIR, 'VLGothic', 'VL-Gothic-Regular.ttf')
