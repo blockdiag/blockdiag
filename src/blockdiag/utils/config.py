@@ -14,15 +14,11 @@
 #  limitations under the License.
 
 import io
-try:
-    from configparser import SafeConfigParser
-except ImportError:
-    from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 
 
-class ConfigParser(SafeConfigParser):
-
+class ConfigParser(ConfigParser):
     def read(self, path):
         fd = io.open(path, 'r', encoding='utf-8-sig')
-        self.readfp(fd)
+        self.read_file(fd)
         fd.close()

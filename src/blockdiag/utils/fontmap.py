@@ -118,7 +118,7 @@ class FontMap(object):
         config = ConfigParser()
 
         if hasattr(conffile, 'read'):
-            config.readfp(conffile)
+            config.read_file(conffile)
         elif os.path.isfile(conffile):
             config.read(conffile)
         else:
