@@ -16,11 +16,6 @@
 import sys
 import codecs
 
-if sys.version_info[0] == 2:
-    from urllib import urlopen  # NOQA: exporting for common interface
-else:
-    from urllib.request import urlopen  # NOQA: exporting for common interface
-
 
 def u(string):
     if sys.version_info[0] == 2:

@@ -28,7 +28,7 @@ urlopen_cache = {}
 
 def urlopen(url, *args, **kwargs):
     """ auto caching urlopen() (using tempfile) """
-    from blockdiag.utils.compat import urlopen as orig_urlopen
+    from urllib.request import urlopen as orig_urlopen
 
     if url not in urlopen_cache:
         with NamedTemporaryFile(delete=False) as tmpfile:
