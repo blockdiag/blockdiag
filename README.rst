@@ -103,7 +103,7 @@ Execute blockdiag command::
 Requirements
 ============
 * Python 3.5 or later
-* Pillow 2.2.1 or later
+* Pillow 3.0 or later
 * funcparserlib 0.3.6 or later
 * reportlab (optional)
 * wand and imagemagick (optional)
