@@ -14,9 +14,9 @@
 #  limitations under the License.
 
 import os
-import sys
 import tempfile
 import unittest
+import configparser
 from io import StringIO
 from collections import namedtuple
 from blockdiag.utils.fontmap import FontInfo, FontMap
@@ -218,20 +218,8 @@ class TestUtilsFontmap(unittest.TestCase):
         _config = "[fontmap]\nsansserif: %s\nsansserif: %s\n" % \
                   (self.fontpath[0], self.fontpath[1])
         config = StringIO(_config)
-        if sys.version_info[0] == 2:
-            try:
-                fmap = FontMap(config)
-
-                font1 = fmap.find()
-                self.assertEqual('sans-serif', font1.generic_family)
-                self.assertEqual(self.fontpath[1], font1.path)
-                self.assertEqual(11, font1.size)
-            except Exception:
-                pass  # backports.configparser raises DuplicateOptionError
-        else:
-            import configparser
-            with self.assertRaises(configparser.DuplicateOptionError):
-                FontMap(config)
+        with self.assertRaises(configparser.DuplicateOptionError):
+            FontMap(config)
 
     def test_fontmap_duplicated_fontentry2(self):
         _config = "[fontmap]\nsansserif: %s\nsansserif-normal: %s\n" % \

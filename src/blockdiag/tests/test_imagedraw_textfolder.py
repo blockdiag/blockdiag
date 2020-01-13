@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 import unittest
 from blockdiag.imagedraw.textfolder import splitlabel
 from blockdiag.imagedraw.textfolder import splittext
@@ -54,10 +53,7 @@ class TestTextFolder(unittest.TestCase):
         self.assertEqual(['abc\\ndef'], list(splitlabel(text)))
 
         # text includes escaped \n (\x5c and mac yensign mixed)
-        if sys.version_info[0] == 2:
-            text = "abc\xa5\\\\ndef"
-        else:
-            text = "abc\xa5\\ndef"
+        text = "abc\xa5\\ndef"
         self.assertEqual(['abc\\ndef'], list(splitlabel(text)))
 
         # text include \n and spaces
