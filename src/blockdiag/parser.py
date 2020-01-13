@@ -41,7 +41,6 @@ from collections import namedtuple
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
                                   forward_decl)
-from blockdiag.utils.compat import u
 
 
 ENCODING = 'utf-8'
@@ -67,8 +66,8 @@ def tokenize(string):
         ('Comment', (r'(//|#).*',)),                                          # NOQA
         ('NL',      (r'[\r\n]+',)),                                           # NOQA
         ('Space',   (r'[ \t\r\n]+',)),                                        # NOQA
-        ('Name',    (u('[A-Za-z_0-9\u0080-\uffff]') +                         # NOQA
-                     u('[A-Za-z_\\-.0-9\u0080-\uffff]*'),)),                  # NOQA
+        ('Name',    ('[A-Za-z_0-9\u0080-\uffff]' +                            # NOQA
+                     '[A-Za-z_\\-.0-9\u0080-\uffff]*',)),                     # NOQA
         ('Op',      (r'[{};,=\[\]]|(<->)|(<-)|(--)|(->)|(>-<)|(-<)|(>-)',)),  # NOQA
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),                  # NOQA
         ('String',  (r'(?P<quote>"|\').*?(?<!\\)(?P=quote)', DOTALL)),        # NOQA

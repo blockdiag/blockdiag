@@ -17,7 +17,6 @@ import os
 import re
 import copy
 from blockdiag.utils import images, unquote, urlutil, uuid, XY
-from blockdiag.utils.compat import u
 from blockdiag.utils.logging import warning
 from blockdiag import noderenderer, plugins
 
@@ -229,7 +228,7 @@ class DiagramNode(Element):
         for name in self.desctable:
             value = getattr(self, name)
             if value is None:
-                attrs.append(u(""))
+                attrs.append("")
             else:
                 attrs.append(value)
 
