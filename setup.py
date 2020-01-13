@@ -36,6 +36,7 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
+    python_requires=">=3.5",
     install_requires=[
         'setuptools',
         'funcparserlib',
