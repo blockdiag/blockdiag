@@ -22,7 +22,6 @@ from blockdiag.tests.utils import with_pdf
 import blockdiag
 from blockdiag.command import BlockdiagOptions
 from blockdiag.utils.bootstrap import detectfont
-from blockdiag.utils.compat import u
 
 
 class TestBootParams(unittest.TestCase):
@@ -99,7 +98,7 @@ class TestBootParams(unittest.TestCase):
         try:
             tmp = tempfile.mkstemp()
             fp = io.open(tmp[0], 'wt', encoding='utf-8-sig')
-            fp.write(u("[blockdiag]\n"))
+            fp.write("[blockdiag]\n")
             fp.close()
 
             self.parser.parse(['-c', tmp[1], 'input.diag'])
@@ -122,7 +121,7 @@ class TestBootParams(unittest.TestCase):
     def test_config_option_fontpath(self):
         try:
             tmp = tempfile.mkstemp()
-            config = u("[blockdiag]\nfontpath = /path/to/font\n")
+            config = "[blockdiag]\nfontpath = /path/to/font\n"
             io.open(tmp[0], 'wt', encoding='utf-8-sig').write(config)
 
             options = self.parser.parse(['-c', tmp[1], 'input.diag'])

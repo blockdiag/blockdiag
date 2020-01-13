@@ -20,7 +20,6 @@ import re
 from PIL import Image
 from tempfile import NamedTemporaryFile
 from blockdiag.utils import urlutil
-from blockdiag.utils.compat import u
 from blockdiag.utils.logging import warning
 
 urlopen_cache = {}
@@ -116,7 +115,7 @@ def open(url, mode='Pillow'):
             # wrap BytesIO for rewind stream
             stream = io.BytesIO(urlopen(url).read())
         except Exception:
-            warning(u("Could not retrieve: %s"), url)
+            warning("Could not retrieve: %s", url)
             raise IOError
 
     image = pillow_open(url, stream)
@@ -130,7 +129,7 @@ def open(url, mode='Pillow'):
             if hasattr(stream, 'close'):  # close() is implemented on Pillow
                 stream.close()
         except Exception:
-            warning(u("Could not convert image: %s"), url)
+            warning("Could not convert image: %s", url)
             raise IOError
 
         png_image.seek(0)

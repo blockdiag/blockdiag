@@ -15,7 +15,6 @@
 
 import re
 from blockdiag.utils import Box, Size, XY
-from blockdiag.utils.compat import u
 
 
 def splitlabel(string):
@@ -35,7 +34,7 @@ def splitlabel(string):
 def splittext(metrics, text, bound, measure='width'):
     folded = []
     if text == '':
-        folded.append(u(' '))
+        folded.append(' ')
 
     for i in range(len(text), 0, -1):
         textsize = metrics.textsize(text[0:i])

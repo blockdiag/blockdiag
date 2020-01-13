@@ -17,13 +17,6 @@ import sys
 import codecs
 
 
-def u(string):
-    if sys.version_info[0] == 2:
-        return unicode(string, "unicode_escape")  # NOQA: pyflakes complains to unicode in py3
-    else:
-        return string
-
-
 # replace codecs.getreader
 if sys.version_info[0] == 3:
     getreader = codecs.getreader

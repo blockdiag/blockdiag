@@ -19,7 +19,6 @@ import unittest
 from docutils import nodes
 from docutils.core import publish_doctree
 from docutils.parsers.rst import directives as docutils
-from blockdiag.utils.compat import u
 from blockdiag.utils.rst import directives
 from blockdiag.tests.utils import capture_stderr, with_pil, TemporaryDirectory
 
@@ -178,9 +177,9 @@ class TestRstDirectives(unittest.TestCase):
 
     def test_setup_inline_svg_is_true_with_multibytes(self):
         directives.setup(format='SVG', outputdir=self.tmpdir)
-        text = u(".. blockdiag::\n"
-                 "\n"
-                 "   あ -> い")
+        text = (".. blockdiag::\n"
+                "\n"
+                "   あ -> い")
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
