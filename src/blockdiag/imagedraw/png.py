@@ -17,10 +17,6 @@ from __future__ import division
 import re
 import math
 from itertools import tee
-try:
-    from future_builtins import zip
-except ImportError:
-    pass
 from functools import partial, wraps
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from blockdiag.imagedraw import base
