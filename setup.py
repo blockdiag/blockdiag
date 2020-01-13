@@ -51,7 +51,6 @@ setup(
         ],
         'testing': [
             'nose',
-            'mock',
             'flake8',
             'flake8-coding',
             'flake8-copyright',
