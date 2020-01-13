@@ -20,8 +20,9 @@ matrix:
     - python: '3.7'
       env:
         - TOXENV=py37
-    - python: 'nightly'
-      env: TOXENV=py38
+    - python: '3.8'
+      env:
+        - TOXENV=py38
     - python: '3.7'
       env:
         - TOXENV=pillow2.x
