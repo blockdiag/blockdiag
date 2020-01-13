@@ -17,10 +17,8 @@ import sys
 import codecs
 
 if sys.version_info[0] == 2:
-    string_types = (str, unicode)  # NOQA: pyflakes complains to unicode in py3
     from urllib import urlopen  # NOQA: exporting for common interface
 else:
-    string_types = (str,)
     from urllib.request import urlopen  # NOQA: exporting for common interface
 
 

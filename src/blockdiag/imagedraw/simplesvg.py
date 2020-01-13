@@ -14,12 +14,12 @@
 #  limitations under the License.
 
 import re
-from blockdiag.utils.compat import u, string_types
+from blockdiag.utils.compat import u
 from io import StringIO
 
 
 def _escape(s):
-    if not isinstance(s, string_types):
+    if not isinstance(s, str):
         s = str(s)
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
