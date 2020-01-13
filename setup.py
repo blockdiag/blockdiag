@@ -40,7 +40,7 @@ setup(
     install_requires=[
         'setuptools',
         'funcparserlib',
-        'Pillow',
+        'Pillow > 3.0',
         'webcolors',
     ],
     extras_require={
