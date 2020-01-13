@@ -14,8 +14,9 @@
 #  limitations under the License.
 
 from __future__ import division
-import re
+
 import math
+import re
 
 
 class XY(tuple):

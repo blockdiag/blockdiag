@@ -14,13 +14,14 @@
 #  limitations under the License.
 from __future__ import print_function
 
+import functools
 import os
 import re
 import sys
-import functools
 import unittest
 from shutil import rmtree
 from tempfile import mkdtemp, mkstemp
+
 from blockdiag.builder import ScreenNodeBuilder
 from blockdiag.parser import parse_file
 

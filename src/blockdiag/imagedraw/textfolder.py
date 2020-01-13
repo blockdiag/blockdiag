@@ -14,7 +14,8 @@
 #  limitations under the License.
 
 import re
-from blockdiag.utils import Box, Size, XY
+
+from blockdiag.utils import XY, Box, Size
 
 
 def splitlabel(string):

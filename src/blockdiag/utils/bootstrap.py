@@ -17,14 +17,14 @@ import os
 import re
 import sys
 import traceback
-from optparse import OptionParser, SUPPRESS_HELP
-from blockdiag import imagedraw
-from blockdiag import plugins
+from optparse import SUPPRESS_HELP, OptionParser
+
+from blockdiag import imagedraw, plugins
 from blockdiag.utils import images
 from blockdiag.utils.compat import codecs
 from blockdiag.utils.config import ConfigParser
-from blockdiag.utils.fontmap import parse_fontpath, FontMap
-from blockdiag.utils.logging import warning, error
+from blockdiag.utils.fontmap import FontMap, parse_fontpath
+from blockdiag.utils.logging import error, warning
 
 
 class Application(object):

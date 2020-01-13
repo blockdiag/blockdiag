@@ -15,6 +15,7 @@
 
 import os
 import unittest
+
 from blockdiag.command import BlockdiagApp
 from blockdiag.tests.utils import TemporaryDirectory
 

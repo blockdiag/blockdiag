@@ -13,9 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 import codecs
-
+import sys
 
 # replace codecs.getreader
 if sys.version_info[0] == 3:

@@ -13,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
-import os
 import copy
+import os
+import re
 from collections import namedtuple
+
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.logging import warning
 

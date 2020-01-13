@@ -13,8 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from blockdiag.tests.utils import BuilderTestCase
 from blockdiag.parser import ParseException
+from blockdiag.tests.utils import BuilderTestCase
 
 
 class TestBuilderError(BuilderTestCase):

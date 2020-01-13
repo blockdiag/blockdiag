@@ -15,16 +15,17 @@
 
 import os
 import re
-from PIL.Image import Image
 from base64 import b64encode
+
+from PIL.Image import Image
+
 from blockdiag.imagedraw import base as _base
-from blockdiag.imagedraw.simplesvg import (
-    svg, svgclass, filter, title, desc, defs, g, a, text,
-    rect, polygon, ellipse, path, pathdata, image
-)
+from blockdiag.imagedraw.simplesvg import (a, defs, desc, ellipse, filter, g,
+                                           image, path, pathdata, polygon,
+                                           rect, svg, svgclass, text, title)
 from blockdiag.imagedraw.utils import memoize
 from blockdiag.imagedraw.utils.ellipse import endpoints as ellipse_endpoints
-from blockdiag.utils import images, Box, XY, is_Pillow_available
+from blockdiag.utils import XY, Box, images, is_Pillow_available
 
 feGaussianBlur = svgclass('feGaussianBlur')
 

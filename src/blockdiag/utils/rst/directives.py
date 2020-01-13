@@ -13,17 +13,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
 import io
-from hashlib import sha1
-from functools import wraps
+import os
 from collections import namedtuple
+from functools import wraps
+from hashlib import sha1
+
 from docutils import nodes
 from docutils.parsers import rst
 from docutils.parsers.rst.roles import set_classes
 from docutils.statemachine import ViewList
 
-from blockdiag.utils.bootstrap import create_fontmap, Application
+from blockdiag.utils.bootstrap import Application, create_fontmap
 from blockdiag.utils.rst.nodes import blockdiag as blockdiag_node
 
 directive_options_default = dict(format='PNG',

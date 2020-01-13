@@ -14,11 +14,9 @@
 #  limitations under the License.
 
 import unittest
-from blockdiag.imagedraw.textfolder import splitlabel
-from blockdiag.imagedraw.textfolder import splittext
-from blockdiag.imagedraw.textfolder import truncate_text
-from blockdiag.utils import Size
 
+from blockdiag.imagedraw.textfolder import splitlabel, splittext, truncate_text
+from blockdiag.utils import Size
 
 CHAR_WIDTH = 14
 CHAR_HEIGHT = 10

@@ -14,16 +14,19 @@
 #  limitations under the License.
 
 from __future__ import division
-import re
+
 import math
-from itertools import tee
+import re
 from functools import partial, wraps
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from itertools import tee
+
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
+
 from blockdiag.imagedraw import base
 from blockdiag.imagedraw.utils import memoize
 from blockdiag.imagedraw.utils.ellipse import dots as ellipse_dots
-from blockdiag.utils import images, Box, Size, XY
-from blockdiag.utils.fontmap import parse_fontpath, FontMap
+from blockdiag.utils import XY, Box, Size, images
+from blockdiag.utils.fontmap import FontMap, parse_fontpath
 from blockdiag.utils.myitertools import istep, stepslice
 
 
