@@ -31,11 +31,6 @@ from blockdiag.utils.fontmap import parse_fontpath, FontMap
 from blockdiag.utils.myitertools import istep, stepslice
 
 
-# apply monkey patch to pillow
-from blockdiag.imagedraw.utils import pillow
-pillow.apply_patch()
-
-
 def point_pairs(xylist):
     iterable = iter(xylist)
     for pt in iterable:
