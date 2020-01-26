@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.0.0 (2020-01-26)
+------------------
+* Drop python2 and python3.4 support
+* Fix a bug
+
+  - Fix #109 blockdiag does not work with recent pillow
+
 1.5.4 (2018-07-22)
 ------------------
 * Fix bug
