@@ -36,6 +36,7 @@ setup(
     version=get_version(),
     description='blockdiag generates block-diagram image from text',
     long_description=open("README.rst").read(),
+    long_description_content_type='text/x-rst',
     classifiers=classifiers,
     keywords=['diagram', 'generator'],
     author='Takeshi Komiya',
