@@ -42,6 +42,10 @@ setup(
     author_email='i.tkomiya@gmail.com',
     url='http://blockdiag.com/',
     download_url='http://pypi.python.org/pypi/blockdiag',
+    project_urls={
+        "Code": "https://github.com/blockdiag/blockdiag",
+        "Issue tracker": "https://github.com/blockdiag/blockdiag/issues",
+    },
     license='Apache License 2.0',
     py_modules=['blockdiag_sphinxhelper'],
     packages=find_packages('src'),
