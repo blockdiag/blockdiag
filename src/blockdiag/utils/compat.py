@@ -16,15 +16,6 @@
 import codecs
 import sys
 
-# replace codecs.getreader
-if sys.version_info[0] == 3:
-    getreader = codecs.getreader
-
-    def py3_getreader(encoding):
-        return lambda stream, *args: getreader(encoding)(stream.buffer, *args)
-
-    codecs.getreader = py3_getreader
-
 
 def cmp_to_key(mycmp):
     """Convert a cmp= function into a key= function"""
