@@ -13,38 +13,40 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
-
 from blockdiag.utils import XY, Box, Size
 
 
-def splitlabel(string):
+def splitlabel(text):
     """Split text to lines as generator.
-       Every line will be stripped.
-       If text includes characters "\n", treat as line separator.
+
+    Every line will be stripped. If text includes characters "\n\n", treat
+    as line separator. Ignore '\n' to allow line wrapping.
     """
-    string = re.sub(r'^\s*', '', string)
-    string = re.sub(r'\s*$', '', string)
-    string = re.sub(r'\xa5', '\\\\', string)
-    string = re.sub('(\\\\){2}', '\x00', string)
-    string = re.sub('\\\\n', '\n', string)
-    for line in string.splitlines():
-        yield re.sub('\x00', '\\\\', line).strip()
+    lines = [x.strip() for x in text.splitlines()]
+    out = []
+
+    for line in lines:
+        if line:
+            out.append(line)
+        else:
+            yield ' '.join(out)
+            out = []
+
+    yield ' '.join(out)
 
 
 def splittext(metrics, text, bound, measure='width'):
-    folded = []
-    if text == '':
-        folded.append(' ')
+    folded = [' ']
+    for word in text.split():
+        # Try appending the word to the last line
+        tryline = ' '.join([folded[-1], word]).strip()
+        textsize = metrics.textsize(tryline)
 
-    for i in range(len(text), 0, -1):
-        textsize = metrics.textsize(text[0:i])
-
-        if getattr(textsize, measure) <= bound:
-            folded.append(text[0:i])
-            if text[i:]:
-                folded += splittext(metrics, text[i:], bound, measure)
-            break
+        if getattr(textsize, measure) > bound:
+            # Start a new line. Appends `word` even if > bound.
+            folded.append(word)
+        else:
+            folded[-1] = tryline
 
     return folded
 
