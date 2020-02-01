@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0.0 (unreleased)
+------------------
+* Fix a bug
+
+  - Fix #126: '_io.BufferedRandom' object has no attribute 'buffer'
+
 2.0.0 (2020-01-26)
 ------------------
 * Drop python2 and python3.4 support

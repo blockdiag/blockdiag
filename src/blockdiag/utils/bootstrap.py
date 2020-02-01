@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import codecs
 import os
 import re
 import sys
@@ -21,7 +22,6 @@ from optparse import SUPPRESS_HELP, OptionParser
 
 from blockdiag import imagedraw, plugins
 from blockdiag.utils import images
-from blockdiag.utils.compat import codecs
 from blockdiag.utils.config import ConfigParser
 from blockdiag.utils.fontmap import FontMap, parse_fontpath
 from blockdiag.utils.logging import error, warning
@@ -78,8 +78,9 @@ class Application(object):
 
     def parse_diagram(self):
         if self.options.input == '-':
-            stream = codecs.getreader('utf-8-sig')(sys.stdin)
-            self.code = stream.read()
+            self.code = sys.stdin.read()
+            if self.code.startswith('\ufeff'):  # strip BOM
+                self.code = self.code[1:]
         else:
             fp = codecs.open(self.options.input, 'r', 'utf-8-sig')
             self.code = fp.read()
