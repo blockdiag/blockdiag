@@ -67,7 +67,7 @@ setup(
             'docutils'
         ],
         'testing': [
-            'nose',
+            'pytest',
             'flake8',
             'flake8-coding',
             'flake8-copyright',
@@ -76,7 +76,6 @@ setup(
             'docutils',
         ],
     },
-    test_suite='nose.collector',
     entry_points="""
        [console_scripts]
        blockdiag = blockdiag.command:main
