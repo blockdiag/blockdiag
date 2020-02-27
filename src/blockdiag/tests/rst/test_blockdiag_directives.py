@@ -24,6 +24,9 @@ from docutils.parsers.rst import directives as docutils
 from blockdiag.tests.utils import TemporaryDirectory, capture_stderr, with_pil
 from blockdiag.utils.rst import directives
 
+TESTDIR = os.path.dirname(__file__)
+FONTPATH = os.path.join(TESTDIR, '..', 'VLGothic', 'VL-Gothic-Regular.ttf')
+
 
 class TestRstDirectives(unittest.TestCase):
     def setUp(self):
@@ -178,7 +181,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.image, type(doctree[0]))
 
     def test_setup_inline_svg_is_true_with_multibytes(self):
-        directives.setup(format='SVG', outputdir=self.tmpdir)
+        directives.setup(format='SVG', outputdir=self.tmpdir, fontpath=FONTPATH)
         text = (".. blockdiag::\n"
                 "\n"
                 "   あ -> い")

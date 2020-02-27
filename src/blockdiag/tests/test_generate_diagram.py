@@ -18,8 +18,6 @@ import re
 import sys
 import unittest
 
-from nose.tools import nottest
-
 import blockdiag
 import blockdiag.command
 from blockdiag.tests.utils import (TemporaryDirectory, capture_stderr,
@@ -51,7 +49,7 @@ def test_generate():
     files = get_diagram_files(basepath)
     options = []
 
-    for testcase in testcase_generator(basepath, mainfunc, files, options):
+    for testcase in _testcase_generator(basepath, mainfunc, files, options):
         yield testcase
 
 
@@ -62,12 +60,11 @@ def test_generate_with_separate():
     filtered = (f for f in files if re.search('separate', f))
     options = ['--separate']
 
-    for testcase in testcase_generator(basepath, mainfunc, filtered, options):
+    for testcase in _testcase_generator(basepath, mainfunc, filtered, options):
         yield testcase
 
 
-@nottest
-def testcase_generator(basepath, mainfunc, files, options):
+def _testcase_generator(basepath, mainfunc, files, options):
     fontpath = get_fontpath(basepath)
     options = options + ['-f', fontpath]
 
