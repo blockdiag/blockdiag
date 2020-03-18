@@ -128,6 +128,7 @@ class ImageDrawExBase(base.ImageDraw):
         self.set_canvas_size(Size(1, 1))  # This line make textsize() workable
 
     def paste(self, image, pt, mask=None):
+        pt = (int(pt[0]),int(pt[1]))  # This line fix issue on python3 #108 or when blockdiag_html_image_format = "PDF" is enable
         self._image.paste(image, pt, mask)
         self.draw = ImageDraw.Draw(self._image)
 
