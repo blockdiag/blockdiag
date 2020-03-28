@@ -124,7 +124,8 @@ class PDFImageDraw(base.ImageDraw):
             self.canvas.setLineWidth(kwargs['thick'])
 
         params = self.set_render_params(**kwargs)
-        self.canvas.rect(x, y, width, height, **params)
+        if kwargs['fill'] != 'none' or kwargs['style'] != 'none':
+            self.canvas.rect(x, y, width, height, **params)
 
         if 'thick' in kwargs:
             self.canvas.setLineWidth(1)
