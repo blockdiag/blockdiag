@@ -70,6 +70,12 @@ class TestParser(unittest.TestCase):
                  A;
                  B [label = "foobar"];
                  C [color = "red"];
+                 D [label = \"\"\"foobar\"\"\"];
+                 E [label = 'foobar'];
+                 F [color = 'red'];
+                 G [label = \'\'\'foobar\'\'\'];
+                 H [label = \"\"\"foo"bar\"\"\"];
+                 I [label = \'\'\'foo'bar\'\'\'];
                }
                """
         tree = parse_string(code)
