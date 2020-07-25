@@ -1,3 +1,6 @@
 {
   A -> B [label = "test label"];
+  A -> B [label = 'test label'];
+  A -> B [label = """test' "label"""];
+  A -> B [label = '''test' "label'''];
 }

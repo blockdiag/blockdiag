@@ -1,0 +1,8 @@
+diagram {
+    A [label = """A
+block
+string"""];
+    B [label = '''Another
+block
+string with different quotes'''];
+}
