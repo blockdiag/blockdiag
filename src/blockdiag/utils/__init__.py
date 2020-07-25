@@ -172,7 +172,7 @@ def unquote(string):
     if string:
         string = string.replace('"""', '').replace("'''", '')
 
-        m = re.match(r'\A(?P<quote>(""")|(\'\'\')|"|\')((.|\s)*)(?P=quote)\Z', string, re.M)
+        m = re.match(r'\A(?P<quote>"|\')((.|\s)*)(?P=quote)\Z', string, re.M)
         if m:
             return re.sub("\\\\" + m.group(1), m.group(1), m.group(2))
         else:
