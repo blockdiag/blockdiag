@@ -55,7 +55,7 @@ setup(
     python_requires=">=3.5",
     install_requires=[
         'setuptools',
-        'funcparserlib',
+        'funcparserlib>=1.0.0a0',
         'Pillow > 3.0',
         'webcolors',
     ],
