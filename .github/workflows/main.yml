@@ -1,0 +1,46 @@
+name: Test
+
+on: [push, pull_request]
+
+env:
+  PYTHONFAULTHANDLER: x
+  ALL_TESTS: 1
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+          - python-version: '3.5'
+            toxenv: py35
+          - python-version: '3.6'
+            toxenv: py36
+          - python-version: '3.7'
+            toxenv: py37
+          - python-version: '3.8'
+            toxenv: py38
+          - python-version: '3.7'
+            toxenv: pillow3.x
+          - python-version: '3.7'
+            toxenv: pillow4.x
+          - python-version: '3.7'
+            toxenv: pillow5.x
+          - python-version: '3.7'
+            toxenv: pillow6.x
+          - python-version: '3.7'
+            toxenv: pillow7.x
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          sudo apt-get install fonts-ipafont-gothic ghostscript libjpeg8-dev libfreetype6-dev
+          pip install -U docutils tox
+      - name: Run tox
+        env:
+          TOXENV: ${{ matrix.toxenv }}
+        run: tox -- -v
