@@ -1,6 +1,15 @@
 Changelog
 =========
 
+3.0.0 (unreleased)
+------------------
+* Drop python3.6 support
+* Use funcparserlib-1.0.0a0 or newer to support new python versions
+* Allow to write multiline string via triple quotes (""" ... """)
+* Fix a bug
+
+  - Fix #147: file existence disclosure using svg renderer
+
 2.0.0 (2020-02-01)
 ------------------
 * Fix a bug
