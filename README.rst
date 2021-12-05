@@ -1,14 +1,14 @@
 `blockdiag` generate block-diagram image file from spec-text file.
 
-.. image:: https://drone.io/bitbucket.org/blockdiag/blockdiag/status.png
-   :target: https://drone.io/bitbucket.org/blockdiag/blockdiag
-   :alt: drone.io CI build status
+.. image:: https://github.com/blockdiag/blockdiag/actions/workflows/main.yml/badge.svg
+   :target: https://github.com/blockdiag/blockdiag/actions/workflows/main.yml
+   :alt: GitHub Action CI build status
 
-.. image:: https://pypip.in/v/blockdiag/badge.png
+.. image:: https://img.shields.io/pypi/v/blockdiag
    :target: https://pypi.python.org/pypi/blockdiag/
    :alt: Latest PyPI version
 
-.. image:: https://pypip.in/d/blockdiag/badge.png
+.. image:: https://img.shields.io/pypi/dm/blockdiag
    :target: https://pypi.python.org/pypi/blockdiag/
    :alt: Number of PyPI downloads
 
