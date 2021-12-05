@@ -70,17 +70,35 @@ class TestParser(unittest.TestCase):
                  A;
                  B [label = "foobar"];
                  C [color = "red"];
+                 D [label = 'foobar'];
+                 E [color = 'red'];
+                 F [label = \"\"\"foobar\"\"\"];
+                 G [label = \'\'\'foobar\'\'\'];
+                 H [label = \"\"\"foo"bar\"\"\"];
+                 I [label = \'\'\'foo'bar\'\'\'];
                }
                """
         tree = parse_string(code)
         self.assertIsInstance(tree, Diagram)
-        self.assertEqual(3, len(tree.stmts))
+        self.assertEqual(9, len(tree.stmts))
         self.assertIsInstance(tree.stmts[0], Statements)
         self.assertIsInstance(tree.stmts[0].stmts[0], Node)
         self.assertIsInstance(tree.stmts[1], Statements)
         self.assertIsInstance(tree.stmts[1].stmts[0], Node)
         self.assertIsInstance(tree.stmts[2], Statements)
         self.assertIsInstance(tree.stmts[2].stmts[0], Node)
+        self.assertIsInstance(tree.stmts[3], Statements)
+        self.assertIsInstance(tree.stmts[3].stmts[0], Node)
+        self.assertIsInstance(tree.stmts[4], Statements)
+        self.assertIsInstance(tree.stmts[4].stmts[0], Node)
+        self.assertIsInstance(tree.stmts[5], Statements)
+        self.assertIsInstance(tree.stmts[5].stmts[0], Node)
+        self.assertIsInstance(tree.stmts[6], Statements)
+        self.assertIsInstance(tree.stmts[6].stmts[0], Node)
+        self.assertIsInstance(tree.stmts[7], Statements)
+        self.assertIsInstance(tree.stmts[7].stmts[0], Node)
+        self.assertIsInstance(tree.stmts[8], Statements)
+        self.assertIsInstance(tree.stmts[8].stmts[0], Node)
 
     def test_diagram_includes_edges(self):
         code = """
