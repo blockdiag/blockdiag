@@ -47,7 +47,6 @@ setup(
         "Issue tracker": "https://github.com/blockdiag/blockdiag/issues",
     },
     license='Apache License 2.0',
-    py_modules=['blockdiag_sphinxhelper'],
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
