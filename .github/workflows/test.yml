@@ -1,0 +1,56 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [py35, py36, py37, py38, pillow3.x, pillow4.x, pillow5.x, pillow6.x, pillow7.x]
+        include:
+        - name: py35
+          python: 3.5
+          toxenv: py35
+        - name: py36
+          python: 3.6
+          toxenv: py36
+        - name: py37
+          python: 3.7
+          toxenv: py37
+        - name: py38
+          python: 3.8
+          toxenv: py38
+        - name: pillow3.x
+          python: 3.7
+          toxenv: pillow3.x
+        - name: pillow4.x
+          python: 3.7
+          toxenv: pillow4.x
+        - name: pillow5.x
+          python: 3.7
+          toxenv: pillow5.x
+        - name: pillow6.x
+          python: 3.7
+          toxenv: pillow6.x
+        - name: pillow7.x
+          python: 3.7
+          toxenv: pillow7.x
+    env:
+      ALL_TESTS: 1
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python }}
+    - name: Check Python version
+      run: python --version
+    - name: Install fonts and ghostscript
+      run: sudo apt-get install fonts-ipafont-gothic ghostscript libjpeg8-dev libfreetype6-dev
+    - name: Install dependencies
+      run: pip install -U docutils tox
+    - name: Run Tox
+      run: tox -e ${{ matrix.toxenv }} -- -vv
