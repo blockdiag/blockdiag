@@ -21,6 +21,7 @@ from docutils import nodes
 from docutils.core import publish_doctree
 from docutils.parsers.rst import directives as docutils
 
+from blockdiag.tests.test_generate_diagram import TESTDIR, get_fontpath
 from blockdiag.tests.utils import TemporaryDirectory, capture_stderr, with_pil
 from blockdiag.utils.rst import directives
 
@@ -178,7 +179,9 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(nodes.image, type(doctree[0]))
 
     def test_setup_inline_svg_is_true_with_multibytes(self):
-        directives.setup(format='SVG', outputdir=self.tmpdir)
+        # multibyte characters aren't support for default font, set a own font
+        directives.setup(format='SVG', outputdir=self.tmpdir,
+                         fontpath=get_fontpath(TESTDIR))
         text = (".. blockdiag::\n"
                 "\n"
                 "   あ -> い")
