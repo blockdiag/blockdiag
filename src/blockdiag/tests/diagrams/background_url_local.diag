@@ -1,0 +1,5 @@
+{
+  A [background = "src/blockdiag/tests/diagrams/white.gif"];
+  B [background = "src/blockdiag/tests/diagrams/invalid.txt"];
+  Z;
+}

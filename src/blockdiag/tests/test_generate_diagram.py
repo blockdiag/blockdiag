@@ -17,6 +17,7 @@ import os
 import re
 import sys
 import unittest
+from xml.etree import ElementTree
 
 from nose.tools import nottest
 
@@ -37,7 +38,7 @@ def get_diagram_files(testdir):
     diagramsdir = os.path.join(testdir, 'diagrams')
 
     skipped = ['README', 'debian-logo-256color-palettealpha.png',
-               'errors', 'white.gif']
+               'errors', 'invalid.txt', 'white.gif']
     for file in os.listdir(diagramsdir):
         if file in skipped:
             pass
@@ -158,8 +159,6 @@ def ghostscript_not_found_test():
 
 @capture_stderr
 def svg_includes_source_code_tag_test():
-    from xml.etree import ElementTree
-
     testdir = os.path.dirname(__file__)
     diagpath = os.path.join(testdir, 'diagrams', 'single_edge.diag')
 
@@ -180,5 +179,29 @@ def svg_includes_source_code_tag_test():
         source_code = re.sub(r'\s+', ' ', source_code)
         embeded = re.sub(r'\s+', ' ', desc.text)
         assert source_code == embeded
+    finally:
+        tmpdir.clean()
+
+
+@capture_stderr
+def svg_sanitizes_url_on_error_test():
+    testdir = os.path.dirname(__file__)
+    diagpath = os.path.join(testdir, 'diagrams', 'background_url_local.diag')
+
+    try:
+        tmpdir = TemporaryDirectory()
+        fd, tmpfile = tmpdir.mkstemp()
+        os.close(fd)
+
+        args = ['-T', 'SVG', '-o', tmpfile, diagpath]
+        ret = blockdiag.command.main(args)
+        tree = ElementTree.parse(tmpfile)
+        images = tree.findall('{http://www.w3.org/2000/svg}image')
+        valid_url, invalid_url = [image.attrib.get('{http://www.w3.org/1999/xlink}href') for image in images]
+
+        assert valid_url
+        assert not invalid_url
+        assert 'unknown image type:' in sys.stderr.getvalue()
+        assert ret == 0
     finally:
         tmpdir.clean()
