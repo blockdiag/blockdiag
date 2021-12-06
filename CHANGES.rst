@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0 (unreleased)
+3.0.0 (2021-12-06)
 ------------------
 * Drop python3.6 support
 * Use funcparserlib-1.0.0a0 or newer to support new python versions
