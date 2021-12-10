@@ -5,6 +5,6 @@ include blockdiag.1
 include tox.ini
 include src/blockdiag/tests/VLGothic/*
 recursive-include examples blockdiagrc *.diag *.png *.svg
-recursive-include src README *.py *.diag *.gif *.png
+recursive-include src README *.py *.diag *.gif *.png invalid.txt
 
 exclude examples/update.sh
