@@ -104,6 +104,8 @@ def generate(mainfunc, filetype, source, options):
 
         mainfunc(['--debug', '-T', filetype, '-o', tmpfile, source] +
                  list(options))
+        if 'Could not retrieve:' in sys.stderr.getvalue():
+            raise unittest.SkipTest("No internet access")
     finally:
         tmpdir.clean()
 
@@ -150,6 +152,8 @@ def ghostscript_not_found_test():
 
         args = ['-T', 'SVG', '-o', tmpfile, diagpath]
         ret = blockdiag.command.main(args)
+        if 'Could not retrieve:' in sys.stderr.getvalue():
+            raise unittest.SkipTest("No internet access")
         assert 'Could not convert image:' in sys.stderr.getvalue()
         assert ret == 0
     finally:

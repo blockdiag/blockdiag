@@ -14,12 +14,14 @@
 #  limitations under the License.
 
 import os
+import sys
 import unittest
 
 from blockdiag.command import BlockdiagApp
-from blockdiag.tests.utils import TemporaryDirectory
+from blockdiag.tests.utils import TemporaryDirectory, capture_stderr
 
 
+@capture_stderr
 class TestBlockdiagApp(unittest.TestCase):
     def test_app_cleans_up_images(self):
         testdir = os.path.dirname(__file__)
@@ -41,6 +43,9 @@ class TestBlockdiagApp(unittest.TestCase):
             app = BlockdiagApp()
             app.register_cleanup_handler(cleanup)  # to get internal state
             app.run(args)
+
+            if 'Could not retrieve:' in sys.stderr.getvalue():
+                raise unittest.SkipTest("No internet access")
 
             self.assertTrue(urlopen_cache)  # check images were cached
             for path in urlopen_cache.values():
