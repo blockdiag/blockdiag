@@ -195,6 +195,7 @@ class PDFImageDraw(base.ImageDraw):
         r = (360 + end - start) % 360
 
         self.set_render_params(**kwargs)
+        self.set_stroke_color(kwargs.get('fill', 'none'))
         y = self.size[1]
         self.canvas.arc(xy[0], y - xy[3], xy[2], y - xy[1], start, r)
 
