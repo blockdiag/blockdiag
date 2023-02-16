@@ -273,7 +273,8 @@ class ImageDrawExBase(base.ImageDraw):
     def textlinesize(self, string, font):
         ttfont = ttfont_for(font)
         if ttfont is None:
-            size = self.draw.textsize(string, font=None)
+            left, top, right, bottom = self.draw.textbbox((0, 0), string)
+            size = (right - left, bottom - top)
 
             font_ratio = font.size * 1.0 / FontMap.BASE_FONTSIZE
             size = Size(int(size[0] * font_ratio),
@@ -291,7 +292,8 @@ class ImageDrawExBase(base.ImageDraw):
             if self.scale_ratio == 1 and font.size == FontMap.BASE_FONTSIZE:
                 self.draw.text(xy, string, fill=fill)
             else:
-                size = self.draw.textsize(string)
+                left, top, right, bottom = self.draw.textbbox((0, 0), string)
+                size = (right - left, bottom - top)
                 image = Image.new('RGBA', size)
                 draw = ImageDraw.Draw(image)
                 draw.text((0, 0), string, fill=fill)
