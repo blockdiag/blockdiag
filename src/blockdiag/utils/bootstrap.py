@@ -102,11 +102,15 @@ class Application(object):
                              transparency=self.options.transparency)
         drawer.draw()
 
-        if self.options.size:
-            drawer.save(size=self.options.size)
-        else:
-            drawer.save()
-
+        maybe_an_image = (drawer.save(size=self.options.size)
+                          if self.options.size else drawer.save())
+        if self.options.output == '-' and maybe_an_image:
+            # If output=-, (bytebuffer or string) image returned
+            # dump it to console
+            if isinstance(maybe_an_image, bytes):
+                sys.stdout.buffer.write(maybe_an_image)
+            else:
+                sys.stdout.write(maybe_an_image)
         return 0
 
     def cleanup(self):

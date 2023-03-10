@@ -406,7 +406,7 @@ class ImageDrawExBase(base.ImageDraw):
 
         self._image.thumbnail(size, Image.ANTIALIAS)
 
-        if self.filename:
+        if self.filename and self.filename != '-':
             self._image.save(self.filename, _format)
             image = None
         else:
