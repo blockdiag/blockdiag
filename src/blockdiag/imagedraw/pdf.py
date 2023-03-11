@@ -231,6 +231,8 @@ class PDFImageDraw(base.ImageDraw):
         # Ignore size and format parameter; compatibility for ImageDrawEx.
 
         self.canvas.showPage()
+        if self.filename == '-':
+            return self.canvas.getpdfdata()
         self.canvas.save()
 
 
