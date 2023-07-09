@@ -19,7 +19,7 @@ import sys
 import unittest
 from xml.etree import ElementTree
 
-from nose.tools import nottest
+import pytest
 
 import blockdiag
 import blockdiag.command
@@ -46,66 +46,65 @@ def get_diagram_files(testdir):
             yield os.path.join(diagramsdir, file)
 
 
-def test_generate():
-    mainfunc = blockdiag.command.main
-    basepath = os.path.dirname(__file__)
-    files = get_diagram_files(basepath)
-    options = []
-
-    for testcase in testcase_generator(basepath, mainfunc, files, options):
-        yield testcase
-
-
-def test_generate_with_separate():
-    mainfunc = blockdiag.command.main
-    basepath = os.path.dirname(__file__)
-    files = get_diagram_files(basepath)
-    filtered = (f for f in files if re.search('separate', f))
-    options = ['--separate']
-
-    for testcase in testcase_generator(basepath, mainfunc, filtered, options):
-        yield testcase
+base_path = os.path.dirname(__file__)
+files = get_diagram_files(base_path)
+generate_testdata = []
+generate_with_separate_testdata = []
+for file_source in files:
+    generate_testdata.append((file_source, 'svg', []))
+    generate_testdata.append((file_source, 'png', []))
+    generate_testdata.append((file_source, 'png', ['--antialias']))
+    generate_testdata.append((file_source, 'pdf', []))
+    if re.search('separate', file_source):
+        generate_with_separate_testdata.append((file_source, 'svg', ['--separate']))
+        generate_with_separate_testdata.append((file_source, 'png', ['--separate']))
+        generate_with_separate_testdata.append((file_source, 'png', ['--separate', '--antialias']))
+        generate_with_separate_testdata.append((file_source, 'pdf', ['--separate']))
 
 
-@nottest
-def testcase_generator(basepath, mainfunc, files, options):
-    fontpath = get_fontpath(basepath)
-    options = options + ['-f', fontpath]
+@pytest.mark.parametrize("source,file_type,options", generate_with_separate_testdata)
+def test_generate_with_separate_option(source, file_type, options):
+    generate(source, file_type, options)
 
-    for source in files:
-        yield generate, mainfunc, 'svg', source, options
 
-        if not supported_pil():
-            yield unittest.skip("Pillow is not available")(generate)
-            yield unittest.skip("Pillow is not available")(generate)
-        elif os.environ.get('ALL_TESTS') is None:
-            message = "Skipped by default. To enable it, specify $ALL_TESTS=1"
-            yield unittest.skip(message)(generate)
-            yield unittest.skip(message)(generate)
-        else:
-            yield generate, mainfunc, 'png', source, options
-            yield generate, mainfunc, 'png', source, options + ['--antialias']
-
-        if not supported_pdf():
-            yield unittest.skip("reportlab is not available")(generate)
-        elif os.environ.get('ALL_TESTS') is None:
-            message = "Skipped by default. To enable it, specify $ALL_TESTS=1"
-            yield unittest.skip(message)(generate)
-        else:
-            yield generate, mainfunc, 'pdf', source, options
+@pytest.mark.parametrize("source,file_type,options", generate_testdata)
+def test_generate_with_separate(source, file_type, options):
+    generate(source, file_type, options)
 
 
 @capture_stderr
-def generate(mainfunc, filetype, source, options):
+def generate(source, file_type, options):
+    if file_type == 'png':
+        if not supported_pil():
+            unittest.skip('Pillow is not available')
+            return
+        if os.environ.get('ALL_TESTS') is None:
+            unittest.skip('Skipped by default. To enable it, specify $ALL_TESTS=1')
+            return
+    elif file_type == 'pdf':
+        if not supported_pdf():
+            unittest.skip('reportlab is not available')
+            return
+        if os.environ.get('ALL_TESTS') is None:
+            unittest.skip('Skipped by default. To enable it, specify $ALL_TESTS=1')
+            return
+
+    tmpdir = None
     try:
         tmpdir = TemporaryDirectory()
-        fd, tmpfile = tmpdir.mkstemp()
+        fd, tmp_file = tmpdir.mkstemp()
         os.close(fd)
-
-        mainfunc(['--debug', '-T', filetype, '-o', tmpfile, source] +
-                 list(options))
+        blockdiag.command.main(
+            [
+                '--debug',
+                '-T',
+                file_type,
+                '-o', tmp_file, source
+            ] + list(options)
+        )
     finally:
-        tmpdir.clean()
+        if tmpdir is not None:
+            tmpdir.clean()
 
 
 def not_exist_font_config_option_test():
