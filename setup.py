@@ -54,7 +54,7 @@ setup(
     install_requires=[
         'setuptools',
         'funcparserlib>=1.0.0a0',
-        'Pillow > 3.0',
+        'Pillow > 3.0, < 10.0',
         'webcolors',
     ],
     extras_require={
@@ -65,7 +65,7 @@ setup(
             'docutils'
         ],
         'testing': [
-            'nose',
+            'pytest',
             'flake8',
             'flake8-coding',
             'flake8-copyright',
@@ -74,7 +74,6 @@ setup(
             'docutils',
         ],
     },
-    test_suite='nose.collector',
     entry_points="""
        [console_scripts]
        blockdiag = blockdiag.command:main
